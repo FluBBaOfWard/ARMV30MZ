@@ -1,0 +1,10 @@
+ARMV30MZ revision history
+-=-=-=-=-=-=-=-=-=-=-=-=-
+
+
+V0.1.0 - 2021-10-17 (FluBBa)
+	Started to use c version on NDS.
+
+V0.0.0 - 2006-07-23 (FluBBa)
+	Started using c version on GBA.
+
