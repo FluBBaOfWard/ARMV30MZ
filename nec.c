@@ -271,7 +271,7 @@ void (*nec_instruction[256])(void) =
     i_or_ald8,
     i_or_axd16,
     i_push_cs,
-	i_pre_nec,
+    i_pre_nec,
     i_adc_br8,
     i_adc_wr16,
     i_adc_r8b,
@@ -386,7 +386,7 @@ void (*nec_instruction[256])(void) =
     i_jnle,
     i_80pre,
     i_81pre,
-	i_82pre,
+    i_82pre,
     i_83pre,
     i_test_br8,
     i_test_wr16,
@@ -575,76 +575,76 @@ static unsigned (*GetEA[192])(void)={
 };
 
 static struct {
-		
+
 	struct {
 		WREGS w[256];
 		BREGS b[256];
 	} reg;
-		
+
 	struct {
 		WREGS w[256];
 		BREGS b[256];
 	} RM;	
-		
+
 } Mod_RM;
-		
+
 static int no_interrupt;
 static unsigned char parity_table[256];
-		
+
 		// Functions
-		
+
 void nec_reset (void *param)
 {
 	u32 i, j, c;
 	BREGS reg_name[8] = { AL, CL, DL, BL, AH, CH, DH, BH };
-		
+
 	memset( &I, 0, sizeof(I) );
-		
+
 	no_interrupt = 0;
 	I.sregs[CS] = 0xFFFF;
-		
+
 	for (i=0; i<256; ++i) {
-		for (j=i, c=0; j>0; j>>=1)
+		for (j=i, c=0; j>0; j>>=1) {
 			c += j & 0x01;
-			
+		}
 		parity_table[i] = !(c & 1);
 	}
-		
+
 	I.ZeroVal = I.ParityVal = 1;
 	I.MF = 1;
-		
+
     for (i = 0; i < 256; i++) {
 		Mod_RM.reg.b[i] = reg_name[(i & 0x38) >> 3];
 		Mod_RM.reg.w[i] = (WREGS)( (i & 0x38) >> 3) ;
     }
-		
+
 	for (i = 0xc0; i < 0x100; i++) {
 		Mod_RM.RM.w[i] = (WREGS)( i & 7 );
 		Mod_RM.RM.b[i] = (BREGS)reg_name[i & 7];
 	}
-		
+
 	I.regs.w[SP] = 0x2000;
 }
 
 void nec_int(unsigned long wektor)
 {
 	u32 dest_seg, dest_off;
-		
-	if(I.IF) {
+
+	if (I.IF) {
 		i_pushf();
 		I.TF = I.IF = 0;
-			
+
 		dest_off = cpuReadByte(wektor) | cpuReadByte((wektor)+1) << 8;
 		dest_seg = cpuReadByte(wektor + 2) | cpuReadByte(wektor + 3) << 8;
-			
+
 		I.regs.w[SP] -= 2;
 		cpuWriteByte((I.sregs[SS] << 4) + I.regs.w[SP], I.sregs[CS]);
 		cpuWriteByte((I.sregs[SS] << 4) + I.regs.w[SP] + 1, I.sregs[CS] >> 8);
-			
+
 		I.regs.w[SP] -= 2;
 		cpuWriteByte((I.sregs[SS] << 4) + I.regs.w[SP], I.ip);
 		cpuWriteByte((I.sregs[SS] << 4) + I.regs.w[SP] + 1, I.ip >> 8);
-			
+
 		I.ip = dest_off;
 		I.sregs[CS] = dest_seg;
 	}
@@ -654,9 +654,9 @@ static void nec_interrupt(unsigned int_num,int md_flag)
 {
 	u32 dest_seg, dest_off;
 
-	if (int_num == -1)
+	if (int_num == -1) {
 		return;
-
+	}
 	i_pushf();
 	I.TF = I.IF = 0;
 
@@ -691,7 +691,7 @@ static void i_add_br8(void)
 	I.SignVal = I.ZeroVal = I.ParityVal = (s8)res;
 	dst = res & 0xFF;
 
-	if(ModRM >= 0xC0) {
+	if (ModRM >= 0xC0) {
 		I.regs.b[Mod_RM.RM.b[ModRM]] = dst;
 		nec_ICount -= 1;
 	} else {
@@ -714,7 +714,7 @@ static void i_add_wr16(void)
 	I.SignVal = I.ZeroVal = I.ParityVal = (signed short)res;
 	dst = res & 0xFFFF;
 
-	if(ModRM >= 0xc0) {
+	if (ModRM >= 0xc0) {
 		I.regs.w[Mod_RM.RM.w[ModRM]]=dst;
 		nec_ICount -= 1;
 	} else {
@@ -847,7 +847,7 @@ static void i_popa(void) {
  { I.regs.w[IY] = (cpuReadByte((((I.sregs[SS]<<4)+I.regs.w[SP]))) | (cpuReadByte(((((I.sregs[SS]<<4)+I.regs.w[SP])))+1)<<8)); I.regs.w[SP]+=2; };
  { I.regs.w[IX] = (cpuReadByte((((I.sregs[SS]<<4)+I.regs.w[SP]))) | (cpuReadByte(((((I.sregs[SS]<<4)+I.regs.w[SP])))+1)<<8)); I.regs.w[SP]+=2; };
  { I.regs.w[BP] = (cpuReadByte((((I.sregs[SS]<<4)+I.regs.w[SP]))) | (cpuReadByte(((((I.sregs[SS]<<4)+I.regs.w[SP])))+1)<<8)); I.regs.w[SP]+=2; };
-    { tmp = (cpuReadByte((((I.sregs[SS]<<4)+I.regs.w[SP]))) | (cpuReadByte(((((I.sregs[SS]<<4)+I.regs.w[SP])))+1)<<8)); I.regs.w[SP]+=2; };
+ { tmp = (cpuReadByte((((I.sregs[SS]<<4)+I.regs.w[SP]))) | (cpuReadByte(((((I.sregs[SS]<<4)+I.regs.w[SP])))+1)<<8)); I.regs.w[SP]+=2; };
  { I.regs.w[BW] = (cpuReadByte((((I.sregs[SS]<<4)+I.regs.w[SP]))) | (cpuReadByte(((((I.sregs[SS]<<4)+I.regs.w[SP])))+1)<<8)); I.regs.w[SP]+=2; };
  { I.regs.w[DW] = (cpuReadByte((((I.sregs[SS]<<4)+I.regs.w[SP]))) | (cpuReadByte(((((I.sregs[SS]<<4)+I.regs.w[SP])))+1)<<8)); I.regs.w[SP]+=2; };
  { I.regs.w[CW] = (cpuReadByte((((I.sregs[SS]<<4)+I.regs.w[SP]))) | (cpuReadByte(((((I.sregs[SS]<<4)+I.regs.w[SP])))+1)<<8)); I.regs.w[SP]+=2; };
@@ -855,15 +855,15 @@ static void i_popa(void) {
  nec_ICount-=8;
 }
 static void i_chkind(void) {
- unsigned long low,high,tmp;
- unsigned long ModRM=cpuReadByte((I.sregs[CS]<<4)+I.ip++);
-    low = ((ModRM) >= 0xc0 ? I.regs.w[Mod_RM.RM.w[ModRM]] : ( (*GetEA[ModRM])(), (cpuReadByte(EA) | (cpuReadByte((EA)+1)<<8)) ));
-    high= (cpuReadByte((EA&0xf0000)|((EA+2)&0xffff)) | (cpuReadByte(((EA&0xf0000)|((EA+2)&0xffff))+1)<<8));
-    tmp= I.regs.w[Mod_RM.reg.w[ModRM]];
-    if (tmp<low || tmp>high) {
-  nec_interrupt(5,0);
-  nec_ICount-=7;
-    }
+  unsigned long low,high,tmp;
+  unsigned long ModRM=cpuReadByte((I.sregs[CS]<<4)+I.ip++);
+  low = ((ModRM) >= 0xc0 ? I.regs.w[Mod_RM.RM.w[ModRM]] : ( (*GetEA[ModRM])(), (cpuReadByte(EA) | (cpuReadByte((EA)+1)<<8)) ));
+  high= (cpuReadByte((EA&0xf0000)|((EA+2)&0xffff)) | (cpuReadByte(((EA&0xf0000)|((EA+2)&0xffff))+1)<<8));
+  tmp= I.regs.w[Mod_RM.reg.w[ModRM]];
+  if (tmp<low || tmp>high) {
+    nec_interrupt(5,0);
+    nec_ICount-=7;
+  }
   nec_ICount-=13;
 }
 
@@ -900,57 +900,57 @@ static void i_jnle(void) { int tmp = (int)((signed char)(cpuReadByte((I.sregs[CS
 static void i_80pre(void) { unsigned long dst, src; unsigned long ModRM=cpuReadByte((I.sregs[CS]<<4)+I.ip++); dst = ((ModRM) >= 0xc0 ? I.regs.b[Mod_RM.RM.b[ModRM]] : (cpuReadByte((*GetEA[ModRM])()))); src = (cpuReadByte((I.sregs[CS]<<4)+I.ip++));
  { nec_ICount-=( ModRM >=0xc0 )?1:3; }
  switch (ModRM & 0x38) {
-     case 0x00: { unsigned long res=dst+src; (I.CarryVal = (res) & 0x100); (I.OverVal = ((res) ^ (src)) & ((res) ^ (dst)) & 0x80); (I.AuxVal = ((res) ^ ((src) ^ (dst))) & 0x10); (I.SignVal=I.ZeroVal=I.ParityVal=(signed char)(res)); dst=(unsigned char)res; }; { if (ModRM >= 0xc0) I.regs.b[Mod_RM.RM.b[ModRM]]=dst; else {cpuWriteByte((EA),dst); }; }; break;
-     case 0x08: dst|=src; I.CarryVal=I.OverVal=I.AuxVal=0; (I.SignVal=I.ZeroVal=I.ParityVal=(signed char)(dst)); { if (ModRM >= 0xc0) I.regs.b[Mod_RM.RM.b[ModRM]]=dst; else {cpuWriteByte((EA),dst); }; }; break;
-     case 0x10: src+=(I.CarryVal!=0); { unsigned long res=dst+src; (I.CarryVal = (res) & 0x100); (I.OverVal = ((res) ^ (src)) & ((res) ^ (dst)) & 0x80); (I.AuxVal = ((res) ^ ((src) ^ (dst))) & 0x10); (I.SignVal=I.ZeroVal=I.ParityVal=(signed char)(res)); dst=(unsigned char)res; }; { if (ModRM >= 0xc0) I.regs.b[Mod_RM.RM.b[ModRM]]=dst; else {cpuWriteByte((EA),dst); }; }; break;
-     case 0x18: src+=(I.CarryVal!=0); { unsigned long res=dst-src; (I.CarryVal = (res) & 0x100); (I.OverVal = ((dst) ^ (src)) & ((dst) ^ (res)) & 0x80); (I.AuxVal = ((res) ^ ((src) ^ (dst))) & 0x10); (I.SignVal=I.ZeroVal=I.ParityVal=(signed char)(res)); dst=(unsigned char)res; }; { if (ModRM >= 0xc0) I.regs.b[Mod_RM.RM.b[ModRM]]=dst; else {cpuWriteByte((EA),dst); }; }; break;
-  case 0x20: dst&=src; I.CarryVal=I.OverVal=I.AuxVal=0; (I.SignVal=I.ZeroVal=I.ParityVal=(signed char)(dst)); { if (ModRM >= 0xc0) I.regs.b[Mod_RM.RM.b[ModRM]]=dst; else {cpuWriteByte((EA),dst); }; }; break;
-     case 0x28: { unsigned long res=dst-src; (I.CarryVal = (res) & 0x100); (I.OverVal = ((dst) ^ (src)) & ((dst) ^ (res)) & 0x80); (I.AuxVal = ((res) ^ ((src) ^ (dst))) & 0x10); (I.SignVal=I.ZeroVal=I.ParityVal=(signed char)(res)); dst=(unsigned char)res; }; { if (ModRM >= 0xc0) I.regs.b[Mod_RM.RM.b[ModRM]]=dst; else {cpuWriteByte((EA),dst); }; }; break;
-     case 0x30: dst^=src; I.CarryVal=I.OverVal=I.AuxVal=0; (I.SignVal=I.ZeroVal=I.ParityVal=(signed char)(dst)); { if (ModRM >= 0xc0) I.regs.b[Mod_RM.RM.b[ModRM]]=dst; else {cpuWriteByte((EA),dst); }; }; break;
-     case 0x38: { unsigned long res=dst-src; (I.CarryVal = (res) & 0x100); (I.OverVal = ((dst) ^ (src)) & ((dst) ^ (res)) & 0x80); (I.AuxVal = ((res) ^ ((src) ^ (dst))) & 0x10); (I.SignVal=I.ZeroVal=I.ParityVal=(signed char)(res)); dst=(unsigned char)res; }; break;
-    }
+   case 0x00: { unsigned long res=dst+src; (I.CarryVal = (res) & 0x100); (I.OverVal = ((res) ^ (src)) & ((res) ^ (dst)) & 0x80); (I.AuxVal = ((res) ^ ((src) ^ (dst))) & 0x10); (I.SignVal=I.ZeroVal=I.ParityVal=(signed char)(res)); dst=(unsigned char)res; }; { if (ModRM >= 0xc0) I.regs.b[Mod_RM.RM.b[ModRM]]=dst; else {cpuWriteByte((EA),dst); }; }; break;
+   case 0x08: dst|=src; I.CarryVal=I.OverVal=I.AuxVal=0; (I.SignVal=I.ZeroVal=I.ParityVal=(signed char)(dst)); { if (ModRM >= 0xc0) I.regs.b[Mod_RM.RM.b[ModRM]]=dst; else {cpuWriteByte((EA),dst); }; }; break;
+   case 0x10: src+=(I.CarryVal!=0); { unsigned long res=dst+src; (I.CarryVal = (res) & 0x100); (I.OverVal = ((res) ^ (src)) & ((res) ^ (dst)) & 0x80); (I.AuxVal = ((res) ^ ((src) ^ (dst))) & 0x10); (I.SignVal=I.ZeroVal=I.ParityVal=(signed char)(res)); dst=(unsigned char)res; }; { if (ModRM >= 0xc0) I.regs.b[Mod_RM.RM.b[ModRM]]=dst; else {cpuWriteByte((EA),dst); }; }; break;
+   case 0x18: src+=(I.CarryVal!=0); { unsigned long res=dst-src; (I.CarryVal = (res) & 0x100); (I.OverVal = ((dst) ^ (src)) & ((dst) ^ (res)) & 0x80); (I.AuxVal = ((res) ^ ((src) ^ (dst))) & 0x10); (I.SignVal=I.ZeroVal=I.ParityVal=(signed char)(res)); dst=(unsigned char)res; }; { if (ModRM >= 0xc0) I.regs.b[Mod_RM.RM.b[ModRM]]=dst; else {cpuWriteByte((EA),dst); }; }; break;
+   case 0x20: dst&=src; I.CarryVal=I.OverVal=I.AuxVal=0; (I.SignVal=I.ZeroVal=I.ParityVal=(signed char)(dst)); { if (ModRM >= 0xc0) I.regs.b[Mod_RM.RM.b[ModRM]]=dst; else {cpuWriteByte((EA),dst); }; }; break;
+   case 0x28: { unsigned long res=dst-src; (I.CarryVal = (res) & 0x100); (I.OverVal = ((dst) ^ (src)) & ((dst) ^ (res)) & 0x80); (I.AuxVal = ((res) ^ ((src) ^ (dst))) & 0x10); (I.SignVal=I.ZeroVal=I.ParityVal=(signed char)(res)); dst=(unsigned char)res; }; { if (ModRM >= 0xc0) I.regs.b[Mod_RM.RM.b[ModRM]]=dst; else {cpuWriteByte((EA),dst); }; }; break;
+   case 0x30: dst^=src; I.CarryVal=I.OverVal=I.AuxVal=0; (I.SignVal=I.ZeroVal=I.ParityVal=(signed char)(dst)); { if (ModRM >= 0xc0) I.regs.b[Mod_RM.RM.b[ModRM]]=dst; else {cpuWriteByte((EA),dst); }; }; break;
+   case 0x38: { unsigned long res=dst-src; (I.CarryVal = (res) & 0x100); (I.OverVal = ((dst) ^ (src)) & ((dst) ^ (res)) & 0x80); (I.AuxVal = ((res) ^ ((src) ^ (dst))) & 0x10); (I.SignVal=I.ZeroVal=I.ParityVal=(signed char)(res)); dst=(unsigned char)res; }; break;
+ }
 }
 
 static void i_81pre(void) { unsigned long dst, src; unsigned long ModRM=cpuReadByte((I.sregs[CS]<<4)+I.ip++); dst = ((ModRM) >= 0xc0 ? I.regs.w[Mod_RM.RM.w[ModRM]] : ( (*GetEA[ModRM])(), (cpuReadByte(EA) | (cpuReadByte((EA)+1)<<8)) )); src = (cpuReadByte((I.sregs[CS]<<4)+I.ip++)); src+= ((cpuReadByte((I.sregs[CS]<<4)+I.ip++)) << 8);
  { nec_ICount-=( ModRM >=0xc0 )?1:3; }
-    switch (ModRM & 0x38) {
-     case 0x00: { unsigned long res=dst+src; (I.CarryVal = (res) & 0x10000); (I.OverVal = ((res) ^ (src)) & ((res) ^ (dst)) & 0x8000); (I.AuxVal = ((res) ^ ((src) ^ (dst))) & 0x10); (I.SignVal=I.ZeroVal=I.ParityVal=(signed short)(res)); dst=(unsigned short)res; }; { if (ModRM >= 0xc0) I.regs.w[Mod_RM.RM.w[ModRM]]=dst; else {cpuWriteByte((EA),dst); cpuWriteByte(((EA)+1),(dst)>>8); }; }; break;
-     case 0x08: dst|=src; I.CarryVal=I.OverVal=I.AuxVal=0; (I.SignVal=I.ZeroVal=I.ParityVal=(signed short)(dst)); { if (ModRM >= 0xc0) I.regs.w[Mod_RM.RM.w[ModRM]]=dst; else {cpuWriteByte((EA),dst); cpuWriteByte(((EA)+1),(dst)>>8); }; }; break;
-     case 0x10: src+=(I.CarryVal!=0); { unsigned long res=dst+src; (I.CarryVal = (res) & 0x10000); (I.OverVal = ((res) ^ (src)) & ((res) ^ (dst)) & 0x8000); (I.AuxVal = ((res) ^ ((src) ^ (dst))) & 0x10); (I.SignVal=I.ZeroVal=I.ParityVal=(signed short)(res)); dst=(unsigned short)res; }; { if (ModRM >= 0xc0) I.regs.w[Mod_RM.RM.w[ModRM]]=dst; else {cpuWriteByte((EA),dst); cpuWriteByte(((EA)+1),(dst)>>8); }; }; break;
-     case 0x18: src+=(I.CarryVal!=0); { unsigned long res=dst-src; (I.CarryVal = (res) & 0x10000); (I.OverVal = ((dst) ^ (src)) & ((dst) ^ (res)) & 0x8000); (I.AuxVal = ((res) ^ ((src) ^ (dst))) & 0x10); (I.SignVal=I.ZeroVal=I.ParityVal=(signed short)(res)); dst=(unsigned short)res; }; { if (ModRM >= 0xc0) I.regs.w[Mod_RM.RM.w[ModRM]]=dst; else {cpuWriteByte((EA),dst); cpuWriteByte(((EA)+1),(dst)>>8); }; }; break;
-  case 0x20: dst&=src; I.CarryVal=I.OverVal=I.AuxVal=0; (I.SignVal=I.ZeroVal=I.ParityVal=(signed short)(dst)); { if (ModRM >= 0xc0) I.regs.w[Mod_RM.RM.w[ModRM]]=dst; else {cpuWriteByte((EA),dst); cpuWriteByte(((EA)+1),(dst)>>8); }; }; break;
-     case 0x28: { unsigned long res=dst-src; (I.CarryVal = (res) & 0x10000); (I.OverVal = ((dst) ^ (src)) & ((dst) ^ (res)) & 0x8000); (I.AuxVal = ((res) ^ ((src) ^ (dst))) & 0x10); (I.SignVal=I.ZeroVal=I.ParityVal=(signed short)(res)); dst=(unsigned short)res; }; { if (ModRM >= 0xc0) I.regs.w[Mod_RM.RM.w[ModRM]]=dst; else {cpuWriteByte((EA),dst); cpuWriteByte(((EA)+1),(dst)>>8); }; }; break;
-     case 0x30: dst^=src; I.CarryVal=I.OverVal=I.AuxVal=0; (I.SignVal=I.ZeroVal=I.ParityVal=(signed short)(dst)); { if (ModRM >= 0xc0) I.regs.w[Mod_RM.RM.w[ModRM]]=dst; else {cpuWriteByte((EA),dst); cpuWriteByte(((EA)+1),(dst)>>8); }; }; break;
-     case 0x38: { unsigned long res=dst-src; (I.CarryVal = (res) & 0x10000); (I.OverVal = ((dst) ^ (src)) & ((dst) ^ (res)) & 0x8000); (I.AuxVal = ((res) ^ ((src) ^ (dst))) & 0x10); (I.SignVal=I.ZeroVal=I.ParityVal=(signed short)(res)); dst=(unsigned short)res; }; break;
-    }
+ switch (ModRM & 0x38) {
+   case 0x00: { unsigned long res=dst+src; (I.CarryVal = (res) & 0x10000); (I.OverVal = ((res) ^ (src)) & ((res) ^ (dst)) & 0x8000); (I.AuxVal = ((res) ^ ((src) ^ (dst))) & 0x10); (I.SignVal=I.ZeroVal=I.ParityVal=(signed short)(res)); dst=(unsigned short)res; }; { if (ModRM >= 0xc0) I.regs.w[Mod_RM.RM.w[ModRM]]=dst; else {cpuWriteByte((EA),dst); cpuWriteByte(((EA)+1),(dst)>>8); }; }; break;
+   case 0x08: dst|=src; I.CarryVal=I.OverVal=I.AuxVal=0; (I.SignVal=I.ZeroVal=I.ParityVal=(signed short)(dst)); { if (ModRM >= 0xc0) I.regs.w[Mod_RM.RM.w[ModRM]]=dst; else {cpuWriteByte((EA),dst); cpuWriteByte(((EA)+1),(dst)>>8); }; }; break;
+   case 0x10: src+=(I.CarryVal!=0); { unsigned long res=dst+src; (I.CarryVal = (res) & 0x10000); (I.OverVal = ((res) ^ (src)) & ((res) ^ (dst)) & 0x8000); (I.AuxVal = ((res) ^ ((src) ^ (dst))) & 0x10); (I.SignVal=I.ZeroVal=I.ParityVal=(signed short)(res)); dst=(unsigned short)res; }; { if (ModRM >= 0xc0) I.regs.w[Mod_RM.RM.w[ModRM]]=dst; else {cpuWriteByte((EA),dst); cpuWriteByte(((EA)+1),(dst)>>8); }; }; break;
+   case 0x18: src+=(I.CarryVal!=0); { unsigned long res=dst-src; (I.CarryVal = (res) & 0x10000); (I.OverVal = ((dst) ^ (src)) & ((dst) ^ (res)) & 0x8000); (I.AuxVal = ((res) ^ ((src) ^ (dst))) & 0x10); (I.SignVal=I.ZeroVal=I.ParityVal=(signed short)(res)); dst=(unsigned short)res; }; { if (ModRM >= 0xc0) I.regs.w[Mod_RM.RM.w[ModRM]]=dst; else {cpuWriteByte((EA),dst); cpuWriteByte(((EA)+1),(dst)>>8); }; }; break;
+   case 0x20: dst&=src; I.CarryVal=I.OverVal=I.AuxVal=0; (I.SignVal=I.ZeroVal=I.ParityVal=(signed short)(dst)); { if (ModRM >= 0xc0) I.regs.w[Mod_RM.RM.w[ModRM]]=dst; else {cpuWriteByte((EA),dst); cpuWriteByte(((EA)+1),(dst)>>8); }; }; break;
+   case 0x28: { unsigned long res=dst-src; (I.CarryVal = (res) & 0x10000); (I.OverVal = ((dst) ^ (src)) & ((dst) ^ (res)) & 0x8000); (I.AuxVal = ((res) ^ ((src) ^ (dst))) & 0x10); (I.SignVal=I.ZeroVal=I.ParityVal=(signed short)(res)); dst=(unsigned short)res; }; { if (ModRM >= 0xc0) I.regs.w[Mod_RM.RM.w[ModRM]]=dst; else {cpuWriteByte((EA),dst); cpuWriteByte(((EA)+1),(dst)>>8); }; }; break;
+   case 0x30: dst^=src; I.CarryVal=I.OverVal=I.AuxVal=0; (I.SignVal=I.ZeroVal=I.ParityVal=(signed short)(dst)); { if (ModRM >= 0xc0) I.regs.w[Mod_RM.RM.w[ModRM]]=dst; else {cpuWriteByte((EA),dst); cpuWriteByte(((EA)+1),(dst)>>8); }; }; break;
+   case 0x38: { unsigned long res=dst-src; (I.CarryVal = (res) & 0x10000); (I.OverVal = ((dst) ^ (src)) & ((dst) ^ (res)) & 0x8000); (I.AuxVal = ((res) ^ ((src) ^ (dst))) & 0x10); (I.SignVal=I.ZeroVal=I.ParityVal=(signed short)(res)); dst=(unsigned short)res; }; break;
+ }
 }
 
 static void i_82pre(void) { unsigned long dst, src; unsigned long ModRM=cpuReadByte((I.sregs[CS]<<4)+I.ip++); dst = ((ModRM) >= 0xc0 ? I.regs.b[Mod_RM.RM.b[ModRM]] : (cpuReadByte((*GetEA[ModRM])()))); src = (unsigned char)((signed char)(cpuReadByte((I.sregs[CS]<<4)+I.ip++)));
  { nec_ICount-=( ModRM >=0xc0 )?1:3; }
  switch (ModRM & 0x38) {
-     case 0x00: { unsigned long res=dst+src; (I.CarryVal = (res) & 0x100); (I.OverVal = ((res) ^ (src)) & ((res) ^ (dst)) & 0x80); (I.AuxVal = ((res) ^ ((src) ^ (dst))) & 0x10); (I.SignVal=I.ZeroVal=I.ParityVal=(signed char)(res)); dst=(unsigned char)res; }; { if (ModRM >= 0xc0) I.regs.b[Mod_RM.RM.b[ModRM]]=dst; else {cpuWriteByte((EA),dst); }; }; break;
-     case 0x08: dst|=src; I.CarryVal=I.OverVal=I.AuxVal=0; (I.SignVal=I.ZeroVal=I.ParityVal=(signed char)(dst)); { if (ModRM >= 0xc0) I.regs.b[Mod_RM.RM.b[ModRM]]=dst; else {cpuWriteByte((EA),dst); }; }; break;
-     case 0x10: src+=(I.CarryVal!=0); { unsigned long res=dst+src; (I.CarryVal = (res) & 0x100); (I.OverVal = ((res) ^ (src)) & ((res) ^ (dst)) & 0x80); (I.AuxVal = ((res) ^ ((src) ^ (dst))) & 0x10); (I.SignVal=I.ZeroVal=I.ParityVal=(signed char)(res)); dst=(unsigned char)res; }; { if (ModRM >= 0xc0) I.regs.b[Mod_RM.RM.b[ModRM]]=dst; else {cpuWriteByte((EA),dst); }; }; break;
-     case 0x18: src+=(I.CarryVal!=0); { unsigned long res=dst-src; (I.CarryVal = (res) & 0x100); (I.OverVal = ((dst) ^ (src)) & ((dst) ^ (res)) & 0x80); (I.AuxVal = ((res) ^ ((src) ^ (dst))) & 0x10); (I.SignVal=I.ZeroVal=I.ParityVal=(signed char)(res)); dst=(unsigned char)res; }; { if (ModRM >= 0xc0) I.regs.b[Mod_RM.RM.b[ModRM]]=dst; else {cpuWriteByte((EA),dst); }; }; break;
-  case 0x20: dst&=src; I.CarryVal=I.OverVal=I.AuxVal=0; (I.SignVal=I.ZeroVal=I.ParityVal=(signed char)(dst)); { if (ModRM >= 0xc0) I.regs.b[Mod_RM.RM.b[ModRM]]=dst; else {cpuWriteByte((EA),dst); }; }; break;
-     case 0x28: { unsigned long res=dst-src; (I.CarryVal = (res) & 0x100); (I.OverVal = ((dst) ^ (src)) & ((dst) ^ (res)) & 0x80); (I.AuxVal = ((res) ^ ((src) ^ (dst))) & 0x10); (I.SignVal=I.ZeroVal=I.ParityVal=(signed char)(res)); dst=(unsigned char)res; }; { if (ModRM >= 0xc0) I.regs.b[Mod_RM.RM.b[ModRM]]=dst; else {cpuWriteByte((EA),dst); }; }; break;
-     case 0x30: dst^=src; I.CarryVal=I.OverVal=I.AuxVal=0; (I.SignVal=I.ZeroVal=I.ParityVal=(signed char)(dst)); { if (ModRM >= 0xc0) I.regs.b[Mod_RM.RM.b[ModRM]]=dst; else {cpuWriteByte((EA),dst); }; }; break;
-     case 0x38: { unsigned long res=dst-src; (I.CarryVal = (res) & 0x100); (I.OverVal = ((dst) ^ (src)) & ((dst) ^ (res)) & 0x80); (I.AuxVal = ((res) ^ ((src) ^ (dst))) & 0x10); (I.SignVal=I.ZeroVal=I.ParityVal=(signed char)(res)); dst=(unsigned char)res; }; break;
-    }
+   case 0x00: { unsigned long res=dst+src; (I.CarryVal = (res) & 0x100); (I.OverVal = ((res) ^ (src)) & ((res) ^ (dst)) & 0x80); (I.AuxVal = ((res) ^ ((src) ^ (dst))) & 0x10); (I.SignVal=I.ZeroVal=I.ParityVal=(signed char)(res)); dst=(unsigned char)res; }; { if (ModRM >= 0xc0) I.regs.b[Mod_RM.RM.b[ModRM]]=dst; else {cpuWriteByte((EA),dst); }; }; break;
+   case 0x08: dst|=src; I.CarryVal=I.OverVal=I.AuxVal=0; (I.SignVal=I.ZeroVal=I.ParityVal=(signed char)(dst)); { if (ModRM >= 0xc0) I.regs.b[Mod_RM.RM.b[ModRM]]=dst; else {cpuWriteByte((EA),dst); }; }; break;
+   case 0x10: src+=(I.CarryVal!=0); { unsigned long res=dst+src; (I.CarryVal = (res) & 0x100); (I.OverVal = ((res) ^ (src)) & ((res) ^ (dst)) & 0x80); (I.AuxVal = ((res) ^ ((src) ^ (dst))) & 0x10); (I.SignVal=I.ZeroVal=I.ParityVal=(signed char)(res)); dst=(unsigned char)res; }; { if (ModRM >= 0xc0) I.regs.b[Mod_RM.RM.b[ModRM]]=dst; else {cpuWriteByte((EA),dst); }; }; break;
+   case 0x18: src+=(I.CarryVal!=0); { unsigned long res=dst-src; (I.CarryVal = (res) & 0x100); (I.OverVal = ((dst) ^ (src)) & ((dst) ^ (res)) & 0x80); (I.AuxVal = ((res) ^ ((src) ^ (dst))) & 0x10); (I.SignVal=I.ZeroVal=I.ParityVal=(signed char)(res)); dst=(unsigned char)res; }; { if (ModRM >= 0xc0) I.regs.b[Mod_RM.RM.b[ModRM]]=dst; else {cpuWriteByte((EA),dst); }; }; break;
+   case 0x20: dst&=src; I.CarryVal=I.OverVal=I.AuxVal=0; (I.SignVal=I.ZeroVal=I.ParityVal=(signed char)(dst)); { if (ModRM >= 0xc0) I.regs.b[Mod_RM.RM.b[ModRM]]=dst; else {cpuWriteByte((EA),dst); }; }; break;
+   case 0x28: { unsigned long res=dst-src; (I.CarryVal = (res) & 0x100); (I.OverVal = ((dst) ^ (src)) & ((dst) ^ (res)) & 0x80); (I.AuxVal = ((res) ^ ((src) ^ (dst))) & 0x10); (I.SignVal=I.ZeroVal=I.ParityVal=(signed char)(res)); dst=(unsigned char)res; }; { if (ModRM >= 0xc0) I.regs.b[Mod_RM.RM.b[ModRM]]=dst; else {cpuWriteByte((EA),dst); }; }; break;
+   case 0x30: dst^=src; I.CarryVal=I.OverVal=I.AuxVal=0; (I.SignVal=I.ZeroVal=I.ParityVal=(signed char)(dst)); { if (ModRM >= 0xc0) I.regs.b[Mod_RM.RM.b[ModRM]]=dst; else {cpuWriteByte((EA),dst); }; }; break;
+   case 0x38: { unsigned long res=dst-src; (I.CarryVal = (res) & 0x100); (I.OverVal = ((dst) ^ (src)) & ((dst) ^ (res)) & 0x80); (I.AuxVal = ((res) ^ ((src) ^ (dst))) & 0x10); (I.SignVal=I.ZeroVal=I.ParityVal=(signed char)(res)); dst=(unsigned char)res; }; break;
+ }
 }
 
 static void i_83pre(void) { unsigned long dst, src; unsigned long ModRM=cpuReadByte((I.sregs[CS]<<4)+I.ip++); dst = ((ModRM) >= 0xc0 ? I.regs.w[Mod_RM.RM.w[ModRM]] : ( (*GetEA[ModRM])(), (cpuReadByte(EA) | (cpuReadByte((EA)+1)<<8)) )); src = (unsigned short)((signed short)((signed char)(cpuReadByte((I.sregs[CS]<<4)+I.ip++))));
  { nec_ICount-=( ModRM >=0xc0 )?1:3; }
-    switch (ModRM & 0x38) {
-     case 0x00: { unsigned long res=dst+src; (I.CarryVal = (res) & 0x10000); (I.OverVal = ((res) ^ (src)) & ((res) ^ (dst)) & 0x8000); (I.AuxVal = ((res) ^ ((src) ^ (dst))) & 0x10); (I.SignVal=I.ZeroVal=I.ParityVal=(signed short)(res)); dst=(unsigned short)res; }; { if (ModRM >= 0xc0) I.regs.w[Mod_RM.RM.w[ModRM]]=dst; else {cpuWriteByte((EA),dst); cpuWriteByte(((EA)+1),(dst)>>8); }; }; break;
-     case 0x08: dst|=src; I.CarryVal=I.OverVal=I.AuxVal=0; (I.SignVal=I.ZeroVal=I.ParityVal=(signed short)(dst)); { if (ModRM >= 0xc0) I.regs.w[Mod_RM.RM.w[ModRM]]=dst; else {cpuWriteByte((EA),dst); cpuWriteByte(((EA)+1),(dst)>>8); }; }; break;
-     case 0x10: src+=(I.CarryVal!=0); { unsigned long res=dst+src; (I.CarryVal = (res) & 0x10000); (I.OverVal = ((res) ^ (src)) & ((res) ^ (dst)) & 0x8000); (I.AuxVal = ((res) ^ ((src) ^ (dst))) & 0x10); (I.SignVal=I.ZeroVal=I.ParityVal=(signed short)(res)); dst=(unsigned short)res; }; { if (ModRM >= 0xc0) I.regs.w[Mod_RM.RM.w[ModRM]]=dst; else {cpuWriteByte((EA),dst); cpuWriteByte(((EA)+1),(dst)>>8); }; }; break;
-     case 0x18: src+=(I.CarryVal!=0); { unsigned long res=dst-src; (I.CarryVal = (res) & 0x10000); (I.OverVal = ((dst) ^ (src)) & ((dst) ^ (res)) & 0x8000); (I.AuxVal = ((res) ^ ((src) ^ (dst))) & 0x10); (I.SignVal=I.ZeroVal=I.ParityVal=(signed short)(res)); dst=(unsigned short)res; }; { if (ModRM >= 0xc0) I.regs.w[Mod_RM.RM.w[ModRM]]=dst; else {cpuWriteByte((EA),dst); cpuWriteByte(((EA)+1),(dst)>>8); }; }; break;
-  case 0x20: dst&=src; I.CarryVal=I.OverVal=I.AuxVal=0; (I.SignVal=I.ZeroVal=I.ParityVal=(signed short)(dst)); { if (ModRM >= 0xc0) I.regs.w[Mod_RM.RM.w[ModRM]]=dst; else {cpuWriteByte((EA),dst); cpuWriteByte(((EA)+1),(dst)>>8); }; }; break;
-     case 0x28: { unsigned long res=dst-src; (I.CarryVal = (res) & 0x10000); (I.OverVal = ((dst) ^ (src)) & ((dst) ^ (res)) & 0x8000); (I.AuxVal = ((res) ^ ((src) ^ (dst))) & 0x10); (I.SignVal=I.ZeroVal=I.ParityVal=(signed short)(res)); dst=(unsigned short)res; }; { if (ModRM >= 0xc0) I.regs.w[Mod_RM.RM.w[ModRM]]=dst; else {cpuWriteByte((EA),dst); cpuWriteByte(((EA)+1),(dst)>>8); }; }; break;
-     case 0x30: dst^=src; I.CarryVal=I.OverVal=I.AuxVal=0; (I.SignVal=I.ZeroVal=I.ParityVal=(signed short)(dst)); { if (ModRM >= 0xc0) I.regs.w[Mod_RM.RM.w[ModRM]]=dst; else {cpuWriteByte((EA),dst); cpuWriteByte(((EA)+1),(dst)>>8); }; }; break;
-     case 0x38: { unsigned long res=dst-src; (I.CarryVal = (res) & 0x10000); (I.OverVal = ((dst) ^ (src)) & ((dst) ^ (res)) & 0x8000); (I.AuxVal = ((res) ^ ((src) ^ (dst))) & 0x10); (I.SignVal=I.ZeroVal=I.ParityVal=(signed short)(res)); dst=(unsigned short)res; }; break;
-    }
+ switch (ModRM & 0x38) {
+   case 0x00: { unsigned long res=dst+src; (I.CarryVal = (res) & 0x10000); (I.OverVal = ((res) ^ (src)) & ((res) ^ (dst)) & 0x8000); (I.AuxVal = ((res) ^ ((src) ^ (dst))) & 0x10); (I.SignVal=I.ZeroVal=I.ParityVal=(signed short)(res)); dst=(unsigned short)res; }; { if (ModRM >= 0xc0) I.regs.w[Mod_RM.RM.w[ModRM]]=dst; else {cpuWriteByte((EA),dst); cpuWriteByte(((EA)+1),(dst)>>8); }; }; break;
+   case 0x08: dst|=src; I.CarryVal=I.OverVal=I.AuxVal=0; (I.SignVal=I.ZeroVal=I.ParityVal=(signed short)(dst)); { if (ModRM >= 0xc0) I.regs.w[Mod_RM.RM.w[ModRM]]=dst; else {cpuWriteByte((EA),dst); cpuWriteByte(((EA)+1),(dst)>>8); }; }; break;
+   case 0x10: src+=(I.CarryVal!=0); { unsigned long res=dst+src; (I.CarryVal = (res) & 0x10000); (I.OverVal = ((res) ^ (src)) & ((res) ^ (dst)) & 0x8000); (I.AuxVal = ((res) ^ ((src) ^ (dst))) & 0x10); (I.SignVal=I.ZeroVal=I.ParityVal=(signed short)(res)); dst=(unsigned short)res; }; { if (ModRM >= 0xc0) I.regs.w[Mod_RM.RM.w[ModRM]]=dst; else {cpuWriteByte((EA),dst); cpuWriteByte(((EA)+1),(dst)>>8); }; }; break;
+   case 0x18: src+=(I.CarryVal!=0); { unsigned long res=dst-src; (I.CarryVal = (res) & 0x10000); (I.OverVal = ((dst) ^ (src)) & ((dst) ^ (res)) & 0x8000); (I.AuxVal = ((res) ^ ((src) ^ (dst))) & 0x10); (I.SignVal=I.ZeroVal=I.ParityVal=(signed short)(res)); dst=(unsigned short)res; }; { if (ModRM >= 0xc0) I.regs.w[Mod_RM.RM.w[ModRM]]=dst; else {cpuWriteByte((EA),dst); cpuWriteByte(((EA)+1),(dst)>>8); }; }; break;
+   case 0x20: dst&=src; I.CarryVal=I.OverVal=I.AuxVal=0; (I.SignVal=I.ZeroVal=I.ParityVal=(signed short)(dst)); { if (ModRM >= 0xc0) I.regs.w[Mod_RM.RM.w[ModRM]]=dst; else {cpuWriteByte((EA),dst); cpuWriteByte(((EA)+1),(dst)>>8); }; }; break;
+   case 0x28: { unsigned long res=dst-src; (I.CarryVal = (res) & 0x10000); (I.OverVal = ((dst) ^ (src)) & ((dst) ^ (res)) & 0x8000); (I.AuxVal = ((res) ^ ((src) ^ (dst))) & 0x10); (I.SignVal=I.ZeroVal=I.ParityVal=(signed short)(res)); dst=(unsigned short)res; }; { if (ModRM >= 0xc0) I.regs.w[Mod_RM.RM.w[ModRM]]=dst; else {cpuWriteByte((EA),dst); cpuWriteByte(((EA)+1),(dst)>>8); }; }; break;
+   case 0x30: dst^=src; I.CarryVal=I.OverVal=I.AuxVal=0; (I.SignVal=I.ZeroVal=I.ParityVal=(signed short)(dst)); { if (ModRM >= 0xc0) I.regs.w[Mod_RM.RM.w[ModRM]]=dst; else {cpuWriteByte((EA),dst); cpuWriteByte(((EA)+1),(dst)>>8); }; }; break;
+   case 0x38: { unsigned long res=dst-src; (I.CarryVal = (res) & 0x10000); (I.OverVal = ((dst) ^ (src)) & ((dst) ^ (res)) & 0x8000); (I.AuxVal = ((res) ^ ((src) ^ (dst))) & 0x10); (I.SignVal=I.ZeroVal=I.ParityVal=(signed short)(res)); dst=(unsigned short)res; }; break;
+ }
 }
 
 static void i_test_br8(void) { unsigned long ModRM = (cpuReadByte((I.sregs[CS]<<4)+I.ip++)),src,dst; src = I.regs.b[Mod_RM.reg.b[ModRM]]; dst = ((ModRM) >= 0xc0 ? I.regs.b[Mod_RM.RM.b[ModRM]] : (cpuReadByte((*GetEA[ModRM])()))); dst&=src; I.CarryVal=I.OverVal=I.AuxVal=0; (I.SignVal=I.ZeroVal=I.ParityVal=(signed char)(dst)); { nec_ICount-=( ModRM >=0xc0 )?1:2; }; }
@@ -965,14 +965,14 @@ static void i_mov_r16w(void) { unsigned short src; unsigned long ModRM=cpuReadBy
 static void i_mov_wsreg(void) { unsigned long ModRM=cpuReadByte((I.sregs[CS]<<4)+I.ip++); { if (ModRM >= 0xc0) I.regs.w[Mod_RM.RM.w[ModRM]]=I.sregs[(ModRM & 0x38) >> 3]; else { (*GetEA[ModRM])(); {cpuWriteByte((EA),I.sregs[(ModRM & 0x38) >> 3]); cpuWriteByte(((EA)+1),(I.sregs[(ModRM & 0x38) >> 3])>>8); }; } }; { nec_ICount-=( ModRM >=0xc0 )?1:1; }; }
 static void i_lea(void) { unsigned short ModRM = (cpuReadByte((I.sregs[CS]<<4)+I.ip++)); (void)(*GetEA[ModRM])(); I.regs.w[Mod_RM.reg.w[ModRM]]=EO; nec_ICount-=1; }
 static void i_mov_sregw(void) { unsigned short src; unsigned long ModRM=cpuReadByte((I.sregs[CS]<<4)+I.ip++); src = ((ModRM) >= 0xc0 ? I.regs.w[Mod_RM.RM.w[ModRM]] : ( (*GetEA[ModRM])(), (cpuReadByte(EA) | (cpuReadByte((EA)+1)<<8)) )); { nec_ICount-=( ModRM >=0xc0 )?2:3; };
-    switch (ModRM & 0x38) {
-     case 0x00: I.sregs[ES] = src; break;
-  case 0x08: I.sregs[CS] = src; break;
-     case 0x10: I.sregs[SS] = src; break;
-     case 0x18: I.sregs[DS] = src; break;
-  default: ;
-    }
- no_interrupt=1;
+  switch (ModRM & 0x38) {
+    case 0x00: I.sregs[ES] = src; break;
+    case 0x08: I.sregs[CS] = src; break;
+    case 0x10: I.sregs[SS] = src; break;
+    case 0x18: I.sregs[DS] = src; break;
+    default: ;
+  }
+  no_interrupt=1;
 }
 static void i_popw(void) { unsigned short tmp; unsigned long ModRM=cpuReadByte((I.sregs[CS]<<4)+I.ip++); { tmp = (cpuReadByte((((I.sregs[SS]<<4)+I.regs.w[SP]))) | (cpuReadByte(((((I.sregs[SS]<<4)+I.regs.w[SP])))+1)<<8)); I.regs.w[SP]+=2; }; { if (ModRM >= 0xc0) I.regs.w[Mod_RM.RM.w[ModRM]]=tmp; else { (*GetEA[ModRM])(); {cpuWriteByte((EA),tmp); cpuWriteByte(((EA)+1),(tmp)>>8); }; } }; { nec_ICount-=( ModRM >=0xc0 )?1:3; }; }
 static void i_nop(void) { nec_ICount-=1;
@@ -1015,23 +1015,23 @@ static void i_lodsw(void) { I.regs.w[AW] = ((unsigned short)cpuReadByte((((seg_p
 static void i_scasb(void) { unsigned long src = (cpuReadByte((((seg_prefix && (ES==DS || ES==SS)) ? prefix_base : I.sregs[ES] << 4)+(I.regs.w[IY])))); unsigned long dst = I.regs.b[AL]; { unsigned long res=dst-src; (I.CarryVal = (res) & 0x100); (I.OverVal = ((dst) ^ (src)) & ((dst) ^ (res)) & 0x80); (I.AuxVal = ((res) ^ ((src) ^ (dst))) & 0x10); (I.SignVal=I.ZeroVal=I.ParityVal=(signed char)(res)); dst=(unsigned char)res; }; I.regs.w[IY] += -2 * I.DF + 1; nec_ICount-=4; }
 static void i_scasw(void) { unsigned long src = ((unsigned short)cpuReadByte((((seg_prefix && (ES==DS || ES==SS)) ? prefix_base : I.sregs[ES] << 4)+(I.regs.w[IY]))) + (cpuReadByte((((seg_prefix && (ES==DS || ES==SS)) ? prefix_base : I.sregs[ES] << 4)+((I.regs.w[IY])+1)))<<8) ); unsigned long dst = I.regs.w[AW]; { unsigned long res=dst-src; (I.CarryVal = (res) & 0x10000); (I.OverVal = ((dst) ^ (src)) & ((dst) ^ (res)) & 0x8000); (I.AuxVal = ((res) ^ ((src) ^ (dst))) & 0x10); (I.SignVal=I.ZeroVal=I.ParityVal=(signed short)(res)); dst=(unsigned short)res; }; I.regs.w[IY] += -4 * I.DF + 2; nec_ICount-=4; }
 
-static void i_mov_ald8(void) { I.regs.b[AL] = (cpuReadByte((I.sregs[CS]<<4)+I.ip++)); nec_ICount-=1; }
-static void i_mov_cld8(void) { I.regs.b[CL] = (cpuReadByte((I.sregs[CS]<<4)+I.ip++)); nec_ICount-=1; }
-static void i_mov_dld8(void) { I.regs.b[DL] = (cpuReadByte((I.sregs[CS]<<4)+I.ip++)); nec_ICount-=1; }
-static void i_mov_bld8(void) { I.regs.b[BL] = (cpuReadByte((I.sregs[CS]<<4)+I.ip++)); nec_ICount-=1; }
-static void i_mov_ahd8(void) { I.regs.b[AH] = (cpuReadByte((I.sregs[CS]<<4)+I.ip++)); nec_ICount-=1; }
-static void i_mov_chd8(void) { I.regs.b[CH] = (cpuReadByte((I.sregs[CS]<<4)+I.ip++)); nec_ICount-=1; }
-static void i_mov_dhd8(void) { I.regs.b[DH] = (cpuReadByte((I.sregs[CS]<<4)+I.ip++)); nec_ICount-=1; }
-static void i_mov_bhd8(void) { I.regs.b[BH] = (cpuReadByte((I.sregs[CS]<<4)+I.ip++)); nec_ICount-=1; }
+static void i_mov_ald8(void) { I.regs.b[AL] = (cpuReadByte((I.sregs[CS]<<4)+I.ip++)); nec_ICount -= 1; }
+static void i_mov_cld8(void) { I.regs.b[CL] = (cpuReadByte((I.sregs[CS]<<4)+I.ip++)); nec_ICount -= 1; }
+static void i_mov_dld8(void) { I.regs.b[DL] = (cpuReadByte((I.sregs[CS]<<4)+I.ip++)); nec_ICount -= 1; }
+static void i_mov_bld8(void) { I.regs.b[BL] = (cpuReadByte((I.sregs[CS]<<4)+I.ip++)); nec_ICount -= 1; }
+static void i_mov_ahd8(void) { I.regs.b[AH] = (cpuReadByte((I.sregs[CS]<<4)+I.ip++)); nec_ICount -= 1; }
+static void i_mov_chd8(void) { I.regs.b[CH] = (cpuReadByte((I.sregs[CS]<<4)+I.ip++)); nec_ICount -= 1; }
+static void i_mov_dhd8(void) { I.regs.b[DH] = (cpuReadByte((I.sregs[CS]<<4)+I.ip++)); nec_ICount -= 1; }
+static void i_mov_bhd8(void) { I.regs.b[BH] = (cpuReadByte((I.sregs[CS]<<4)+I.ip++)); nec_ICount -= 1; }
 
-static void i_mov_axd16(void) { I.regs.b[AL] = (cpuReadByte((I.sregs[CS]<<4)+I.ip++)); I.regs.b[AH] = (cpuReadByte((I.sregs[CS]<<4)+I.ip++)); nec_ICount-=1; }
-static void i_mov_cxd16(void) { I.regs.b[CL] = (cpuReadByte((I.sregs[CS]<<4)+I.ip++)); I.regs.b[CH] = (cpuReadByte((I.sregs[CS]<<4)+I.ip++)); nec_ICount-=1; }
-static void i_mov_dxd16(void) { I.regs.b[DL] = (cpuReadByte((I.sregs[CS]<<4)+I.ip++)); I.regs.b[DH] = (cpuReadByte((I.sregs[CS]<<4)+I.ip++)); nec_ICount-=1; }
-static void i_mov_bxd16(void) { I.regs.b[BL] = (cpuReadByte((I.sregs[CS]<<4)+I.ip++)); I.regs.b[BH] = (cpuReadByte((I.sregs[CS]<<4)+I.ip++)); nec_ICount-=1; }
-static void i_mov_spd16(void) { I.regs.b[SPL] = (cpuReadByte((I.sregs[CS]<<4)+I.ip++)); I.regs.b[SPH] = (cpuReadByte((I.sregs[CS]<<4)+I.ip++)); nec_ICount-=1; }
-static void i_mov_bpd16(void) { I.regs.b[BPL] = (cpuReadByte((I.sregs[CS]<<4)+I.ip++)); I.regs.b[BPH] = (cpuReadByte((I.sregs[CS]<<4)+I.ip++)); nec_ICount-=1; }
-static void i_mov_sid16(void) { I.regs.b[IXL] = (cpuReadByte((I.sregs[CS]<<4)+I.ip++)); I.regs.b[IXH] = (cpuReadByte((I.sregs[CS]<<4)+I.ip++)); nec_ICount-=1; }
-static void i_mov_did16(void) { I.regs.b[IYL] = (cpuReadByte((I.sregs[CS]<<4)+I.ip++)); I.regs.b[IYH] = (cpuReadByte((I.sregs[CS]<<4)+I.ip++)); nec_ICount-=1; }
+static void i_mov_axd16(void) { I.regs.b[AL] = (cpuReadByte((I.sregs[CS]<<4)+I.ip++)); I.regs.b[AH] = (cpuReadByte((I.sregs[CS]<<4)+I.ip++)); nec_ICount -= 1; }
+static void i_mov_cxd16(void) { I.regs.b[CL] = (cpuReadByte((I.sregs[CS]<<4)+I.ip++)); I.regs.b[CH] = (cpuReadByte((I.sregs[CS]<<4)+I.ip++)); nec_ICount -= 1; }
+static void i_mov_dxd16(void) { I.regs.b[DL] = (cpuReadByte((I.sregs[CS]<<4)+I.ip++)); I.regs.b[DH] = (cpuReadByte((I.sregs[CS]<<4)+I.ip++)); nec_ICount -= 1; }
+static void i_mov_bxd16(void) { I.regs.b[BL] = (cpuReadByte((I.sregs[CS]<<4)+I.ip++)); I.regs.b[BH] = (cpuReadByte((I.sregs[CS]<<4)+I.ip++)); nec_ICount -= 1; }
+static void i_mov_spd16(void) { I.regs.b[SPL] = (cpuReadByte((I.sregs[CS]<<4)+I.ip++)); I.regs.b[SPH] = (cpuReadByte((I.sregs[CS]<<4)+I.ip++)); nec_ICount -= 1; }
+static void i_mov_bpd16(void) { I.regs.b[BPL] = (cpuReadByte((I.sregs[CS]<<4)+I.ip++)); I.regs.b[BPH] = (cpuReadByte((I.sregs[CS]<<4)+I.ip++)); nec_ICount -= 1; }
+static void i_mov_sid16(void) { I.regs.b[IXL] = (cpuReadByte((I.sregs[CS]<<4)+I.ip++)); I.regs.b[IXH] = (cpuReadByte((I.sregs[CS]<<4)+I.ip++)); nec_ICount -= 1; }
+static void i_mov_did16(void) { I.regs.b[IYL] = (cpuReadByte((I.sregs[CS]<<4)+I.ip++)); I.regs.b[IYH] = (cpuReadByte((I.sregs[CS]<<4)+I.ip++)); nec_ICount -= 1; }
 
 static void i_rotshft_bd8(void) {
  unsigned long src, dst; unsigned char c;
@@ -1057,7 +1057,7 @@ static void i_rotshft_wd8(void) {
  c=(cpuReadByte((I.sregs[CS]<<4)+I.ip++));
  c&=0x1f;
  { nec_ICount-=( ModRM >=0xc0 )?3:5; };
-    if (c) switch (ModRM & 0x38) {
+ if (c) switch (ModRM & 0x38) {
   case 0x00: do { I.CarryVal = dst & 0x8000; dst = (dst << 1)+(I.CarryVal!=0); c--; } while (c>0); { if (ModRM >= 0xc0) I.regs.w[Mod_RM.RM.w[ModRM]]=(unsigned short)dst; else {cpuWriteByte((EA),(unsigned short)dst); cpuWriteByte(((EA)+1),((unsigned short)dst)>>8); }; }; break;
   case 0x08: do { I.CarryVal = dst & 0x1; dst = (dst >> 1)+((I.CarryVal!=0)<<15); c--; } while (c>0); { if (ModRM >= 0xc0) I.regs.w[Mod_RM.RM.w[ModRM]]=(unsigned short)dst; else {cpuWriteByte((EA),(unsigned short)dst); cpuWriteByte(((EA)+1),((unsigned short)dst)>>8); }; }; break;
   case 0x10: do { dst = (dst << 1) + (I.CarryVal!=0); (I.CarryVal = (dst) & 0x10000); c--; } while (c>0); { if (ModRM >= 0xc0) I.regs.w[Mod_RM.RM.w[ModRM]]=(unsigned short)dst; else {cpuWriteByte((EA),(unsigned short)dst); cpuWriteByte(((EA)+1),((unsigned short)dst)>>8); }; }; break;
@@ -1077,37 +1077,37 @@ static void i_mov_bd8(void) { unsigned long ModRM=cpuReadByte((I.sregs[CS]<<4)+I
 static void i_mov_wd16(void) { unsigned long ModRM=cpuReadByte((I.sregs[CS]<<4)+I.ip++); { unsigned short val; if (ModRM >= 0xc0) { I.regs.w[Mod_RM.RM.w[ModRM]]=cpuReadByte((((I.sregs[CS]<<4)+I.ip)))+(cpuReadByte((((I.sregs[CS]<<4)+I.ip+1)))<<8); I.ip+=2; } else { (*GetEA[ModRM])(); { val=cpuReadByte((((I.sregs[CS]<<4)+I.ip)))+(cpuReadByte((((I.sregs[CS]<<4)+I.ip+1)))<<8); I.ip+=2; } {cpuWriteByte((EA),val); cpuWriteByte(((EA)+1),(val)>>8); }; } }; nec_ICount-=1; }
 
 static void i_enter(void) {
-    unsigned long nb = (cpuReadByte((I.sregs[CS]<<4)+I.ip++));
-    unsigned long i,level;
+  unsigned long nb = (cpuReadByte((I.sregs[CS]<<4)+I.ip++));
+  unsigned long i,level;
 
-    nec_ICount-=19;
-    nb += (cpuReadByte((I.sregs[CS]<<4)+I.ip++)) << 8;
-    level = (cpuReadByte((I.sregs[CS]<<4)+I.ip++));
-    { I.regs.w[SP] -= 2; {cpuWriteByte(((((I.sregs[SS]<<4)+I.regs.w[SP]))),I.regs.w[BP]); cpuWriteByte((((((I.sregs[SS]<<4)+I.regs.w[SP])))+1),(I.regs.w[BP])>>8); }; };
-    I.regs.w[BP]=I.regs.w[SP];
-    I.regs.w[SP] -= nb;
-    for (i=1;i<level;i++) {
-  { I.regs.w[SP] -= 2; {cpuWriteByte(((((I.sregs[SS]<<4)+I.regs.w[SP]))),((unsigned short)cpuReadByte((((seg_prefix && (SS==DS || SS==SS)) ? prefix_base : I.sregs[SS] << 4)+(I.regs.w[BP]-i*2))) + (cpuReadByte((((seg_prefix && (SS==DS || SS==SS)) ? prefix_base : I.sregs[SS] << 4)+((I.regs.w[BP]-i*2)+1)))<<8) )); cpuWriteByte((((((I.sregs[SS]<<4)+I.regs.w[SP])))+1),(((unsigned short)cpuReadByte((((seg_prefix && (SS==DS || SS==SS)) ? prefix_base : I.sregs[SS] << 4)+(I.regs.w[BP]-i*2))) + (cpuReadByte((((seg_prefix && (SS==DS || SS==SS)) ? prefix_base : I.sregs[SS] << 4)+((I.regs.w[BP]-i*2)+1)))<<8) ))>>8); }; };
-  nec_ICount-=4;
-    }
-    if (level) { I.regs.w[SP] -= 2; {cpuWriteByte(((((I.sregs[SS]<<4)+I.regs.w[SP]))),I.regs.w[BP]); cpuWriteByte((((((I.sregs[SS]<<4)+I.regs.w[SP])))+1),(I.regs.w[BP])>>8); }; };
+  nec_ICount -= 19;
+  nb += (cpuReadByte((I.sregs[CS]<<4)+I.ip++)) << 8;
+  level = (cpuReadByte((I.sregs[CS]<<4)+I.ip++));
+  { I.regs.w[SP] -= 2; {cpuWriteByte(((((I.sregs[SS]<<4)+I.regs.w[SP]))),I.regs.w[BP]); cpuWriteByte((((((I.sregs[SS]<<4)+I.regs.w[SP])))+1),(I.regs.w[BP])>>8); }; };
+  I.regs.w[BP]=I.regs.w[SP];
+  I.regs.w[SP] -= nb;
+  for (i=1;i<level;i++) {
+    { I.regs.w[SP] -= 2; {cpuWriteByte(((((I.sregs[SS]<<4)+I.regs.w[SP]))),((unsigned short)cpuReadByte((((seg_prefix && (SS==DS || SS==SS)) ? prefix_base : I.sregs[SS] << 4)+(I.regs.w[BP]-i*2))) + (cpuReadByte((((seg_prefix && (SS==DS || SS==SS)) ? prefix_base : I.sregs[SS] << 4)+((I.regs.w[BP]-i*2)+1)))<<8) )); cpuWriteByte((((((I.sregs[SS]<<4)+I.regs.w[SP])))+1),(((unsigned short)cpuReadByte((((seg_prefix && (SS==DS || SS==SS)) ? prefix_base : I.sregs[SS] << 4)+(I.regs.w[BP]-i*2))) + (cpuReadByte((((seg_prefix && (SS==DS || SS==SS)) ? prefix_base : I.sregs[SS] << 4)+((I.regs.w[BP]-i*2)+1)))<<8) ))>>8); }; };
+    nec_ICount -= 4;
+  }
+  if (level) { I.regs.w[SP] -= 2; {cpuWriteByte(((((I.sregs[SS]<<4)+I.regs.w[SP]))),I.regs.w[BP]); cpuWriteByte((((((I.sregs[SS]<<4)+I.regs.w[SP])))+1),(I.regs.w[BP])>>8); }; };
 }
 static void i_leave(void) {
  I.regs.w[SP]=I.regs.w[BP];
  { I.regs.w[BP] = (cpuReadByte((((I.sregs[SS]<<4)+I.regs.w[SP]))) | (cpuReadByte(((((I.sregs[SS]<<4)+I.regs.w[SP])))+1)<<8)); I.regs.w[SP]+=2; };
- nec_ICount-=2;
+ nec_ICount -= 2;
 }
 static void i_retf_d16(void) { unsigned long count = (cpuReadByte((I.sregs[CS]<<4)+I.ip++)); count += (cpuReadByte((I.sregs[CS]<<4)+I.ip++)) << 8; { I.ip = (cpuReadByte((((I.sregs[SS]<<4)+I.regs.w[SP]))) | (cpuReadByte(((((I.sregs[SS]<<4)+I.regs.w[SP])))+1)<<8)); I.regs.w[SP]+=2; }; { I.sregs[CS] = (cpuReadByte((((I.sregs[SS]<<4)+I.regs.w[SP]))) | (cpuReadByte(((((I.sregs[SS]<<4)+I.regs.w[SP])))+1)<<8)); I.regs.w[SP]+=2; }; I.regs.w[SP]+=count; nec_ICount-=9; }
 static void i_retf(void) { { I.ip = (cpuReadByte((((I.sregs[SS]<<4)+I.regs.w[SP]))) | (cpuReadByte(((((I.sregs[SS]<<4)+I.regs.w[SP])))+1)<<8)); I.regs.w[SP]+=2; }; { I.sregs[CS] = (cpuReadByte((((I.sregs[SS]<<4)+I.regs.w[SP]))) | (cpuReadByte(((((I.sregs[SS]<<4)+I.regs.w[SP])))+1)<<8)); I.regs.w[SP]+=2; }; nec_ICount-=8; }
-static void i_int3(void) { nec_interrupt(3,0); nec_ICount-=9; }
-static void i_int(void) { nec_interrupt((cpuReadByte((I.sregs[CS]<<4)+I.ip++)),0); nec_ICount-=10; }
-static void i_into(void) { if ((I.OverVal!=0)) { nec_interrupt(4,0); nec_ICount-=13; } else nec_ICount-=6; }
+static void i_int3(void) { nec_interrupt(3,0); nec_ICount -= 9; }
+static void i_int(void) { nec_interrupt((cpuReadByte((I.sregs[CS]<<4)+I.ip++)),0); nec_ICount -= 10; }
+static void i_into(void) { if ((I.OverVal!=0)) { nec_interrupt(4,0); nec_ICount-=13; } else nec_ICount -= 6; }
 static void i_iret(void) { { I.ip = (cpuReadByte((((I.sregs[SS]<<4)+I.regs.w[SP]))) | (cpuReadByte(((((I.sregs[SS]<<4)+I.regs.w[SP])))+1)<<8)); I.regs.w[SP]+=2; }; { I.sregs[CS] = (cpuReadByte((((I.sregs[SS]<<4)+I.regs.w[SP]))) | (cpuReadByte(((((I.sregs[SS]<<4)+I.regs.w[SP])))+1)<<8)); I.regs.w[SP]+=2; }; i_popf(); nec_ICount-=10; }
 
 static void i_rotshft_b(void) {
  unsigned long src, dst; unsigned long ModRM=cpuReadByte((I.sregs[CS]<<4)+I.ip++); src = (unsigned long)((ModRM) >= 0xc0 ? I.regs.b[Mod_RM.RM.b[ModRM]] : (cpuReadByte((*GetEA[ModRM])()))); dst=src;
- { nec_ICount-=( ModRM >=0xc0 )?1:3; };
-    switch (ModRM & 0x38) {
+ { nec_ICount -= ( ModRM >=0xc0 )?1:3; };
+ switch (ModRM & 0x38) {
   case 0x00: I.CarryVal = dst & 0x80; dst = (dst << 1)+(I.CarryVal!=0); { if (ModRM >= 0xc0) I.regs.b[Mod_RM.RM.b[ModRM]]=(unsigned char)dst; else {cpuWriteByte((EA),(unsigned char)dst); }; }; I.OverVal = (src^dst)&0x80; break;
   case 0x08: I.CarryVal = dst & 0x1; dst = (dst >> 1)+((I.CarryVal!=0)<<7); { if (ModRM >= 0xc0) I.regs.b[Mod_RM.RM.b[ModRM]]=(unsigned char)dst; else {cpuWriteByte((EA),(unsigned char)dst); }; }; I.OverVal = (src^dst)&0x80; break;
   case 0x10: dst = (dst << 1) + (I.CarryVal!=0); (I.CarryVal = (dst) & 0x100); { if (ModRM >= 0xc0) I.regs.b[Mod_RM.RM.b[ModRM]]=(unsigned char)dst; else {cpuWriteByte((EA),(unsigned char)dst); }; }; I.OverVal = (src^dst)&0x80; break;
@@ -1121,7 +1121,7 @@ static void i_rotshft_b(void) {
 
 static void i_rotshft_w(void) {
  unsigned long src, dst; unsigned long ModRM=cpuReadByte((I.sregs[CS]<<4)+I.ip++); src = (unsigned long)((ModRM) >= 0xc0 ? I.regs.w[Mod_RM.RM.w[ModRM]] : ( (*GetEA[ModRM])(), (cpuReadByte(EA) | (cpuReadByte((EA)+1)<<8)) )); dst=src;
- { nec_ICount-=( ModRM >=0xc0 )?1:3; };
+ { nec_ICount -= ( ModRM >=0xc0 )?1:3; };
  switch (ModRM & 0x38) {
   case 0x00: I.CarryVal = dst & 0x8000; dst = (dst << 1)+(I.CarryVal!=0); { if (ModRM >= 0xc0) I.regs.w[Mod_RM.RM.w[ModRM]]=(unsigned short)dst; else {cpuWriteByte((EA),(unsigned short)dst); cpuWriteByte(((EA)+1),((unsigned short)dst)>>8); }; }; I.OverVal = (src^dst)&0x8000; break;
   case 0x08: I.CarryVal = dst & 0x1; dst = (dst >> 1)+((I.CarryVal!=0)<<15); { if (ModRM >= 0xc0) I.regs.w[Mod_RM.RM.w[ModRM]]=(unsigned short)dst; else {cpuWriteByte((EA),(unsigned short)dst); cpuWriteByte(((EA)+1),((unsigned short)dst)>>8); }; }; I.OverVal = (src^dst)&0x8000; break;
@@ -1137,7 +1137,7 @@ static void i_rotshft_w(void) {
 static void i_rotshft_bcl(void) {
  unsigned long src, dst; unsigned char c; unsigned long ModRM=cpuReadByte((I.sregs[CS]<<4)+I.ip++); src = (unsigned long)((ModRM) >= 0xc0 ? I.regs.b[Mod_RM.RM.b[ModRM]] : (cpuReadByte((*GetEA[ModRM])()))); dst=src;
  c=I.regs.b[CL];
- { nec_ICount-=( ModRM >=0xc0 )?3:5; };
+ { nec_ICount -= ( ModRM >=0xc0 )?3:5; };
  c&=0x1f;
  if (c) switch (ModRM & 0x38) {
   case 0x00: do { I.CarryVal = dst & 0x80; dst = (dst << 1)+(I.CarryVal!=0); c--; nec_ICount-=1; } while (c>0); { if (ModRM >= 0xc0) I.regs.b[Mod_RM.RM.b[ModRM]]=(unsigned char)dst; else {cpuWriteByte((EA),(unsigned char)dst); }; }; break;
@@ -1155,8 +1155,8 @@ static void i_rotshft_wcl(void) {
  unsigned long src, dst; unsigned char c; unsigned long ModRM=cpuReadByte((I.sregs[CS]<<4)+I.ip++); src = (unsigned long)((ModRM) >= 0xc0 ? I.regs.w[Mod_RM.RM.w[ModRM]] : ( (*GetEA[ModRM])(), (cpuReadByte(EA) | (cpuReadByte((EA)+1)<<8)) )); dst=src;
  c=I.regs.b[CL];
  c&=0x1f;
- { nec_ICount-=( ModRM >=0xc0 )?3:5; };
-    if (c) switch (ModRM & 0x38) {
+ { nec_ICount -= ( ModRM >=0xc0 )?3:5; };
+ if (c) switch (ModRM & 0x38) {
   case 0x00: do { I.CarryVal = dst & 0x8000; dst = (dst << 1)+(I.CarryVal!=0); c--; nec_ICount-=1; } while (c>0); { if (ModRM >= 0xc0) I.regs.w[Mod_RM.RM.w[ModRM]]=(unsigned short)dst; else {cpuWriteByte((EA),(unsigned short)dst); cpuWriteByte(((EA)+1),((unsigned short)dst)>>8); }; }; break;
   case 0x08: do { I.CarryVal = dst & 0x1; dst = (dst >> 1)+((I.CarryVal!=0)<<15); c--; nec_ICount-=1; } while (c>0); { if (ModRM >= 0xc0) I.regs.w[Mod_RM.RM.w[ModRM]]=(unsigned short)dst; else {cpuWriteByte((EA),(unsigned short)dst); cpuWriteByte(((EA)+1),((unsigned short)dst)>>8); }; }; break;
   case 0x10: do { dst = (dst << 1) + (I.CarryVal!=0); (I.CarryVal = (dst) & 0x10000); c--; nec_ICount-=1; } while (c>0); { if (ModRM >= 0xc0) I.regs.w[Mod_RM.RM.w[ModRM]]=(unsigned short)dst; else {cpuWriteByte((EA),(unsigned short)dst); cpuWriteByte(((EA)+1),((unsigned short)dst)>>8); }; }; break;
@@ -1199,41 +1199,41 @@ static void i_outdxax(void) { unsigned long port = I.regs.w[DW]; ioWriteByte(por
 static void i_lock(void) { no_interrupt=1; nec_ICount-=1; }
 
 static void i_repne(void) { unsigned long next = (cpuReadByte((I.sregs[CS]<<4)+I.ip++)); unsigned short c = I.regs.w[CW];
-    switch(next) {
+  switch(next) {
      case 0x26: seg_prefix=1; prefix_base=I.sregs[ES]<<4; next = (cpuReadByte((I.sregs[CS]<<4)+I.ip++)); nec_ICount-=2; break;
      case 0x2e: seg_prefix=1; prefix_base=I.sregs[CS]<<4; next = (cpuReadByte((I.sregs[CS]<<4)+I.ip++)); nec_ICount-=2; break;
      case 0x36: seg_prefix=1; prefix_base=I.sregs[SS]<<4; next = (cpuReadByte((I.sregs[CS]<<4)+I.ip++)); nec_ICount-=2; break;
      case 0x3e: seg_prefix=1; prefix_base=I.sregs[DS]<<4; next = (cpuReadByte((I.sregs[CS]<<4)+I.ip++)); nec_ICount-=2; break;
- }
+  }
 
-    switch(next) {
-     case 0x6c: nec_ICount-=2; if (c) do { i_insb(); c--; } while (c>0); I.regs.w[CW]=c; break;
-     case 0x6d: nec_ICount-=2; if (c) do { i_insw(); c--; } while (c>0); I.regs.w[CW]=c; break;
-     case 0x6e: nec_ICount-=2; if (c) do { i_outsb(); c--; } while (c>0); I.regs.w[CW]=c; break;
-     case 0x6f: nec_ICount-=2; if (c) do { i_outsw(); c--; } while (c>0); I.regs.w[CW]=c; break;
-     case 0xa4: nec_ICount-=2; if (c) do { i_movsb(); c--; } while (c>0); I.regs.w[CW]=c; break;
-     case 0xa5: nec_ICount-=2; if (c) do { i_movsw(); c--; } while (c>0); I.regs.w[CW]=c; break;
-     case 0xa6: nec_ICount-=5; if (c) do { if(nec_ICount<0){ if(seg_prefix) I.ip-=(unsigned short)3; else I.ip-=(unsigned short)2; break;}; i_cmpsb(); c--; nec_ICount-=3; } while (c>0 && (I.ZeroVal==0)==0); I.regs.w[CW]=c; break;
-     case 0xa7: nec_ICount-=5; if (c) do { if(nec_ICount<0){ if(seg_prefix) I.ip-=(unsigned short)3; else I.ip-=(unsigned short)2; break;}; i_cmpsw(); c--; nec_ICount-=3; } while (c>0 && (I.ZeroVal==0)==0); I.regs.w[CW]=c; break;
-     case 0xaa: nec_ICount-=2; if (c) do { i_stosb(); c--; } while (c>0); I.regs.w[CW]=c; break;
-     case 0xab: nec_ICount-=2; if (c) do { i_stosw(); c--; } while (c>0); I.regs.w[CW]=c; break;
-     case 0xac: nec_ICount-=2; if (c) do { i_lodsb(); c--; } while (c>0); I.regs.w[CW]=c; break;
-     case 0xad: nec_ICount-=2; if (c) do { i_lodsw(); c--; } while (c>0); I.regs.w[CW]=c; break;
-     case 0xae: nec_ICount-=5; if (c) do { if(nec_ICount<0){ if(seg_prefix) I.ip-=(unsigned short)3; else I.ip-=(unsigned short)2; break;}; i_scasb(); c--; nec_ICount-=5; } while (c>0 && (I.ZeroVal==0)==0); I.regs.w[CW]=c; break;
-     case 0xaf: nec_ICount-=5; if (c) do { if(nec_ICount<0){ if(seg_prefix) I.ip-=(unsigned short)3; else I.ip-=(unsigned short)2; break;}; i_scasw(); c--; nec_ICount-=5; } while (c>0 && (I.ZeroVal==0)==0); I.regs.w[CW]=c; break;
-  default: nec_instruction[next]();
-    }
- seg_prefix=0;
+  switch(next) {
+     case 0x6c: nec_ICount -= 2; if (c) do { i_insb(); c--; } while (c>0); I.regs.w[CW]=c; break;
+     case 0x6d: nec_ICount -= 2; if (c) do { i_insw(); c--; } while (c>0); I.regs.w[CW]=c; break;
+     case 0x6e: nec_ICount -= 2; if (c) do { i_outsb(); c--; } while (c>0); I.regs.w[CW]=c; break;
+     case 0x6f: nec_ICount -= 2; if (c) do { i_outsw(); c--; } while (c>0); I.regs.w[CW]=c; break;
+     case 0xa4: nec_ICount -= 2; if (c) do { i_movsb(); c--; } while (c>0); I.regs.w[CW]=c; break;
+     case 0xa5: nec_ICount -= 2; if (c) do { i_movsw(); c--; } while (c>0); I.regs.w[CW]=c; break;
+     case 0xa6: nec_ICount -= 5; if (c) do { if(nec_ICount<0){ if(seg_prefix) I.ip-=(unsigned short)3; else I.ip-=(unsigned short)2; break;}; i_cmpsb(); c--; nec_ICount-=3; } while (c>0 && (I.ZeroVal==0)==0); I.regs.w[CW]=c; break;
+     case 0xa7: nec_ICount -= 5; if (c) do { if(nec_ICount<0){ if(seg_prefix) I.ip-=(unsigned short)3; else I.ip-=(unsigned short)2; break;}; i_cmpsw(); c--; nec_ICount-=3; } while (c>0 && (I.ZeroVal==0)==0); I.regs.w[CW]=c; break;
+     case 0xaa: nec_ICount -= 2; if (c) do { i_stosb(); c--; } while (c>0); I.regs.w[CW]=c; break;
+     case 0xab: nec_ICount -= 2; if (c) do { i_stosw(); c--; } while (c>0); I.regs.w[CW]=c; break;
+     case 0xac: nec_ICount -= 2; if (c) do { i_lodsb(); c--; } while (c>0); I.regs.w[CW]=c; break;
+     case 0xad: nec_ICount -= 2; if (c) do { i_lodsw(); c--; } while (c>0); I.regs.w[CW]=c; break;
+     case 0xae: nec_ICount -= 5; if (c) do { if(nec_ICount<0){ if(seg_prefix) I.ip-=(unsigned short)3; else I.ip-=(unsigned short)2; break;}; i_scasb(); c--; nec_ICount-=5; } while (c>0 && (I.ZeroVal==0)==0); I.regs.w[CW]=c; break;
+     case 0xaf: nec_ICount -= 5; if (c) do { if(nec_ICount<0){ if(seg_prefix) I.ip-=(unsigned short)3; else I.ip-=(unsigned short)2; break;}; i_scasw(); c--; nec_ICount-=5; } while (c>0 && (I.ZeroVal==0)==0); I.regs.w[CW]=c; break;
+     default: nec_instruction[next]();
+  }
+  seg_prefix=0;
 }
 static void i_repe(void) { unsigned long next = (cpuReadByte((I.sregs[CS]<<4)+I.ip++)); unsigned short c = I.regs.w[CW];
-    switch(next) {
+  switch(next) {
      case 0x26: seg_prefix=1; prefix_base=I.sregs[ES]<<4; next = (cpuReadByte((I.sregs[CS]<<4)+I.ip++)); nec_ICount-=2; break;
      case 0x2e: seg_prefix=1; prefix_base=I.sregs[CS]<<4; next = (cpuReadByte((I.sregs[CS]<<4)+I.ip++)); nec_ICount-=2; break;
      case 0x36: seg_prefix=1; prefix_base=I.sregs[SS]<<4; next = (cpuReadByte((I.sregs[CS]<<4)+I.ip++)); nec_ICount-=2; break;
      case 0x3e: seg_prefix=1; prefix_base=I.sregs[DS]<<4; next = (cpuReadByte((I.sregs[CS]<<4)+I.ip++)); nec_ICount-=2; break;
- }
+  }
 
-    switch(next) {
+  switch(next) {
      case 0x6c: nec_ICount-=5; if (c) do { if(nec_ICount<0){ if(seg_prefix) I.ip-=(unsigned short)3; else I.ip-=(unsigned short)2; break;}; i_insb(); c--; nec_ICount-=0; } while (c>0); I.regs.w[CW]=c; break;
      case 0x6d: nec_ICount-=5; if (c) do { if(nec_ICount<0){ if(seg_prefix) I.ip-=(unsigned short)3; else I.ip-=(unsigned short)2; break;}; i_insw(); c--; nec_ICount-=0; } while (c>0); I.regs.w[CW]=c; break;
      case 0x6e: nec_ICount-=5; if (c) do { if(nec_ICount<0){ if(seg_prefix) I.ip-=(unsigned short)3; else I.ip-=(unsigned short)2; break;}; i_outsb(); c--; nec_ICount-=-1; } while (c>0); I.regs.w[CW]=c; break;
@@ -1248,37 +1248,37 @@ static void i_repe(void) { unsigned long next = (cpuReadByte((I.sregs[CS]<<4)+I.
      case 0xad: nec_ICount-=5; if (c) do { if(nec_ICount<0){ if(seg_prefix) I.ip-=(unsigned short)3; else I.ip-=(unsigned short)2; break;}; i_lodsw(); c--; nec_ICount-=3; } while (c>0); I.regs.w[CW]=c; break;
      case 0xae: nec_ICount-=5; if (c) do { if(nec_ICount<0){ if(seg_prefix) I.ip-=(unsigned short)3; else I.ip-=(unsigned short)2; break;}; i_scasb(); c--; nec_ICount-=4; } while (c>0 && (I.ZeroVal==0)==1); I.regs.w[CW]=c; break;
      case 0xaf: nec_ICount-=5; if (c) do { if(nec_ICount<0){ if(seg_prefix) I.ip-=(unsigned short)3; else I.ip-=(unsigned short)2; break;}; i_scasw(); c--; nec_ICount-=4; } while (c>0 && (I.ZeroVal==0)==1); I.regs.w[CW]=c; break;
-  default: nec_instruction[next]();
-    }
- seg_prefix=0;
+     default: nec_instruction[next]();
+  }
+  seg_prefix=0;
 }
 static void i_hlt(void) { nec_ICount=0; }
 static void i_cmc(void) { I.CarryVal = !(I.CarryVal!=0); nec_ICount-=4; }
 static void i_f6pre(void) { unsigned long tmp; unsigned long uresult,uresult2; signed long result,result2;
- unsigned long ModRM=cpuReadByte((I.sregs[CS]<<4)+I.ip++); tmp = ((ModRM) >= 0xc0 ? I.regs.b[Mod_RM.RM.b[ModRM]] : (cpuReadByte((*GetEA[ModRM])())));
-    switch (ModRM & 0x38) {
-  case 0x00: tmp &= (cpuReadByte((I.sregs[CS]<<4)+I.ip++)); I.CarryVal = I.OverVal = I.AuxVal=0; (I.SignVal=I.ZeroVal=I.ParityVal=(signed char)(tmp)); { nec_ICount-=( ModRM >=0xc0 )?1:2; }; break;
-  case 0x08: break;
+  unsigned long ModRM=cpuReadByte((I.sregs[CS]<<4)+I.ip++); tmp = ((ModRM) >= 0xc0 ? I.regs.b[Mod_RM.RM.b[ModRM]] : (cpuReadByte((*GetEA[ModRM])())));
+  switch (ModRM & 0x38) {
+   case 0x00: tmp &= (cpuReadByte((I.sregs[CS]<<4)+I.ip++)); I.CarryVal = I.OverVal = I.AuxVal=0; (I.SignVal=I.ZeroVal=I.ParityVal=(signed char)(tmp)); { nec_ICount-=( ModRM >=0xc0 )?1:2; }; break;
+   case 0x08: break;
    case 0x10: { if (ModRM >= 0xc0) I.regs.b[Mod_RM.RM.b[ModRM]]=~tmp; else {cpuWriteByte((EA),~tmp); }; }; { nec_ICount-=( ModRM >=0xc0 )?1:3; }; break;
-  case 0x18: I.CarryVal=(tmp!=0);tmp=(~tmp)+1; (I.SignVal=I.ZeroVal=I.ParityVal=(signed char)(tmp)); { if (ModRM >= 0xc0) I.regs.b[Mod_RM.RM.b[ModRM]]=tmp&0xff; else {cpuWriteByte((EA),tmp&0xff); }; }; { nec_ICount-=( ModRM >=0xc0 )?1:3; }; break;
-  case 0x20: uresult = I.regs.b[AL]*tmp; I.regs.w[AW]=(unsigned short)uresult; I.CarryVal=I.OverVal=(I.regs.b[AH]!=0); { nec_ICount-=( ModRM >=0xc0 )?3:4; }; break;
-  case 0x28: result = (signed short)((signed char)I.regs.b[AL])*(signed short)((signed char)tmp); I.regs.w[AW]=(unsigned short)result; I.CarryVal=I.OverVal=(I.regs.b[AH]!=0); { nec_ICount-=( ModRM >=0xc0 )?3:4; }; break;
-  case 0x30: if (tmp) { uresult = I.regs.w[AW]; uresult2 = uresult % tmp; if ((uresult /= tmp) > 0xff) { nec_interrupt(0,0); break; } else { I.regs.b[AL] = uresult; I.regs.b[AH] = uresult2; }; } else nec_interrupt(0,0); { nec_ICount-=( ModRM >=0xc0 )?15:16; }; break;
-  case 0x38: if (tmp) { result = (signed short)I.regs.w[AW]; result2 = result % (signed short)((signed char)tmp); if ((result /= (signed short)((signed char)tmp)) > 0xff) { nec_interrupt(0,0); break; } else { I.regs.b[AL] = result; I.regs.b[AH] = result2; }; } else nec_interrupt(0,0); { nec_ICount-=( ModRM >=0xc0 )?17:18; }; break;
-   }
+   case 0x18: I.CarryVal=(tmp!=0);tmp=(~tmp)+1; (I.SignVal=I.ZeroVal=I.ParityVal=(signed char)(tmp)); { if (ModRM >= 0xc0) I.regs.b[Mod_RM.RM.b[ModRM]]=tmp&0xff; else {cpuWriteByte((EA),tmp&0xff); }; }; { nec_ICount-=( ModRM >=0xc0 )?1:3; }; break;
+   case 0x20: uresult = I.regs.b[AL]*tmp; I.regs.w[AW]=(unsigned short)uresult; I.CarryVal=I.OverVal=(I.regs.b[AH]!=0); { nec_ICount-=( ModRM >=0xc0 )?3:4; }; break;
+   case 0x28: result = (signed short)((signed char)I.regs.b[AL])*(signed short)((signed char)tmp); I.regs.w[AW]=(unsigned short)result; I.CarryVal=I.OverVal=(I.regs.b[AH]!=0); { nec_ICount-=( ModRM >=0xc0 )?3:4; }; break;
+   case 0x30: if (tmp) { uresult = I.regs.w[AW]; uresult2 = uresult % tmp; if ((uresult /= tmp) > 0xff) { nec_interrupt(0,0); break; } else { I.regs.b[AL] = uresult; I.regs.b[AH] = uresult2; }; } else nec_interrupt(0,0); { nec_ICount-=( ModRM >=0xc0 )?15:16; }; break;
+   case 0x38: if (tmp) { result = (signed short)I.regs.w[AW]; result2 = result % (signed short)((signed char)tmp); if ((result /= (signed short)((signed char)tmp)) > 0xff) { nec_interrupt(0,0); break; } else { I.regs.b[AL] = result; I.regs.b[AH] = result2; }; } else nec_interrupt(0,0); { nec_ICount-=( ModRM >=0xc0 )?17:18; }; break;
+  }
 }
 
 static void i_f7pre(void) { unsigned long tmp,tmp2; unsigned long uresult,uresult2; signed long result,result2;
- unsigned long ModRM=cpuReadByte((I.sregs[CS]<<4)+I.ip++); tmp = ((ModRM) >= 0xc0 ? I.regs.w[Mod_RM.RM.w[ModRM]] : ( (*GetEA[ModRM])(), (cpuReadByte(EA) | (cpuReadByte((EA)+1)<<8)) ));
-    switch (ModRM & 0x38) {
-  case 0x00: { tmp2=cpuReadByte((((I.sregs[CS]<<4)+I.ip)))+(cpuReadByte((((I.sregs[CS]<<4)+I.ip+1)))<<8); I.ip+=2; }; tmp &= tmp2; I.CarryVal = I.OverVal = I.AuxVal=0; (I.SignVal=I.ZeroVal=I.ParityVal=(signed short)(tmp)); { nec_ICount-=( ModRM >=0xc0 )?1:2; }; break;
-  case 0x08: break;
+  unsigned long ModRM=cpuReadByte((I.sregs[CS]<<4)+I.ip++); tmp = ((ModRM) >= 0xc0 ? I.regs.w[Mod_RM.RM.w[ModRM]] : ( (*GetEA[ModRM])(), (cpuReadByte(EA) | (cpuReadByte((EA)+1)<<8)) ));
+  switch (ModRM & 0x38) {
+   case 0x00: { tmp2=cpuReadByte((((I.sregs[CS]<<4)+I.ip)))+(cpuReadByte((((I.sregs[CS]<<4)+I.ip+1)))<<8); I.ip+=2; }; tmp &= tmp2; I.CarryVal = I.OverVal = I.AuxVal=0; (I.SignVal=I.ZeroVal=I.ParityVal=(signed short)(tmp)); { nec_ICount-=( ModRM >=0xc0 )?1:2; }; break;
+   case 0x08: break;
    case 0x10: { if (ModRM >= 0xc0) I.regs.w[Mod_RM.RM.w[ModRM]]=~tmp; else {cpuWriteByte((EA),~tmp); cpuWriteByte(((EA)+1),(~tmp)>>8); }; }; { nec_ICount-=( ModRM >=0xc0 )?1:3; }; break;
-  case 0x18: I.CarryVal=(tmp!=0); tmp=(~tmp)+1; (I.SignVal=I.ZeroVal=I.ParityVal=(signed short)(tmp)); { if (ModRM >= 0xc0) I.regs.w[Mod_RM.RM.w[ModRM]]=tmp&0xffff; else {cpuWriteByte((EA),tmp&0xffff); cpuWriteByte(((EA)+1),(tmp&0xffff)>>8); }; }; { nec_ICount-=( ModRM >=0xc0 )?1:3; }; break;
-  case 0x20: uresult = I.regs.w[AW]*tmp; I.regs.w[AW]=uresult&0xffff; I.regs.w[DW]=((unsigned long)uresult)>>16; I.CarryVal=I.OverVal=(I.regs.w[DW]!=0); { nec_ICount-=( ModRM >=0xc0 )?3:4; }; break;
-  case 0x28: result = (signed long)((signed short)I.regs.w[AW])*(signed long)((signed short)tmp); I.regs.w[AW]=result&0xffff; I.regs.w[DW]=result>>16; I.CarryVal=I.OverVal=(I.regs.w[DW]!=0); { nec_ICount-=( ModRM >=0xc0 )?3:4; }; break;
-  case 0x30: if (tmp) { uresult = (((unsigned long)I.regs.w[DW]) << 16) | I.regs.w[AW]; uresult2 = uresult % tmp; if ((uresult /= tmp) > 0xffff) { nec_interrupt(0,0); break; } else { I.regs.w[AW]=uresult; I.regs.w[DW]=uresult2; }; } else nec_interrupt(0,0); { nec_ICount-=( ModRM >=0xc0 )?23:24; }; break;
-  case 0x38: if (tmp) { result = ((unsigned long)I.regs.w[DW] << 16) + I.regs.w[AW]; result2 = result % (signed long)((signed short)tmp); if ((result /= (signed long)((signed short)tmp)) > 0xffff) { nec_interrupt(0,0); break; } else { I.regs.w[AW]=result; I.regs.w[DW]=result2; }; } else nec_interrupt(0,0); { nec_ICount-=( ModRM >=0xc0 )?24:25; }; break;
+   case 0x18: I.CarryVal=(tmp!=0); tmp=(~tmp)+1; (I.SignVal=I.ZeroVal=I.ParityVal=(signed short)(tmp)); { if (ModRM >= 0xc0) I.regs.w[Mod_RM.RM.w[ModRM]]=tmp&0xffff; else {cpuWriteByte((EA),tmp&0xffff); cpuWriteByte(((EA)+1),(tmp&0xffff)>>8); }; }; { nec_ICount-=( ModRM >=0xc0 )?1:3; }; break;
+   case 0x20: uresult = I.regs.w[AW]*tmp; I.regs.w[AW]=uresult&0xffff; I.regs.w[DW]=((unsigned long)uresult)>>16; I.CarryVal=I.OverVal=(I.regs.w[DW]!=0); { nec_ICount-=( ModRM >=0xc0 )?3:4; }; break;
+   case 0x28: result = (signed long)((signed short)I.regs.w[AW])*(signed long)((signed short)tmp); I.regs.w[AW]=result&0xffff; I.regs.w[DW]=result>>16; I.CarryVal=I.OverVal=(I.regs.w[DW]!=0); { nec_ICount-=( ModRM >=0xc0 )?3:4; }; break;
+   case 0x30: if (tmp) { uresult = (((unsigned long)I.regs.w[DW]) << 16) | I.regs.w[AW]; uresult2 = uresult % tmp; if ((uresult /= tmp) > 0xffff) { nec_interrupt(0,0); break; } else { I.regs.w[AW]=uresult; I.regs.w[DW]=uresult2; }; } else nec_interrupt(0,0); { nec_ICount-=( ModRM >=0xc0 )?23:24; }; break;
+   case 0x38: if (tmp) { result = ((unsigned long)I.regs.w[DW] << 16) + I.regs.w[AW]; result2 = result % (signed long)((signed short)tmp); if ((result /= (signed long)((signed short)tmp)) > 0xffff) { nec_interrupt(0,0); break; } else { I.regs.w[AW]=result; I.regs.w[DW]=result2; }; } else nec_interrupt(0,0); { nec_ICount-=( ModRM >=0xc0 )?24:25; }; break;
   }
 }
 
@@ -1289,27 +1289,28 @@ static void i_ei(void) { (I.IF = (1)); nec_ICount-=4; }
 static void i_cld(void) { (I.DF = (0)); nec_ICount-=4; }
 static void i_std(void) { (I.DF = (1)); nec_ICount-=4; }
 static void i_fepre(void) { unsigned long tmp, tmp1; unsigned long ModRM=cpuReadByte((I.sregs[CS]<<4)+I.ip++); tmp=((ModRM) >= 0xc0 ? I.regs.b[Mod_RM.RM.b[ModRM]] : (cpuReadByte((*GetEA[ModRM])())));
-    switch(ModRM & 0x38) {
-     case 0x00: tmp1 = tmp+1; I.OverVal = (tmp==0x7f); (I.AuxVal = ((tmp1) ^ ((tmp) ^ (1))) & 0x10); (I.SignVal=I.ZeroVal=I.ParityVal=(signed char)(tmp1)); { if (ModRM >= 0xc0) I.regs.b[Mod_RM.RM.b[ModRM]]=(unsigned char)tmp1; else {cpuWriteByte((EA),(unsigned char)tmp1); }; }; { nec_ICount-=( ModRM >=0xc0 )?1:3; }; break;
-  case 0x08: tmp1 = tmp-1; I.OverVal = (tmp==0x80); (I.AuxVal = ((tmp1) ^ ((tmp) ^ (1))) & 0x10); (I.SignVal=I.ZeroVal=I.ParityVal=(signed char)(tmp1)); { if (ModRM >= 0xc0) I.regs.b[Mod_RM.RM.b[ModRM]]=(unsigned char)tmp1; else {cpuWriteByte((EA),(unsigned char)tmp1); }; }; { nec_ICount-=( ModRM >=0xc0 )?1:3; }; break;
+  switch(ModRM & 0x38) {
+   case 0x00: tmp1 = tmp+1; I.OverVal = (tmp==0x7f); (I.AuxVal = ((tmp1) ^ ((tmp) ^ (1))) & 0x10); (I.SignVal=I.ZeroVal=I.ParityVal=(signed char)(tmp1)); { if (ModRM >= 0xc0) I.regs.b[Mod_RM.RM.b[ModRM]]=(unsigned char)tmp1; else {cpuWriteByte((EA),(unsigned char)tmp1); }; }; { nec_ICount-=( ModRM >=0xc0 )?1:3; }; break;
+   case 0x08: tmp1 = tmp-1; I.OverVal = (tmp==0x80); (I.AuxVal = ((tmp1) ^ ((tmp) ^ (1))) & 0x10); (I.SignVal=I.ZeroVal=I.ParityVal=(signed char)(tmp1)); { if (ModRM >= 0xc0) I.regs.b[Mod_RM.RM.b[ModRM]]=(unsigned char)tmp1; else {cpuWriteByte((EA),(unsigned char)tmp1); }; }; { nec_ICount-=( ModRM >=0xc0 )?1:3; }; break;
+   default: i_invalid();
  }
 }
 static void i_ffpre(void) { unsigned long tmp, tmp1; unsigned long ModRM=cpuReadByte((I.sregs[CS]<<4)+I.ip++); tmp=((ModRM) >= 0xc0 ? I.regs.w[Mod_RM.RM.w[ModRM]] : ( (*GetEA[ModRM])(), (cpuReadByte(EA) | (cpuReadByte((EA)+1)<<8)) ));
-    switch(ModRM & 0x38) {
-     case 0x00: tmp1 = tmp+1; I.OverVal = (tmp==0x7fff); (I.AuxVal = ((tmp1) ^ ((tmp) ^ (1))) & 0x10); (I.SignVal=I.ZeroVal=I.ParityVal=(signed short)(tmp1)); { if (ModRM >= 0xc0) I.regs.w[Mod_RM.RM.w[ModRM]]=(unsigned short)tmp1; else {cpuWriteByte((EA),(unsigned short)tmp1); cpuWriteByte(((EA)+1),((unsigned short)tmp1)>>8); }; }; { nec_ICount-=( ModRM >=0xc0 )?1:3; }; break;
-  case 0x08: tmp1 = tmp-1; I.OverVal = (tmp==0x8000); (I.AuxVal = ((tmp1) ^ ((tmp) ^ (1))) & 0x10); (I.SignVal=I.ZeroVal=I.ParityVal=(signed short)(tmp1)); { if (ModRM >= 0xc0) I.regs.w[Mod_RM.RM.w[ModRM]]=(unsigned short)tmp1; else {cpuWriteByte((EA),(unsigned short)tmp1); cpuWriteByte(((EA)+1),((unsigned short)tmp1)>>8); }; }; { nec_ICount-=( ModRM >=0xc0 )?1:3; }; break;
-  case 0x10: { I.regs.w[SP] -= 2; {cpuWriteByte(((((I.sregs[SS]<<4)+I.regs.w[SP]))),I.ip); cpuWriteByte((((((I.sregs[SS]<<4)+I.regs.w[SP])))+1),(I.ip)>>8); }; }; I.ip = (unsigned short)tmp; { nec_ICount-=( ModRM >=0xc0 )?5:6; }; break;
-  case 0x18: tmp1 = I.sregs[CS]; I.sregs[CS] = (cpuReadByte((EA&0xf0000)|((EA+2)&0xffff)) | (cpuReadByte(((EA&0xf0000)|((EA+2)&0xffff))+1)<<8)); { I.regs.w[SP] -= 2; {cpuWriteByte(((((I.sregs[SS]<<4)+I.regs.w[SP]))),tmp1); cpuWriteByte((((((I.sregs[SS]<<4)+I.regs.w[SP])))+1),(tmp1)>>8); }; }; { I.regs.w[SP] -= 2; {cpuWriteByte(((((I.sregs[SS]<<4)+I.regs.w[SP]))),I.ip); cpuWriteByte((((((I.sregs[SS]<<4)+I.regs.w[SP])))+1),(I.ip)>>8); }; }; I.ip = tmp; { nec_ICount-=( ModRM >=0xc0 )?1:12; }; break;
-  case 0x20: I.ip = tmp; { nec_ICount-=( ModRM >=0xc0 )?4:5; }; break;
-  case 0x28: I.ip = tmp; I.sregs[CS] = (cpuReadByte((EA&0xf0000)|((EA+2)&0xffff)) | (cpuReadByte(((EA&0xf0000)|((EA+2)&0xffff))+1)<<8)); { nec_ICount-=( ModRM >=0xc0 )?1:10; }; break;
-  case 0x30: { I.regs.w[SP] -= 2; {cpuWriteByte(((((I.sregs[SS]<<4)+I.regs.w[SP]))),tmp); cpuWriteByte((((((I.sregs[SS]<<4)+I.regs.w[SP])))+1),(tmp)>>8); }; }; { nec_ICount-=( ModRM >=0xc0 )?1:2; }; break;
-  default: ;
+  switch(ModRM & 0x38) {
+   case 0x00: tmp1 = tmp+1; I.OverVal = (tmp==0x7fff); (I.AuxVal = ((tmp1) ^ ((tmp) ^ (1))) & 0x10); (I.SignVal=I.ZeroVal=I.ParityVal=(signed short)(tmp1)); { if (ModRM >= 0xc0) I.regs.w[Mod_RM.RM.w[ModRM]]=(unsigned short)tmp1; else {cpuWriteByte((EA),(unsigned short)tmp1); cpuWriteByte(((EA)+1),((unsigned short)tmp1)>>8); }; }; { nec_ICount-=( ModRM >=0xc0 )?1:3; }; break;
+   case 0x08: tmp1 = tmp-1; I.OverVal = (tmp==0x8000); (I.AuxVal = ((tmp1) ^ ((tmp) ^ (1))) & 0x10); (I.SignVal=I.ZeroVal=I.ParityVal=(signed short)(tmp1)); { if (ModRM >= 0xc0) I.regs.w[Mod_RM.RM.w[ModRM]]=(unsigned short)tmp1; else {cpuWriteByte((EA),(unsigned short)tmp1); cpuWriteByte(((EA)+1),((unsigned short)tmp1)>>8); }; }; { nec_ICount-=( ModRM >=0xc0 )?1:3; }; break;
+   case 0x10: { I.regs.w[SP] -= 2; {cpuWriteByte(((((I.sregs[SS]<<4)+I.regs.w[SP]))),I.ip); cpuWriteByte((((((I.sregs[SS]<<4)+I.regs.w[SP])))+1),(I.ip)>>8); }; }; I.ip = (unsigned short)tmp; { nec_ICount-=( ModRM >=0xc0 )?5:6; }; break;
+   case 0x18: tmp1 = I.sregs[CS]; I.sregs[CS] = (cpuReadByte((EA&0xf0000)|((EA+2)&0xffff)) | (cpuReadByte(((EA&0xf0000)|((EA+2)&0xffff))+1)<<8)); { I.regs.w[SP] -= 2; {cpuWriteByte(((((I.sregs[SS]<<4)+I.regs.w[SP]))),tmp1); cpuWriteByte((((((I.sregs[SS]<<4)+I.regs.w[SP])))+1),(tmp1)>>8); }; }; { I.regs.w[SP] -= 2; {cpuWriteByte(((((I.sregs[SS]<<4)+I.regs.w[SP]))),I.ip); cpuWriteByte((((((I.sregs[SS]<<4)+I.regs.w[SP])))+1),(I.ip)>>8); }; }; I.ip = tmp; { nec_ICount-=( ModRM >=0xc0 )?1:12; }; break;
+   case 0x20: I.ip = tmp; { nec_ICount-=( ModRM >=0xc0 )?4:5; }; break;
+   case 0x28: I.ip = tmp; I.sregs[CS] = (cpuReadByte((EA&0xf0000)|((EA+2)&0xffff)) | (cpuReadByte(((EA&0xf0000)|((EA+2)&0xffff))+1)<<8)); { nec_ICount-=( ModRM >=0xc0 )?1:10; }; break;
+   case 0x30: { I.regs.w[SP] -= 2; {cpuWriteByte(((((I.sregs[SS]<<4)+I.regs.w[SP]))),tmp); cpuWriteByte((((((I.sregs[SS]<<4)+I.regs.w[SP])))+1),(tmp)>>8); }; }; { nec_ICount-=( ModRM >=0xc0 )?1:2; }; break;
+   default: i_invalid();
  }
 }
 
 static void i_invalid(void)
 {
-	nec_ICount-=10;
+	nec_ICount -= 10;
 }
 
 int nec_execute(int cycles)
