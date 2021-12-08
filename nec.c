@@ -1,6 +1,8 @@
 #include <nds.h>
 
 #include "nec.h"
+#include "../Memory.h"
+#include "../Gfx.h"
 
 int nec_ICount;
 static nec_Regs I;

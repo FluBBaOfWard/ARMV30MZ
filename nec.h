@@ -2,9 +2,6 @@
 #define __NEC_H__
 
 //#include "types.h"
-#include "../memory.h"
-#include "../io.h"
-	// DEBUG TEXT
 //#include "menu.h"
 
 typedef enum { ES, CS, SS, DS } SREGS;
