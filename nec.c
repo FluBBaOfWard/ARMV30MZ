@@ -1,4 +1,43 @@
+/****************************************************************************
+
+	NEC V30MZ(V20/V30/V33) emulator
+
+	Small changes made by toshi (Cycle count macros changed  , "THROUGH" macro added)
+
+	Small changes made by dox@space.pl (Corrected bug in NEG instruction , different AUX flag handling in some opcodes)
+
+	(Re)Written June-September 2000 by Bryan McPhail (mish@tendril.co.uk) based
+	on code by Oliver Bergmann (Raul_Bloodworth@hotmail.com) who based code
+	on the i286 emulator by Fabrice Frances which had initial work based on
+	David Hedley's pcemu(!).
+
+	This new core features 99% accurate cycle counts for each processor,
+	there are still some complex situations where cycle counts are wrong,
+	typically where a few instructions have differing counts for odd/even
+	source and odd/even destination memory operands.
+
+	Flag settings are also correct for the NEC processors rather than the
+	I86 versions.
+
+	Nb:  This emulation should be faster than previous NEC cores, but
+	because the old cycle count values were far too high in many cases
+	the processor has to do more 'work' than before, so the overall effect
+	may	be a slower core.
+
+****************************************************************************/
+
+
 #include <nds.h>
+
+#define UINT8 unsigned char
+#define UINT16 unsigned short
+#define UINT32 unsigned int
+#define INT8 signed char
+#define INT16 signed short
+#define INT32 signed int
+#define BYTE unsigned char
+#define WORD unsigned short
+#define DWORD unsigned int
 
 #include "nec.h"
 #include "necintrf.h"
@@ -29,10 +68,21 @@ typedef struct
 } nec_Regs;
 
 
+/***************************************************************************/
+/* cpu state															   */
+/***************************************************************************/
+
 int nec_ICount;
+
 static nec_Regs I;
+
 static u32 prefix_base;
 s8 seg_prefix;
+
+
+/* The interrupt number of a pending external interrupt pending NMI is 2.	*/
+/* For INTR interrupts, the level is caught on the bus during an INTA cycle */
+
 
 #include "necinstr.h"
 #include "necea.h"
@@ -76,7 +126,7 @@ void nec_reset (void *param)
 	I.regs.w[SP] = 0x2000;
 }
 
-void nec_int(unsigned long wektor)
+void nec_int(unsigned int wektor)
 {
 	u32 dest_seg, dest_off;
 
@@ -126,6 +176,13 @@ static void nec_interrupt(unsigned int_num,int md_flag)
 	I.ip = dest_off & 0xFFFF;
 	I.sregs[CS] = dest_seg & 0xFFFF;
 }
+
+/****************************************************************************/
+/*							   OPCODES										*/
+/****************************************************************************/
+
+#define OP(num,func_name) static void func_name(void)
+
 
 static void i_add_br8(void)
 {
@@ -767,8 +824,8 @@ int nec_execute(int cycles)
 {
 	nec_ICount = cycles;
 
-	while(nec_ICount > 0)
+	while(nec_ICount > 0) {
 		nec_instruction[(cpuReadByte((I.sregs[CS]<<4)+I.ip++))]();
-
+	}
 	return cycles - nec_ICount;
 }
