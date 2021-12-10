@@ -161,7 +161,7 @@ static void nec_interrupt(unsigned int_num,int md_flag)
 	I.TF = I.IF = 0;
 
 	dest_off = cpuReadByte(int_num << 2) | cpuReadByte((int_num << 2) + 1) << 8;
-	dest_seg = cpuReadByte((int_num << 2) + 2) | cpuReadByte(((int_num << 2) + 3) << 8);
+	dest_seg = cpuReadByte((int_num << 2) + 2) | cpuReadByte((int_num << 2) + 3) << 8;
 
 	I.regs.w[SP] -= 2;
 
