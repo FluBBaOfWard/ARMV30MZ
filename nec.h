@@ -3,10 +3,10 @@
 
 BYTE cpu_readport(WORD);
 void cpu_writeport(WORD,BYTE);
-#define cpu_readop cpu_readmem20	
-#define cpu_readop_arg cpu_readmem20	
+#define cpu_readop cpu_readmem20
+#define cpu_readop_arg cpu_readmem20
 void cpu_writemem20(DWORD,BYTE);
-BYTE cpu_readmem20(DWORD);	
+BYTE cpu_readmem20(DWORD);
 
 typedef enum { ES, CS, SS, DS } SREGS;
 typedef enum { AW, CW, DW, BW, SP, BP, IX, IY } WREGS;
@@ -147,22 +147,22 @@ typedef enum { AL,AH,CL,CH,DL,DH,BL,BH,SPL,SPH,BPL,BPH,IXL,IXH,IYL,IYH } BREGS;
 
 
 
-#define IncWordReg(Reg) 					\
+#define IncWordReg(Reg)						\
 	unsigned tmp = (unsigned)I.regs.w[Reg]; \
 	unsigned tmp1 = tmp+1;					\
-	I.OverVal = (tmp == 0x7fff); 			\
+	I.OverVal = (tmp == 0x7fff);			\
 	SetAF(tmp1,tmp,1);						\
 	SetSZPF_Word(tmp1); 					\
 	I.regs.w[Reg]=tmp1
 
 
 
-#define DecWordReg(Reg) 					\
+#define DecWordReg(Reg)						\
 	unsigned tmp = (unsigned)I.regs.w[Reg]; \
-    unsigned tmp1 = tmp-1; 					\
+	unsigned tmp1 = tmp-1; 					\
 	I.OverVal = (tmp == 0x8000); 			\
-    SetAF(tmp1,tmp,1); 						\
-    SetSZPF_Word(tmp1); 					\
+	SetAF(tmp1,tmp,1);						\
+	SetSZPF_Word(tmp1);						\
 	I.regs.w[Reg]=tmp1
 
 #define JMP(flag)							\
@@ -190,17 +190,17 @@ typedef enum { AL,AH,CL,CH,DL,DH,BL,BH,SPL,SPH,BPL,BPH,IXL,IXH,IYL,IYH } BREGS;
 
 #define ADJB(param1,param2)					\
 	if (AF || ((I.regs.b[AL] & 0xf) > 9))	\
-    {										\
+	{										\
 		I.regs.b[AL] += param1;				\
 		I.regs.b[AH] += param2;				\
 		I.AuxVal = 1;						\
 		I.CarryVal = 1;						\
-    }										\
+	}										\
 	else									\
 	{										\
 		I.AuxVal = 0;						\
 		I.CarryVal = 0;						\
-    }										\
+	}										\
 	I.regs.b[AL] &= 0x0F
 
 #define BITOP_BYTE							\
@@ -211,7 +211,7 @@ typedef enum { AL,AH,CL,CH,DL,DH,BL,BH,SPL,SPH,BPL,BPH,IXL,IXH,IYL,IYH } BREGS;
 	else {									\
 		(*GetEA[ModRM])();					\
 		tmp=ReadByte(EA);					\
-    }
+	}
 
 #define BITOP_WORD							\
 	ModRM = FETCH;							\
@@ -221,7 +221,7 @@ typedef enum { AL,AH,CL,CH,DL,DH,BL,BH,SPL,SPH,BPL,BPH,IXL,IXH,IYL,IYH } BREGS;
 	else {									\
 		(*GetEA[ModRM])();					\
 		tmp=ReadWord(EA);					\
-    }
+	}
 
 #define BIT_NOT								\
 	if (tmp & (1<<tmp2))					\
@@ -230,7 +230,7 @@ typedef enum { AL,AH,CL,CH,DL,DH,BL,BH,SPL,SPH,BPL,BPH,IXL,IXH,IYL,IYH } BREGS;
 		tmp |= (1<<tmp2)
 
 #define XchgAWReg(Reg) 						\
-    WORD tmp; 								\
+	WORD tmp;								\
 	tmp = I.regs.w[Reg]; 					\
 	I.regs.w[Reg] = I.regs.w[AW]; 			\
 	I.regs.w[AW] = tmp
@@ -315,7 +315,7 @@ typedef enum { AL,AH,CL,CH,DL,DH,BL,BH,SPL,SPH,BPL,BPH,IXL,IXH,IYL,IYH } BREGS;
 #define SUB4S {												\
 	int count = (I.regs.b[CL]+1)/2;							\
 	int i,v1,v2,result;										\
-    unsigned di = I.regs.w[IY];								\
+	unsigned di = I.regs.w[IY];								\
 	unsigned si = I.regs.w[IX];								\
 	I.ZeroVal = I.CarryVal = 0;								\
 	for (i=0;i<count;i++) {									\
@@ -342,7 +342,7 @@ typedef enum { AL,AH,CL,CH,DL,DH,BL,BH,SPL,SPH,BPL,BPH,IXL,IXH,IYL,IYH } BREGS;
 #define CMP4S {												\
 	int count = (I.regs.b[CL]+1)/2;							\
 	int i,v1,v2,result;										\
-    unsigned di = I.regs.w[IY];								\
+	unsigned di = I.regs.w[IY];								\
 	unsigned si = I.regs.w[IX];								\
 	I.ZeroVal = I.CarryVal = 0;								\
 	for (i=0;i<count;i++) {									\
