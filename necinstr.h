@@ -14,7 +14,7 @@ static void i_or_r16w(void);
 static void i_or_ald8(void);
 static void i_or_axd16(void);
 static void i_push_cs(void);
-static void i_pre_nec(void);
+static void i_pop_cs(void);
 static void i_adc_br8(void);
 static void i_adc_wr16(void);
 static void i_adc_r8b(void);
@@ -98,8 +98,6 @@ static void i_pop_di(void);
 static void i_pusha(void);
 static void i_popa(void);
 static void i_chkind(void);
-static void i_repnc(void);
-static void i_repc(void);
 static void i_push_d16(void);
 static void i_imul_d16(void);
 static void i_push_d8(void);
@@ -210,9 +208,7 @@ static void i_rotshft_bcl(void);
 static void i_rotshft_wcl(void);
 static void i_aam(void);
 static void i_aad(void);
-static void i_setalc(void);
 static void i_trans(void);
-static void i_fpo(void);
 static void i_loopne(void);
 static void i_loope(void);
 static void i_loop(void);
@@ -263,7 +259,7 @@ void (*nec_instruction[256])(void) =
 	i_or_ald8,
 	i_or_axd16,
 	i_push_cs,
-	i_pre_nec,
+	i_pop_cs,
 	i_adc_br8,
 	i_adc_wr16,
 	i_adc_r8b,
@@ -348,10 +344,10 @@ void (*nec_instruction[256])(void) =
 	i_popa,
 	i_chkind,
 	i_invalid,
-	i_repnc,
-	i_repc,
-	i_invalid,
-	i_invalid,
+	i_invalid,	// repnc
+	i_invalid,	// repc
+	i_invalid,	// fpo2
+	i_invalid,	// fpo2
 	i_push_d16,
 	i_imul_d16,
 	i_push_d8,
@@ -462,16 +458,16 @@ void (*nec_instruction[256])(void) =
 	i_rotshft_wcl,
 	i_aam,
 	i_aad,
-	i_setalc,
-	i_trans,
-	i_fpo,
-	i_fpo,
-	i_fpo,
-	i_fpo,
-	i_fpo,
-	i_fpo,
-	i_fpo,
-	i_fpo,
+	i_trans,  	//xlat (undocumented mirror)
+	i_trans,  	//xlat
+	i_invalid,	// fpo1
+	i_invalid,	// fpo1
+	i_invalid,	// fpo1
+	i_invalid,	// fpo1
+	i_invalid,	// fpo1
+	i_invalid,	// fpo1
+	i_invalid,	// fpo1
+	i_invalid,	// fpo1
 	i_loopne,
 	i_loope,
 	i_loop,

@@ -31,12 +31,7 @@ typedef enum { AL,AH,CL,CH,DL,DH,BL,BH,SPL,SPH,BPL,BPH,IXL,IXH,IYL,IYH } BREGS;
 
 #define SetCFB(x)		(I.CarryVal = (x) & 0x100)
 #define SetCFW(x)		(I.CarryVal = (x) & 0x10000)
-
 #define SetAF(x,y,z)	(I.AuxVal = ((x) ^ ((y) ^ (z))) & 0x10)
-
-
-
-
 #define SetSF(x)		(I.SignVal = (x))
 #define SetZF(x)		(I.ZeroVal = (x))
 #define SetPF(x)		(I.ParityVal = (x))
@@ -148,19 +143,18 @@ typedef enum { AL,AH,CL,CH,DL,DH,BL,BH,SPL,SPH,BPL,BPH,IXL,IXH,IYL,IYH } BREGS;
 
 
 #define IncWordReg(Reg)						\
-	unsigned tmp = (unsigned)I.regs.w[Reg]; \
+	unsigned tmp = (unsigned)I.regs.w[Reg];	\
 	unsigned tmp1 = tmp+1;					\
 	I.OverVal = (tmp == 0x7fff);			\
 	SetAF(tmp1,tmp,1);						\
-	SetSZPF_Word(tmp1); 					\
+	SetSZPF_Word(tmp1);						\
 	I.regs.w[Reg]=tmp1
 
 
-
 #define DecWordReg(Reg)						\
-	unsigned tmp = (unsigned)I.regs.w[Reg]; \
-	unsigned tmp1 = tmp-1; 					\
-	I.OverVal = (tmp == 0x8000); 			\
+	unsigned tmp = (unsigned)I.regs.w[Reg];	\
+	unsigned tmp1 = tmp-1;					\
+	I.OverVal = (tmp == 0x8000);			\
 	SetAF(tmp1,tmp,1);						\
 	SetSZPF_Word(tmp1);						\
 	I.regs.w[Reg]=tmp1
@@ -170,7 +164,7 @@ typedef enum { AL,AH,CL,CH,DL,DH,BL,BH,SPL,SPH,BPL,BPH,IXL,IXH,IYL,IYH } BREGS;
 	if (flag)								\
 	{										\
 		I.ip = (WORD)(I.ip+tmp);			\
-		nec_ICount-=3;						\
+		CLK(3);								\
 		return;								\
 	}
 
@@ -180,6 +174,7 @@ typedef enum { AL,AH,CL,CH,DL,DH,BL,BH,SPL,SPH,BPL,BPH,IXL,IXH,IYL,IYH } BREGS;
 		int tmp;							\
 		I.regs.b[AL] = tmp = I.regs.b[AL] + param1;	\
 		I.AuxVal = 1;						\
+		I.CarryVal |= tmp & 0x100;			\
 	}										\
 	if (CF || (I.regs.b[AL] > 0x9f))		\
 	{										\
@@ -203,32 +198,6 @@ typedef enum { AL,AH,CL,CH,DL,DH,BL,BH,SPL,SPH,BPL,BPH,IXL,IXH,IYL,IYH } BREGS;
 	}										\
 	I.regs.b[AL] &= 0x0F
 
-#define BITOP_BYTE							\
-	ModRM = FETCH;							\
-	if (ModRM >= 0xc0) {					\
-		tmp=I.regs.b[Mod_RM.RM.b[ModRM]];	\
-	}										\
-	else {									\
-		(*GetEA[ModRM])();					\
-		tmp=ReadByte(EA);					\
-	}
-
-#define BITOP_WORD							\
-	ModRM = FETCH;							\
-	if (ModRM >= 0xc0) {					\
-		tmp=I.regs.w[Mod_RM.RM.w[ModRM]];	\
-	}										\
-	else {									\
-		(*GetEA[ModRM])();					\
-		tmp=ReadWord(EA);					\
-	}
-
-#define BIT_NOT								\
-	if (tmp & (1<<tmp2))					\
-		tmp &= ~(1<<tmp2);					\
-	else									\
-		tmp |= (1<<tmp2)
-
 #define XchgAWReg(Reg) 						\
 	WORD tmp;								\
 	tmp = I.regs.w[Reg]; 					\
@@ -243,12 +212,12 @@ typedef enum { AL,AH,CL,CH,DL,DH,BL,BH,SPL,SPH,BPL,BPH,IXL,IXH,IYL,IYH } BREGS;
 #define ROLC_WORD dst = (dst << 1) + CF; SetCFW(dst)
 #define RORC_BYTE dst = (CF<<8)+dst; I.CarryVal = dst & 0x01; dst >>= 1
 #define RORC_WORD dst = (CF<<16)+dst; I.CarryVal = dst & 0x01; dst >>= 1
-#define SHL_BYTE(c) dst <<= c;	SetCFB(dst); SetSZPF_Byte(dst);	PutbackRMByte(ModRM,(BYTE)dst)
-#define SHL_WORD(c) dst <<= c;	SetCFW(dst); SetSZPF_Word(dst);	PutbackRMWord(ModRM,(WORD)dst)
+#define SHL_BYTE(c) dst <<= c; SetCFB(dst); SetSZPF_Byte(dst); PutbackRMByte(ModRM,(BYTE)dst)
+#define SHL_WORD(c) dst <<= c; SetCFW(dst); SetSZPF_Word(dst); PutbackRMWord(ModRM,(WORD)dst)
 #define SHR_BYTE(c) dst >>= c-1; I.CarryVal = dst & 0x1; dst >>= 1; SetSZPF_Byte(dst); PutbackRMByte(ModRM,(BYTE)dst)
 #define SHR_WORD(c) dst >>= c-1; I.CarryVal = dst & 0x1; dst >>= 1; SetSZPF_Word(dst); PutbackRMWord(ModRM,(WORD)dst)
-#define SHRA_BYTE(c) dst = ((INT8)dst) >> (c-1);	I.CarryVal = dst & 0x1;	dst = ((INT8)((BYTE)dst)) >> 1; SetSZPF_Byte(dst); PutbackRMByte(ModRM,(BYTE)dst)
-#define SHRA_WORD(c) dst = ((INT16)dst) >> (c-1);	I.CarryVal = dst & 0x1;	dst = ((INT16)((WORD)dst)) >> 1; SetSZPF_Word(dst); PutbackRMWord(ModRM,(WORD)dst)
+#define SHRA_BYTE(c) dst = ((INT8)dst) >> (c-1); I.CarryVal = dst & 0x1; dst = ((INT8)((BYTE)dst)) >> 1; SetSZPF_Byte(dst); PutbackRMByte(ModRM,(BYTE)dst)
+#define SHRA_WORD(c) dst = ((INT16)dst) >> (c-1); I.CarryVal = dst & 0x1; dst = ((INT16)((WORD)dst)) >> 1; SetSZPF_Word(dst); PutbackRMWord(ModRM,(WORD)dst)
 
 #define DIVUB												\
 	uresult = I.regs.w[AW];									\
@@ -289,80 +258,5 @@ typedef enum { AL,AH,CL,CH,DL,DH,BL,BH,SPL,SPH,BPL,BPH,IXL,IXH,IYL,IYH } BREGS;
 		I.regs.w[AW]=result;								\
 		I.regs.w[DW]=result2;								\
 	}
-
-#define ADD4S {												\
-	int i,v1,v2,result;										\
-	int count = (I.regs.b[CL]+1)/2;							\
-	unsigned di = I.regs.w[IY];								\
-	unsigned si = I.regs.w[IX];								\
-	I.ZeroVal = I.CarryVal = 0;								\
-	for (i=0;i<count;i++) {									\
-		tmp = GetMemB(DS, si);								\
-		tmp2 = GetMemB(ES, di);								\
-		v1 = (tmp>>4)*10 + (tmp&0xf);						\
-		v2 = (tmp2>>4)*10 + (tmp2&0xf);						\
-		result = v1+v2+I.CarryVal;							\
-		I.CarryVal = result > 99 ? 1 : 0;					\
-		result = result % 100;								\
-		v1 = ((result/10)<<4) | (result % 10);				\
-		PutMemB(ES, di,v1);									\
-		if (v1) I.ZeroVal = 1;								\
-		si++;												\
-		di++;												\
-	}														\
-}
-
-#define SUB4S {												\
-	int count = (I.regs.b[CL]+1)/2;							\
-	int i,v1,v2,result;										\
-	unsigned di = I.regs.w[IY];								\
-	unsigned si = I.regs.w[IX];								\
-	I.ZeroVal = I.CarryVal = 0;								\
-	for (i=0;i<count;i++) {									\
-		tmp = GetMemB(ES, di);								\
-		tmp2 = GetMemB(DS, si);								\
-		v1 = (tmp>>4)*10 + (tmp&0xf);						\
-		v2 = (tmp2>>4)*10 + (tmp2&0xf);						\
-		if (v1 < (v2+I.CarryVal)) {							\
-			v1+=100;										\
-			result = v1-(v2+I.CarryVal);					\
-			I.CarryVal = 1;									\
-		} else {											\
-			result = v1-(v2+I.CarryVal);					\
-			I.CarryVal = 0;									\
-		}													\
-		v1 = ((result/10)<<4) | (result % 10);				\
-		PutMemB(ES, di,v1);									\
-		if (v1) I.ZeroVal = 1;								\
-		si++;												\
-		di++;												\
-	}														\
-}
-
-#define CMP4S {												\
-	int count = (I.regs.b[CL]+1)/2;							\
-	int i,v1,v2,result;										\
-	unsigned di = I.regs.w[IY];								\
-	unsigned si = I.regs.w[IX];								\
-	I.ZeroVal = I.CarryVal = 0;								\
-	for (i=0;i<count;i++) {									\
-		tmp = GetMemB(ES, di);								\
-		tmp2 = GetMemB(DS, si);								\
-		v1 = (tmp>>4)*10 + (tmp&0xf);						\
-		v2 = (tmp2>>4)*10 + (tmp2&0xf);						\
-		if (v1 < (v2+I.CarryVal)) {							\
-			v1+=100;										\
-			result = v1-(v2+I.CarryVal);					\
-			I.CarryVal = 1;									\
-		} else {											\
-			result = v1-(v2+I.CarryVal);					\
-			I.CarryVal = 0;									\
-		}													\
-		v1 = ((result/10)<<4) | (result % 10);				\
-		if (v1) I.ZeroVal = 1;								\
-		si++;												\
-		di++;												\
-	}														\
-}
 
 #endif
