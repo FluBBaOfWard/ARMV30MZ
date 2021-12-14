@@ -2,9 +2,14 @@ ARMV30MZ revision history
 -=-=-=-=-=-=-=-=-=-=-=-=-
 
 
+V0.2.0 - 2021-12-14 (FluBBa)
+	Fixed bug in interrupt.
+	Compile to arm code instead of thumb.
+	Use DTCM and ITCM for faster execution.
+
 V0.1.0 - 2021-10-17 (FluBBa)
-	Started to use c version on NDS.
+	Started to use C version on NDS.
 
 V0.0.0 - 2006-07-23 (FluBBa)
-	Started using c version on GBA.
+	Started using C version on GBA.
 

@@ -8,7 +8,7 @@ static struct {
 		WREGS w[256];
 		BREGS b[256];
 	} RM;
-} Mod_RM;
+} Mod_RM __attribute__((section(".dtcm")));
 
 #define RegWord(ModRM) I.regs.w[Mod_RM.reg.w[ModRM]]
 #define RegByte(ModRM) I.regs.b[Mod_RM.reg.b[ModRM]]

@@ -71,15 +71,14 @@ typedef struct
 /***************************************************************************/
 /* cpu state															   */
 /***************************************************************************/
+int nec_ICount __attribute__((section(".dtcm")));
 
-int nec_ICount;
-
-static nec_Regs I;
+static nec_Regs I __attribute__((section(".dtcm")));
 
 /** Base address of the latest prefix segment */
-static UINT32 prefix_base;
+static UINT32 prefix_base __attribute__((section(".dtcm")));
 /** Prefix segment indicator */
-u8 seg_prefix;
+u8 seg_prefix __attribute__((section(".dtcm")));
 
 /* The interrupt number of a pending external interrupt pending NMI is 2.	*/
 /* For INTR interrupts, the level is caught on the bus during an INTA cycle */
@@ -91,7 +90,7 @@ u8 seg_prefix;
 
 static int no_interrupt;
 
-static UINT8 parity_table[256];
+static UINT8 __attribute__((section(".dtcm"))) parity_table[256];
 
 /***************************************************************************/
 
@@ -325,22 +324,22 @@ OP( 0x6d, i_insw     ) { PutMemB(ES,I.regs.w[IY],read_port(I.regs.w[DW])); PutMe
 OP( 0x6e, i_outsb    ) { write_port(I.regs.w[DW],GetMemB(DS,I.regs.w[IX])); I.regs.w[IX]+= -2 * I.DF + 1; CLK(7); }
 OP( 0x6f, i_outsw    ) { write_port(I.regs.w[DW],GetMemB(DS,I.regs.w[IX])); write_port((I.regs.w[DW]+1)&0xffff,GetMemB(DS,(I.regs.w[IX]+1)&0xffff)); I.regs.w[IX]+= -4 * I.DF + 2; CLK(7); }
 
-OP( 0x70, i_jo      ) { JMP( OF);			  CLK(1); }
-OP( 0x71, i_jno     ) { JMP(!OF);			  CLK(1); }
-OP( 0x72, i_jc      ) { JMP( CF);			  CLK(1); }
-OP( 0x73, i_jnc     ) { JMP(!CF);			  CLK(1); }
-OP( 0x74, i_jz      ) { JMP( ZF);			  CLK(1); }
-OP( 0x75, i_jnz     ) { JMP(!ZF);			  CLK(1); }
-OP( 0x76, i_jce     ) { JMP(CF || ZF);		  CLK(1); }
-OP( 0x77, i_jnce    ) { JMP(!(CF || ZF));	  CLK(1); }
-OP( 0x78, i_js      ) { JMP( SF);			  CLK(1); }
-OP( 0x79, i_jns     ) { JMP(!SF);			  CLK(1); }
-OP( 0x7a, i_jp      ) { JMP( PF);			  CLK(1); }
-OP( 0x7b, i_jnp     ) { JMP(!PF);			  CLK(1); }
-OP( 0x7c, i_jl      ) { JMP((SF!=OF)&&(!ZF)); CLK(1); }
-OP( 0x7d, i_jnl     ) { JMP((ZF)||(SF==OF));  CLK(1); }
-OP( 0x7e, i_jle     ) { JMP((ZF)||(SF!=OF));  CLK(1); }
-OP( 0x7f, i_jnle    ) { JMP((SF==OF)&&(!ZF)); CLK(1); }
+ITCM_CODE OP( 0x70, i_jo   ) { JMP( OF);			 CLK(1); }
+ITCM_CODE OP( 0x71, i_jno  ) { JMP(!OF);			 CLK(1); }
+ITCM_CODE OP( 0x72, i_jc   ) { JMP( CF);			 CLK(1); }
+ITCM_CODE OP( 0x73, i_jnc  ) { JMP(!CF);			 CLK(1); }
+ITCM_CODE OP( 0x74, i_jz   ) { JMP( ZF);			 CLK(1); }
+ITCM_CODE OP( 0x75, i_jnz  ) { JMP(!ZF);			 CLK(1); }
+ITCM_CODE OP( 0x76, i_jce  ) { JMP(CF || ZF);		 CLK(1); }
+ITCM_CODE OP( 0x77, i_jnce ) { JMP(!(CF || ZF));	 CLK(1); }
+ITCM_CODE OP( 0x78, i_js   ) { JMP( SF);			 CLK(1); }
+ITCM_CODE OP( 0x79, i_jns  ) { JMP(!SF);			 CLK(1); }
+ITCM_CODE OP( 0x7a, i_jp   ) { JMP( PF);			 CLK(1); }
+ITCM_CODE OP( 0x7b, i_jnp  ) { JMP(!PF);			 CLK(1); }
+ITCM_CODE OP( 0x7c, i_jl   ) { JMP((SF!=OF)&&(!ZF)); CLK(1); }
+ITCM_CODE OP( 0x7d, i_jnl  ) { JMP((ZF)||(SF==OF));  CLK(1); }
+ITCM_CODE OP( 0x7e, i_jle  ) { JMP((ZF)||(SF!=OF));  CLK(1); }
+ITCM_CODE OP( 0x7f, i_jnle ) { JMP((SF==OF)&&(!ZF)); CLK(1); }
 
 OP( 0x80, i_80pre   ) { UINT32 dst, src; GetModRM; dst = GetRMByte(ModRM); src = FETCH;
 	CLKM(3,1)
@@ -619,8 +618,8 @@ OP( 0xd5, i_aad    ) { UINT32 mult=FETCH; mult=0; I.regs.b[AL] = I.regs.b[AH] * 
 OP( 0xd7, i_trans  ) { UINT32 dest = (I.regs.w[BW]+I.regs.b[AL])&0xffff; I.regs.b[AL] = GetMemB(DS, dest); CLK(5); }
 // OP 0xd8 - 0xdf is nop at V30MZ?
 
-OP( 0xe0, i_loopne ) { INT8 disp = (INT8)FETCH; I.regs.w[CW]--; if (!ZF && I.regs.w[CW]) { I.ip = (WORD)(I.ip+disp); CLK(6); } else CLK(3); }
-OP( 0xe1, i_loope  ) { INT8 disp = (INT8)FETCH; I.regs.w[CW]--; if ( ZF && I.regs.w[CW]) { I.ip = (WORD)(I.ip+disp); CLK(6); } else CLK(3); }
+ITCM_CODE OP( 0xe0, i_loopne ) { INT8 disp = (INT8)FETCH; I.regs.w[CW]--; if (!ZF && I.regs.w[CW]) { I.ip = (WORD)(I.ip+disp); CLK(6); } else CLK(3); }
+ITCM_CODE OP( 0xe1, i_loope  ) { INT8 disp = (INT8)FETCH; I.regs.w[CW]--; if ( ZF && I.regs.w[CW]) { I.ip = (WORD)(I.ip+disp); CLK(6); } else CLK(3); }
 OP( 0xe2, i_loop   ) { INT8 disp = (INT8)FETCH; I.regs.w[CW]--; if (I.regs.w[CW]) { I.ip = (WORD)(I.ip+disp); CLK(5); } else CLK(2); }
 OP( 0xe3, i_jcxz   ) { INT8 disp = (INT8)FETCH; if (I.regs.w[CW] == 0) { I.ip = (WORD)(I.ip+disp); CLK(4); } else CLK(1); }
 OP( 0xe4, i_inal   ) { UINT8 port = FETCH; I.regs.b[AL] = read_port(port); CLK(6); }
@@ -649,7 +648,7 @@ OP( 0xf0, i_lock     ) { no_interrupt=1; CLK(1); }
 			I.ip-=(UINT16)2;	\
 		break;}
 
-OP( 0xf2, i_repne   ) { UINT32 next = FETCHOP; UINT16 c = I.regs.w[CW];
+ITCM_CODE OP( 0xf2, i_repne   ) { UINT32 next = FETCHOP; UINT16 c = I.regs.w[CW];
 	switch(next) { // Segments
 		case 0x26: seg_prefix=TRUE; prefix_base=I.sregs[ES]<<4; next = FETCHOP; CLK(2); break;
 		case 0x2e: seg_prefix=TRUE; prefix_base=I.sregs[CS]<<4; next = FETCHOP; CLK(2); break;
@@ -676,7 +675,7 @@ OP( 0xf2, i_repne   ) { UINT32 next = FETCHOP; UINT16 c = I.regs.w[CW];
 	}
 	seg_prefix=FALSE;
 }
-OP( 0xf3, i_repe	 ) { UINT32 next = FETCHOP; UINT16 c = I.regs.w[CW];
+ITCM_CODE OP( 0xf3, i_repe	 ) { UINT32 next = FETCHOP; UINT16 c = I.regs.w[CW];
 	switch(next) { // Segments
 		case 0x26: seg_prefix=TRUE; prefix_base=I.sregs[ES]<<4; next = FETCHOP; CLK(2); break;
 		case 0x2e: seg_prefix=TRUE; prefix_base=I.sregs[CS]<<4; next = FETCHOP; CLK(2); break;
@@ -765,7 +764,7 @@ static void i_invalid(void)
 	CLK(10);
 }
 
-int nec_execute(int cycles)
+ITCM_CODE int nec_execute(int cycles)
 {
 	nec_ICount = cycles;
 

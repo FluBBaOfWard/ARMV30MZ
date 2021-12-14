@@ -242,7 +242,7 @@ static void i_fepre(void);
 static void i_ffpre(void);
 static void i_wait(void);
 
-void (*nec_instruction[256])(void) =
+void (* __attribute__((section(".dtcm"))) nec_instruction[256])(void) =
 {
 	i_add_br8,
 	i_add_wr16,
