@@ -8,6 +8,15 @@ enum {
 
 /* Public variables */
 extern int nec_ICount;
+extern int no_interrupt;
+/** Base address of the latest prefix segment */
+extern UINT32 prefix_base;
+/** Prefix segment indicator */
+extern u8 seg_prefix;
+
+extern UINT8 PZSTable[256];
+extern void (*nec_instruction[256])(void);
+
 
 void nec_set_reg(int regnum, unsigned val);
 int nec_execute(int cycles);	

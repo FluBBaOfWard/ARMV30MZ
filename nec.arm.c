@@ -71,14 +71,8 @@ typedef struct
 /***************************************************************************/
 /* cpu state															   */
 /***************************************************************************/
-int nec_ICount __attribute__((section(".dtcm")));
 
 static nec_Regs I __attribute__((section(".dtcm")));
-
-/** Base address of the latest prefix segment */
-static UINT32 prefix_base __attribute__((section(".dtcm")));
-/** Prefix segment indicator */
-u8 seg_prefix __attribute__((section(".dtcm")));
 
 /* The interrupt number of a pending external interrupt pending NMI is 2.	*/
 /* For INTR interrupts, the level is caught on the bus during an INTA cycle */
@@ -87,10 +81,6 @@ u8 seg_prefix __attribute__((section(".dtcm")));
 #include "necinstr.h"
 #include "necea.h"
 #include "necmodrm.h"
-
-static int no_interrupt;
-
-static UINT8 __attribute__((section(".dtcm"))) parity_table[256];
 
 /***************************************************************************/
 
@@ -108,7 +98,7 @@ void nec_reset (void *param)
 		for (j = i, c = 0; j > 0; j >>= 1) {
 			c += (j & 1);
 		}
-		parity_table[i] = !(c & 1);
+		PZSTable[i] = !(c & 1);
 	}
 
 	I.ZeroVal = I.ParityVal = 1;
@@ -165,7 +155,7 @@ static void nec_interrupt(unsigned int_num,bool md_flag)
 /*							   OPCODES										*/
 /****************************************************************************/
 
-#define OP(num,func_name) static void func_name(void)
+#define OP(num,func_name) void func_name(void)
 
 
 OP( 0x00, i_add_br8  ) { DEF_br8;   ADDB; PutbackRMByte(ModRM,dst); CLKM(3,1); }
@@ -759,7 +749,7 @@ OP( 0xff, i_ffpre ) { UINT32 tmp, tmp1; GetModRM; tmp=GetRMWord(ModRM);
 	}
 }
 
-static void i_invalid(void)
+void i_invalid(void)
 {
 	CLK(10);
 }
