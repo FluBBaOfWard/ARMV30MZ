@@ -17,7 +17,12 @@ v30MemTbl:			.space 16*4
 v30ReadTbl:			.space 16*4
 v30WriteTbl:		.space 16*4
 
-v30Regs:			.space 8*4
+v30I:
+v30Regs:
+					.space 8*2
+v30SRegs:
+					.space 4*2
+					.space 56
 v30ICount:			.long 0
 v30NoInterrupt:		.long 0
 v30PrefixBase:		.long 0

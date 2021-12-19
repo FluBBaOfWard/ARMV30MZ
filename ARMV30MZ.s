@@ -27,6 +27,7 @@
 	.global V30GetStateSize
 	.global V30RedirectOpcode
 
+	.global I
 	.global nec_ICount
 	.global no_interrupt
 	.global prefix_base
@@ -193,6 +194,8 @@ defaultZ80:
 v30StateStart:
 	;@ group these together for save/loadstate
 	.space 8*4	;@ v30Regs		(flg, a, bc, de, hl,cycles,pc,sp)
+I:
+	.space 80
 nec_ICount:
 	.long 0
 no_interrupt:

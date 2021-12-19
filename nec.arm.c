@@ -55,16 +55,16 @@ typedef struct
 	necbasicregs regs;
 	UINT16 sregs[4];
 
-	UINT16 ip;
-
 	INT32 SignVal;
 	UINT32 AuxVal, OverVal, ZeroVal, CarryVal, ParityVal; // 0 or non-0 valued flags
-	UINT8  TF, IF, DF, MF; 	/* 0 or 1 valued flags */	/* OB[19.07.99] added Mode Flag V30 */
 	UINT32 int_vector;
 	UINT32 pending_irq;
 	UINT32 nmi_state;
 	UINT32 irq_state;
 	int (*irq_callback)(int irqline);
+	UINT16 ip;
+	UINT8  TF, IF, DF, MF; 	/* 0 or 1 valued flags */	/* OB[19.07.99] added Mode Flag V30 */
+
 } nec_Regs;
 
 
@@ -72,7 +72,7 @@ typedef struct
 /* cpu state															   */
 /***************************************************************************/
 
-static nec_Regs I __attribute__((section(".dtcm")));
+extern nec_Regs I;
 
 /* The interrupt number of a pending external interrupt pending NMI is 2.	*/
 /* For INTR interrupts, the level is caught on the bus during an INTA cycle */
@@ -154,6 +154,11 @@ static void nec_interrupt(unsigned int_num,bool md_flag)
 /****************************************************************************/
 /*							   OPCODES										*/
 /****************************************************************************/
+
+void i_invalid(void)
+{
+	CLK(10);
+}
 
 #define OP(num,func_name) void func_name(void)
 
@@ -747,11 +752,6 @@ OP( 0xff, i_ffpre ) { UINT32 tmp, tmp1; GetModRM; tmp=GetRMWord(ModRM);
 		case 0x30: PUSH(tmp); CLKM(2,1); break;
 		default: ;
 	}
-}
-
-void i_invalid(void)
-{
-	CLK(10);
 }
 
 ITCM_CODE int nec_execute(int cycles)

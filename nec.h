@@ -10,6 +10,7 @@ BYTE cpu_readmem20(DWORD);
 
 typedef enum { ES, CS, SS, DS } SREGS;
 typedef enum { AW, CW, DW, BW, SP, BP, IX, IY } WREGS;
+typedef enum { AL,AH,CL,CH,DL,DH,BL,BH,SPL,SPH,BPL,BPH,IXL,IXH,IYL,IYH } BREGS;
 
 #define NEC_NMI_INT_VECTOR 2
 
@@ -21,7 +22,6 @@ typedef enum { AW, CW, DW, BW, SP, BP, IX, IY } WREGS;
 #define TRUE 1
 #endif
 
-typedef enum { AL,AH,CL,CH,DL,DH,BL,BH,SPL,SPH,BPL,BPH,IXL,IXH,IYL,IYH } BREGS;
 /* parameter x = result, y = source 1, z = source 2 */
 
 #define SetTF(x)		(I.TF = (x))
