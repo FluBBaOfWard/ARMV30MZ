@@ -14,8 +14,8 @@ extern UINT32 prefix_base;
 /** Prefix segment indicator */
 extern u8 seg_prefix;
 
-extern UINT8 PZSTable[256];
 extern void (*nec_instruction[256])(void);
+extern UINT8 PZSTable[256];
 
 
 void nec_set_reg(int regnum, unsigned val);

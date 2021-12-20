@@ -52,22 +52,22 @@ V30RunXCycles:				;@ r0 = number of cycles to run
 	stmfd sp!,{lr}
 
 	mov r4,r0
-	str r0,[v30ptr,v30ICount]
+	str r0,[v30ptr,#v30ICount]
 xLoop:
-	ldr r0,[v30ptr,v30ICount]
+	ldr r0,[v30ptr,#v30ICount]
 	cmp r0,#0
 	bmi xOut
-//	ldr r2,[v30ptr,v30CS]
-	ldr r3,[v30ptr,v30pc]
-	ldrb r1,[r3,r2,lsl#4]
-	add r3,r3,#1
-	str r3,[v30ptr,v30pc]
-	ldr r1,[v30ptr,r1,lsl#4]
+	ldrh r1,[v30ptr,#v30IP]
+	ldrh r0,[v30ptr,#v30SRegCS]
+	add r2,r1,#1
+	add r0,r1,r0,lsl#4
+	strh r2,[v30ptr,#v30IP]
+	bl cpuReadByte
 	adr lr,xLoop
-	bx r1
+	ldr pc,[v30ptr,r0,lsl#2]
 xOut:
 	sub r0,r4,r0
-	ldmfd sp!,{lr}
+	ldmfd sp!,{pc}
 ;@----------------------------------------------------------------------------
 V30CheckIRQs:
 ;@----------------------------------------------------------------------------
@@ -187,24 +187,17 @@ V30RedirectOpcode:		;@ In r0=opcode, r1=address.
 	.section .text
 #endif
 ;@----------------------------------------------------------------------------
-defaultZ80:
-	.space 8*4		;@ z80MemTbl $0000-FFFF
-	.space 8*4		;@ z80ReadTbl $0000-FFFF
-	.space 8*4		;@ z80WriteTbl $0000-FFFF
+defaultV30:
+	.space 16*4		;@ v30MemTbl $00000-FFFFF
+	.space 16*4		;@ v30ReadTbl $00000-FFFFF
+	.space 16*4		;@ v30WriteTbl $00000-FFFFF
 v30StateStart:
-	;@ group these together for save/loadstate
-	.space 8*4	;@ v30Regs		(flg, a, bc, de, hl,cycles,pc,sp)
-I:
-	.space 80
-nec_ICount:
-	.long 0
-no_interrupt:
-	.long 0
-prefix_base:
-	.long 0
-seg_prefix:
-	.byte 0
-	.space 3
+I:				.space 19*4
+nec_ICount:		.long 0
+no_interrupt:	.long 0
+prefix_base:	.long 0
+seg_prefix:		.byte 0
+				.space 3
 v30StateEnd:
 
 nec_instruction:
