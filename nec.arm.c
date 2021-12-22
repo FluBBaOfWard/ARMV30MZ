@@ -300,7 +300,7 @@ OP( 0x62, i_chkind ) {
 	UINT32 low,high,tmp;
 	GetModRM;
 	low = GetRMWord(ModRM);
-	high= GetnextRMWord;
+	high= GetNextRMWord;
 	tmp= RegWord(ModRM);
 	if (tmp<low || tmp>high) {
 		nec_interrupt(5,0);
@@ -511,8 +511,8 @@ OP( 0xc1, i_rotshft_wd8 ) {
 
 OP( 0xc2, i_ret_d16  ) { UINT32 count = FETCH; count += FETCH << 8; POP(I.ip); I.regs.w[SP]+=count; CLK(6); }
 OP( 0xc3, i_ret      ) { POP(I.ip); CLK(6); }
-OP( 0xc4, i_les_dw   ) { GetModRM; WORD tmp = GetRMWord(ModRM); RegWord(ModRM)=tmp; I.sregs[ES] = GetnextRMWord; CLK(6); }
-OP( 0xc5, i_lds_dw   ) { GetModRM; WORD tmp = GetRMWord(ModRM); RegWord(ModRM)=tmp; I.sregs[DS] = GetnextRMWord; CLK(6); }
+OP( 0xc4, i_les_dw   ) { GetModRM; WORD tmp = GetRMWord(ModRM); RegWord(ModRM)=tmp; I.sregs[ES] = GetNextRMWord; CLK(6); }
+OP( 0xc5, i_lds_dw   ) { GetModRM; WORD tmp = GetRMWord(ModRM); RegWord(ModRM)=tmp; I.sregs[DS] = GetNextRMWord; CLK(6); }
 OP( 0xc6, i_mov_bd8  ) { GetModRM; PutImmRMByte(ModRM); CLK(1); }
 OP( 0xc7, i_mov_wd16 ) { GetModRM; PutImmRMWord(ModRM); CLK(1); }
 
@@ -746,9 +746,9 @@ OP( 0xff, i_ffpre ) { UINT32 tmp, tmp1; GetModRM; tmp=GetRMWord(ModRM);
 		case 0x00: tmp1 = tmp+1; I.OverVal = (tmp==0x7fff); SetAF(tmp1,tmp,1); SetSZPF_Word(tmp1); PutbackRMWord(ModRM,(WORD)tmp1); CLKM(3,1); break; // INC
 		case 0x08: tmp1 = tmp-1; I.OverVal = (tmp==0x8000); SetAF(tmp1,tmp,1); SetSZPF_Word(tmp1); PutbackRMWord(ModRM,(WORD)tmp1); CLKM(3,1); break; // DEC
 		case 0x10: PUSH(I.ip); I.ip = (WORD)tmp; CLKM(6,5); break; // CALL
-		case 0x18: tmp1 = I.sregs[CS]; I.sregs[CS] = GetnextRMWord; PUSH(tmp1); PUSH(I.ip); I.ip = tmp; CLKM(12,1); break; // CALL FAR
+		case 0x18: tmp1 = I.sregs[CS]; I.sregs[CS] = GetNextRMWord; PUSH(tmp1); PUSH(I.ip); I.ip = tmp; CLKM(12,1); break; // CALL FAR
 		case 0x20: I.ip = tmp; CLKM(5,4); break; // JMP
-		case 0x28: I.ip = tmp; I.sregs[CS] = GetnextRMWord; CLKM(10,1); break; // JMP FAR
+		case 0x28: I.ip = tmp; I.sregs[CS] = GetNextRMWord; CLKM(10,1); break; // JMP FAR
 		case 0x38: // PUSH (undocumented mirror)
 		case 0x30: PUSH(tmp); CLKM(2,1); break;
 		default: ;

@@ -22,7 +22,7 @@ static struct {
     else WriteWord(EA,val);  \
 }
 
-#define GetnextRMWord ReadWord((EA&0xf0000)|((EA+2)&0xffff))
+#define GetNextRMWord ReadWord((EA&0xf0000)|((EA+2)&0xffff))
 
 #define PutRMWord(ModRM,val)				\
 {							\
