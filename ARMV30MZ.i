@@ -51,6 +51,7 @@ v30SRegCS:			.short 0
 v30SRegSS:			.short 0
 v30SRegDS:			.short 0
 
+v30ICount:			.long 0
 v30SignVal:			.long 0
 v30AuxVal:			.long 0
 v30OverVal:			.long 0
@@ -69,7 +70,6 @@ v30DF:				.byte 0
 v30MF:				.byte 0
 					.space 2
 ;@--------------------------------
-v30ICount:			.long 0
 
 v30NoInterrupt:		.long 0
 v30PrefixBase:		.long 0

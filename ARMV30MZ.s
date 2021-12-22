@@ -28,7 +28,6 @@
 	.global V30RedirectOpcode
 
 	.global I
-	.global nec_ICount
 	.global no_interrupt
 	.global prefix_base
 	.global seg_prefix
@@ -192,8 +191,7 @@ defaultV30:
 	.space 16*4		;@ v30ReadTbl $00000-FFFFF
 	.space 16*4		;@ v30WriteTbl $00000-FFFFF
 v30StateStart:
-I:				.space 19*4
-nec_ICount:		.long 0
+I:				.space 20*4
 no_interrupt:	.long 0
 prefix_base:	.long 0
 seg_prefix:		.byte 0

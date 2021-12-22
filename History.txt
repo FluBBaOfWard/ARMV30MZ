@@ -2,6 +2,9 @@ ARMV30MZ revision history
 -=-=-=-=-=-=-=-=-=-=-=-=-
 
 
+V0.3.0 - 2021-12-22 (FluBBa)
+	Rewriting core in asm.
+
 V0.2.0 - 2021-12-14 (FluBBa)
 	Fixed bug in interrupt.
 	Compile to arm code instead of thumb.

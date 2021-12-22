@@ -55,6 +55,7 @@ typedef struct
 	necbasicregs regs;
 	UINT16 sregs[4];
 
+	INT32 ICount;
 	INT32 SignVal;
 	UINT32 AuxVal, OverVal, ZeroVal, CarryVal, ParityVal; // 0 or non-0 valued flags
 	UINT32 int_vector;
@@ -416,8 +417,8 @@ OP( 0x8e, i_mov_sregw ) { UINT16 src; GetModRM; src = GetRMWord(ModRM); CLKM(3,2
 OP( 0x8f, i_popw ) { UINT16 tmp; GetModRM; POP(tmp); PutRMWord(ModRM,tmp); CLKM(3,1); }
 OP( 0x90, i_nop  ) { CLK(1);
 	// Cycle skip for idle loops (0: NOP  1:  JMP 0)
-	if (no_interrupt==0 && nec_ICount>0 && (PEEKOP((I.sregs[CS]<<4)+I.ip))==0xeb && (PEEK((I.sregs[CS]<<4)+I.ip+1))==0xfd)
-		nec_ICount%=15;
+	if (no_interrupt==0 && I.ICount>0 && (PEEKOP((I.sregs[CS]<<4)+I.ip))==0xeb && (PEEK((I.sregs[CS]<<4)+I.ip+1))==0xfd)
+		I.ICount%=15;
 }
 OP( 0x91, i_xchg_axcx ) { XchgAWReg(CW); CLK(3); }
 OP( 0x92, i_xchg_axdx ) { XchgAWReg(DW); CLK(3); }
@@ -626,7 +627,7 @@ OP( 0xe8, i_call_d16 ) { UINT32 tmp; FETCHWORD(tmp); PUSH(I.ip); I.ip = (WORD)(I
 OP( 0xe9, i_jmp_d16  ) { UINT32 tmp; FETCHWORD(tmp); I.ip = (WORD)(I.ip+(INT16)tmp); CLK(4); }
 OP( 0xea, i_jmp_far  ) { UINT32 tmp,tmp1; FETCHWORD(tmp); FETCHWORD(tmp1); I.sregs[CS] = (WORD)tmp1; I.ip = (WORD)tmp; CLK(7); }
 OP( 0xeb, i_jmp_d8   ) { int tmp = (int)((INT8)FETCH); CLK(4);
-	if (tmp==-2 && no_interrupt==0 && nec_ICount>0) nec_ICount%=12; // Cycle skip
+	if (tmp==-2 && no_interrupt==0 && I.ICount>0) I.ICount%=12; // Cycle skip
 	I.ip = (WORD)(I.ip+tmp);
 }
 OP( 0xec, i_inaldx   ) { I.regs.b[AL] = read_port(I.regs.w[DW]); CLK(6); }
@@ -636,7 +637,7 @@ OP( 0xef, i_outdxax  ) { UINT32 port = I.regs.w[DW]; write_port(port, I.regs.b[A
 
 OP( 0xf0, i_lock     ) { no_interrupt=1; CLK(1); }
 #define THROUGH 				\
-	if(nec_ICount<0){			\
+	if(I.ICount<0){			\
 		if(seg_prefix)			\
 			I.ip-=(UINT16)3;	\
 		else					\
@@ -697,7 +698,7 @@ ITCM_CODE OP( 0xf3, i_repe	 ) { UINT32 next = FETCHOP; UINT16 c = I.regs.w[CW];
 	}
 	seg_prefix=FALSE;
 }
-OP( 0xf4, i_hlt ) { nec_ICount=0; }
+OP( 0xf4, i_hlt ) { I.ICount=0; }
 OP( 0xf5, i_cmc ) { I.CarryVal = !CF; CLK(4); }
 OP( 0xf6, i_f6pre ) { UINT32 tmp; UINT32 uresult,uresult2; INT32 result,result2;
 	GetModRM; tmp = GetRMByte(ModRM);
@@ -756,10 +757,10 @@ OP( 0xff, i_ffpre ) { UINT32 tmp, tmp1; GetModRM; tmp=GetRMWord(ModRM);
 
 ITCM_CODE int nec_execute(int cycles)
 {
-	nec_ICount = cycles;
+	I.ICount = cycles;
 
-	while(nec_ICount > 0) {
+	while(I.ICount > 0) {
 		nec_instruction[FETCHOP]();
 	}
-	return cycles - nec_ICount;
+	return cycles - I.ICount;
 }

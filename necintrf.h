@@ -7,7 +7,6 @@ enum {
 	NEC_VECTOR, NEC_PENDING, NEC_NMI_STATE, NEC_IRQ_STATE };
 
 /* Public variables */
-extern int nec_ICount;
 extern int no_interrupt;
 /** Base address of the latest prefix segment */
 extern UINT32 prefix_base;
