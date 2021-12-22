@@ -80,9 +80,9 @@ typedef enum { AL,AH,CL,CH,DL,DH,BL,BH,SPL,SPH,BPL,BPH,IXL,IXH,IYL,IYH } BREGS;
 #define PutMemW(Seg,Off,x) { /*I.ICount-=(Off)&1;*/ WriteWord((DefaultBase(Seg)+(Off)),(x)); }
 
 #define ReadByte(ea) ((BYTE)cpu_readmem20((ea)))
-#define ReadWord(ea) (/*I.ICount-=(ea)&1;*/ cpu_readmem20((ea))+(cpu_readmem20(((ea)+1))<<8))
+#define ReadWord(ea) (/*I.ICount-=(ea)&1;*/ cpu_readmem20w((ea)))
 #define WriteByte(ea,val) { cpu_writemem20((ea),val); }
-#define WriteWord(ea,val) { /*I.ICount-=(ea)&1;*/ cpu_writemem20((ea),(BYTE)(val)); cpu_writemem20(((ea)+1),(val)>>8); }
+#define WriteWord(ea,val) { /*I.ICount-=(ea)&1;*/ cpu_writemem20w((ea),val); }
 
 #define read_port(port) cpu_readport(port)
 #define write_port(port,val) cpu_writeport(port,val)
