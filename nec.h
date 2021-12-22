@@ -73,13 +73,12 @@ typedef enum { AL,AH,CL,CH,DL,DH,BL,BH,SPL,SPH,BPL,BPH,IXL,IXH,IYL,IYH } BREGS;
 
 #define DefaultBase(Seg) ((seg_prefix && (Seg==DS || Seg==SS)) ? prefix_base : I.sregs[Seg] << 4)
 
-#define GetMemB(Seg,Off) ((UINT8)cpu_readmem20((DefaultBase(Seg)+(Off))))
-#define GetMemW(Seg,Off) (/*I.ICount-=(Off)&1;*/ (UINT16)cpu_readmem20((DefaultBase(Seg)+(Off))) + (cpu_readmem20((DefaultBase(Seg)+((Off)+1)))<<8) )
+#define GetMemB(Seg,Off) ((UINT8)ReadByte((DefaultBase(Seg)+(Off))))
+#define GetMemW(Seg,Off) (/*I.ICount-=(Off)&1;*/ (UINT16)ReadWord((DefaultBase(Seg)+(Off))))
 
-#define PutMemB(Seg,Off,x) { cpu_writemem20((DefaultBase(Seg)+(Off)),(x)); }
-#define PutMemW(Seg,Off,x) { /*I.ICount-=(Off)&1;*/ PutMemB(Seg,Off,(x)&0xff); PutMemB(Seg,(Off)+1,(BYTE)((x)>>8)); }
+#define PutMemB(Seg,Off,x) { WriteByte((DefaultBase(Seg)+(Off)),(x)); }
+#define PutMemW(Seg,Off,x) { /*I.ICount-=(Off)&1;*/ WriteWord((DefaultBase(Seg)+(Off)),(x)); }
 
-/* Todo:  Remove these later - plus readword could overflow */
 #define ReadByte(ea) ((BYTE)cpu_readmem20((ea)))
 #define ReadWord(ea) (/*I.ICount-=(ea)&1;*/ cpu_readmem20((ea))+(cpu_readmem20(((ea)+1))<<8))
 #define WriteByte(ea,val) { cpu_writemem20((ea),val); }
@@ -96,7 +95,7 @@ typedef enum { AL,AH,CL,CH,DL,DH,BL,BH,SPL,SPH,BPL,BPH,IXL,IXH,IYL,IYH } BREGS;
 #define PEEK(addr) ((BYTE)cpu_readop_arg(addr))
 #define PEEKOP(addr) ((BYTE)cpu_readop(addr))
 
-#define GetModRM UINT32 ModRM=cpu_readop_arg((I.sregs[CS]<<4)+I.ip++)
+#define GetModRM UINT32 ModRM=FETCH
 
 #define CLK(all) I.ICount-=all
 #define CLKM(v30MZm,v30MZ) { I.ICount-=( ModRM >=0xc0 )?v30MZ:v30MZm; }
