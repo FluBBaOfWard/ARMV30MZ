@@ -3,10 +3,10 @@
 
 BYTE cpu_readport(WORD);
 void cpu_writeport(WORD,BYTE);
+BYTE cpu_readmem20(DWORD);
+void cpu_writemem20(DWORD,BYTE);
 #define cpu_readop cpu_readmem20
 #define cpu_readop_arg cpu_readmem20
-void cpu_writemem20(DWORD,BYTE);
-BYTE cpu_readmem20(DWORD);
 
 typedef enum { ES, CS, SS, DS } SREGS;
 typedef enum { AW, CW, DW, BW, SP, BP, IX, IY } WREGS;
@@ -73,17 +73,17 @@ typedef enum { AL,AH,CL,CH,DL,DH,BL,BH,SPL,SPH,BPL,BPH,IXL,IXH,IYL,IYH } BREGS;
 
 #define DefaultBase(Seg) ((seg_prefix && (Seg==DS || Seg==SS)) ? prefix_base : I.sregs[Seg] << 4)
 
-#define GetMemB(Seg,Off) (/*I.ICount-=((Off)&1)?1:0,*/ (UINT8)cpu_readmem20((DefaultBase(Seg)+(Off))))
-#define GetMemW(Seg,Off) (/*I.ICount-=((Off)&1)?1:0,*/ (UINT16)cpu_readmem20((DefaultBase(Seg)+(Off))) + (cpu_readmem20((DefaultBase(Seg)+((Off)+1)))<<8) )
+#define GetMemB(Seg,Off) ((UINT8)cpu_readmem20((DefaultBase(Seg)+(Off))))
+#define GetMemW(Seg,Off) (/*I.ICount-=(Off)&1;*/ (UINT16)cpu_readmem20((DefaultBase(Seg)+(Off))) + (cpu_readmem20((DefaultBase(Seg)+((Off)+1)))<<8) )
 
-#define PutMemB(Seg,Off,x) { /*I.ICount-=((Off)&1)?1:0*/; cpu_writemem20((DefaultBase(Seg)+(Off)),(x)); }
-#define PutMemW(Seg,Off,x) { /*I.ICount-=((Off)&1)?1:0*/; PutMemB(Seg,Off,(x)&0xff); PutMemB(Seg,(Off)+1,(BYTE)((x)>>8)); }
+#define PutMemB(Seg,Off,x) { cpu_writemem20((DefaultBase(Seg)+(Off)),(x)); }
+#define PutMemW(Seg,Off,x) { /*I.ICount-=(Off)&1;*/ PutMemB(Seg,Off,(x)&0xff); PutMemB(Seg,(Off)+1,(BYTE)((x)>>8)); }
 
 /* Todo:  Remove these later - plus readword could overflow */
-#define ReadByte(ea) (/*I.ICount-=((ea)&1)?1:0,*/ (BYTE)cpu_readmem20((ea)))
-#define ReadWord(ea) (/*I.ICount-=((ea)&1)?1:0,*/ cpu_readmem20((ea))+(cpu_readmem20(((ea)+1))<<8))
-#define WriteByte(ea,val) { /*I.ICount-=((ea)&1)?1:0*/; cpu_writemem20((ea),val); }
-#define WriteWord(ea,val) { /*I.ICount-=((ea)&1)?1:0*/; cpu_writemem20((ea),(BYTE)(val)); cpu_writemem20(((ea)+1),(val)>>8); }
+#define ReadByte(ea) ((BYTE)cpu_readmem20((ea)))
+#define ReadWord(ea) (/*I.ICount-=(ea)&1;*/ cpu_readmem20((ea))+(cpu_readmem20(((ea)+1))<<8))
+#define WriteByte(ea,val) { cpu_writemem20((ea),val); }
+#define WriteWord(ea,val) { /*I.ICount-=(ea)&1;*/ cpu_writemem20((ea),(BYTE)(val)); cpu_writemem20(((ea)+1),(val)>>8); }
 
 #define read_port(port) cpu_readport(port)
 #define write_port(port,val) cpu_writeport(port,val)
@@ -98,28 +98,8 @@ typedef enum { AL,AH,CL,CH,DL,DH,BL,BH,SPL,SPH,BPL,BPH,IXL,IXH,IYL,IYH } BREGS;
 
 #define GetModRM UINT32 ModRM=cpu_readop_arg((I.sregs[CS]<<4)+I.ip++)
 
-/* Cycle count macros:
-	CLK  - cycle count is the same on all processors
-	CLKS - cycle count differs between processors, list all counts
-	CLKW - cycle count for word read/write differs for odd/even source/destination address
-	CLKM - cycle count for reg/mem instructions
-	CLKR - cycle count for reg/mem instructions with different counts for odd/even addresses
-
-
-	Prefetch & buswait time is not emulated.
-	Extra cycles for PUSH'ing or POP'ing registers to odd addresses is not emulated.
-
-#define CLKS(v20,v30,v33) { const UINT32 ccount=(v20<<16)|(v30<<8)|v33; I.ICount-=(ccount>>cpu_type)&0x7f; }
-#define CLKW(v20o,v30o,v33o,v20e,v30e,v33e) { const UINT32 ocount=(v20o<<16)|(v30o<<8)|v33o, ecount=(v20e<<16)|(v30e<<8)|v33e; I.ICount-=(I.ip&1)?((ocount>>cpu_type)&0x7f):((ecount>>cpu_type)&0x7f); }
-#define CLKM(v20,v30,v33,v20m,v30m,v33m) { const UINT32 ccount=(v20<<16)|(v30<<8)|v33, mcount=(v20m<<16)|(v30m<<8)|v33m; I.ICount-=( ModRM >=0xc0 )?((ccount>>cpu_type)&0x7f):((mcount>>cpu_type)&0x7f); }
-#define CLKR(v20o,v30o,v33o,v20e,v30e,v33e,vall) { const UINT32 ocount=(v20o<<16)|(v30o<<8)|v33o, ecount=(v20e<<16)|(v30e<<8)|v33e; if (ModRM >=0xc0) I.ICount-=vall; else I.ICount-=(I.ip&1)?((ocount>>cpu_type)&0x7f):((ecount>>cpu_type)&0x7f); }
-*/
-#define CLKS(v20,v30,v33) { const UINT32 ccount=(v20<<16)|(v30<<8)|v33; I.ICount-=(ccount>>cpu_type)&0x7f; }
-
 #define CLK(all) I.ICount-=all
-#define CLKW(v30MZo,v30MZe) { I.ICount-=(I.ip&1)?v30MZo:v30MZe; }
 #define CLKM(v30MZm,v30MZ) { I.ICount-=( ModRM >=0xc0 )?v30MZ:v30MZm; }
-#define CLKR(v30MZo,v30MZe,vall) { if (ModRM >=0xc0) I.ICount-=vall; else I.ICount-=(I.ip&1)?v30MZo:v30MZe; }
 
 #define CompressFlags() (WORD)(CF | (PF << 2) | (AF << 4) | (ZF << 6) \
 				| (SF << 7) | (I.TF << 8) | (I.IF << 9) \
@@ -165,7 +145,10 @@ typedef enum { AL,AH,CL,CH,DL,DH,BL,BH,SPL,SPH,BPL,BPH,IXL,IXH,IYL,IYH } BREGS;
 	{										\
 		I.ip = (WORD)(I.ip+tmp);			\
 		CLK(3);								\
-		return;								\
+	}										\
+	else									\
+	{										\
+		CLK(1);								\
 	}
 
 #define ADJ4(param1,param2)					\
@@ -259,4 +242,4 @@ typedef enum { AL,AH,CL,CH,DL,DH,BL,BH,SPL,SPH,BPL,BPH,IXL,IXH,IYL,IYH } BREGS;
 		I.regs.w[DW]=result2;								\
 	}
 
-#endif
+#endif	// __NEC_H__

@@ -312,7 +312,7 @@ OP( 0x62, i_chkind ) {
 // OP 0x63 - 0x67 is nop at V30MZ
 
 OP( 0x68, i_push_d16 ) { UINT32 tmp; FETCHWORD(tmp); PUSH(tmp); CLK(1); }
-OP( 0x69, i_imul_d16 ) { UINT32 tmp; DEF_r16w; FETCHWORD(tmp); dst = (INT32)((INT16)src)*(INT32)((INT16)tmp); I.CarryVal = I.OverVal = (((INT32)dst) >> 15 != 0) && (((INT32)dst) >> 15 != -1); RegWord(ModRM)=(WORD)dst; CLKM(4,3);}
+OP( 0x69, i_imul_d16 ) { UINT32 tmp; DEF_r16w; FETCHWORD(tmp); dst = (INT32)((INT16)src)*(INT32)((INT16)tmp); I.CarryVal = I.OverVal = (((INT32)dst) >> 15 != 0) && (((INT32)dst) >> 15 != -1); RegWord(ModRM)=(WORD)dst; CLKM(4,3); }
 OP( 0x6a, i_push_d8  ) { UINT32 tmp = (WORD)((INT16)((INT8)FETCH)); PUSH(tmp); CLK(1); }
 OP( 0x6b, i_imul_d8  ) { UINT32 src2; DEF_r16w; src2= (WORD)((INT16)((INT8)FETCH)); dst = (INT32)((INT16)src)*(INT32)((INT16)src2); I.CarryVal = I.OverVal = (((INT32)dst) >> 15 != 0) && (((INT32)dst) >> 15 != -1); RegWord(ModRM)=(WORD)dst; CLKM(4,3); }
 OP( 0x6c, i_insb     ) { PutMemB(ES,I.regs.w[IY],read_port(I.regs.w[DW])); I.regs.w[IY]+= -2 * I.DF + 1; CLK(6); }
@@ -320,22 +320,22 @@ OP( 0x6d, i_insw     ) { PutMemB(ES,I.regs.w[IY],read_port(I.regs.w[DW])); PutMe
 OP( 0x6e, i_outsb    ) { write_port(I.regs.w[DW],GetMemB(DS,I.regs.w[IX])); I.regs.w[IX]+= -2 * I.DF + 1; CLK(7); }
 OP( 0x6f, i_outsw    ) { write_port(I.regs.w[DW],GetMemB(DS,I.regs.w[IX])); write_port((I.regs.w[DW]+1)&0xffff,GetMemB(DS,(I.regs.w[IX]+1)&0xffff)); I.regs.w[IX]+= -4 * I.DF + 2; CLK(7); }
 
-ITCM_CODE OP( 0x70, i_jo   ) { JMP( OF);			 CLK(1); }
-ITCM_CODE OP( 0x71, i_jno  ) { JMP(!OF);			 CLK(1); }
-ITCM_CODE OP( 0x72, i_jc   ) { JMP( CF);			 CLK(1); }
-ITCM_CODE OP( 0x73, i_jnc  ) { JMP(!CF);			 CLK(1); }
-ITCM_CODE OP( 0x74, i_jz   ) { JMP( ZF);			 CLK(1); }
-ITCM_CODE OP( 0x75, i_jnz  ) { JMP(!ZF);			 CLK(1); }
-ITCM_CODE OP( 0x76, i_jce  ) { JMP(CF || ZF);		 CLK(1); }
-ITCM_CODE OP( 0x77, i_jnce ) { JMP(!(CF || ZF));	 CLK(1); }
-ITCM_CODE OP( 0x78, i_js   ) { JMP( SF);			 CLK(1); }
-ITCM_CODE OP( 0x79, i_jns  ) { JMP(!SF);			 CLK(1); }
-ITCM_CODE OP( 0x7a, i_jp   ) { JMP( PF);			 CLK(1); }
-ITCM_CODE OP( 0x7b, i_jnp  ) { JMP(!PF);			 CLK(1); }
-ITCM_CODE OP( 0x7c, i_jl   ) { JMP((SF!=OF)&&(!ZF)); CLK(1); }
-ITCM_CODE OP( 0x7d, i_jnl  ) { JMP((ZF)||(SF==OF));  CLK(1); }
-ITCM_CODE OP( 0x7e, i_jle  ) { JMP((ZF)||(SF!=OF));  CLK(1); }
-ITCM_CODE OP( 0x7f, i_jnle ) { JMP((SF==OF)&&(!ZF)); CLK(1); }
+ITCM_CODE OP( 0x70, i_jo   ) { JMP( OF); }
+ITCM_CODE OP( 0x71, i_jno  ) { JMP(!OF); }
+ITCM_CODE OP( 0x72, i_jc   ) { JMP( CF); }
+ITCM_CODE OP( 0x73, i_jnc  ) { JMP(!CF); }
+ITCM_CODE OP( 0x74, i_jz   ) { JMP( ZF); }
+ITCM_CODE OP( 0x75, i_jnz  ) { JMP(!ZF); }
+ITCM_CODE OP( 0x76, i_jce  ) { JMP(CF || ZF); }
+ITCM_CODE OP( 0x77, i_jnce ) { JMP(!(CF || ZF)); }
+ITCM_CODE OP( 0x78, i_js   ) { JMP( SF); }
+ITCM_CODE OP( 0x79, i_jns  ) { JMP(!SF); }
+ITCM_CODE OP( 0x7a, i_jp   ) { JMP( PF); }
+ITCM_CODE OP( 0x7b, i_jnp  ) { JMP(!PF); }
+ITCM_CODE OP( 0x7c, i_jl   ) { JMP((SF!=OF)&&(!ZF)); }
+ITCM_CODE OP( 0x7d, i_jnl  ) { JMP((ZF)||(SF==OF)); }
+ITCM_CODE OP( 0x7e, i_jle  ) { JMP((ZF)||(SF!=OF)); }
+ITCM_CODE OP( 0x7f, i_jnle ) { JMP((SF==OF)&&(!ZF)); }
 
 OP( 0x80, i_80pre   ) { UINT32 dst, src; GetModRM; dst = GetRMByte(ModRM); src = FETCH;
 	CLKM(3,1)
