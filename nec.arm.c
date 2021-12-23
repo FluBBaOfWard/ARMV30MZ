@@ -254,23 +254,23 @@ OP( 0x4d, i_dec_bp ) { DecWordReg(BP);						CLK(1); }
 OP( 0x4e, i_dec_si ) { DecWordReg(IX);						CLK(1); }
 OP( 0x4f, i_dec_di ) { DecWordReg(IY);						CLK(1); }
 
-OP( 0x50, i_push_ax ) { PUSH(I.regs.w[AW]);					CLK(1); }
-OP( 0x51, i_push_cx ) { PUSH(I.regs.w[CW]);					CLK(1); }
-OP( 0x52, i_push_dx ) { PUSH(I.regs.w[DW]);					CLK(1); }
-OP( 0x53, i_push_bx ) { PUSH(I.regs.w[BW]);					CLK(1); }
-OP( 0x54, i_push_sp ) { PUSH(I.regs.w[SP]);					CLK(1); }
-OP( 0x55, i_push_bp ) { PUSH(I.regs.w[BP]);					CLK(1); }
-OP( 0x56, i_push_si ) { PUSH(I.regs.w[IX]);					CLK(1); }
-OP( 0x57, i_push_di ) { PUSH(I.regs.w[IY]);					CLK(1); }
+//OP( 0x50, i_push_ax ) { PUSH(I.regs.w[AW]);					CLK(1); }
+//OP( 0x51, i_push_cx ) { PUSH(I.regs.w[CW]);					CLK(1); }
+//OP( 0x52, i_push_dx ) { PUSH(I.regs.w[DW]);					CLK(1); }
+//OP( 0x53, i_push_bx ) { PUSH(I.regs.w[BW]);					CLK(1); }
+//OP( 0x54, i_push_sp ) { PUSH(I.regs.w[SP]);					CLK(1); }
+//OP( 0x55, i_push_bp ) { PUSH(I.regs.w[BP]);					CLK(1); }
+//OP( 0x56, i_push_si ) { PUSH(I.regs.w[IX]);					CLK(1); }
+//OP( 0x57, i_push_di ) { PUSH(I.regs.w[IY]);					CLK(1); }
 
-OP( 0x58, i_pop_ax ) { POP(I.regs.w[AW]);					CLK(1); }
-OP( 0x59, i_pop_cx ) { POP(I.regs.w[CW]);					CLK(1); }
-OP( 0x5a, i_pop_dx ) { POP(I.regs.w[DW]);					CLK(1); }
-OP( 0x5b, i_pop_bx ) { POP(I.regs.w[BW]);					CLK(1); }
-OP( 0x5c, i_pop_sp ) { POP(I.regs.w[SP]);					CLK(1); }
-OP( 0x5d, i_pop_bp ) { POP(I.regs.w[BP]);					CLK(1); }
-OP( 0x5e, i_pop_si ) { POP(I.regs.w[IX]);					CLK(1); }
-OP( 0x5f, i_pop_di ) { POP(I.regs.w[IY]);					CLK(1); }
+//OP( 0x58, i_pop_ax ) { POP(I.regs.w[AW]);					CLK(1); }
+//OP( 0x59, i_pop_cx ) { POP(I.regs.w[CW]);					CLK(1); }
+//OP( 0x5a, i_pop_dx ) { POP(I.regs.w[DW]);					CLK(1); }
+//OP( 0x5b, i_pop_bx ) { POP(I.regs.w[BW]);					CLK(1); }
+//OP( 0x5c, i_pop_sp ) { POP(I.regs.w[SP]);					CLK(1); }
+//OP( 0x5d, i_pop_bp ) { POP(I.regs.w[BP]);					CLK(1); }
+//OP( 0x5e, i_pop_si ) { POP(I.regs.w[IX]);					CLK(1); }
+//OP( 0x5f, i_pop_di ) { POP(I.regs.w[IY]);					CLK(1); }
 
 OP( 0x60, i_pusha  ) {
 	unsigned tmp=I.regs.w[SP];
