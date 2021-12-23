@@ -4,10 +4,12 @@
 BYTE cpu_readport(WORD);
 void cpu_writeport(WORD,BYTE);
 BYTE cpu_readmem20(DWORD);
+WORD cpu_readmem20w(DWORD);
 void cpu_writemem20(DWORD,BYTE);
+void cpu_writemem20w(DWORD,WORD);
 #define cpu_readop cpu_readmem20
 #define cpu_readop_arg cpu_readmem20
-
+#define cpu_readop_arg_w cpu_readmem20w
 typedef enum { ES, CS, SS, DS } SREGS;
 typedef enum { AW, CW, DW, BW, SP, BP, IX, IY } WREGS;
 typedef enum { AL,AH,CL,CH,DL,DH,BL,BH,SPL,SPH,BPL,BPH,IXL,IXH,IYL,IYH } BREGS;
@@ -89,7 +91,7 @@ typedef enum { AL,AH,CL,CH,DL,DH,BL,BH,SPL,SPH,BPL,BPH,IXL,IXH,IYL,IYH } BREGS;
 
 #define FETCH (cpu_readop_arg((I.sregs[CS]<<4)+I.ip++))
 #define FETCHOP (cpu_readop((I.sregs[CS]<<4)+I.ip++))
-#define FETCHWORD(var) { var=cpu_readop_arg((((I.sregs[CS]<<4)+I.ip)))+(cpu_readop_arg((((I.sregs[CS]<<4)+I.ip+1)))<<8); I.ip+=2; }
+#define FETCHWORD(var) { var=cpu_readop_arg_w((I.sregs[CS]<<4)+I.ip); I.ip+=2; }
 #define PUSH(val) { I.regs.w[SP]-=2; WriteWord((((I.sregs[SS]<<4)+I.regs.w[SP])),val); }
 #define POP(var) { var = ReadWord((((I.sregs[SS]<<4)+I.regs.w[SP]))); I.regs.w[SP]+=2; }
 #define PEEK(addr) ((BYTE)cpu_readop_arg(addr))
