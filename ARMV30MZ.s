@@ -44,6 +44,134 @@ _30:	;@ JR NC,*			Jump if no carry
 	subeq cycles,cycles,#5*CYCLE
 	addeq v30pc,v30pc,r0
 //	fetch 7
+;@----------------------------------------------------------------------------
+i_mov_ald8:
+_B0:	;@ MOV ALD8
+;@----------------------------------------------------------------------------
+	stmfd	sp!,{lr}
+	ldrh r3,[v30ptr,#v30IP]
+	ldrh r0,[v30ptr,#v30SRegCS]
+	add	r2,r3,#1
+	add	r0,r3,r0,asl#4
+	strh r2,[v30ptr,#v30IP]
+	bl cpu_readmem20
+	ldr r1,[v30ptr,#v30ICount]
+	strb r0,[v30ptr,#v30RegAL]
+	sub	r1,r1,#1
+	str r1,[v30ptr,#v30ICount]
+	ldmfd sp!,{pc}
+;@----------------------------------------------------------------------------
+i_mov_cld8:
+_B1:	;@ MOV CLD8
+;@----------------------------------------------------------------------------
+	stmfd	sp!,{lr}
+	ldrh r3,[v30ptr,#v30IP]
+	ldrh r0,[v30ptr,#v30SRegCS]
+	add	r2,r3,#1
+	add	r0,r3,r0,asl#4
+	strh r2,[v30ptr,#v30IP]
+	bl cpu_readmem20
+	ldr r1,[v30ptr,#v30ICount]
+	strb r0,[v30ptr,#v30RegCL]
+	sub	r1,r1,#1
+	str r1,[v30ptr,#v30ICount]
+	ldmfd sp!,{pc}
+;@----------------------------------------------------------------------------
+i_mov_dld8:
+_B2:	;@ MOV DLD8
+;@----------------------------------------------------------------------------
+	stmfd	sp!,{lr}
+	ldrh r3,[v30ptr,#v30IP]
+	ldrh r0,[v30ptr,#v30SRegCS]
+	add	r2,r3,#1
+	add	r0,r3,r0,asl#4
+	strh r2,[v30ptr,#v30IP]
+	bl cpu_readmem20
+	ldr r1,[v30ptr,#v30ICount]
+	strb r0,[v30ptr,#v30RegDL]
+	sub	r1,r1,#1
+	str r1,[v30ptr,#v30ICount]
+	ldmfd sp!,{pc}
+;@----------------------------------------------------------------------------
+i_mov_bld8:
+_B3:	;@ MOV BLD8
+;@----------------------------------------------------------------------------
+	stmfd	sp!,{lr}
+	ldrh r3,[v30ptr,#v30IP]
+	ldrh r0,[v30ptr,#v30SRegCS]
+	add	r2,r3,#1
+	add	r0,r3,r0,asl#4
+	strh r2,[v30ptr,#v30IP]
+	bl cpu_readmem20
+	ldr r1,[v30ptr,#v30ICount]
+	strb r0,[v30ptr,#v30RegBL]
+	sub	r1,r1,#1
+	str r1,[v30ptr,#v30ICount]
+	ldmfd sp!,{pc}
+;@----------------------------------------------------------------------------
+i_mov_ahd8:
+_B4:	;@ MOV AHD8
+;@----------------------------------------------------------------------------
+	stmfd	sp!,{lr}
+	ldrh r3,[v30ptr,#v30IP]
+	ldrh r0,[v30ptr,#v30SRegCS]
+	add	r2,r3,#1
+	add	r0,r3,r0,asl#4
+	strh r2,[v30ptr,#v30IP]
+	bl cpu_readmem20
+	ldr r1,[v30ptr,#v30ICount]
+	strb r0,[v30ptr,#v30RegAH]
+	sub	r1,r1,#1
+	str r1,[v30ptr,#v30ICount]
+	ldmfd sp!,{pc}
+;@----------------------------------------------------------------------------
+i_mov_chd8:
+_B5:	;@ MOV CHD8
+;@----------------------------------------------------------------------------
+	stmfd	sp!,{lr}
+	ldrh r3,[v30ptr,#v30IP]
+	ldrh r0,[v30ptr,#v30SRegCS]
+	add	r2,r3,#1
+	add	r0,r3,r0,asl#4
+	strh r2,[v30ptr,#v30IP]
+	bl cpu_readmem20
+	ldr r1,[v30ptr,#v30ICount]
+	strb r0,[v30ptr,#v30RegCH]
+	sub	r1,r1,#1
+	str r1,[v30ptr,#v30ICount]
+	ldmfd sp!,{pc}
+;@----------------------------------------------------------------------------
+i_mov_dhd8:
+_B6:	;@ MOV DHD8
+;@----------------------------------------------------------------------------
+	stmfd	sp!,{lr}
+	ldrh r3,[v30ptr,#v30IP]
+	ldrh r0,[v30ptr,#v30SRegCS]
+	add	r2,r3,#1
+	add	r0,r3,r0,asl#4
+	strh r2,[v30ptr,#v30IP]
+	bl cpu_readmem20
+	ldr r1,[v30ptr,#v30ICount]
+	strb r0,[v30ptr,#v30RegDH]
+	sub	r1,r1,#1
+	str r1,[v30ptr,#v30ICount]
+	ldmfd sp!,{pc}
+;@----------------------------------------------------------------------------
+i_mov_bhd8:
+_B7:	;@ MOV BHD8
+;@----------------------------------------------------------------------------
+	stmfd	sp!,{lr}
+	ldrh r3,[v30ptr,#v30IP]
+	ldrh r0,[v30ptr,#v30SRegCS]
+	add	r2,r3,#1
+	add	r0,r3,r0,asl#4
+	strh r2,[v30ptr,#v30IP]
+	bl cpu_readmem20
+	ldr r1,[v30ptr,#v30ICount]
+	strb r0,[v30ptr,#v30RegBH]
+	sub	r1,r1,#1
+	str r1,[v30ptr,#v30ICount]
+	ldmfd sp!,{pc}
 
 ;@----------------------------------------------------------------------------
 V30RunXCycles:				;@ r0 = number of cycles to run
@@ -171,7 +299,7 @@ V30GetStateSize:			;@ Out r0=state size.
 	mov r0,#v30StateEnd-v30StateStart	;@ Right now?
 	bx lr
 ;@----------------------------------------------------------------------------
-V30RedirectOpcode:		;@ In r0=opcode, r1=address.
+V30RedirectOpcode:			;@ In r0=opcode, r1=address.
 	.type   V30RedirectOpcode STT_FUNC
 ;@----------------------------------------------------------------------------
 	ldr r2,=V30OpTable

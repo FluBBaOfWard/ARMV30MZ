@@ -455,14 +455,14 @@ OP( 0xad, i_lodsw      ) { I.regs.w[AW] = GetMemW(DS,I.regs.w[IX]); I.regs.w[IX]
 OP( 0xae, i_scasb      ) { UINT32 src = GetMemB(ES, I.regs.w[IY]); UINT32 dst = I.regs.b[AL]; SUBB; I.regs.w[IY] += -2 * I.DF + 1; CLK(4); }
 OP( 0xaf, i_scasw      ) { UINT32 src = GetMemW(ES, I.regs.w[IY]); UINT32 dst = I.regs.w[AW]; SUBW; I.regs.w[IY] += -4 * I.DF + 2; CLK(4); }
 
-OP( 0xb0, i_mov_ald8  ) { I.regs.b[AL] = FETCH; CLK(1); }
-OP( 0xb1, i_mov_cld8  ) { I.regs.b[CL] = FETCH; CLK(1); }
-OP( 0xb2, i_mov_dld8  ) { I.regs.b[DL] = FETCH; CLK(1); }
-OP( 0xb3, i_mov_bld8  ) { I.regs.b[BL] = FETCH; CLK(1); }
-OP( 0xb4, i_mov_ahd8  ) { I.regs.b[AH] = FETCH; CLK(1); }
-OP( 0xb5, i_mov_chd8  ) { I.regs.b[CH] = FETCH; CLK(1); }
-OP( 0xb6, i_mov_dhd8  ) { I.regs.b[DH] = FETCH; CLK(1); }
-OP( 0xb7, i_mov_bhd8  ) { I.regs.b[BH] = FETCH; CLK(1); }
+//OP( 0xb0, i_mov_ald8  ) { I.regs.b[AL] = FETCH; CLK(1); }
+//OP( 0xb1, i_mov_cld8  ) { I.regs.b[CL] = FETCH; CLK(1); }
+//OP( 0xb2, i_mov_dld8  ) { I.regs.b[DL] = FETCH; CLK(1); }
+//OP( 0xb3, i_mov_bld8  ) { I.regs.b[BL] = FETCH; CLK(1); }
+//OP( 0xb4, i_mov_ahd8  ) { I.regs.b[AH] = FETCH; CLK(1); }
+//OP( 0xb5, i_mov_chd8  ) { I.regs.b[CH] = FETCH; CLK(1); }
+//OP( 0xb6, i_mov_dhd8  ) { I.regs.b[DH] = FETCH; CLK(1); }
+//OP( 0xb7, i_mov_bhd8  ) { I.regs.b[BH] = FETCH; CLK(1); }
 
 OP( 0xb8, i_mov_axd16 ) { I.regs.b[AL] = FETCH; I.regs.b[AH] = FETCH; CLK(1); }
 OP( 0xb9, i_mov_cxd16 ) { I.regs.b[CL] = FETCH; I.regs.b[CH] = FETCH; CLK(1); }
