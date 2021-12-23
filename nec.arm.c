@@ -420,13 +420,13 @@ OP( 0x90, i_nop  ) { CLK(1);
 	if (no_interrupt==0 && I.ICount>0 && (PEEKOP((I.sregs[CS]<<4)+I.ip))==0xeb && (PEEK((I.sregs[CS]<<4)+I.ip+1))==0xfd)
 		I.ICount%=15;
 }
-OP( 0x91, i_xchg_axcx ) { XchgAWReg(CW); CLK(3); }
-OP( 0x92, i_xchg_axdx ) { XchgAWReg(DW); CLK(3); }
-OP( 0x93, i_xchg_axbx ) { XchgAWReg(BW); CLK(3); }
-OP( 0x94, i_xchg_axsp ) { XchgAWReg(SP); CLK(3); }
-OP( 0x95, i_xchg_axbp ) { XchgAWReg(BP); CLK(3); }
-OP( 0x96, i_xchg_axsi ) { XchgAWReg(IX); CLK(3); }
-OP( 0x97, i_xchg_axdi ) { XchgAWReg(IY); CLK(3); }
+//OP( 0x91, i_xchg_axcx ) { XchgAWReg(CW); CLK(3); }
+//OP( 0x92, i_xchg_axdx ) { XchgAWReg(DW); CLK(3); }
+//OP( 0x93, i_xchg_axbx ) { XchgAWReg(BW); CLK(3); }
+//OP( 0x94, i_xchg_axsp ) { XchgAWReg(SP); CLK(3); }
+//OP( 0x95, i_xchg_axbp ) { XchgAWReg(BP); CLK(3); }
+//OP( 0x96, i_xchg_axsi ) { XchgAWReg(IX); CLK(3); }
+//OP( 0x97, i_xchg_axdi ) { XchgAWReg(IY); CLK(3); }
 
 OP( 0x98, i_cbw       ) { I.regs.b[AH] = (I.regs.b[AL] & 0x80) ? 0xff : 0; CLK(1); }
 OP( 0x99, i_cwd       ) { I.regs.w[DW] = (I.regs.b[AH] & 0x80) ? 0xffff : 0; CLK(1); }

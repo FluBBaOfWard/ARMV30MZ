@@ -45,6 +45,89 @@ _30:	;@ JR NC,*			Jump if no carry
 	addeq v30pc,v30pc,r0
 //	fetch 7
 ;@----------------------------------------------------------------------------
+i_xchg_axcx:
+_91:	;@ XCHG AXCX
+;@----------------------------------------------------------------------------
+	ldr r1,[v30ptr,#v30ICount]
+	ldr r0,[v30ptr,#v30RegAW]
+	sub	r1,r1,#3
+	mov r0,r0,ror#16
+	str r1,[v30ptr,#v30ICount]
+	str r0,[v30ptr,#v30RegAW]
+	bx lr
+;@----------------------------------------------------------------------------
+i_xchg_axdx:
+_92:	;@ XCHG AXDX
+;@----------------------------------------------------------------------------
+	ldr r1,[v30ptr,#v30ICount]
+	ldrh r0,[v30ptr,#v30RegAW]
+	ldrh r2,[v30ptr,#v30RegDW]
+	sub	r1,r1,#3
+	str r1,[v30ptr,#v30ICount]
+	strh r0,[v30ptr,#v30RegDW]
+	strh r2,[v30ptr,#v30RegAW]
+	bx lr
+;@----------------------------------------------------------------------------
+i_xchg_axbx:
+_93:	;@ XCHG AXBX
+;@----------------------------------------------------------------------------
+	ldr r1,[v30ptr,#v30ICount]
+	ldrh r0,[v30ptr,#v30RegAW]
+	ldrh r2,[v30ptr,#v30RegBW]
+	sub	r1,r1,#3
+	str r1,[v30ptr,#v30ICount]
+	strh r0,[v30ptr,#v30RegBW]
+	strh r2,[v30ptr,#v30RegAW]
+	bx lr
+;@----------------------------------------------------------------------------
+i_xchg_axsp:
+_94:	;@ XCHG AXSP
+;@----------------------------------------------------------------------------
+	ldr r1,[v30ptr,#v30ICount]
+	ldrh r0,[v30ptr,#v30RegAW]
+	ldrh r2,[v30ptr,#v30RegBW]
+	sub	r1,r1,#3
+	str r1,[v30ptr,#v30ICount]
+	strh r0,[v30ptr,#v30RegBW]
+	strh r2,[v30ptr,#v30RegAW]
+	bx lr
+;@----------------------------------------------------------------------------
+i_xchg_axbp:
+_95:	;@ XCHG AXBP
+;@----------------------------------------------------------------------------
+	ldr r1,[v30ptr,#v30ICount]
+	ldrh r0,[v30ptr,#v30RegAW]
+	ldrh r2,[v30ptr,#v30RegBP]
+	sub	r1,r1,#3
+	str r1,[v30ptr,#v30ICount]
+	strh r0,[v30ptr,#v30RegBP]
+	strh r2,[v30ptr,#v30RegAW]
+	bx lr
+;@----------------------------------------------------------------------------
+i_xchg_axsi:
+_96:	;@ XCHG AXSI
+;@----------------------------------------------------------------------------
+	ldr r1,[v30ptr,#v30ICount]
+	ldrh r0,[v30ptr,#v30RegAW]
+	ldrh r2,[v30ptr,#v30RegIX]
+	sub	r1,r1,#3
+	str r1,[v30ptr,#v30ICount]
+	strh r0,[v30ptr,#v30RegIX]
+	strh r2,[v30ptr,#v30RegAW]
+	bx lr
+;@----------------------------------------------------------------------------
+i_xchg_axdi:
+_97:	;@ XCHG AXDI
+;@----------------------------------------------------------------------------
+	ldr r1,[v30ptr,#v30ICount]
+	ldrh r0,[v30ptr,#v30RegAW]
+	ldrh r2,[v30ptr,#v30RegIY]
+	sub	r1,r1,#3
+	str r1,[v30ptr,#v30ICount]
+	strh r0,[v30ptr,#v30RegIY]
+	strh r2,[v30ptr,#v30RegAW]
+	bx lr
+;@----------------------------------------------------------------------------
 i_mov_ald8:
 _B0:	;@ MOV ALD8
 ;@----------------------------------------------------------------------------
