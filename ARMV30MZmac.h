@@ -229,4 +229,48 @@
 	.endm
 ;@----------------------------------------------------------------------------
 
+	.macro incWord reg
+	ldrh r0,[v30ptr,#\reg]
+	mov r2,#0
+	mov r3,#0
+	mov r1,r0,lsl#16
+	adds r1,r1,#0x10000
+	movvs r2,#1
+	tst r1,#0xF
+	moveq r3,#1
+	mov r1,r1,asr#16
+	ldr r0,[v30ptr,#v30ICount]
+	strh r1,[v30ptr,#\reg]
+	str r2,[v30ptr,#v30OverVal]
+	str r3,[v30ptr,#v30AuxVal]
+	str r1,[v30ptr,#v30SignVal]
+	str r1,[v30ptr,#v30ZeroVal]
+	str r1,[v30ptr,#v30ParityVal]
+	sub	r0,r0,#1
+	str r0,[v30ptr,#v30ICount]
+	bx lr
+	.endm
+
+	.macro decWord reg
+	ldrh r0,[v30ptr,#\reg]
+	mov r2,#0
+	mov r3,#0
+	mov r1,r0,lsl#16
+	subs r1,r1,#0x10000
+	movvs r2,#1
+	tst r0,#0xF
+	moveq r3,#1
+	mov r1,r1,asr#16
+	ldr r0,[v30ptr,#v30ICount]
+	strh r1,[v30ptr,#\reg]
+	str r2,[v30ptr,#v30OverVal]
+	str r3,[v30ptr,#v30AuxVal]
+	str r1,[v30ptr,#v30SignVal]
+	str r1,[v30ptr,#v30ZeroVal]
+	str r1,[v30ptr,#v30ParityVal]
+	sub	r0,r0,#1
+	str r0,[v30ptr,#v30ICount]
+	bx lr
+	.endm
+
 ;@---------------------------------------

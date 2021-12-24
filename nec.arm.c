@@ -236,23 +236,23 @@ OP( 0x3d, i_cmp_axd16) { DEF_axd16; SUBW;					CLK(1); }
 OP( 0x3e, i_ds       ) { seg_prefix=TRUE; prefix_base=I.sregs[DS]<<4; CLK(1); nec_instruction[FETCHOP](); seg_prefix=FALSE; }
 OP( 0x3f, i_aas      ) { ADJB(-6,-1);						CLK(9); }
 
-OP( 0x40, i_inc_ax ) { IncWordReg(AW);						CLK(1); }
-OP( 0x41, i_inc_cx ) { IncWordReg(CW);						CLK(1); }
-OP( 0x42, i_inc_dx ) { IncWordReg(DW);						CLK(1); }
-OP( 0x43, i_inc_bx ) { IncWordReg(BW);						CLK(1); }
-OP( 0x44, i_inc_sp ) { IncWordReg(SP);						CLK(1); }
-OP( 0x45, i_inc_bp ) { IncWordReg(BP);						CLK(1); }
-OP( 0x46, i_inc_si ) { IncWordReg(IX);						CLK(1); }
-OP( 0x47, i_inc_di ) { IncWordReg(IY);						CLK(1); }
+//OP( 0x40, i_inc_ax ) { IncWordReg(AW);						CLK(1); }
+//OP( 0x41, i_inc_cx ) { IncWordReg(CW);						CLK(1); }
+//OP( 0x42, i_inc_dx ) { IncWordReg(DW);						CLK(1); }
+//OP( 0x43, i_inc_bx ) { IncWordReg(BW);						CLK(1); }
+//OP( 0x44, i_inc_sp ) { IncWordReg(SP);						CLK(1); }
+//OP( 0x45, i_inc_bp ) { IncWordReg(BP);						CLK(1); }
+//OP( 0x46, i_inc_si ) { IncWordReg(IX);						CLK(1); }
+//OP( 0x47, i_inc_di ) { IncWordReg(IY);						CLK(1); }
 
-OP( 0x48, i_dec_ax ) { DecWordReg(AW);						CLK(1); }
-OP( 0x49, i_dec_cx ) { DecWordReg(CW);						CLK(1); }
-OP( 0x4a, i_dec_dx ) { DecWordReg(DW);						CLK(1); }
-OP( 0x4b, i_dec_bx ) { DecWordReg(BW);						CLK(1); }
-OP( 0x4c, i_dec_sp ) { DecWordReg(SP);						CLK(1); }
-OP( 0x4d, i_dec_bp ) { DecWordReg(BP);						CLK(1); }
-OP( 0x4e, i_dec_si ) { DecWordReg(IX);						CLK(1); }
-OP( 0x4f, i_dec_di ) { DecWordReg(IY);						CLK(1); }
+//OP( 0x48, i_dec_ax ) { DecWordReg(AW);						CLK(1); }
+//OP( 0x49, i_dec_cx ) { DecWordReg(CW);						CLK(1); }
+//OP( 0x4a, i_dec_dx ) { DecWordReg(DW);						CLK(1); }
+//OP( 0x4b, i_dec_bx ) { DecWordReg(BW);						CLK(1); }
+//OP( 0x4c, i_dec_sp ) { DecWordReg(SP);						CLK(1); }
+//OP( 0x4d, i_dec_bp ) { DecWordReg(BP);						CLK(1); }
+//OP( 0x4e, i_dec_si ) { DecWordReg(IX);						CLK(1); }
+//OP( 0x4f, i_dec_di ) { DecWordReg(IY);						CLK(1); }
 
 //OP( 0x50, i_push_ax ) { PUSH(I.regs.w[AW]);					CLK(1); }
 //OP( 0x51, i_push_cx ) { PUSH(I.regs.w[CW]);					CLK(1); }
