@@ -320,16 +320,16 @@ OP( 0x6d, i_insw     ) { PutMemB(ES,I.regs.w[IY],read_port(I.regs.w[DW])); PutMe
 OP( 0x6e, i_outsb    ) { write_port(I.regs.w[DW],GetMemB(DS,I.regs.w[IX])); I.regs.w[IX]+= -2 * I.DF + 1; CLK(7); }
 OP( 0x6f, i_outsw    ) { write_port(I.regs.w[DW],GetMemB(DS,I.regs.w[IX])); write_port((I.regs.w[DW]+1)&0xffff,GetMemB(DS,(I.regs.w[IX]+1)&0xffff)); I.regs.w[IX]+= -4 * I.DF + 2; CLK(7); }
 
-ITCM_CODE OP( 0x70, i_jo   ) { JMP( OF); }
-ITCM_CODE OP( 0x71, i_jno  ) { JMP(!OF); }
-ITCM_CODE OP( 0x72, i_jc   ) { JMP( CF); }
-ITCM_CODE OP( 0x73, i_jnc  ) { JMP(!CF); }
-ITCM_CODE OP( 0x74, i_jz   ) { JMP( ZF); }
-ITCM_CODE OP( 0x75, i_jnz  ) { JMP(!ZF); }
+//ITCM_CODE OP( 0x70, i_jo   ) { JMP( OF); }
+//ITCM_CODE OP( 0x71, i_jno  ) { JMP(!OF); }
+//ITCM_CODE OP( 0x72, i_jc   ) { JMP( CF); }
+//ITCM_CODE OP( 0x73, i_jnc  ) { JMP(!CF); }
+//ITCM_CODE OP( 0x74, i_jz   ) { JMP( ZF); }
+//ITCM_CODE OP( 0x75, i_jnz  ) { JMP(!ZF); }
 ITCM_CODE OP( 0x76, i_jce  ) { JMP(CF || ZF); }
 ITCM_CODE OP( 0x77, i_jnce ) { JMP(!(CF || ZF)); }
-ITCM_CODE OP( 0x78, i_js   ) { JMP( SF); }
-ITCM_CODE OP( 0x79, i_jns  ) { JMP(!SF); }
+//ITCM_CODE OP( 0x78, i_js   ) { JMP( SF); }
+//ITCM_CODE OP( 0x79, i_jns  ) { JMP(!SF); }
 ITCM_CODE OP( 0x7a, i_jp   ) { JMP( PF); }
 ITCM_CODE OP( 0x7b, i_jnp  ) { JMP(!PF); }
 ITCM_CODE OP( 0x7c, i_jl   ) { JMP((SF!=OF)&&(!ZF)); }
