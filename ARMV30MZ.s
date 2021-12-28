@@ -1104,7 +1104,7 @@ V30RunXCycles:				;@ r0 = number of cycles to run
 xLoop:
 	ldr r0,[v30ptr,#v30ICount]
 	cmp r0,#0
-	bmi xOut
+	ble xOut
 	ldrh r1,[v30ptr,#v30IP]
 	ldrh r0,[v30ptr,#v30SRegCS]
 	add r2,r1,#1
@@ -1114,7 +1114,7 @@ xLoop:
 	adr lr,xLoop
 	ldr pc,[v30ptr,r0,lsl#2]
 xOut:
-	sub r0,r4,r0
+	sub r0,r0,r4
 	ldmfd sp!,{pc}
 ;@----------------------------------------------------------------------------
 V30CheckIRQs:
@@ -1132,7 +1132,7 @@ V30Go:						;@ Continue running
 
 
 ;@----------------------------------------------------------------------------
-	.section .text				;@ For everything else
+	.section .text			;@ For everything else
 ;@----------------------------------------------------------------------------
 
 ;@----------------------------------------------------------------------------

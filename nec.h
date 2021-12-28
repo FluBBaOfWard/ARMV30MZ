@@ -76,10 +76,10 @@ typedef enum { AL,AH,CL,CH,DL,DH,BL,BH,SPL,SPH,BPL,BPH,IXL,IXH,IYL,IYH } BREGS;
 #define DefaultBase(Seg) ((seg_prefix && (Seg==DS || Seg==SS)) ? prefix_base : I.sregs[Seg] << 4)
 
 #define GetMemB(Seg,Off) ((UINT8)ReadByte((DefaultBase(Seg)+(Off))))
-#define GetMemW(Seg,Off) (/*I.ICount-=(Off)&1;*/ (UINT16)ReadWord((DefaultBase(Seg)+(Off))))
+#define GetMemW(Seg,Off) ((UINT16)ReadWord((DefaultBase(Seg)+(Off))))
 
 #define PutMemB(Seg,Off,x) { WriteByte((DefaultBase(Seg)+(Off)),(x)); }
-#define PutMemW(Seg,Off,x) { /*I.ICount-=(Off)&1;*/ WriteWord((DefaultBase(Seg)+(Off)),(x)); }
+#define PutMemW(Seg,Off,x) { WriteWord((DefaultBase(Seg)+(Off)),(x)); }
 
 #define ReadByte(ea) ((BYTE)cpu_readmem20((ea)))
 #define ReadWord(ea) (/*I.ICount-=(ea)&1;*/ cpu_readmem20w((ea)))
