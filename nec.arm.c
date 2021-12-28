@@ -313,7 +313,7 @@ OP( 0x62, i_chkind ) {
 
 //OP( 0x68, i_push_d16 ) { UINT32 tmp; FETCHWORD(tmp); PUSH(tmp); CLK(1); }
 OP( 0x69, i_imul_d16 ) { UINT32 tmp; DEF_r16w; FETCHWORD(tmp); dst = (INT32)((INT16)src)*(INT32)((INT16)tmp); I.CarryVal = I.OverVal = (((INT32)dst) >> 15 != 0) && (((INT32)dst) >> 15 != -1); RegWord(ModRM)=(WORD)dst; CLKM(4,3); }
-OP( 0x6a, i_push_d8  ) { UINT32 tmp = (WORD)((INT16)((INT8)FETCH)); PUSH(tmp); CLK(1); }
+//OP( 0x6a, i_push_d8  ) { UINT32 tmp = (WORD)((INT16)((INT8)FETCH)); PUSH(tmp); CLK(1); }
 OP( 0x6b, i_imul_d8  ) { UINT32 src2; DEF_r16w; src2= (WORD)((INT16)((INT8)FETCH)); dst = (INT32)((INT16)src)*(INT32)((INT16)src2); I.CarryVal = I.OverVal = (((INT32)dst) >> 15 != 0) && (((INT32)dst) >> 15 != -1); RegWord(ModRM)=(WORD)dst; CLKM(4,3); }
 OP( 0x6c, i_insb     ) { PutMemB(ES,I.regs.w[IY],read_port(I.regs.w[DW])); I.regs.w[IY]+= -2 * I.DF + 1; CLK(6); }
 OP( 0x6d, i_insw     ) { PutMemB(ES,I.regs.w[IY],read_port(I.regs.w[DW])); PutMemB(ES,(I.regs.w[IY]+1)&0xffff,read_port((I.regs.w[DW]+1)&0xffff)); I.regs.w[IY]+= -4 * I.DF + 2; CLK(6); }
@@ -509,19 +509,18 @@ OP( 0xc1, i_rotshft_wd8 ) {
 	}
 }
 
-OP( 0xc2, i_ret_d16  ) { UINT32 count = FETCH; count += FETCH << 8; POP(I.ip); I.regs.w[SP]+=count; CLK(6); }
-OP( 0xc3, i_ret      ) { POP(I.ip); CLK(6); }
+//OP( 0xc2, i_ret_d16  ) { UINT32 count; FETCHWORD(count); POP(I.ip); I.regs.w[SP]+=count; CLK(6); }
+//OP( 0xc3, i_ret      ) { POP(I.ip); CLK(6); }
 OP( 0xc4, i_les_dw   ) { GetModRM; WORD tmp = GetRMWord(ModRM); RegWord(ModRM)=tmp; I.sregs[ES] = GetNextRMWord; CLK(6); }
 OP( 0xc5, i_lds_dw   ) { GetModRM; WORD tmp = GetRMWord(ModRM); RegWord(ModRM)=tmp; I.sregs[DS] = GetNextRMWord; CLK(6); }
 OP( 0xc6, i_mov_bd8  ) { GetModRM; PutImmRMByte(ModRM); CLK(1); }
 OP( 0xc7, i_mov_wd16 ) { GetModRM; PutImmRMWord(ModRM); CLK(1); }
 
 OP( 0xc8, i_enter ) {
-	UINT32 nb = FETCH;
-	UINT32 i,level;
+	UINT32 i,level,nb;
 
 	CLK(19);
-	nb += FETCH << 8;
+	FETCHWORD(nb);
 	level = FETCH;
 	PUSH(I.regs.w[BP]);
 	I.regs.w[BP]=I.regs.w[SP];
@@ -537,7 +536,7 @@ OP( 0xc9, i_leave ) {
 	POP(I.regs.w[BP]);
 	CLK(2);
 }
-OP( 0xca, i_retf_d16 ) { UINT32 count = FETCH; count += FETCH << 8; POP(I.ip); POP(I.sregs[CS]); I.regs.w[SP]+=count; CLK(9); }
+OP( 0xca, i_retf_d16 ) { UINT32 count; FETCHWORD(count); POP(I.ip); POP(I.sregs[CS]); I.regs.w[SP]+=count; CLK(9); }
 OP( 0xcb, i_retf     ) { POP(I.ip); POP(I.sregs[CS]); CLK(8); }
 OP( 0xcc, i_int3     ) { nec_interrupt(3,0); CLK(9); }
 OP( 0xcd, i_int      ) { nec_interrupt(FETCH,0); CLK(10); }
@@ -728,12 +727,12 @@ OP( 0xf7, i_f7pre	) { UINT32 tmp,tmp2; UINT32 uresult,uresult2; INT32 result,res
 	}
 }
 
-OP( 0xf8, i_clc   ) { I.CarryVal = 0; CLK(4); }
-OP( 0xf9, i_stc   ) { I.CarryVal = 1; CLK(4); }
-OP( 0xfa, i_di    ) { SetIF(0); CLK(4); }
-OP( 0xfb, i_ei    ) { SetIF(1); CLK(4); }
-OP( 0xfc, i_cld   ) { SetDF(0); CLK(4); }
-OP( 0xfd, i_std   ) { SetDF(1); CLK(4); }
+//OP( 0xf8, i_clc   ) { I.CarryVal = 0; CLK(4); }
+//OP( 0xf9, i_stc   ) { I.CarryVal = 1; CLK(4); }
+//OP( 0xfa, i_di    ) { SetIF(0); CLK(4); }
+//OP( 0xfb, i_ei    ) { SetIF(1); CLK(4); }
+//OP( 0xfc, i_cld   ) { SetDF(0); CLK(4); }
+//OP( 0xfd, i_std   ) { SetDF(1); CLK(4); }
 OP( 0xfe, i_fepre ) { UINT32 tmp, tmp1; GetModRM; tmp=GetRMByte(ModRM);
 	switch(ModRM & 0x38) {
 		case 0x00: tmp1 = tmp+1; I.OverVal = (tmp==0x7f); SetAF(tmp1,tmp,1); SetSZPF_Byte(tmp1); PutbackRMByte(ModRM,(BYTE)tmp1); CLKM(3,1); break; // INC

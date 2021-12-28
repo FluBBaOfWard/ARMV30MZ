@@ -394,6 +394,29 @@ _68:	;@ PUSH D16
 	sub	r1,r1,#1
 	str r1,[v30ptr,#v30ICount]
 	ldmfd sp!,{pc}
+;@----------------------------------------------------------------------------
+i_push_d8:
+_6A:	;@ PUSH D8
+;@----------------------------------------------------------------------------
+	stmfd sp!,{lr}
+	ldrh r1,[v30ptr,#v30IP]
+	ldrh r0,[v30ptr,#v30SRegCS]
+	add	r2,r1,#1
+	add	r0,r1,r0,lsl#4
+	strh r2,[v30ptr,#v30IP]
+	bl cpu_readmem20
+	mov r1,r0,lsl#24
+	mov r1,r1,asr#24
+	ldrh r2,[v30ptr,#v30RegSP]
+	ldrh r0,[v30ptr,#v30SRegSS]
+	sub	r2,r2,#2
+	add	r0,r2,r0,lsl#4
+	strh r2,[v30ptr,#v30RegSP]
+	bl cpu_writemem20w
+	ldr r1,[v30ptr,#v30ICount]
+	sub	r1,r1,#1
+	str r1,[v30ptr,#v30ICount]
+	ldmfd sp!,{pc}
 
 ;@----------------------------------------------------------------------------
 i_jo:
@@ -864,10 +887,10 @@ i_mov_bpd16:
 _BD:	;@ MOV BPD16
 ;@----------------------------------------------------------------------------
 	stmfd sp!,{lr}
-	ldrh r3,[v30ptr,#v30IP]
+	ldrh r1,[v30ptr,#v30IP]
 	ldrh r0,[v30ptr,#v30SRegCS]
-	add	r2,r3,#2
-	add	r0,r3,r0,lsl#4
+	add	r2,r1,#2
+	add	r0,r1,r0,lsl#4
 	strh r2,[v30ptr,#v30IP]
 	bl cpu_readmem20w
 	ldr r1,[v30ptr,#v30ICount]
@@ -880,10 +903,10 @@ i_mov_sid16:
 _BE:	;@ MOV SID16
 ;@----------------------------------------------------------------------------
 	stmfd sp!,{lr}
-	ldrh r3,[v30ptr,#v30IP]
+	ldrh r1,[v30ptr,#v30IP]
 	ldrh r0,[v30ptr,#v30SRegCS]
-	add	r2,r3,#2
-	add	r0,r3,r0,lsl#4
+	add	r2,r1,#2
+	add	r0,r1,r0,lsl#4
 	strh r2,[v30ptr,#v30IP]
 	bl cpu_readmem20w
 	ldr r1,[v30ptr,#v30ICount]
@@ -896,15 +919,54 @@ i_mov_did16:
 _BF:	;@ MOV DID16
 ;@----------------------------------------------------------------------------
 	stmfd sp!,{lr}
-	ldrh r3,[v30ptr,#v30IP]
+	ldrh r1,[v30ptr,#v30IP]
 	ldrh r0,[v30ptr,#v30SRegCS]
-	add	r2,r3,#2
-	add	r0,r3,r0,lsl#4
+	add	r2,r1,#2
+	add	r0,r1,r0,lsl#4
 	strh r2,[v30ptr,#v30IP]
 	bl cpu_readmem20w
 	ldr r1,[v30ptr,#v30ICount]
 	strh r0,[v30ptr,#v30RegIY]
 	sub	r1,r1,#1
+	str r1,[v30ptr,#v30ICount]
+	ldmfd sp!,{pc}
+
+;@----------------------------------------------------------------------------
+i_ret_d16:
+_C2:	;@ RET D16
+;@----------------------------------------------------------------------------
+	stmfd sp!,{lr}
+	ldrh r1,[v30ptr,#v30IP]
+	ldrh r0,[v30ptr,#v30SRegCS]
+	add	r0,r1,r0,lsl#4
+	bl cpu_readmem20w
+	ldrh r1,[v30ptr,#v30RegSP]
+	ldrh r3,[v30ptr,#v30SRegSS]
+	add	r2,r1,#2
+	add r2,r2,r0
+	add	r0,r1,r3,lsl#4
+	strh r2,[v30ptr,#v30RegSP]
+	bl cpu_readmem20w
+	ldr r1,[v30ptr,#v30ICount]
+	strh r0,[v30ptr,#v30IP]
+	sub	r1,r1,#6
+	str r1,[v30ptr,#v30ICount]
+	ldmfd sp!,{pc}
+
+;@----------------------------------------------------------------------------
+i_ret:
+_C3:	;@ RET
+;@----------------------------------------------------------------------------
+	stmfd sp!,{lr}
+	ldrh r1,[v30ptr,#v30RegSP]
+	ldrh r0,[v30ptr,#v30SRegSS]
+	add	r2,r1,#2
+	add	r0,r1,r0,lsl#4
+	strh r2,[v30ptr,#v30RegSP]
+	bl cpu_readmem20w
+	ldr r1,[v30ptr,#v30ICount]
+	strh r0,[v30ptr,#v30IP]
+	sub	r1,r1,#6
 	str r1,[v30ptr,#v30ICount]
 	ldmfd sp!,{pc}
 
@@ -964,6 +1026,73 @@ _EA:	;@ JMP FAR
 	sub	r1,r1,#7
 	str r1,[v30ptr,#v30ICount]
 	ldmfd sp!,{r4,r5,pc}
+
+;@----------------------------------------------------------------------------
+i_clc:
+_F8:	;@ CLC
+;@----------------------------------------------------------------------------
+	stmfd sp!,{lr}
+	ldr r1,[v30ptr,#v30ICount]
+	mov r0,#0
+	str r0,[v30ptr,#v30CarryVal]
+	sub	r1,r1,#4
+	str r1,[v30ptr,#v30ICount]
+	ldmfd sp!,{pc}
+;@----------------------------------------------------------------------------
+i_stc:
+_F9:	;@ STC
+;@----------------------------------------------------------------------------
+	stmfd sp!,{lr}
+	ldr r1,[v30ptr,#v30ICount]
+	mov r0,#1
+	str r0,[v30ptr,#v30CarryVal]
+	sub	r1,r1,#4
+	str r1,[v30ptr,#v30ICount]
+	ldmfd sp!,{pc}
+;@----------------------------------------------------------------------------
+i_di:
+_FA:	;@ DI
+;@----------------------------------------------------------------------------
+	stmfd sp!,{lr}
+	ldr r1,[v30ptr,#v30ICount]
+	mov r0,#0
+	strb r0,[v30ptr,#v30IF]
+	sub	r1,r1,#4
+	str r1,[v30ptr,#v30ICount]
+	ldmfd sp!,{pc}
+;@----------------------------------------------------------------------------
+i_ei:
+_FB:	;@ EI
+;@----------------------------------------------------------------------------
+	stmfd sp!,{lr}
+	ldr r1,[v30ptr,#v30ICount]
+	mov r0,#1
+	strb r0,[v30ptr,#v30IF]
+	sub	r1,r1,#4
+	str r1,[v30ptr,#v30ICount]
+	ldmfd sp!,{pc}
+;@----------------------------------------------------------------------------
+i_cld:
+_FC:	;@ CLD
+;@----------------------------------------------------------------------------
+	stmfd sp!,{lr}
+	ldr r1,[v30ptr,#v30ICount]
+	mov r0,#0
+	strb r0,[v30ptr,#v30DF]
+	sub	r1,r1,#4
+	str r1,[v30ptr,#v30ICount]
+	ldmfd sp!,{pc}
+;@----------------------------------------------------------------------------
+i_std:
+_FD:	;@ STD
+;@----------------------------------------------------------------------------
+	stmfd sp!,{lr}
+	ldr r1,[v30ptr,#v30ICount]
+	mov r0,#1
+	strb r0,[v30ptr,#v30DF]
+	sub	r1,r1,#4
+	str r1,[v30ptr,#v30ICount]
+	ldmfd sp!,{pc}
 
 ;@----------------------------------------------------------------------------
 V30RunXCycles:				;@ r0 = number of cycles to run
