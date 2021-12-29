@@ -531,13 +531,9 @@ OP( 0xc8, i_enter ) {
 	}
 	if (level) PUSH(I.regs.w[BP]);
 }
-OP( 0xc9, i_leave ) {
-	I.regs.w[SP]=I.regs.w[BP];
-	POP(I.regs.w[BP]);
-	CLK(2);
-}
+//OP( 0xc9, i_leave ) { I.regs.w[SP]=I.regs.w[BP]; POP(I.regs.w[BP]); CLK(2); }
 OP( 0xca, i_retf_d16 ) { UINT32 count; FETCHWORD(count); POP(I.ip); POP(I.sregs[CS]); I.regs.w[SP]+=count; CLK(9); }
-OP( 0xcb, i_retf     ) { POP(I.ip); POP(I.sregs[CS]); CLK(8); }
+//OP( 0xcb, i_retf     ) { POP(I.ip); POP(I.sregs[CS]); CLK(8); }
 OP( 0xcc, i_int3     ) { nec_interrupt(3,0); CLK(9); }
 OP( 0xcd, i_int      ) { nec_interrupt(FETCH,0); CLK(10); }
 OP( 0xce, i_into     ) { if (OF) { nec_interrupt(4,0); CLK(13); } else CLK(6); }
@@ -608,15 +604,15 @@ OP( 0xd3, i_rotshft_wcl ) {
 }
 
 OP( 0xd4, i_aam    ) { UINT32 mult=FETCH; mult=0; I.regs.b[AH] = I.regs.b[AL] / 10; I.regs.b[AL] %= 10; SetSZPF_Word(I.regs.w[AW]); CLK(17); }
-OP( 0xd5, i_aad    ) { UINT32 mult=FETCH; mult=0; I.regs.b[AL] = I.regs.b[AH] * 10 + I.regs.b[AL]; I.regs.b[AH] = 0; SetSZPF_Byte(I.regs.b[AL]); CLK(6); }
+//OP( 0xd5, i_aad    ) { UINT32 mult=FETCH; mult=0; I.regs.b[AL] = I.regs.b[AH] * 10 + I.regs.b[AL]; I.regs.b[AH] = 0; SetSZPF_Byte(I.regs.b[AL]); CLK(6); }
 // OP 0xd6 - undocumented mirror of OP 0xd7
 OP( 0xd7, i_trans  ) { UINT32 dest = (I.regs.w[BW]+I.regs.b[AL])&0xffff; I.regs.b[AL] = GetMemB(DS, dest); CLK(5); }
 // OP 0xd8 - 0xdf is nop at V30MZ?
 
-ITCM_CODE OP( 0xe0, i_loopne ) { INT8 disp = (INT8)FETCH; I.regs.w[CW]--; if (!ZF && I.regs.w[CW]) { I.ip = (WORD)(I.ip+disp); CLK(6); } else CLK(3); }
-ITCM_CODE OP( 0xe1, i_loope  ) { INT8 disp = (INT8)FETCH; I.regs.w[CW]--; if ( ZF && I.regs.w[CW]) { I.ip = (WORD)(I.ip+disp); CLK(6); } else CLK(3); }
-OP( 0xe2, i_loop   ) { INT8 disp = (INT8)FETCH; I.regs.w[CW]--; if (I.regs.w[CW]) { I.ip = (WORD)(I.ip+disp); CLK(5); } else CLK(2); }
-OP( 0xe3, i_jcxz   ) { INT8 disp = (INT8)FETCH; if (I.regs.w[CW] == 0) { I.ip = (WORD)(I.ip+disp); CLK(4); } else CLK(1); }
+//OP( 0xe0, i_loopne ) { INT8 disp = (INT8)FETCH; I.regs.w[CW]--; if (!ZF && I.regs.w[CW]) { I.ip = (WORD)(I.ip+disp); CLK(6); } else CLK(3); }
+//OP( 0xe1, i_loope  ) { INT8 disp = (INT8)FETCH; I.regs.w[CW]--; if ( ZF && I.regs.w[CW]) { I.ip = (WORD)(I.ip+disp); CLK(6); } else CLK(3); }
+//OP( 0xe2, i_loop   ) { INT8 disp = (INT8)FETCH; I.regs.w[CW]--; if (I.regs.w[CW]) { I.ip = (WORD)(I.ip+disp); CLK(5); } else CLK(2); }
+//OP( 0xe3, i_jcxz   ) { INT8 disp = (INT8)FETCH; if (I.regs.w[CW] == 0) { I.ip = (WORD)(I.ip+disp); CLK(4); } else CLK(1); }
 OP( 0xe4, i_inal   ) { UINT8 port = FETCH; I.regs.b[AL] = read_port(port); CLK(6); }
 OP( 0xe5, i_inax   ) { UINT8 port = FETCH; I.regs.b[AL] = read_port(port); I.regs.b[AH] = read_port(port+1); CLK(6); }
 OP( 0xe6, i_outal  ) { UINT8 port = FETCH; write_port(port, I.regs.b[AL]); CLK(6); }
@@ -697,8 +693,8 @@ ITCM_CODE OP( 0xf3, i_repe	 ) { UINT32 next = FETCHOP; UINT16 c = I.regs.w[CW];
 	}
 	seg_prefix=FALSE;
 }
-OP( 0xf4, i_hlt ) { I.ICount=0; }
-OP( 0xf5, i_cmc ) { I.CarryVal = !CF; CLK(4); }
+//OP( 0xf4, i_hlt ) { I.ICount=0; }
+//OP( 0xf5, i_cmc ) { I.CarryVal = !CF; CLK(4); }
 OP( 0xf6, i_f6pre ) { UINT32 tmp; UINT32 uresult,uresult2; INT32 result,result2;
 	GetModRM; tmp = GetRMByte(ModRM);
 	switch (ModRM & 0x38) {
