@@ -4,4 +4,5 @@ ARMV30MZ To do
 	Implement Halt (0xf4) correctly.
 	Wait (0x9b) can be used instead of Halt?
 
+	SP can get borked when pushing, should be masked?
 	Cardcaptor Sakura, timing sensitive.

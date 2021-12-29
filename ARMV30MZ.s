@@ -37,6 +37,136 @@
 	.global PZSTable
 
 ;@----------------------------------------------------------------------------
+i_push_es:
+_06:	;@ PUSH ES
+;@----------------------------------------------------------------------------
+	stmfd sp!,{lr}
+	ldrh r1,[v30ptr,#v30RegSP]
+	ldrh r0,[v30ptr,#v30SRegSS]
+	sub r1,r1,#2
+	add r0,r1,r0,lsl#4
+	strh r1,[v30ptr,#v30RegSP]
+	ldrh r1,[v30ptr,#v30SRegES]
+	bl cpu_writemem20w
+	ldr r0,[v30ptr,#v30ICount]
+	sub r0,r0,#2
+	str r0,[v30ptr,#v30ICount]
+	ldmfd sp!,{pc}
+;@----------------------------------------------------------------------------
+i_pop_es:
+_07:	;@ POP ES
+;@----------------------------------------------------------------------------
+	stmfd sp!,{lr}
+	ldrh r1,[v30ptr,#v30RegSP]
+	ldrh r0,[v30ptr,#v30SRegSS]
+	add r2,r1,#2
+	add r0,r1,r0,lsl#4
+	strh r2,[v30ptr,#v30RegSP]
+	bl cpu_readmem20w
+	ldr r1,[v30ptr,#v30ICount]
+	strh r0,[v30ptr,#v30SRegES]
+	sub r1,r1,#3
+	str r1,[v30ptr,#v30ICount]
+	ldmfd sp!,{pc}
+;@----------------------------------------------------------------------------
+i_push_cs:
+_0E:	;@ PUSH CS
+;@----------------------------------------------------------------------------
+	stmfd sp!,{lr}
+	ldrh r1,[v30ptr,#v30RegSP]
+	ldrh r0,[v30ptr,#v30SRegSS]
+	sub r1,r1,#2
+	add r0,r1,r0,lsl#4
+	strh r1,[v30ptr,#v30RegSP]
+	ldrh r1,[v30ptr,#v30SRegCS]
+	bl cpu_writemem20w
+	ldr r0,[v30ptr,#v30ICount]
+	sub r0,r0,#2
+	str r0,[v30ptr,#v30ICount]
+	ldmfd sp!,{pc}
+;@----------------------------------------------------------------------------
+i_pop_cs:
+_0F:	;@ POP CS
+;@----------------------------------------------------------------------------
+	stmfd sp!,{lr}
+	ldrh r1,[v30ptr,#v30RegSP]
+	ldrh r0,[v30ptr,#v30SRegSS]
+	add r2,r1,#2
+	add r0,r1,r0,lsl#4
+	strh r2,[v30ptr,#v30RegSP]
+	bl cpu_readmem20w
+	ldr r1,[v30ptr,#v30ICount]
+	strh r0,[v30ptr,#v30SRegCS]
+	sub r1,r1,#3
+	str r1,[v30ptr,#v30ICount]
+	ldmfd sp!,{pc}
+;@----------------------------------------------------------------------------
+i_push_ss:
+_16:	;@ PUSH SS
+;@----------------------------------------------------------------------------
+	stmfd sp!,{lr}
+	ldrh r2,[v30ptr,#v30RegSP]
+	ldrh r1,[v30ptr,#v30SRegSS]
+	sub r2,r2,#2
+	add r0,r2,r1,lsl#4
+	strh r2,[v30ptr,#v30RegSP]
+	bl cpu_writemem20w
+	ldr r0,[v30ptr,#v30ICount]
+	sub r0,r0,#2
+	str r0,[v30ptr,#v30ICount]
+	ldmfd sp!,{pc}
+;@----------------------------------------------------------------------------
+i_pop_ss:
+_17:	;@ POP SS
+;@----------------------------------------------------------------------------
+	stmfd sp!,{lr}
+	ldrh r1,[v30ptr,#v30RegSP]
+	ldrh r0,[v30ptr,#v30SRegSS]
+	add r2,r1,#2
+	add r0,r1,r0,lsl#4
+	strh r2,[v30ptr,#v30RegSP]
+	bl cpu_readmem20w
+	ldr r1,[v30ptr,#v30ICount]
+	strh r0,[v30ptr,#v30SRegSS]
+	sub r1,r1,#3
+	str r1,[v30ptr,#v30ICount]
+	mov r0,#1
+	str r0,[v30ptr,#v30NoInterrupt]			;@ What is this?
+	ldmfd sp!,{pc}
+;@----------------------------------------------------------------------------
+i_push_ds:
+_1E:	;@ PUSH DS
+;@----------------------------------------------------------------------------
+	stmfd sp!,{lr}
+	ldrh r1,[v30ptr,#v30RegSP]
+	ldrh r0,[v30ptr,#v30SRegSS]
+	sub r1,r1,#2
+	add r0,r1,r0,lsl#4
+	strh r1,[v30ptr,#v30RegSP]
+	ldrh r1,[v30ptr,#v30SRegDS]
+	bl cpu_writemem20w
+	ldr r0,[v30ptr,#v30ICount]
+	sub r0,r0,#2
+	str r0,[v30ptr,#v30ICount]
+	ldmfd sp!,{pc}
+;@----------------------------------------------------------------------------
+i_pop_ds:
+_1F:	;@ POP DS
+;@----------------------------------------------------------------------------
+	stmfd sp!,{lr}
+	ldrh r1,[v30ptr,#v30RegSP]
+	ldrh r0,[v30ptr,#v30SRegSS]
+	add r2,r1,#2
+	add r0,r1,r0,lsl#4
+	strh r2,[v30ptr,#v30RegSP]
+	bl cpu_readmem20w
+	ldr r1,[v30ptr,#v30ICount]
+	strh r0,[v30ptr,#v30SRegDS]
+	sub r1,r1,#3
+	str r1,[v30ptr,#v30ICount]
+	ldmfd sp!,{pc}
+
+;@----------------------------------------------------------------------------
 i_inc_ax:
 _40:	;@ INC AX
 ;@----------------------------------------------------------------------------
@@ -251,9 +381,9 @@ _58:	;@ POP AX
 	stmfd sp!,{lr}
 	ldrh r1,[v30ptr,#v30RegSP]
 	ldrh r0,[v30ptr,#v30SRegSS]
+	add r2,r1,#2
 	add r0,r1,r0,lsl#4
-	add r1,r1,#2
-	strh r1,[v30ptr,#v30RegSP]
+	strh r2,[v30ptr,#v30RegSP]
 	bl cpu_readmem20w
 	strh r0,[v30ptr,#v30RegAW]
 	ldr r0,[v30ptr,#v30ICount]
@@ -267,9 +397,9 @@ _59:	;@ POP CX
 	stmfd sp!,{lr}
 	ldrh r1,[v30ptr,#v30RegSP]
 	ldrh r0,[v30ptr,#v30SRegSS]
+	add r2,r1,#2
 	add r0,r1,r0,lsl#4
-	add r1,r1,#2
-	strh r1,[v30ptr,#v30RegSP]
+	strh r2,[v30ptr,#v30RegSP]
 	bl cpu_readmem20w
 	strh r0,[v30ptr,#v30RegCW]
 	ldr r0,[v30ptr,#v30ICount]
@@ -283,9 +413,9 @@ _5A:	;@ POP DX
 	stmfd sp!,{lr}
 	ldrh r1,[v30ptr,#v30RegSP]
 	ldrh r0,[v30ptr,#v30SRegSS]
+	add r2,r1,#2
 	add r0,r1,r0,lsl#4
-	add r1,r1,#2
-	strh r1,[v30ptr,#v30RegSP]
+	strh r2,[v30ptr,#v30RegSP]
 	bl cpu_readmem20w
 	strh r0,[v30ptr,#v30RegDW]
 	ldr r0,[v30ptr,#v30ICount]
@@ -299,9 +429,9 @@ _5B:	;@ POP BX
 	stmfd sp!,{lr}
 	ldrh r1,[v30ptr,#v30RegSP]
 	ldrh r0,[v30ptr,#v30SRegSS]
+	add r2,r1,#2
 	add r0,r1,r0,lsl#4
-	add r1,r1,#2
-	strh r1,[v30ptr,#v30RegSP]
+	strh r2,[v30ptr,#v30RegSP]
 	bl cpu_readmem20w
 	strh r0,[v30ptr,#v30RegBW]
 	ldr r0,[v30ptr,#v30ICount]
@@ -330,9 +460,9 @@ _5D:	;@ POP BP
 	stmfd sp!,{lr}
 	ldrh r1,[v30ptr,#v30RegSP]
 	ldrh r0,[v30ptr,#v30SRegSS]
+	add r2,r1,#2
 	add r0,r1,r0,lsl#4
-	add r1,r1,#2
-	strh r1,[v30ptr,#v30RegSP]
+	strh r2,[v30ptr,#v30RegSP]
 	bl cpu_readmem20w
 	strh r0,[v30ptr,#v30RegBP]
 	ldr r0,[v30ptr,#v30ICount]
@@ -346,9 +476,9 @@ _5E:	;@ POP SI
 	stmfd sp!,{lr}
 	ldrh r1,[v30ptr,#v30RegSP]
 	ldrh r0,[v30ptr,#v30SRegSS]
+	add r2,r1,#2
 	add r0,r1,r0,lsl#4
-	add r1,r1,#2
-	strh r1,[v30ptr,#v30RegSP]
+	strh r2,[v30ptr,#v30RegSP]
 	bl cpu_readmem20w
 	strh r0,[v30ptr,#v30RegIX]
 	ldr r0,[v30ptr,#v30ICount]
@@ -362,9 +492,9 @@ _5F:	;@ POP DI
 	stmfd sp!,{lr}
 	ldrh r1,[v30ptr,#v30RegSP]
 	ldrh r0,[v30ptr,#v30SRegSS]
+	add r2,r1,#2
 	add r0,r1,r0,lsl#4
-	add r1,r1,#2
-	strh r1,[v30ptr,#v30RegSP]
+	strh r2,[v30ptr,#v30RegSP]
 	bl cpu_readmem20w
 	strh r0,[v30ptr,#v30RegIY]
 	ldr r0,[v30ptr,#v30ICount]
