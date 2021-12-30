@@ -76,30 +76,30 @@ static struct {
 }
 
 #define DEF_br8							\
-	UINT32 ModRM = FETCH,src,dst;		\
-	src = RegByte(ModRM);				\
-    dst = GetRMByte(ModRM)
+	GetModRM;							\
+	UINT32 src = RegByte(ModRM);		\
+    UINT32 dst = GetRMByte(ModRM)
     
 #define DEF_wr16						\
-	UINT32 ModRM = FETCH,src,dst;		\
-	src = RegWord(ModRM);				\
-    dst = GetRMWord(ModRM)
+	GetModRM;							\
+	UINT32 src = RegWord(ModRM);		\
+    UINT32 dst = GetRMWord(ModRM)
 
 #define DEF_r8b							\
-	UINT32 ModRM = FETCH,src,dst;		\
-	dst = RegByte(ModRM);				\
-    src = GetRMByte(ModRM)
+	GetModRM;							\
+	UINT32 src = GetRMByte(ModRM);		\
+	UINT32 dst = RegByte(ModRM)
 
 #define DEF_r16w						\
-	UINT32 ModRM = FETCH,src,dst;		\
-	dst = RegWord(ModRM);				\
-    src = GetRMWord(ModRM)
+	GetModRM;							\
+	UINT32 src = GetRMWord(ModRM);		\
+	UINT32 dst = RegWord(ModRM)
 
 #define DEF_ald8						\
 	UINT32 src = FETCH;					\
 	UINT32 dst = I.regs.b[AL]
 
 #define DEF_axd16						\
-	UINT32 src = FETCH; 				\
-	UINT32 dst = I.regs.w[AW];			\
-    src += (FETCH << 8)
+	UINT32 src;							\
+	FETCHWORD(src);						\
+	UINT32 dst = I.regs.w[AW]
