@@ -379,39 +379,39 @@
 ;@----------------------------------------------------------------------------
 	.macro jmpne flag
 	stmfd sp!,{r4,lr}
-	ldrh r3,[v30ptr,#v30IP]
+	ldrh r1,[v30ptr,#v30IP]
 	ldrh r0,[v30ptr,#v30SRegCS]
-	add	r4,r3,#1
-	add	r0,r3,r0,asl#4
+	add	r4,r1,#1
+	add	r0,r1,r0,lsl#4
 	bl cpu_readmem20
-	ldr r1,[v30ptr,#\flag]
-	ldr r3,[v30ptr,#v30ICount]
-	cmp	r1,#0
-	movne r0,r0,asl#24
+	ldr r3,[v30ptr,#\flag]
+	ldr r1,[v30ptr,#v30ICount]
+	cmp	r3,#0
+	movne r0,r0,lsl#24
 	addne r4,r4,r0,asr#24
-	subne r3,r3,#3
-	subeq r3,r3,#1
+	subne r1,r1,#3
+	subeq r1,r1,#1
 	strh r4,[v30ptr,#v30IP]
-	str r3,[v30ptr,#v30ICount]
+	str r1,[v30ptr,#v30ICount]
 	ldmfd sp!,{r4,pc}
 	.endm
 
 	.macro jmpeq flag
 	stmfd sp!,{r4,lr}
-	ldrh r3,[v30ptr,#v30IP]
+	ldrh r1,[v30ptr,#v30IP]
 	ldrh r0,[v30ptr,#v30SRegCS]
-	add	r4,r3,#1
-	add	r0,r3,r0,asl#4
+	add	r4,r1,#1
+	add	r0,r1,r0,lsl#4
 	bl cpu_readmem20
-	ldr r1,[v30ptr,#\flag]
-	ldr r3,[v30ptr,#v30ICount]
-	cmp	r1,#0
-	moveq r0,r0,asl#24
+	ldr r3,[v30ptr,#\flag]
+	ldr r1,[v30ptr,#v30ICount]
+	cmp	r3,#0
+	moveq r0,r0,lsl#24
 	addeq r4,r4,r0,asr#24
-	subeq r3,r3,#3
-	subne r3,r3,#1
+	subeq r1,r1,#3
+	subne r1,r1,#1
 	strh r4,[v30ptr,#v30IP]
-	str r3,[v30ptr,#v30ICount]
+	str r1,[v30ptr,#v30ICount]
 	ldmfd sp!,{r4,pc}
 	.endm
 

@@ -327,12 +327,12 @@ OP( 0x6f, i_outsw    ) { write_port(I.regs.w[DW],GetMemB(DS,I.regs.w[IX])); writ
 //ITCM_CODE OP( 0x73, i_jnc  ) { JMP(!CF); }
 //ITCM_CODE OP( 0x74, i_jz   ) { JMP( ZF); }
 //ITCM_CODE OP( 0x75, i_jnz  ) { JMP(!ZF); }
-ITCM_CODE OP( 0x76, i_jce  ) { JMP(CF || ZF); }
-ITCM_CODE OP( 0x77, i_jnce ) { JMP(!(CF || ZF)); }
+//ITCM_CODE OP( 0x76, i_jce  ) { JMP(CF || ZF); }
+//ITCM_CODE OP( 0x77, i_jnce ) { JMP(!(CF || ZF)); }
 //ITCM_CODE OP( 0x78, i_js   ) { JMP( SF); }
 //ITCM_CODE OP( 0x79, i_jns  ) { JMP(!SF); }
-ITCM_CODE OP( 0x7a, i_jp   ) { JMP( PF); }
-ITCM_CODE OP( 0x7b, i_jnp  ) { JMP(!PF); }
+//ITCM_CODE OP( 0x7a, i_jp   ) { JMP( PF); }
+//ITCM_CODE OP( 0x7b, i_jnp  ) { JMP(!PF); }
 ITCM_CODE OP( 0x7c, i_jl   ) { JMP((SF!=OF)&&(!ZF)); }
 ITCM_CODE OP( 0x7d, i_jnl  ) { JMP((ZF)||(SF==OF)); }
 ITCM_CODE OP( 0x7e, i_jle  ) { JMP((ZF)||(SF!=OF)); }
@@ -447,8 +447,8 @@ OP( 0xa5, i_movsw      ) { UINT32 tmp = GetMemW(DS,I.regs.w[IX]); PutMemW(ES,I.r
 OP( 0xa6, i_cmpsb      ) { UINT32 src = GetMemB(ES,I.regs.w[IY]); UINT32 dst = GetMemB(DS, I.regs.w[IX]); SUBB; I.regs.w[IY] += -2 * I.DF + 1; I.regs.w[IX] += -2 * I.DF + 1; CLK(6); }
 OP( 0xa7, i_cmpsw      ) { UINT32 src = GetMemW(ES,I.regs.w[IY]); UINT32 dst = GetMemW(DS, I.regs.w[IX]); SUBW; I.regs.w[IY] += -4 * I.DF + 2; I.regs.w[IX] += -4 * I.DF + 2; CLK(6); }
 
-OP( 0xa8, i_test_ald8  ) { DEF_ald8;  ANDB; CLK(1); }
-OP( 0xa9, i_test_axd16 ) { DEF_axd16; ANDW; CLK(1); }
+//OP( 0xa8, i_test_ald8  ) { DEF_ald8;  ANDB; CLK(1); }
+//OP( 0xa9, i_test_axd16 ) { DEF_axd16; ANDW; CLK(1); }
 OP( 0xaa, i_stosb      ) { PutMemB(ES,I.regs.w[IY],I.regs.b[AL]); I.regs.w[IY] += -2 * I.DF + 1; CLK(3); }
 OP( 0xab, i_stosw      ) { PutMemW(ES,I.regs.w[IY],I.regs.w[AW]); I.regs.w[IY] += -4 * I.DF + 2; CLK(3); }
 OP( 0xac, i_lodsb      ) { I.regs.b[AL] = GetMemB(DS,I.regs.w[IX]); I.regs.w[IX] += -2 * I.DF + 1; CLK(3); }
@@ -538,7 +538,7 @@ OP( 0xc8, i_enter ) {
 //OP( 0xcc, i_int3     ) { nec_interrupt(3,0); CLK(9); }
 //OP( 0xcd, i_int      ) { nec_interrupt(FETCH,0); CLK(10); }
 //OP( 0xce, i_into     ) { if (OF) { nec_interrupt(4,0); CLK(13); } else CLK(6); }
-OP( 0xcf, i_iret     ) { POP(I.ip); POP(I.sregs[CS]); i_popf(); CLK(10); }
+//OP( 0xcf, i_iret     ) { POP(I.ip); POP(I.sregs[CS]); i_popf(); CLK(10); } // -3?
 
 OP( 0xd0, i_rotshft_b ) {
 	UINT32 src, dst; GetModRM; src = (UINT32)GetRMByte(ModRM); dst=src;
@@ -604,7 +604,7 @@ OP( 0xd3, i_rotshft_wcl ) {
 	}
 }
 
-OP( 0xd4, i_aam    ) { UINT32 mult=FETCH; mult=0; I.regs.b[AH] = I.regs.b[AL] / 10; I.regs.b[AL] %= 10; SetSZPF_Word(I.regs.w[AW]); CLK(17); }
+//OP( 0xd4, i_aam    ) { UINT32 mult=FETCH; mult=0; I.regs.b[AH] = I.regs.b[AL] / 10; I.regs.b[AL] %= 10; SetSZPF_Word(I.regs.w[AW]); CLK(17); }
 //OP( 0xd5, i_aad    ) { UINT32 mult=FETCH; mult=0; I.regs.b[AL] = I.regs.b[AH] * 10 + I.regs.b[AL]; I.regs.b[AH] = 0; SetSZPF_Byte(I.regs.b[AL]); CLK(6); }
 // OP 0xd6 - undocumented mirror of OP 0xd7
 OP( 0xd7, i_trans  ) { UINT32 dest = (I.regs.w[BW]+I.regs.b[AL])&0xffff; I.regs.b[AL] = GetMemB(DS, dest); CLK(5); }
@@ -615,9 +615,9 @@ OP( 0xd7, i_trans  ) { UINT32 dest = (I.regs.w[BW]+I.regs.b[AL])&0xffff; I.regs.
 //OP( 0xe2, i_loop   ) { INT8 disp = (INT8)FETCH; I.regs.w[CW]--; if (I.regs.w[CW]) { I.ip = (WORD)(I.ip+disp); CLK(5); } else CLK(2); }
 //OP( 0xe3, i_jcxz   ) { INT8 disp = (INT8)FETCH; if (I.regs.w[CW] == 0) { I.ip = (WORD)(I.ip+disp); CLK(4); } else CLK(1); }
 //OP( 0xe4, i_inal   ) { UINT8 port = FETCH; I.regs.b[AL] = read_port(port); CLK(6); }
-OP( 0xe5, i_inax   ) { UINT8 port = FETCH; I.regs.b[AL] = read_port(port); I.regs.b[AH] = read_port(port+1); CLK(6); }
+//OP( 0xe5, i_inax   ) { UINT8 port = FETCH; I.regs.b[AL] = read_port(port); I.regs.b[AH] = read_port(port+1); CLK(6); }
 //OP( 0xe6, i_outal  ) { UINT8 port = FETCH; write_port(port, I.regs.b[AL]); CLK(6); }
-OP( 0xe7, i_outax  ) { UINT8 port = FETCH; write_port(port, I.regs.b[AL]); write_port(port+1, I.regs.b[AH]); CLK(6); }
+//OP( 0xe7, i_outax  ) { UINT8 port = FETCH; write_port(port, I.regs.b[AL]); write_port(port+1, I.regs.b[AH]); CLK(6); }
 
 //OP( 0xe8, i_call_d16 ) { UINT32 tmp; FETCHWORD(tmp); PUSH(I.ip); I.ip = (WORD)(I.ip+(INT16)tmp); CLK(5); }
 //OP( 0xe9, i_jmp_d16  ) { UINT32 tmp; FETCHWORD(tmp); I.ip = (WORD)(I.ip+(INT16)tmp); CLK(4); }
@@ -627,9 +627,9 @@ OP( 0xeb, i_jmp_d8   ) { int tmp = (int)((INT8)FETCH); CLK(4);
 	I.ip = (WORD)(I.ip+tmp);
 }
 //OP( 0xec, i_inaldx   ) { I.regs.b[AL] = read_port(I.regs.w[DW]); CLK(6); }
-OP( 0xed, i_inaxdx   ) { UINT32 port = I.regs.w[DW]; I.regs.b[AL] = read_port(port); I.regs.b[AH] = read_port(port+1); CLK(6); }
+//OP( 0xed, i_inaxdx   ) { UINT32 port = I.regs.w[DW]; I.regs.b[AL] = read_port(port); I.regs.b[AH] = read_port(port+1); CLK(6); }
 //OP( 0xee, i_outdxal  ) { write_port(I.regs.w[DW], I.regs.b[AL]); CLK(6); }
-OP( 0xef, i_outdxax  ) { UINT32 port = I.regs.w[DW]; write_port(port, I.regs.b[AL]); write_port(port+1, I.regs.b[AH]); CLK(6); }
+//OP( 0xef, i_outdxax  ) { UINT32 port = I.regs.w[DW]; write_port(port, I.regs.b[AL]); write_port(port+1, I.regs.b[AH]); CLK(6); }
 
 //OP( 0xf0, i_lock     ) { no_interrupt=1; CLK(1); }
 #define THROUGH 				\
