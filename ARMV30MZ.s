@@ -1664,6 +1664,7 @@ _CA:	;@ RETF D16
 	strh r0,[v30ptr,#v30IP]
 	add r1,r4,r6
 	add r0,r4,r5,lsl#4
+	add r1,r1,#2
 	strh r1,[v30ptr,#v30RegSP]
 	bl cpu_readmem20w
 	ldr r1,[v30ptr,#v30ICount]
