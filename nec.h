@@ -104,7 +104,7 @@ typedef enum { AL,AH,CL,CH,DL,DH,BL,BH,SPL,SPH,BPL,BPH,IXL,IXH,IYL,IYH } BREGS;
 
 #define CompressFlags() (WORD)(CF | (PF << 2) | (AF << 4) | (ZF << 6) \
 				| (SF << 7) | (I.TF << 8) | (I.IF << 9) \
-				| (I.DF << 10) | (OF << 11))
+				| (I.DF << 10) | (OF << 11) | 0x7002)
 
 
 #define ExpandFlags(f) \

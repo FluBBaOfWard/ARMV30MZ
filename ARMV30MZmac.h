@@ -14,15 +14,21 @@
 
 
 							;@ V30 flags
-	.equ MF, 0x8000				;@ ?
+	.equ MF, 0x8000				;@ Mode, native/emulated, invalid in V30MZ.
+		;@   0x4000				;@ 1
+		;@   0x2000				;@ 1
+		;@   0x1000				;@ 1
 	.equ OF, 0x0800				;@ Overflow
-	.equ DF, 0x0400				;@ ?
-	.equ IF, 0x0200				;@ Interrupt?
-	.equ TF, 0x0100				;@ ?
+	.equ DF, 0x0400				;@ Direction
+	.equ IF, 0x0200				;@ Interrupt enable
+	.equ TF, 0x0100				;@ BREAK
 	.equ SF, 0x0080				;@ Sign (negative)
 	.equ ZF, 0x0040				;@ Zero
+		;@   0x0020				;@ 0
 	.equ HF, 0x0010				;@ Half carry
+		;@   0x0008				;@ 0
 	.equ PF, 0x0004				;@ Parity
+		;@   0x0002				;@ 1
 	.equ CF, 0x0001				;@ Carry
 
 ;@----------------------------------------------------------------------------

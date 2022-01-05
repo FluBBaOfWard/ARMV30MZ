@@ -27,6 +27,12 @@
 	.global V30GetStateSize
 	.global V30RedirectOpcode
 
+	.global i_insb
+	.global i_scasb
+	.global i_scasw
+	.global i_stosb
+	.global i_stosw
+
 	.global I
 	.global no_interrupt
 	.global prefix_base
@@ -950,6 +956,27 @@ _6A:	;@ PUSH D8
 	sub r1,r1,#1
 	str r1,[v30ptr,#v30ICount]
 	ldmfd sp!,{pc}
+;@----------------------------------------------------------------------------
+i_insb:
+_6C:	;@ INSB
+;@----------------------------------------------------------------------------
+	stmfd sp!,{lr}
+	ldrh r0,[v30ptr,#v30RegCW]
+	bl cpu_readport
+	ldrb r1,[v30ptr,#v30DF]
+	ldrh r2,[v30ptr,#v30RegIY]
+	cmp r1,#0
+	mov r1,r0
+	ldrh r0,[v30ptr,#v30SRegES]
+	addeq r3,r2,#1
+	addne r3,r2,#1
+	add r0,r2,r0,lsl#4
+	strh r3,[v30ptr,#v30RegIY]
+	bl cpu_writemem20
+	ldr r0,[v30ptr,#v30ICount]
+	sub r0,r0,#6
+	str r0,[v30ptr,#v30ICount]
+	ldmfd sp!,{pc}
 
 ;@----------------------------------------------------------------------------
 i_jo:
@@ -1227,7 +1254,7 @@ _98:	;@ CVTBW
 	bx lr
 ;@----------------------------------------------------------------------------
 i_cwd:
-_99:	;@ CWTWL
+_99:	;@ CVTWL
 ;@----------------------------------------------------------------------------
 	ldr r1,[v30ptr,#v30ICount]
 	ldrsb r0,[v30ptr,#v30RegAH]
@@ -1269,10 +1296,13 @@ _9A:	;@ CALL FAR
 	ldmfd sp!,{r4-r7,pc}
 ;@----------------------------------------------------------------------------
 i_wait:
-_9B:	;@ WAIT
+_9B:	;@ WAIT/POLL, poll the "poll" pin?
 ;@----------------------------------------------------------------------------
+	ldrh r0,[v30ptr,#v30IP]
 	ldr r1,[v30ptr,#v30ICount]
+	sub r0,r0,#1
 	sub r1,r1,#1
+	strh r0,[v30ptr,#v30IP]
 	str r1,[v30ptr,#v30ICount]
 	bx lr
 
@@ -1333,6 +1363,90 @@ _A9:	;@ TEST AXD16
 
 	ldr r0,[v30ptr,#v30ICount]
 	sub r0,r0,#1
+	str r0,[v30ptr,#v30ICount]
+	ldmfd sp!,{pc}
+;@----------------------------------------------------------------------------
+i_stosb:
+_AA:	;@ STOSB
+;@----------------------------------------------------------------------------
+	stmfd sp!,{lr}
+	ldrh r1,[v30ptr,#v30RegIY]
+	ldrb r3,[v30ptr,#v30DF]
+	ldrh r0,[v30ptr,#v30SRegES]
+	cmp r3,#0
+	addeq r2,r1,#1
+	addne r2,r1,#1
+	add r0,r1,r0,lsl#4
+	strh r2,[v30ptr,#v30RegIY]
+	ldrb r1,[v30ptr,#v30RegAL]
+	bl cpu_writemem20
+
+	ldr r0,[v30ptr,#v30ICount]
+	sub r0,r0,#3
+	str r0,[v30ptr,#v30ICount]
+	ldmfd sp!,{pc}
+;@----------------------------------------------------------------------------
+i_stosw:
+_AB:	;@ STOSW
+;@----------------------------------------------------------------------------
+	stmfd sp!,{lr}
+	ldrh r1,[v30ptr,#v30RegIY]
+	ldrb r3,[v30ptr,#v30DF]
+	ldrh r0,[v30ptr,#v30SRegES]
+	cmp r3,#0
+	addeq r2,r1,#2
+	addne r2,r1,#2
+	add r0,r1,r0,lsl#4
+	strh r2,[v30ptr,#v30RegIY]
+	ldrh r1,[v30ptr,#v30RegAW]
+	bl cpu_writemem20w
+
+	ldr r0,[v30ptr,#v30ICount]
+	sub r0,r0,#3
+	str r0,[v30ptr,#v30ICount]
+	ldmfd sp!,{pc}
+;@----------------------------------------------------------------------------
+i_scasb:
+_AE:	;@ SCASB
+;@----------------------------------------------------------------------------
+	stmfd sp!,{lr}
+	ldrh r1,[v30ptr,#v30RegIY]
+	ldrb r3,[v30ptr,#v30DF]
+	ldrh r0,[v30ptr,#v30SRegES]
+	cmp r3,#0
+	addeq r2,r1,#1
+	addne r2,r1,#1
+	add r0,r1,r0,lsl#4
+	strh r2,[v30ptr,#v30RegIY]
+	bl cpu_readmem20
+	ldrb r1,[v30ptr,#v30RegAL]
+
+	sub8
+
+	ldr r0,[v30ptr,#v30ICount]
+	sub r0,r0,#4
+	str r0,[v30ptr,#v30ICount]
+	ldmfd sp!,{pc}
+;@----------------------------------------------------------------------------
+i_scasw:
+_AF:	;@ SCASW
+;@----------------------------------------------------------------------------
+	stmfd sp!,{lr}
+	ldrh r1,[v30ptr,#v30RegIY]
+	ldrb r3,[v30ptr,#v30DF]
+	ldrh r0,[v30ptr,#v30SRegES]
+	cmp r3,#0
+	addeq r2,r1,#2
+	addne r2,r1,#2
+	add r0,r1,r0,lsl#4
+	strh r2,[v30ptr,#v30RegIY]
+	bl cpu_readmem20w
+	ldrh r1,[v30ptr,#v30RegAW]
+
+	sub16
+
+	ldr r0,[v30ptr,#v30ICount]
+	sub r0,r0,#4
 	str r0,[v30ptr,#v30ICount]
 	ldmfd sp!,{pc}
 ;@----------------------------------------------------------------------------
@@ -1631,8 +1745,8 @@ _C3:	;@ RET
 	str r1,[v30ptr,#v30ICount]
 	ldmfd sp!,{pc}
 ;@----------------------------------------------------------------------------
-i_leave:
-_C9:	;@ LEAVE
+i_dispose:
+_C9:	;@ DISPOSE
 ;@----------------------------------------------------------------------------
 	stmfd sp!,{lr}
 	ldrh r1,[v30ptr,#v30RegBP]
@@ -2536,8 +2650,8 @@ V30OpTable:
 	.long i_lds_dw
 	.long i_mov_bd8
 	.long i_mov_wd16
-	.long i_enter
-	.long i_leave
+	.long i_prepare
+	.long i_dispose
 	.long i_retf_d16
 	.long i_retf
 	.long i_int3
