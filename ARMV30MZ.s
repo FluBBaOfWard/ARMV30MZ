@@ -28,6 +28,7 @@
 	.global V30RedirectOpcode
 
 	.global i_insb
+	.global i_insw
 	.global i_scasb
 	.global i_scasw
 	.global i_stosb
@@ -35,8 +36,6 @@
 
 	.global I
 	.global no_interrupt
-	.global prefix_base
-	.global seg_prefix
 	.global nec_instruction
 
 	.global V30OpTable
@@ -977,6 +976,31 @@ _6C:	;@ INSB
 	sub r0,r0,#6
 	str r0,[v30ptr,#v30ICount]
 	ldmfd sp!,{pc}
+;@----------------------------------------------------------------------------
+i_insw:
+_6D:	;@ INSW
+;@----------------------------------------------------------------------------
+	stmfd sp!,{r4,r5,lr}
+	ldrh r0,[v30ptr,#v30RegCW]
+	add r4,r0,#1
+	bl cpu_readport
+	mov r5,r0
+	mov r0,r4
+	bl cpu_readport
+	ldrb r1,[v30ptr,#v30DF]
+	ldrh r2,[v30ptr,#v30RegIY]
+	cmp r1,#0
+	orr r1,r5,r0,lsl#8
+	ldrh r0,[v30ptr,#v30SRegES]
+	addeq r3,r2,#2
+	addne r3,r2,#2
+	add r0,r2,r0,lsl#4
+	strh r3,[v30ptr,#v30RegIY]
+	bl cpu_writemem20w
+	ldr r0,[v30ptr,#v30ICount]
+	sub r0,r0,#6
+	str r0,[v30ptr,#v30ICount]
+	ldmfd sp!,{r4,r5,pc}
 
 ;@----------------------------------------------------------------------------
 i_jo:
@@ -2441,11 +2465,9 @@ defaultV30:
 	.space 16*4		;@ v30ReadTbl $00000-FFFFF
 	.space 16*4		;@ v30WriteTbl $00000-FFFFF
 v30StateStart:
-I:				.space 20*4
+I:				.space 22*4
 no_interrupt:	.long 0
-prefix_base:	.long 0
-seg_prefix:		.byte 0
-				.space 3
+
 v30StateEnd:
 
 nec_instruction:

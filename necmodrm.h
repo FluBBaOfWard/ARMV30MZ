@@ -1,36 +1,34 @@
 
 static struct {
 	struct {
-		WREGS w[256];
 		BREGS b[256];
 	} reg;
 	struct {
-		WREGS w[256];
 		BREGS b[256];
 	} RM;
 } Mod_RM __attribute__((section(".dtcm")));
 
-#define RegWord(ModRM) I.regs.w[Mod_RM.reg.w[ModRM]]
+//#define RegWord(ModRM) I.regs.w[((ModRM >> 3) & 0x7)]
+#define RegWord(ModRM) I.regs.w[((ModRM & 0x38) >> 3)]
 #define RegByte(ModRM) I.regs.b[Mod_RM.reg.b[ModRM]]
 
 #define GetRMWord(ModRM) 					\
-	((ModRM) >= 0xc0 ? I.regs.w[Mod_RM.RM.w[ModRM]] : ( (*GetEA[ModRM])(), ReadWord( EA ) ))
+	((ModRM) >= 0xc0 ? I.regs.w[(ModRM & 0x7)] : ReadWord( (*GetEA[ModRM])() ))
 
 #define PutbackRMWord(ModRM,val)			\
 { 							     			\
-	if (ModRM >= 0xc0) I.regs.w[Mod_RM.RM.w[ModRM]]=val; \
-    else WriteWord(EA,val);  				\
+	if (ModRM >= 0xc0) I.regs.w[(ModRM & 0x7)]=val; \
+    else WriteWord(I.EA, val); 				\
 }
 
-#define GetNextRMWord ReadWord((EA&0xf0000)|((EA+2)&0xffff))
+#define GetNextRMWord ReadWord((I.EA&0xf0000)|((I.EA+2)&0xffff))
 
 #define PutRMWord(ModRM,val)				\
 {											\
 	if (ModRM >= 0xc0)						\
-		I.regs.w[Mod_RM.RM.w[ModRM]]=val;	\
+		I.regs.w[(ModRM & 0x7)] = val;		\
 	else {									\
-		(*GetEA[ModRM])();					\
-		WriteWord( EA ,val);				\
+		WriteWord((*GetEA[ModRM])(), val);	\
 	}										\
 }
 
@@ -38,23 +36,23 @@ static struct {
 {											\
 	WORD val;								\
 	if (ModRM >= 0xc0)						\
-		FETCHWORD(I.regs.w[Mod_RM.RM.w[ModRM]]) \
+		FETCHWORD(I.regs.w[(ModRM & 0x7)])	\
 	else {									\
 		(*GetEA[ModRM])();					\
 		FETCHWORD(val)						\
-		WriteWord( EA , val);				\
+		WriteWord(I.EA, val);					\
 	}										\
 }
-	
+
 #define GetRMByte(ModRM)					\
 	((ModRM) >= 0xc0 ? I.regs.b[Mod_RM.RM.b[ModRM]] : ReadByte( (*GetEA[ModRM])() ))
 	
 #define PutRMByte(ModRM,val)				\
 {											\
 	if (ModRM >= 0xc0)						\
-		I.regs.b[Mod_RM.RM.b[ModRM]]=val;	\
+		I.regs.b[Mod_RM.RM.b[ModRM]] = val;	\
 	else									\
-		WriteByte( (*GetEA[ModRM])() ,val);	\
+		WriteByte((*GetEA[ModRM])(), val);	\
 }
 
 #define PutImmRMByte(ModRM) 				\
@@ -63,16 +61,16 @@ static struct {
 		I.regs.b[Mod_RM.RM.b[ModRM]]=FETCH;	\
 	else {									\
 		(*GetEA[ModRM])();					\
-		WriteByte( EA , FETCH );			\
+		WriteByte(I.EA, FETCH);				\
 	}										\
 }
 
 #define PutbackRMByte(ModRM,val)			\
 {											\
 	if (ModRM >= 0xc0)						\
-		I.regs.b[Mod_RM.RM.b[ModRM]]=val;	\
+		I.regs.b[Mod_RM.RM.b[ModRM]] = val;	\
 	else									\
-		WriteByte(EA,val);					\
+		WriteByte(I.EA, val);				\
 }
 
 #define DEF_br8							\

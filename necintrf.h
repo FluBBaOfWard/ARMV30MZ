@@ -8,10 +8,6 @@ enum {
 
 /* Public variables */
 extern int no_interrupt;
-/** Base address of the latest prefix segment */
-extern UINT32 prefix_base;
-/** Prefix segment indicator */
-extern u8 seg_prefix;
 
 extern void (*nec_instruction[256])(void);
 extern UINT8 PZSTable[256];

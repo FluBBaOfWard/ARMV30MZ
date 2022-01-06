@@ -58,23 +58,23 @@ v30OverVal:			.long 0
 v30ZeroVal:			.long 0
 v30CarryVal:		.long 0
 v30ParityVal:		.long 0
+v30EA:				.long 0
 v30IntVector:		.long 0
 v30PendingIrq:		.long 0
 v30NmiState:		.long 0
 v30IrqState:		.long 0
 v30IrqCallback:		.long 0
+v30PrefixBase:		.long 0
 v30IP:				.short 0
 v30TF:				.byte 0
 v30IF:				.byte 0
 v30DF:				.byte 0
 v30MF:				.byte 0
-					.space 2
+v30SegPrefix:		.byte 0
+					.space 1
 ;@--------------------------------
 
 v30NoInterrupt:		.long 0
-v30PrefixBase:		.long 0
-v30SegPrefix:		.byte 0
-					.space 3
 v30Opz:				.space 256*4
 v30PZST:			.space 256
 v30Size:

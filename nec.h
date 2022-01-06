@@ -73,7 +73,7 @@ typedef enum { AL,AH,CL,CH,DL,DH,BL,BH,SPL,SPH,BPL,BPH,IXL,IXH,IYL,IYH } BREGS;
 
 #define SegBase(Seg) (I.sregs[Seg] << 4)
 
-#define DefaultBase(Seg) ((seg_prefix && (Seg==DS || Seg==SS)) ? prefix_base : I.sregs[Seg] << 4)
+#define DefaultBase(Seg) ((I.seg_prefix && (Seg==DS || Seg==SS)) ? I.prefix_base : I.sregs[Seg] << 4)
 
 #define GetMemB(Seg,Off) ((UINT8)ReadByte((DefaultBase(Seg)+(Off))))
 #define GetMemW(Seg,Off) ((UINT16)ReadWord((DefaultBase(Seg)+(Off))))
@@ -207,7 +207,7 @@ typedef enum { AL,AH,CL,CH,DL,DH,BL,BH,SPL,SPH,BPL,BPH,IXL,IXH,IYL,IYH } BREGS;
 	uresult = I.regs.w[AW];									\
 	uresult2 = uresult % tmp;								\
 	if ((uresult /= tmp) > 0xff) {							\
-		nec_interrupt(0,0); break;							\
+		nec_interrupt(0); break;							\
 	} else {												\
 		I.regs.b[AL] = uresult;								\
 		I.regs.b[AH] = uresult2;							\
@@ -217,7 +217,7 @@ typedef enum { AL,AH,CL,CH,DL,DH,BL,BH,SPL,SPH,BPL,BPH,IXL,IXH,IYL,IYH } BREGS;
 	result = (INT16)I.regs.w[AW];							\
 	result2 = result % (INT16)((INT8)tmp);					\
 	if ((result /= (INT16)((INT8)tmp)) > 0xff) {			\
-		nec_interrupt(0,0); break;							\
+		nec_interrupt(0); break;							\
 	} else {												\
 		I.regs.b[AL] = result;								\
 		I.regs.b[AH] = result2;								\
@@ -227,7 +227,7 @@ typedef enum { AL,AH,CL,CH,DL,DH,BL,BH,SPL,SPH,BPL,BPH,IXL,IXH,IYL,IYH } BREGS;
 	uresult = (((UINT32)I.regs.w[DW]) << 16) | I.regs.w[AW];\
 	uresult2 = uresult % tmp;								\
 	if ((uresult /= tmp) > 0xffff) {						\
-		nec_interrupt(0,0); break;							\
+		nec_interrupt(0); break;							\
 	} else {												\
 		I.regs.w[AW]=uresult;								\
 		I.regs.w[DW]=uresult2;								\
@@ -237,7 +237,7 @@ typedef enum { AL,AH,CL,CH,DL,DH,BL,BH,SPL,SPH,BPL,BPH,IXL,IXH,IYL,IYH } BREGS;
 	result = ((UINT32)I.regs.w[DW] << 16) + I.regs.w[AW];	\
 	result2 = result % (INT32)((INT16)tmp);					\
 	if ((result /= (INT32)((INT16)tmp)) > 0xffff) {			\
-		nec_interrupt(0,0); break;							\
+		nec_interrupt(0); break;							\
 	} else {												\
 		I.regs.w[AW]=result;								\
 		I.regs.w[DW]=result2;								\
