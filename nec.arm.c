@@ -213,8 +213,8 @@ OP( 0x22, i_and_r8b  ) { DEF_r8b;   ANDB; RegByte(ModRM)=dst;		CLKM(2,1); }
 OP( 0x23, i_and_r16w ) { DEF_r16w;  ANDW; RegWord(ModRM)=dst;		CLKM(2,1); }
 //OP( 0x24, i_and_ald8 ) { DEF_ald8;  ANDB; I.regs.b[AL]=dst;			CLK(1); }
 //OP( 0x25, i_and_axd16) { DEF_axd16; ANDW; I.regs.w[AW]=dst;			CLK(1); }
-OP( 0x26, i_es       ) { I.seg_prefix=TRUE; I.prefix_base=I.sregs[ES]<<4; CLK(1); nec_instruction[FETCHOP](); I.seg_prefix=FALSE; }
-OP( 0x27, i_daa      ) { ADJ4(6,0x60);								CLK(10); }
+//OP( 0x26, i_es       ) { I.seg_prefix=TRUE; I.prefix_base=I.sregs[ES]<<4; CLK(1); nec_instruction[FETCHOP](); I.seg_prefix=FALSE; }
+//OP( 0x27, i_daa      ) { ADJ4(6,0x60);								CLK(10); }
 
 OP( 0x28, i_sub_br8  ) { DEF_br8;   SUBB; PutbackRMByte(ModRM,dst); CLKM(3,1); }
 OP( 0x29, i_sub_wr16 ) { DEF_wr16;  SUBW; PutbackRMWord(ModRM,dst); CLKM(3,1); }
@@ -222,8 +222,8 @@ OP( 0x2a, i_sub_r8b  ) { DEF_r8b;   SUBB; RegByte(ModRM)=dst;		CLKM(2,1); }
 OP( 0x2b, i_sub_r16w ) { DEF_r16w;  SUBW; RegWord(ModRM)=dst;		CLKM(2,1); }
 //OP( 0x2c, i_sub_ald8 ) { DEF_ald8;  SUBB; I.regs.b[AL]=dst;			CLK(1); }
 //OP( 0x2d, i_sub_axd16) { DEF_axd16; SUBW; I.regs.w[AW]=dst;			CLK(1); }
-OP( 0x2e, i_cs       ) { I.seg_prefix=TRUE; I.prefix_base=I.sregs[CS]<<4; CLK(1); nec_instruction[FETCHOP](); I.seg_prefix=FALSE; }
-OP( 0x2f, i_das      ) { ADJ4(-6,-0x60);							CLK(10); }
+//OP( 0x2e, i_cs       ) { I.seg_prefix=TRUE; I.prefix_base=I.sregs[CS]<<4; CLK(1); nec_instruction[FETCHOP](); I.seg_prefix=FALSE; }
+//OP( 0x2f, i_das      ) { ADJ4(-6,-0x60);							CLK(10); }
 
 OP( 0x30, i_xor_br8  ) { DEF_br8;   XORB; PutbackRMByte(ModRM,dst); CLKM(3,1); }
 OP( 0x31, i_xor_wr16 ) { DEF_wr16;  XORW; PutbackRMWord(ModRM,dst); CLKM(3,1); }
@@ -231,8 +231,8 @@ OP( 0x32, i_xor_r8b  ) { DEF_r8b;   XORB; RegByte(ModRM)=dst;		CLKM(2,1); }
 OP( 0x33, i_xor_r16w ) { DEF_r16w;  XORW; RegWord(ModRM)=dst;		CLKM(2,1); }
 //OP( 0x34, i_xor_ald8 ) { DEF_ald8;  XORB; I.regs.b[AL]=dst;			CLK(1); }
 //OP( 0x35, i_xor_axd16) { DEF_axd16; XORW; I.regs.w[AW]=dst;			CLK(1); }
-OP( 0x36, i_ss       ) { I.seg_prefix=TRUE; I.prefix_base=I.sregs[SS]<<4; CLK(1); nec_instruction[FETCHOP](); I.seg_prefix=FALSE; }
-OP( 0x37, i_aaa      ) { ADJB(6,1);									CLK(9); }
+//OP( 0x36, i_ss       ) { I.seg_prefix=TRUE; I.prefix_base=I.sregs[SS]<<4; CLK(1); nec_instruction[FETCHOP](); I.seg_prefix=FALSE; }
+//OP( 0x37, i_aaa      ) { ADJB(6,1);									CLK(9); }
 
 OP( 0x38, i_cmp_br8  ) { DEF_br8;   SUBB;					CLKM(2,1); }
 OP( 0x39, i_cmp_wr16 ) { DEF_wr16;  SUBW;					CLKM(2,1); }
@@ -240,8 +240,8 @@ OP( 0x3a, i_cmp_r8b  ) { DEF_r8b;   SUBB;					CLKM(2,1); }
 OP( 0x3b, i_cmp_r16w ) { DEF_r16w;  SUBW;					CLKM(2,1); }
 //OP( 0x3c, i_cmp_ald8 ) { DEF_ald8;  SUBB;					CLK(1); }
 //OP( 0x3d, i_cmp_axd16) { DEF_axd16; SUBW;					CLK(1); }
-OP( 0x3e, i_ds       ) { I.seg_prefix=TRUE; I.prefix_base=I.sregs[DS]<<4; CLK(1); nec_instruction[FETCHOP](); I.seg_prefix=FALSE; }
-OP( 0x3f, i_aas      ) { ADJB(-6,-1);						CLK(9); }
+//OP( 0x3e, i_ds       ) { I.seg_prefix=TRUE; I.prefix_base=I.sregs[DS]<<4; CLK(1); nec_instruction[FETCHOP](); I.seg_prefix=FALSE; }
+//OP( 0x3f, i_aas      ) { ADJB(-6,-1);						CLK(9); }
 
 //OP( 0x40, i_inc_ax ) { IncWordReg(AW);						CLK(1); }
 //OP( 0x41, i_inc_cx ) { IncWordReg(CW);						CLK(1); }
