@@ -968,7 +968,7 @@ _6C:	;@ INSB
 	mov r1,r0
 	ldrh r0,[v30ptr,#v30SRegES]
 	addeq r3,r2,#1
-	addne r3,r2,#1
+	subne r3,r2,#1
 	add r0,r2,r0,lsl#4
 	strh r3,[v30ptr,#v30RegIY]
 	bl cpu_writemem20
@@ -993,7 +993,7 @@ _6D:	;@ INSW
 	orr r1,r5,r0,lsl#8
 	ldrh r0,[v30ptr,#v30SRegES]
 	addeq r3,r2,#2
-	addne r3,r2,#2
+	subne r3,r2,#2
 	add r0,r2,r0,lsl#4
 	strh r3,[v30ptr,#v30RegIY]
 	bl cpu_writemem20w
@@ -1399,7 +1399,7 @@ _AA:	;@ STOSB
 	ldrh r0,[v30ptr,#v30SRegES]
 	cmp r3,#0
 	addeq r2,r1,#1
-	addne r2,r1,#1
+	subne r2,r1,#1
 	add r0,r1,r0,lsl#4
 	strh r2,[v30ptr,#v30RegIY]
 	ldrb r1,[v30ptr,#v30RegAL]
@@ -1419,7 +1419,7 @@ _AB:	;@ STOSW
 	ldrh r0,[v30ptr,#v30SRegES]
 	cmp r3,#0
 	addeq r2,r1,#2
-	addne r2,r1,#2
+	subne r2,r1,#2
 	add r0,r1,r0,lsl#4
 	strh r2,[v30ptr,#v30RegIY]
 	ldrh r1,[v30ptr,#v30RegAW]
@@ -1439,7 +1439,7 @@ _AE:	;@ SCASB
 	ldrh r0,[v30ptr,#v30SRegES]
 	cmp r3,#0
 	addeq r2,r1,#1
-	addne r2,r1,#1
+	subne r2,r1,#1
 	add r0,r1,r0,lsl#4
 	strh r2,[v30ptr,#v30RegIY]
 	bl cpu_readmem20
@@ -1461,7 +1461,7 @@ _AF:	;@ SCASW
 	ldrh r0,[v30ptr,#v30SRegES]
 	cmp r3,#0
 	addeq r2,r1,#2
-	addne r2,r1,#2
+	subne r2,r1,#2
 	add r0,r1,r0,lsl#4
 	strh r2,[v30ptr,#v30RegIY]
 	bl cpu_readmem20w
