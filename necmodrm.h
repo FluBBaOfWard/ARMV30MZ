@@ -15,21 +15,22 @@ static struct {
 #define GetRMWord(ModRM) 					\
 	((ModRM) >= 0xc0 ? I.regs.w[(ModRM & 0x7)] : ReadWord( (*GetEA[ModRM])() ))
 
-#define PutbackRMWord(ModRM,val)			\
-{ 							     			\
-	if (ModRM >= 0xc0) I.regs.w[(ModRM & 0x7)]=val; \
-    else WriteWord(I.EA, val); 				\
-}
-
 #define GetNextRMWord ReadWord((I.EA&0xf0000)|((I.EA+2)&0xffff))
 
 #define PutRMWord(ModRM,val)				\
 {											\
 	if (ModRM >= 0xc0)						\
 		I.regs.w[(ModRM & 0x7)] = val;		\
-	else {									\
+	else									\
 		WriteWord((*GetEA[ModRM])(), val);	\
-	}										\
+}
+
+#define PutbackRMWord(ModRM,val)			\
+{ 							     			\
+	if (ModRM >= 0xc0)						\
+		I.regs.w[(ModRM & 0x7)] = val;		\
+	else									\
+		WriteWord(I.EA, val); 				\
 }
 
 #define PutImmRMWord(ModRM) 				\
@@ -40,7 +41,7 @@ static struct {
 	else {									\
 		(*GetEA[ModRM])();					\
 		FETCHWORD(val)						\
-		WriteWord(I.EA, val);					\
+		WriteWord(I.EA, val);				\
 	}										\
 }
 
@@ -55,6 +56,14 @@ static struct {
 		WriteByte((*GetEA[ModRM])(), val);	\
 }
 
+#define PutbackRMByte(ModRM,val)			\
+{											\
+	if (ModRM >= 0xc0)						\
+		I.regs.b[Mod_RM.RM.b[ModRM]] = val;	\
+	else									\
+		WriteByte(I.EA, val);				\
+}
+
 #define PutImmRMByte(ModRM) 				\
 {											\
 	if (ModRM >= 0xc0)						\
@@ -63,14 +72,6 @@ static struct {
 		(*GetEA[ModRM])();					\
 		WriteByte(I.EA, FETCH);				\
 	}										\
-}
-
-#define PutbackRMByte(ModRM,val)			\
-{											\
-	if (ModRM >= 0xc0)						\
-		I.regs.b[Mod_RM.RM.b[ModRM]] = val;	\
-	else									\
-		WriteByte(I.EA, val);				\
 }
 
 #define DEF_br8							\

@@ -326,7 +326,7 @@ OP( 0x6b, i_imul_d8  ) { UINT32 src2; DEF_r16w; src2= (WORD)((INT16)((INT8)FETCH
 //OP( 0x6c, i_insb     ) { PutMemB(ES,I.regs.w[IY],read_port(I.regs.w[DW])); I.regs.w[IY]+= -2 * I.DF + 1; CLK(6); }
 //OP( 0x6d, i_insw     ) { PutMemB(ES,I.regs.w[IY],read_port(I.regs.w[DW])); PutMemB(ES,(I.regs.w[IY]+1)&0xffff,read_port((I.regs.w[DW]+1)&0xffff)); I.regs.w[IY]+= -4 * I.DF + 2; CLK(6); }
 OP( 0x6e, i_outsb    ) { write_port(I.regs.w[DW],GetMemB(DS,I.regs.w[IX])); I.regs.w[IX]+= -2 * I.DF + 1; CLK(7); }
-OP( 0x6f, i_outsw    ) { write_port(I.regs.w[DW],GetMemB(DS,I.regs.w[IX])); write_port((I.regs.w[DW]+1)&0xffff,GetMemB(DS,(I.regs.w[IX]+1)&0xffff)); I.regs.w[IX]+= -4 * I.DF + 2; CLK(7); }
+OP( 0x6f, i_outsw    ) { UINT16 tmp = GetMemW(DS,I.regs.w[IX]); write_port(I.regs.w[DW],tmp); write_port((I.regs.w[DW]+1),tmp>>8); I.regs.w[IX]+= -4 * I.DF + 2; CLK(7); }
 
 //ITCM_CODE OP( 0x70, i_jo   ) { JMP( OF); }
 //ITCM_CODE OP( 0x71, i_jno  ) { JMP(!OF); }
@@ -409,19 +409,19 @@ OP( 0x87, i_xchg_wr16 ) { DEF_wr16; RegWord(ModRM)=dst; PutbackRMWord(ModRM,src)
 OP( 0x88, i_mov_br8   ) { UINT8  src; GetModRM; src = RegByte(ModRM);   PutRMByte(ModRM,src); CLKM(1,1); }
 OP( 0x89, i_mov_wr16  ) { UINT16 src; GetModRM; src = RegWord(ModRM);   PutRMWord(ModRM,src); CLKM(1,1); }
 OP( 0x8a, i_mov_r8b   ) { UINT8  src; GetModRM; src = GetRMByte(ModRM); RegByte(ModRM)=src;   CLKM(1,1); }
-OP( 0x8b, i_mov_r16w  ) { UINT16 src; GetModRM; src = GetRMWord(ModRM); RegWord(ModRM)=src;   CLKM(1,1); }
-OP( 0x8c, i_mov_wsreg ) { GetModRM; PutRMWord(ModRM,I.sregs[(ModRM & 0x38) >> 3]);            CLKM(1,1); }
-OP( 0x8d, i_lea       ) { GetModRM; (void)(*GetEA[ModRM])(); RegWord(ModRM)=I.EO;   CLK(1); }
-OP( 0x8e, i_mov_sregw ) { UINT16 src; GetModRM; src = GetRMWord(ModRM); CLKM(3,2);
-	switch (ModRM & 0x38) {
-		case 0x00: I.sregs[ES] = src; break; // mov es,ew
-		case 0x08: I.sregs[CS] = src; break; // mov cs,ew
-		case 0x10: I.sregs[SS] = src; break; // mov ss,ew
-		case 0x18: I.sregs[DS] = src; break; // mov ds,ew
-		default: ;
-	}
-	no_interrupt=1;
-}
+//OP( 0x8b, i_mov_r16w  ) { UINT16 src; GetModRM; src = GetRMWord(ModRM); RegWord(ModRM)=src;   CLKM(1,1); }
+//OP( 0x8c, i_mov_wsreg ) { GetModRM; PutRMWord(ModRM,I.sregs[(ModRM & 0x38) >> 3]);            CLKM(1,1); }
+//OP( 0x8d, i_lea       ) { GetModRM; (void)(*GetEA[ModRM])(); RegWord(ModRM)=I.EO;   CLK(1); }
+//OP( 0x8e, i_mov_sregw ) { UINT16 src; GetModRM; src = GetRMWord(ModRM); CLKM(3,2);
+//	switch (ModRM & 0x38) {
+//		case 0x00: I.sregs[ES] = src; break; // mov es,ew
+//		case 0x08: I.sregs[CS] = src; break; // mov cs,ew
+//		case 0x10: I.sregs[SS] = src; break; // mov ss,ew
+//		case 0x18: I.sregs[DS] = src; break; // mov ds,ew
+//		default: ;
+//	}
+//	no_interrupt=1;
+//}
 OP( 0x8f, i_popw ) { UINT16 tmp; GetModRM; POP(tmp); PutRMWord(ModRM,tmp); CLKM(3,1); }
 OP( 0x90, i_nop  ) { CLK(1);
 	// Cycle skip for idle loops (0: NOP  1:  JMP 0)
@@ -439,7 +439,7 @@ OP( 0x90, i_nop  ) { CLK(1);
 //OP( 0x98, i_cbw       ) { I.regs.b[AH] = (I.regs.b[AL] & 0x80) ? 0xff : 0; CLK(1); }
 //OP( 0x99, i_cwd       ) { I.regs.w[DW] = (I.regs.b[AH] & 0x80) ? 0xffff : 0; CLK(1); }
 //OP( 0x9a, i_call_far  ) { UINT32 tmp, tmp2; FETCHWORD(tmp); FETCHWORD(tmp2); PUSH(I.sregs[CS]); PUSH(I.ip); I.ip = (WORD)tmp; I.sregs[CS] = (WORD)tmp2; CLK(10); }
-//OP( 0x9b, i_wait      ) { CLK(1); } // poll
+//OP( 0x9b, i_poll      ) { CLK(1); }
 OP( 0x9c, i_pushf     ) { PUSH( CompressFlags() ); CLK(2); }
 OP( 0x9d, i_popf      ) { UINT32 tmp; POP(tmp); ExpandFlags(tmp); CLK(3); }
 OP( 0x9e, i_sahf      ) { UINT32 tmp = (CompressFlags() & 0xff00) | (I.regs.b[AH] & 0xd5); ExpandFlags(tmp); CLK(4); }
