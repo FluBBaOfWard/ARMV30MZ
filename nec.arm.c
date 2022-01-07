@@ -67,6 +67,7 @@ typedef struct
 	/** Base address of the latest prefix segment */
 	UINT32 prefix_base;
 	UINT16 ip;
+	UINT16 EO;
 	UINT8  TF, IF, DF, MF; 	/* 0 or 1 valued flags */	/* OB[19.07.99] added Mode Flag V30 */
 	UINT8 seg_prefix;
 
@@ -410,7 +411,7 @@ OP( 0x89, i_mov_wr16  ) { UINT16 src; GetModRM; src = RegWord(ModRM);   PutRMWor
 OP( 0x8a, i_mov_r8b   ) { UINT8  src; GetModRM; src = GetRMByte(ModRM); RegByte(ModRM)=src;   CLKM(1,1); }
 OP( 0x8b, i_mov_r16w  ) { UINT16 src; GetModRM; src = GetRMWord(ModRM); RegWord(ModRM)=src;   CLKM(1,1); }
 OP( 0x8c, i_mov_wsreg ) { GetModRM; PutRMWord(ModRM,I.sregs[(ModRM & 0x38) >> 3]);            CLKM(1,1); }
-OP( 0x8d, i_lea       ) { GetModRM; (void)(*GetEA[ModRM])(); RegWord(ModRM)=EO;   CLK(1); }
+OP( 0x8d, i_lea       ) { GetModRM; (void)(*GetEA[ModRM])(); RegWord(ModRM)=I.EO;   CLK(1); }
 OP( 0x8e, i_mov_sregw ) { UINT16 src; GetModRM; src = GetRMWord(ModRM); CLKM(3,2);
 	switch (ModRM & 0x38) {
 		case 0x00: I.sregs[ES] = src; break; // mov es,ew

@@ -12,7 +12,7 @@
 	v30xy		.req lr			;@ Pointer to IX or IY reg
 	addy		.req r12		;@ Keep this at r12 (scratch for APCS)
 
-	.struct -(71*4)			;@ Changes section so make sure it's set before real code.
+	.struct -(72*4)			;@ Changes section so make sure it's set before real code.
 v30MemTbl:			.space 16*4
 v30ReadTbl:			.space 16*4
 v30WriteTbl:		.space 16*4
@@ -66,17 +66,19 @@ v30IrqState:		.long 0
 v30IrqCallback:		.long 0
 v30PrefixBase:		.long 0
 v30IP:				.short 0
+v30EO:				.short 0
 v30TF:				.byte 0
 v30IF:				.byte 0
 v30DF:				.byte 0
 v30MF:				.byte 0
 v30SegPrefix:		.byte 0
-					.space 1
+					.space 3
 ;@--------------------------------
 
 v30NoInterrupt:		.long 0
 v30Opz:				.space 256*4
 v30PZST:			.space 256
+v30EATable:			.space 192*4
 v30Size:
 
 ;@----------------------------------------------------------------------------

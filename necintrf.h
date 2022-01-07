@@ -10,6 +10,7 @@ enum {
 extern int no_interrupt;
 
 extern void (*nec_instruction[256])(void);
+extern unsigned (*GetEA[192])(void);
 extern UINT8 PZSTable[256];
 
 

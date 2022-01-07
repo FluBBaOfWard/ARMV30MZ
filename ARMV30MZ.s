@@ -37,6 +37,7 @@
 	.global I
 	.global no_interrupt
 	.global nec_instruction
+	.global GetEA
 
 	.global V30OpTable
 	.global PZSTable
@@ -1432,10 +1433,10 @@ _94:	;@ XCHG AXSP
 ;@----------------------------------------------------------------------------
 	ldr r1,[v30ptr,#v30ICount]
 	ldrh r0,[v30ptr,#v30RegAW]
-	ldrh r2,[v30ptr,#v30RegBW]
+	ldrh r2,[v30ptr,#v30RegSP]
 	sub r1,r1,#3
 	str r1,[v30ptr,#v30ICount]
-	strh r0,[v30ptr,#v30RegBW]
+	strh r0,[v30ptr,#v30RegSP]
 	strh r2,[v30ptr,#v30RegAW]
 	bx lr
 ;@----------------------------------------------------------------------------
@@ -2464,68 +2465,584 @@ _F5:	;@ CMC
 i_clc:
 _F8:	;@ CLC
 ;@----------------------------------------------------------------------------
-	stmfd sp!,{lr}
 	ldr r1,[v30ptr,#v30ICount]
 	mov r0,#0
 	str r0,[v30ptr,#v30CarryVal]
 	sub r1,r1,#4
 	str r1,[v30ptr,#v30ICount]
-	ldmfd sp!,{pc}
+	bx lr
 ;@----------------------------------------------------------------------------
 i_stc:
 _F9:	;@ STC
 ;@----------------------------------------------------------------------------
-	stmfd sp!,{lr}
 	ldr r1,[v30ptr,#v30ICount]
 	mov r0,#1
 	str r0,[v30ptr,#v30CarryVal]
 	sub r1,r1,#4
 	str r1,[v30ptr,#v30ICount]
-	ldmfd sp!,{pc}
+	bx lr
 ;@----------------------------------------------------------------------------
 i_di:
 _FA:	;@ DI
 ;@----------------------------------------------------------------------------
-	stmfd sp!,{lr}
 	ldr r1,[v30ptr,#v30ICount]
 	mov r0,#0
 	strb r0,[v30ptr,#v30IF]
 	sub r1,r1,#4
 	str r1,[v30ptr,#v30ICount]
-	ldmfd sp!,{pc}
+	bx lr
 ;@----------------------------------------------------------------------------
 i_ei:
 _FB:	;@ EI
 ;@----------------------------------------------------------------------------
-	stmfd sp!,{lr}
 	ldr r1,[v30ptr,#v30ICount]
 	mov r0,#1
 	strb r0,[v30ptr,#v30IF]
 	sub r1,r1,#4
 	str r1,[v30ptr,#v30ICount]
-	ldmfd sp!,{pc}
+	bx lr
 ;@----------------------------------------------------------------------------
 i_cld:
 _FC:	;@ CLD
 ;@----------------------------------------------------------------------------
-	stmfd sp!,{lr}
 	ldr r1,[v30ptr,#v30ICount]
 	mov r0,#0
 	strb r0,[v30ptr,#v30DF]
 	sub r1,r1,#4
 	str r1,[v30ptr,#v30ICount]
-	ldmfd sp!,{pc}
+	bx lr
 ;@----------------------------------------------------------------------------
 i_std:
 _FD:	;@ STD
 ;@----------------------------------------------------------------------------
-	stmfd sp!,{lr}
 	ldr r1,[v30ptr,#v30ICount]
 	mov r0,#1
 	strb r0,[v30ptr,#v30DF]
 	sub r1,r1,#4
 	str r1,[v30ptr,#v30ICount]
+	bx lr
+
+
+;@----------------------------------------------------------------------------
+EA_000:	;@
+;@----------------------------------------------------------------------------
+	ldrb r2,[v30ptr,#v30SegPrefix]
+	ldrh r1,[v30ptr,#v30RegBW]
+	ldrh r3,[v30ptr,#v30RegIX]
+	cmp r2,#0
+	ldrheq r0,[v30ptr,#v30SRegDS]
+	ldrne r0,[v30ptr,#v30PrefixBase]
+	add r3,r3,r1
+	mov r3,r3,lsl#16
+	mov r3,r3,lsr#16
+	moveq r0,r0,lsl#4
+	add r0,r0,r3
+	strh r3,[v30ptr,#v30EO]
+	str r0,[v30ptr,#v30EA]
+	bx lr
+;@----------------------------------------------------------------------------
+EA_001:	;@
+;@----------------------------------------------------------------------------
+	ldrb r2,[v30ptr,#v30SegPrefix]
+	ldrh r1,[v30ptr,#v30RegBW]
+	ldrh r3,[v30ptr,#v30RegIY]
+	cmp r2,#0
+	ldrheq r0,[v30ptr,#v30SRegDS]
+	ldrne r0,[v30ptr,#v30PrefixBase]
+	add r3,r3,r1
+	mov r3,r3,lsl#16
+	mov r3,r3,lsr#16
+	moveq r0,r0,lsl#4
+	add r0,r0,r3
+	strh r3,[v30ptr,#v30EO]
+	str r0,[v30ptr,#v30EA]
+	bx lr
+;@----------------------------------------------------------------------------
+EA_002:	;@
+;@----------------------------------------------------------------------------
+	ldrb r2,[v30ptr,#v30SegPrefix]
+	ldrh r1,[v30ptr,#v30RegBP]
+	ldrh r3,[v30ptr,#v30RegIX]
+	cmp r2,#0
+	ldrheq r0,[v30ptr,#v30SRegSS]
+	ldrne r0,[v30ptr,#v30PrefixBase]
+	add r3,r3,r1
+	mov r3,r3,lsl#16
+	mov r3,r3,lsr#16
+	moveq r0,r0,lsl#4
+	add r0,r0,r3
+	strh r3,[v30ptr,#v30EO]
+	str r0,[v30ptr,#v30EA]
+	bx lr
+;@----------------------------------------------------------------------------
+EA_003:	;@
+;@----------------------------------------------------------------------------
+	ldrb r2,[v30ptr,#v30SegPrefix]
+	ldrh r1,[v30ptr,#v30RegBP]
+	ldrh r3,[v30ptr,#v30RegIY]
+	cmp r2,#0
+	ldrheq r0,[v30ptr,#v30SRegSS]
+	ldrne r0,[v30ptr,#v30PrefixBase]
+	add r3,r3,r1
+	mov r3,r3,lsl#16
+	mov r3,r3,lsr#16
+	moveq r0,r0,lsl#4
+	add r0,r0,r3
+	strh r3,[v30ptr,#v30EO]
+	str r0,[v30ptr,#v30EA]
+	bx lr
+;@----------------------------------------------------------------------------
+EA_004:	;@
+;@----------------------------------------------------------------------------
+	ldrb r1,[v30ptr,#v30SegPrefix]
+	ldrh r2,[v30ptr,#v30RegIX]
+	cmp r1,#0
+	ldrheq r0,[v30ptr,#v30SRegDS]
+	ldrne r0,[v30ptr,#v30PrefixBase]
+	moveq r0,r0,lsl#4
+	add r0,r0,r2
+	strh r2,[v30ptr,#v30EO]
+	str r0,[v30ptr,#v30EA]
+	bx lr
+;@----------------------------------------------------------------------------
+EA_005:	;@
+;@----------------------------------------------------------------------------
+	ldrb r1,[v30ptr,#v30SegPrefix]
+	ldrh r2,[v30ptr,#v30RegIY]
+	cmp r1,#0
+	ldrheq r0,[v30ptr,#v30SRegDS]
+	ldrne r0,[v30ptr,#v30PrefixBase]
+	moveq r0,r0,lsl#4
+	add r0,r0,r2
+	strh r2,[v30ptr,#v30EO]
+	str r0,[v30ptr,#v30EA]
+	bx lr
+;@----------------------------------------------------------------------------
+EA_006:	;@
+;@----------------------------------------------------------------------------
+	stmfd sp!,{lr}
+	ldrh r1,[v30ptr,#v30IP]
+	ldrh r0,[v30ptr,#v30SRegCS]
+	add r2,r1,#2
+	add r0,r1,r0,lsl#4
+	strh r2,[v30ptr,#v30IP]
+	bl cpu_readmem20w
+	ldrb r1,[v30ptr,#v30SegPrefix]
+	mov r2,r0
+	cmp r1,#0
+	ldrheq r0,[v30ptr,#v30SRegDS]
+	ldrne r0,[v30ptr,#v30PrefixBase]
+	moveq r0,r0,lsl#4
+	add r0,r0,r2
+	strh r2,[v30ptr,#v30EO]
+	str r0,[v30ptr,#v30EA]
 	ldmfd sp!,{pc}
+;@----------------------------------------------------------------------------
+EA_007:	;@
+;@----------------------------------------------------------------------------
+	ldrb r1,[v30ptr,#v30SegPrefix]
+	ldrh r2,[v30ptr,#v30RegBW]
+	cmp r1,#0
+	ldrheq r0,[v30ptr,#v30SRegDS]
+	ldrne r0,[v30ptr,#v30PrefixBase]
+	moveq r0,r0,lsl#4
+	add r0,r0,r2
+	strh r2,[v30ptr,#v30EO]
+	str r0,[v30ptr,#v30EA]
+	bx lr
+;@----------------------------------------------------------------------------
+EA_100:	;@
+;@----------------------------------------------------------------------------
+	stmfd sp!,{lr}
+	ldrh r1,[v30ptr,#v30IP]
+	ldrh r0,[v30ptr,#v30SRegCS]
+	add r2,r1,#1
+	add r0,r1,r0,lsl#4
+	strh r2,[v30ptr,#v30IP]
+	bl cpu_readmem20
+	ldrb r2,[v30ptr,#v30SegPrefix]
+	ldrh r1,[v30ptr,#v30RegBW]
+	ldrh r3,[v30ptr,#v30RegIX]
+	cmp r2,#0
+	ldrheq r2,[v30ptr,#v30SRegDS]
+	ldrne r2,[v30ptr,#v30PrefixBase]
+	mov r0,r0,lsl#24
+	add r3,r3,r1
+	add r3,r3,r0,asr#24
+	mov r3,r3,lsl#16
+	mov r3,r3,lsr#16
+	moveq r2,r2,lsl#4
+	add r0,r2,r3
+	strh r3,[v30ptr,#v30EO]
+	str r0,[v30ptr,#v30EA]
+	ldmfd sp!,{pc}
+;@----------------------------------------------------------------------------
+EA_101:	;@
+;@----------------------------------------------------------------------------
+	stmfd sp!,{lr}
+	ldrh r1,[v30ptr,#v30IP]
+	ldrh r0,[v30ptr,#v30SRegCS]
+	add r2,r1,#1
+	add r0,r1,r0,lsl#4
+	strh r2,[v30ptr,#v30IP]
+	bl cpu_readmem20
+	ldrb r2,[v30ptr,#v30SegPrefix]
+	ldrh r1,[v30ptr,#v30RegBW]
+	ldrh r3,[v30ptr,#v30RegIY]
+	cmp r2,#0
+	ldrheq r2,[v30ptr,#v30SRegDS]
+	ldrne r2,[v30ptr,#v30PrefixBase]
+	mov r0,r0,lsl#24
+	add r3,r3,r1
+	add r3,r3,r0,asr#24
+	mov r3,r3,lsl#16
+	mov r3,r3,lsr#16
+	moveq r2,r2,lsl#4
+	add r0,r2,r3
+	strh r3,[v30ptr,#v30EO]
+	str r0,[v30ptr,#v30EA]
+	ldmfd sp!,{pc}
+;@----------------------------------------------------------------------------
+EA_102:	;@
+;@----------------------------------------------------------------------------
+	stmfd sp!,{lr}
+	ldrh r1,[v30ptr,#v30IP]
+	ldrh r0,[v30ptr,#v30SRegCS]
+	add r2,r1,#1
+	add r0,r1,r0,lsl#4
+	strh r2,[v30ptr,#v30IP]
+	bl cpu_readmem20
+	ldrb r2,[v30ptr,#v30SegPrefix]
+	ldrh r1,[v30ptr,#v30RegBP]
+	ldrh r3,[v30ptr,#v30RegIX]
+	cmp r2,#0
+	ldrheq r2,[v30ptr,#v30SRegSS]
+	ldrne r2,[v30ptr,#v30PrefixBase]
+	mov r0,r0,lsl#24
+	add r3,r3,r1
+	add r3,r3,r0,asr#24
+	mov r3,r3,lsl#16
+	mov r3,r3,lsr#16
+	moveq r2,r2,lsl#4
+	add r0,r2,r3
+	strh r3,[v30ptr,#v30EO]
+	str r0,[v30ptr,#v30EA]
+	ldmfd sp!,{pc}
+;@----------------------------------------------------------------------------
+EA_103:	;@
+;@----------------------------------------------------------------------------
+	stmfd sp!,{lr}
+	ldrh r1,[v30ptr,#v30IP]
+	ldrh r0,[v30ptr,#v30SRegCS]
+	add r2,r1,#1
+	add r0,r1,r0,lsl#4
+	strh r2,[v30ptr,#v30IP]
+	bl cpu_readmem20
+	ldrb r2,[v30ptr,#v30SegPrefix]
+	ldrh r1,[v30ptr,#v30RegBP]
+	ldrh r3,[v30ptr,#v30RegIY]
+	cmp r2,#0
+	ldrheq r2,[v30ptr,#v30SRegSS]
+	ldrne r2,[v30ptr,#v30PrefixBase]
+	mov r0,r0,lsl#24
+	add r3,r3,r1
+	add r3,r3,r0,asr#24
+	mov r3,r3,lsl#16
+	mov r3,r3,lsr#16
+	moveq r2,r2,lsl#4
+	add r0,r2,r3
+	strh r3,[v30ptr,#v30EO]
+	str r0,[v30ptr,#v30EA]
+	ldmfd sp!,{pc}
+;@----------------------------------------------------------------------------
+EA_104:	;@
+;@----------------------------------------------------------------------------
+	stmfd sp!,{lr}
+	ldrh r1,[v30ptr,#v30IP]
+	ldrh r0,[v30ptr,#v30SRegCS]
+	add r2,r1,#1
+	add r0,r1,r0,lsl#4
+	strh r2,[v30ptr,#v30IP]
+	bl cpu_readmem20
+	ldrb r2,[v30ptr,#v30SegPrefix]
+	ldrh r3,[v30ptr,#v30RegIX]
+	cmp r2,#0
+	ldrheq r2,[v30ptr,#v30SRegDS]
+	ldrne r2,[v30ptr,#v30PrefixBase]
+	mov r0,r0,lsl#24
+	add r3,r3,r0,asr#24
+	mov r3,r3,lsl#16
+	mov r3,r3,lsr#16
+	moveq r2,r2,lsl#4
+	add r0,r2,r3
+	strh r3,[v30ptr,#v30EO]
+	str r0,[v30ptr,#v30EA]
+	ldmfd sp!,{pc}
+;@----------------------------------------------------------------------------
+EA_105:	;@
+;@----------------------------------------------------------------------------
+	stmfd sp!,{lr}
+	ldrh r1,[v30ptr,#v30IP]
+	ldrh r0,[v30ptr,#v30SRegCS]
+	add r2,r1,#1
+	add r0,r1,r0,lsl#4
+	strh r2,[v30ptr,#v30IP]
+	bl cpu_readmem20
+	ldrb r2,[v30ptr,#v30SegPrefix]
+	ldrh r3,[v30ptr,#v30RegIY]
+	cmp r2,#0
+	ldrheq r2,[v30ptr,#v30SRegDS]
+	ldrne r2,[v30ptr,#v30PrefixBase]
+	mov r0,r0,lsl#24
+	add r3,r3,r0,asr#24
+	mov r3,r3,lsl#16
+	mov r3,r3,lsr#16
+	moveq r2,r2,lsl#4
+	add r0,r2,r3
+	strh r3,[v30ptr,#v30EO]
+	str r0,[v30ptr,#v30EA]
+	ldmfd sp!,{pc}
+;@----------------------------------------------------------------------------
+EA_106:	;@
+;@----------------------------------------------------------------------------
+	stmfd sp!,{lr}
+	ldrh r1,[v30ptr,#v30IP]
+	ldrh r0,[v30ptr,#v30SRegCS]
+	add r2,r1,#1
+	add r0,r1,r0,lsl#4
+	strh r2,[v30ptr,#v30IP]
+	bl cpu_readmem20
+	ldrb r2,[v30ptr,#v30SegPrefix]
+	ldrh r3,[v30ptr,#v30RegBP]
+	cmp r2,#0
+	ldrheq r2,[v30ptr,#v30SRegSS]
+	ldrne r2,[v30ptr,#v30PrefixBase]
+	mov r0,r0,lsl#24
+	add r3,r3,r0,asr#24
+	mov r3,r3,lsl#16
+	mov r3,r3,lsr#16
+	moveq r2,r2,lsl#4
+	add r0,r2,r3
+	strh r3,[v30ptr,#v30EO]
+	str r0,[v30ptr,#v30EA]
+	ldmfd sp!,{pc}
+;@----------------------------------------------------------------------------
+EA_107:	;@
+;@----------------------------------------------------------------------------
+	stmfd sp!,{lr}
+	ldrh r1,[v30ptr,#v30IP]
+	ldrh r0,[v30ptr,#v30SRegCS]
+	add r2,r1,#1
+	add r0,r1,r0,lsl#4
+	strh r2,[v30ptr,#v30IP]
+	bl cpu_readmem20
+	ldrb r2,[v30ptr,#v30SegPrefix]
+	ldrh r3,[v30ptr,#v30RegBW]
+	cmp r2,#0
+	ldrheq r2,[v30ptr,#v30SRegDS]
+	ldrne r2,[v30ptr,#v30PrefixBase]
+	mov r0,r0,lsl#24
+	add r3,r3,r0,asr#24
+	mov r3,r3,lsl#16
+	mov r3,r3,lsr#16
+	moveq r2,r2,lsl#4
+	add r0,r2,r3
+	strh r3,[v30ptr,#v30EO]
+	str r0,[v30ptr,#v30EA]
+	ldmfd sp!,{pc}
+;@----------------------------------------------------------------------------
+EA_200:	;@
+;@----------------------------------------------------------------------------
+	stmfd sp!,{lr}
+	ldrh r1,[v30ptr,#v30IP]
+	ldrh r0,[v30ptr,#v30SRegCS]
+	add r2,r1,#2
+	add r0,r1,r0,lsl#4
+	strh r2,[v30ptr,#v30IP]
+	bl cpu_readmem20w
+	ldrb r2,[v30ptr,#v30SegPrefix]
+	ldrh r1,[v30ptr,#v30RegBW]
+	ldrh r3,[v30ptr,#v30RegIX]
+	cmp r2,#0
+	ldrheq r2,[v30ptr,#v30SRegDS]
+	ldrne r2,[v30ptr,#v30PrefixBase]
+	add r3,r3,r1
+	add r3,r3,r0
+	mov r3,r3,lsl#16
+	mov r3,r3,lsr#16
+	moveq r2,r2,lsl#4
+	add r0,r2,r3
+	strh r3,[v30ptr,#v30EO]
+	str r0,[v30ptr,#v30EA]
+	ldmfd sp!,{pc}
+;@----------------------------------------------------------------------------
+EA_201:	;@
+;@----------------------------------------------------------------------------
+	stmfd sp!,{lr}
+	ldrh r1,[v30ptr,#v30IP]
+	ldrh r0,[v30ptr,#v30SRegCS]
+	add r2,r1,#2
+	add r0,r1,r0,lsl#4
+	strh r2,[v30ptr,#v30IP]
+	bl cpu_readmem20w
+	ldrb r2,[v30ptr,#v30SegPrefix]
+	ldrh r1,[v30ptr,#v30RegBW]
+	ldrh r3,[v30ptr,#v30RegIY]
+	cmp r2,#0
+	ldrheq r2,[v30ptr,#v30SRegDS]
+	ldrne r2,[v30ptr,#v30PrefixBase]
+	add r3,r3,r1
+	add r3,r3,r0
+	mov r3,r3,lsl#16
+	mov r3,r3,lsr#16
+	moveq r2,r2,lsl#4
+	add r0,r2,r3
+	strh r3,[v30ptr,#v30EO]
+	str r0,[v30ptr,#v30EA]
+	ldmfd sp!,{pc}
+;@----------------------------------------------------------------------------
+EA_202:	;@
+;@----------------------------------------------------------------------------
+	stmfd sp!,{lr}
+	ldrh r1,[v30ptr,#v30IP]
+	ldrh r0,[v30ptr,#v30SRegCS]
+	add r2,r1,#2
+	add r0,r1,r0,lsl#4
+	strh r2,[v30ptr,#v30IP]
+	bl cpu_readmem20w
+	ldrb r2,[v30ptr,#v30SegPrefix]
+	ldrh r1,[v30ptr,#v30RegBP]
+	ldrh r3,[v30ptr,#v30RegIX]
+	cmp r2,#0
+	ldrheq r2,[v30ptr,#v30SRegSS]
+	ldrne r2,[v30ptr,#v30PrefixBase]
+	add r3,r3,r1
+	add r3,r3,r0
+	mov r3,r3,lsl#16
+	mov r3,r3,lsr#16
+	moveq r2,r2,lsl#4
+	add r0,r2,r3
+	strh r3,[v30ptr,#v30EO]
+	str r0,[v30ptr,#v30EA]
+	ldmfd sp!,{pc}
+;@----------------------------------------------------------------------------
+EA_203:	;@
+;@----------------------------------------------------------------------------
+	stmfd sp!,{lr}
+	ldrh r1,[v30ptr,#v30IP]
+	ldrh r0,[v30ptr,#v30SRegCS]
+	add r2,r1,#2
+	add r0,r1,r0,lsl#4
+	strh r2,[v30ptr,#v30IP]
+	bl cpu_readmem20w
+	ldrb r2,[v30ptr,#v30SegPrefix]
+	ldrh r1,[v30ptr,#v30RegBP]
+	ldrh r3,[v30ptr,#v30RegIY]
+	cmp r2,#0
+	ldrheq r2,[v30ptr,#v30SRegSS]
+	ldrne r2,[v30ptr,#v30PrefixBase]
+	add r3,r3,r1
+	add r3,r3,r0
+	mov r3,r3,lsl#16
+	mov r3,r3,lsr#16
+	moveq r2,r2,lsl#4
+	add r0,r2,r3
+	strh r3,[v30ptr,#v30EO]
+	str r0,[v30ptr,#v30EA]
+	ldmfd sp!,{pc}
+;@----------------------------------------------------------------------------
+EA_204:	;@
+;@----------------------------------------------------------------------------
+	stmfd sp!,{lr}
+	ldrh r1,[v30ptr,#v30IP]
+	ldrh r0,[v30ptr,#v30SRegCS]
+	add r2,r1,#2
+	add r0,r1,r0,lsl#4
+	strh r2,[v30ptr,#v30IP]
+	bl cpu_readmem20w
+	ldrb r2,[v30ptr,#v30SegPrefix]
+	ldrh r3,[v30ptr,#v30RegIX]
+	cmp r2,#0
+	ldrheq r2,[v30ptr,#v30SRegDS]
+	ldrne r2,[v30ptr,#v30PrefixBase]
+	add r3,r3,r0
+	mov r3,r3,lsl#16
+	mov r3,r3,lsr#16
+	moveq r2,r2,lsl#4
+	add r0,r2,r3
+	strh r3,[v30ptr,#v30EO]
+	str r0,[v30ptr,#v30EA]
+	ldmfd sp!,{pc}
+;@----------------------------------------------------------------------------
+EA_205:	;@
+;@----------------------------------------------------------------------------
+	stmfd sp!,{lr}
+	ldrh r1,[v30ptr,#v30IP]
+	ldrh r0,[v30ptr,#v30SRegCS]
+	add r2,r1,#2
+	add r0,r1,r0,lsl#4
+	strh r2,[v30ptr,#v30IP]
+	bl cpu_readmem20w
+	ldrb r2,[v30ptr,#v30SegPrefix]
+	ldrh r3,[v30ptr,#v30RegIY]
+	cmp r2,#0
+	ldrheq r2,[v30ptr,#v30SRegDS]
+	ldrne r2,[v30ptr,#v30PrefixBase]
+	add r3,r3,r0
+	mov r3,r3,lsl#16
+	mov r3,r3,lsr#16
+	moveq r2,r2,lsl#4
+	add r0,r2,r3
+	strh r3,[v30ptr,#v30EO]
+	str r0,[v30ptr,#v30EA]
+	ldmfd sp!,{pc}
+;@----------------------------------------------------------------------------
+EA_206:	;@
+;@----------------------------------------------------------------------------
+	stmfd sp!,{lr}
+	ldrh r1,[v30ptr,#v30IP]
+	ldrh r0,[v30ptr,#v30SRegCS]
+	add r2,r1,#2
+	add r0,r1,r0,lsl#4
+	strh r2,[v30ptr,#v30IP]
+	bl cpu_readmem20w
+	ldrb r2,[v30ptr,#v30SegPrefix]
+	ldrh r3,[v30ptr,#v30RegBP]
+	cmp r2,#0
+	ldrheq r2,[v30ptr,#v30SRegSS]
+	ldrne r2,[v30ptr,#v30PrefixBase]
+	add r3,r3,r0
+	mov r3,r3,lsl#16
+	mov r3,r3,lsr#16
+	moveq r2,r2,lsl#4
+	add r0,r2,r3
+	strh r3,[v30ptr,#v30EO]
+	str r0,[v30ptr,#v30EA]
+	ldmfd sp!,{pc}
+;@----------------------------------------------------------------------------
+EA_207:	;@
+;@----------------------------------------------------------------------------
+	stmfd sp!,{lr}
+	ldrh r1,[v30ptr,#v30IP]
+	ldrh r0,[v30ptr,#v30SRegCS]
+	add r2,r1,#2
+	add r0,r1,r0,lsl#4
+	strh r2,[v30ptr,#v30IP]
+	bl cpu_readmem20w
+	ldrb r2,[v30ptr,#v30SegPrefix]
+	ldrh r3,[v30ptr,#v30RegBW]
+	cmp r2,#0
+	ldrheq r2,[v30ptr,#v30SRegDS]
+	ldrne r2,[v30ptr,#v30PrefixBase]
+	add r3,r3,r0
+	mov r3,r3,lsl#16
+	mov r3,r3,lsr#16
+	moveq r2,r2,lsl#4
+	add r0,r2,r3
+	strh r3,[v30ptr,#v30EO]
+	str r0,[v30ptr,#v30EA]
+	ldmfd sp!,{pc}
+
 
 ;@----------------------------------------------------------------------------
 V30RunXCycles:				;@ r0 = number of cycles to run
@@ -2673,7 +3190,7 @@ defaultV30:
 	.space 16*4		;@ v30ReadTbl $00000-FFFFF
 	.space 16*4		;@ v30WriteTbl $00000-FFFFF
 v30StateStart:
-I:				.space 22*4
+I:				.space 23*4
 no_interrupt:	.long 0
 
 v30StateEnd:
@@ -2954,6 +3471,33 @@ PZSTable:
 	.byte PSR_S, PSR_P+PSR_S, PSR_S+PSR_P, PSR_S, PSR_S+PSR_P, PSR_S, PSR_S, PSR_P+PSR_S, PSR_S+PSR_X+PSR_P, PSR_X+PSR_S, PSR_S+PSR_X, PSR_P+PSR_X+PSR_S, PSR_X+PSR_S, PSR_P+PSR_X+PSR_S, PSR_X+PSR_S+PSR_P, PSR_X+PSR_S
 	.byte PSR_S+PSR_Y, PSR_P+PSR_S+PSR_Y, PSR_S+PSR_Y+PSR_P, PSR_S+PSR_Y, PSR_S+PSR_Y+PSR_P, PSR_S+PSR_Y, PSR_S+PSR_Y, PSR_P+PSR_S+PSR_Y, PSR_X+PSR_S+PSR_Y+PSR_P, PSR_X+PSR_S+PSR_Y, PSR_X+PSR_S+PSR_Y, PSR_P+PSR_X+PSR_S+PSR_Y, PSR_X+PSR_S+PSR_Y, PSR_P+PSR_X+PSR_S+PSR_Y, PSR_X+PSR_S+PSR_Y+PSR_P, PSR_X+PSR_S+PSR_Y
 	.byte PSR_S+PSR_Y+PSR_P, PSR_S+PSR_Y, PSR_S+PSR_Y, PSR_P+PSR_S+PSR_Y, PSR_S+PSR_Y, PSR_P+PSR_S+PSR_Y, PSR_S+PSR_Y+PSR_P, PSR_S+PSR_Y, PSR_X+PSR_S+PSR_Y, PSR_P+PSR_X+PSR_S+PSR_Y, PSR_X+PSR_S+PSR_Y+PSR_P, PSR_X+PSR_S+PSR_Y, PSR_X+PSR_S+PSR_Y+PSR_P, PSR_X+PSR_S+PSR_Y, PSR_X+PSR_S+PSR_Y, PSR_P+PSR_X+PSR_S+PSR_Y
+GetEA:
+	.long EA_000, EA_001, EA_002, EA_003, EA_004, EA_005, EA_006, EA_007
+	.long EA_000, EA_001, EA_002, EA_003, EA_004, EA_005, EA_006, EA_007
+	.long EA_000, EA_001, EA_002, EA_003, EA_004, EA_005, EA_006, EA_007
+	.long EA_000, EA_001, EA_002, EA_003, EA_004, EA_005, EA_006, EA_007
+	.long EA_000, EA_001, EA_002, EA_003, EA_004, EA_005, EA_006, EA_007
+	.long EA_000, EA_001, EA_002, EA_003, EA_004, EA_005, EA_006, EA_007
+	.long EA_000, EA_001, EA_002, EA_003, EA_004, EA_005, EA_006, EA_007
+	.long EA_000, EA_001, EA_002, EA_003, EA_004, EA_005, EA_006, EA_007
+
+	.long EA_100, EA_101, EA_102, EA_103, EA_104, EA_105, EA_106, EA_107
+	.long EA_100, EA_101, EA_102, EA_103, EA_104, EA_105, EA_106, EA_107
+	.long EA_100, EA_101, EA_102, EA_103, EA_104, EA_105, EA_106, EA_107
+	.long EA_100, EA_101, EA_102, EA_103, EA_104, EA_105, EA_106, EA_107
+	.long EA_100, EA_101, EA_102, EA_103, EA_104, EA_105, EA_106, EA_107
+	.long EA_100, EA_101, EA_102, EA_103, EA_104, EA_105, EA_106, EA_107
+	.long EA_100, EA_101, EA_102, EA_103, EA_104, EA_105, EA_106, EA_107
+	.long EA_100, EA_101, EA_102, EA_103, EA_104, EA_105, EA_106, EA_107
+
+	.long EA_200, EA_201, EA_202, EA_203, EA_204, EA_205, EA_206, EA_207
+	.long EA_200, EA_201, EA_202, EA_203, EA_204, EA_205, EA_206, EA_207
+	.long EA_200, EA_201, EA_202, EA_203, EA_204, EA_205, EA_206, EA_207
+	.long EA_200, EA_201, EA_202, EA_203, EA_204, EA_205, EA_206, EA_207
+	.long EA_200, EA_201, EA_202, EA_203, EA_204, EA_205, EA_206, EA_207
+	.long EA_200, EA_201, EA_202, EA_203, EA_204, EA_205, EA_206, EA_207
+	.long EA_200, EA_201, EA_202, EA_203, EA_204, EA_205, EA_206, EA_207
+	.long EA_200, EA_201, EA_202, EA_203, EA_204, EA_205, EA_206, EA_207
 
 ;@----------------------------------------------------------------------------
 
