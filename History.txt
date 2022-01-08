@@ -2,7 +2,7 @@ ARMV30MZ revision history
 -=-=-=-=-=-=-=-=-=-=-=-=-
 
 
-V0.3.0 - 2022-01-07 (FluBBa)
+V0.3.0 - 2022-01-08 (FluBBa)
 	Rewriting core in asm.
 
 V0.2.0 - 2021-12-14 (FluBBa)

@@ -90,10 +90,14 @@ extern nec_Regs I;
 void i_pushf(void);
 void i_insb(void);
 void i_insw(void);
-void i_stosb(void);
-void i_stosw(void);
+void i_movsb(void);
+void i_movsw(void);
+void i_lodsb(void);
+void i_lodsw(void);
 void i_scasb(void);
 void i_scasw(void);
+void i_stosb(void);
+void i_stosw(void);
 
 /***************************************************************************/
 
@@ -214,7 +218,7 @@ OP( 0x22, i_and_r8b  ) { DEF_r8b;   ANDB; RegByte(ModRM)=dst;		CLKM(2,1); }
 OP( 0x23, i_and_r16w ) { DEF_r16w;  ANDW; RegWord(ModRM)=dst;		CLKM(2,1); }
 //OP( 0x24, i_and_ald8 ) { DEF_ald8;  ANDB; I.regs.b[AL]=dst;			CLK(1); }
 //OP( 0x25, i_and_axd16) { DEF_axd16; ANDW; I.regs.w[AW]=dst;			CLK(1); }
-//OP( 0x26, i_es       ) { I.seg_prefix=TRUE; I.prefix_base=I.sregs[ES]<<4; CLK(1); nec_instruction[FETCHOP](); I.seg_prefix=FALSE; }
+//OP( 0x26, i_es       ) { I.seg_prefix=TRUE; I.prefix_base=I.sregs[ES]; CLK(1); nec_instruction[FETCHOP](); I.seg_prefix=FALSE; }
 //OP( 0x27, i_daa      ) { ADJ4(6,0x60);								CLK(10); }
 
 OP( 0x28, i_sub_br8  ) { DEF_br8;   SUBB; PutbackRMByte(ModRM,dst); CLKM(3,1); }
@@ -223,7 +227,7 @@ OP( 0x2a, i_sub_r8b  ) { DEF_r8b;   SUBB; RegByte(ModRM)=dst;		CLKM(2,1); }
 OP( 0x2b, i_sub_r16w ) { DEF_r16w;  SUBW; RegWord(ModRM)=dst;		CLKM(2,1); }
 //OP( 0x2c, i_sub_ald8 ) { DEF_ald8;  SUBB; I.regs.b[AL]=dst;			CLK(1); }
 //OP( 0x2d, i_sub_axd16) { DEF_axd16; SUBW; I.regs.w[AW]=dst;			CLK(1); }
-//OP( 0x2e, i_cs       ) { I.seg_prefix=TRUE; I.prefix_base=I.sregs[CS]<<4; CLK(1); nec_instruction[FETCHOP](); I.seg_prefix=FALSE; }
+//OP( 0x2e, i_cs       ) { I.seg_prefix=TRUE; I.prefix_base=I.sregs[CS]; CLK(1); nec_instruction[FETCHOP](); I.seg_prefix=FALSE; }
 //OP( 0x2f, i_das      ) { ADJ4(-6,-0x60);							CLK(10); }
 
 OP( 0x30, i_xor_br8  ) { DEF_br8;   XORB; PutbackRMByte(ModRM,dst); CLKM(3,1); }
@@ -232,7 +236,7 @@ OP( 0x32, i_xor_r8b  ) { DEF_r8b;   XORB; RegByte(ModRM)=dst;		CLKM(2,1); }
 OP( 0x33, i_xor_r16w ) { DEF_r16w;  XORW; RegWord(ModRM)=dst;		CLKM(2,1); }
 //OP( 0x34, i_xor_ald8 ) { DEF_ald8;  XORB; I.regs.b[AL]=dst;			CLK(1); }
 //OP( 0x35, i_xor_axd16) { DEF_axd16; XORW; I.regs.w[AW]=dst;			CLK(1); }
-//OP( 0x36, i_ss       ) { I.seg_prefix=TRUE; I.prefix_base=I.sregs[SS]<<4; CLK(1); nec_instruction[FETCHOP](); I.seg_prefix=FALSE; }
+//OP( 0x36, i_ss       ) { I.seg_prefix=TRUE; I.prefix_base=I.sregs[SS]; CLK(1); nec_instruction[FETCHOP](); I.seg_prefix=FALSE; }
 //OP( 0x37, i_aaa      ) { ADJB(6,1);									CLK(9); }
 
 OP( 0x38, i_cmp_br8  ) { DEF_br8;   SUBB;					CLKM(2,1); }
@@ -241,7 +245,7 @@ OP( 0x3a, i_cmp_r8b  ) { DEF_r8b;   SUBB;					CLKM(2,1); }
 OP( 0x3b, i_cmp_r16w ) { DEF_r16w;  SUBW;					CLKM(2,1); }
 //OP( 0x3c, i_cmp_ald8 ) { DEF_ald8;  SUBB;					CLK(1); }
 //OP( 0x3d, i_cmp_axd16) { DEF_axd16; SUBW;					CLK(1); }
-//OP( 0x3e, i_ds       ) { I.seg_prefix=TRUE; I.prefix_base=I.sregs[DS]<<4; CLK(1); nec_instruction[FETCHOP](); I.seg_prefix=FALSE; }
+//OP( 0x3e, i_ds       ) { I.seg_prefix=TRUE; I.prefix_base=I.sregs[DS]; CLK(1); nec_instruction[FETCHOP](); I.seg_prefix=FALSE; }
 //OP( 0x3f, i_aas      ) { ADJB(-6,-1);						CLK(9); }
 
 //OP( 0x40, i_inc_ax ) { IncWordReg(AW);						CLK(1); }
@@ -445,12 +449,12 @@ OP( 0x9d, i_popf      ) { UINT32 tmp; POP(tmp); ExpandFlags(tmp); CLK(3); }
 OP( 0x9e, i_sahf      ) { UINT32 tmp = (CompressFlags() & 0xff00) | (I.regs.b[AH] & 0xd5); ExpandFlags(tmp); CLK(4); }
 OP( 0x9f, i_lahf      ) { I.regs.b[AH] = CompressFlags() & 0xff; CLK(2); }
 
-OP( 0xa0, i_mov_aldisp ) { UINT32 addr; FETCHWORD(addr); I.regs.b[AL] = GetMemB(DS, addr); CLK(1); }
-OP( 0xa1, i_mov_axdisp ) { UINT32 addr; FETCHWORD(addr); I.regs.w[AW] = GetMemW(DS, addr); CLK(1); }
-OP( 0xa2, i_mov_dispal ) { UINT32 addr; FETCHWORD(addr); PutMemB(DS, addr, I.regs.b[AL]);  CLK(1); }
-OP( 0xa3, i_mov_dispax ) { UINT32 addr; FETCHWORD(addr); PutMemW(DS, addr, I.regs.w[AW]);  CLK(1); }
-OP( 0xa4, i_movsb      ) { UINT32 tmp = GetMemB(DS,I.regs.w[IX]); PutMemB(ES,I.regs.w[IY], tmp); I.regs.w[IY] += -2 * I.DF + 1; I.regs.w[IX] += -2 * I.DF + 1; CLK(5); }
-OP( 0xa5, i_movsw      ) { UINT32 tmp = GetMemW(DS,I.regs.w[IX]); PutMemW(ES,I.regs.w[IY], tmp); I.regs.w[IY] += -4 * I.DF + 2; I.regs.w[IX] += -4 * I.DF + 2; CLK(5); }
+//OP( 0xa0, i_mov_aldisp ) { UINT32 addr; FETCHWORD(addr); I.regs.b[AL] = GetMemB(DS, addr); CLK(1); }
+//OP( 0xa1, i_mov_axdisp ) { UINT32 addr; FETCHWORD(addr); I.regs.w[AW] = GetMemW(DS, addr); CLK(1); }
+//OP( 0xa2, i_mov_dispal ) { UINT32 addr; FETCHWORD(addr); PutMemB(DS, addr, I.regs.b[AL]);  CLK(1); }
+//OP( 0xa3, i_mov_dispax ) { UINT32 addr; FETCHWORD(addr); PutMemW(DS, addr, I.regs.w[AW]);  CLK(1); }
+//OP( 0xa4, i_movsb      ) { UINT32 tmp = GetMemB(DS,I.regs.w[IX]); PutMemB(ES,I.regs.w[IY], tmp); I.regs.w[IY] += -2 * I.DF + 1; I.regs.w[IX] += -2 * I.DF + 1; CLK(5); }
+//OP( 0xa5, i_movsw      ) { UINT32 tmp = GetMemW(DS,I.regs.w[IX]); PutMemW(ES,I.regs.w[IY], tmp); I.regs.w[IY] += -4 * I.DF + 2; I.regs.w[IX] += -4 * I.DF + 2; CLK(5); }
 OP( 0xa6, i_cmpsb      ) { UINT32 src = GetMemB(ES,I.regs.w[IY]); UINT32 dst = GetMemB(DS, I.regs.w[IX]); SUBB; I.regs.w[IY] += -2 * I.DF + 1; I.regs.w[IX] += -2 * I.DF + 1; CLK(6); }
 OP( 0xa7, i_cmpsw      ) { UINT32 src = GetMemW(ES,I.regs.w[IY]); UINT32 dst = GetMemW(DS, I.regs.w[IX]); SUBW; I.regs.w[IY] += -4 * I.DF + 2; I.regs.w[IX] += -4 * I.DF + 2; CLK(6); }
 
@@ -458,8 +462,8 @@ OP( 0xa7, i_cmpsw      ) { UINT32 src = GetMemW(ES,I.regs.w[IY]); UINT32 dst = G
 //OP( 0xa9, i_test_axd16 ) { DEF_axd16; ANDW; CLK(1); }
 //OP( 0xaa, i_stosb      ) { PutMemB(ES,I.regs.w[IY],I.regs.b[AL]); I.regs.w[IY] += -2 * I.DF + 1; CLK(3); }
 //OP( 0xab, i_stosw      ) { PutMemW(ES,I.regs.w[IY],I.regs.w[AW]); I.regs.w[IY] += -4 * I.DF + 2; CLK(3); }
-OP( 0xac, i_lodsb      ) { I.regs.b[AL] = GetMemB(DS,I.regs.w[IX]); I.regs.w[IX] += -2 * I.DF + 1; CLK(3); }
-OP( 0xad, i_lodsw      ) { I.regs.w[AW] = GetMemW(DS,I.regs.w[IX]); I.regs.w[IX] += -4 * I.DF + 2; CLK(3); }
+//OP( 0xac, i_lodsb      ) { I.regs.b[AL] = GetMemB(DS,I.regs.w[IX]); I.regs.w[IX] += -2 * I.DF + 1; CLK(3); }
+//OP( 0xad, i_lodsw      ) { I.regs.w[AW] = GetMemW(DS,I.regs.w[IX]); I.regs.w[IX] += -4 * I.DF + 2; CLK(3); }
 //OP( 0xae, i_scasb      ) { UINT32 src = GetMemB(ES, I.regs.w[IY]); UINT32 dst = I.regs.b[AL]; SUBB; I.regs.w[IY] += -2 * I.DF + 1; CLK(4); }
 //OP( 0xaf, i_scasw      ) { UINT32 src = GetMemW(ES, I.regs.w[IY]); UINT32 dst = I.regs.w[AW]; SUBW; I.regs.w[IY] += -4 * I.DF + 2; CLK(4); }
 
@@ -653,10 +657,10 @@ OP( 0xeb, i_jmp_d8   ) { int tmp = (int)((INT8)FETCH); CLK(4);
 
 ITCM_CODE OP( 0xf2, i_repne   ) { UINT32 next = FETCHOP; UINT16 c = I.regs.w[CW];
 	switch(next) { // Segments
-		case 0x26: I.seg_prefix=TRUE; I.prefix_base=I.sregs[ES]<<4; next = FETCHOP; CLK(2); break;
-		case 0x2e: I.seg_prefix=TRUE; I.prefix_base=I.sregs[CS]<<4; next = FETCHOP; CLK(2); break;
-		case 0x36: I.seg_prefix=TRUE; I.prefix_base=I.sregs[SS]<<4; next = FETCHOP; CLK(2); break;
-		case 0x3e: I.seg_prefix=TRUE; I.prefix_base=I.sregs[DS]<<4; next = FETCHOP; CLK(2); break;
+		case 0x26: I.seg_prefix=TRUE; I.prefix_base=I.sregs[ES]; next = FETCHOP; CLK(2); break;
+		case 0x2e: I.seg_prefix=TRUE; I.prefix_base=I.sregs[CS]; next = FETCHOP; CLK(2); break;
+		case 0x36: I.seg_prefix=TRUE; I.prefix_base=I.sregs[SS]; next = FETCHOP; CLK(2); break;
+		case 0x3e: I.seg_prefix=TRUE; I.prefix_base=I.sregs[DS]; next = FETCHOP; CLK(2); break;
 	}
 
 	switch(next) {
@@ -680,10 +684,10 @@ ITCM_CODE OP( 0xf2, i_repne   ) { UINT32 next = FETCHOP; UINT16 c = I.regs.w[CW]
 }
 ITCM_CODE OP( 0xf3, i_repe	 ) { UINT32 next = FETCHOP; UINT16 c = I.regs.w[CW];
 	switch(next) { // Segments
-		case 0x26: I.seg_prefix=TRUE; I.prefix_base=I.sregs[ES]<<4; next = FETCHOP; CLK(2); break;
-		case 0x2e: I.seg_prefix=TRUE; I.prefix_base=I.sregs[CS]<<4; next = FETCHOP; CLK(2); break;
-		case 0x36: I.seg_prefix=TRUE; I.prefix_base=I.sregs[SS]<<4; next = FETCHOP; CLK(2); break;
-		case 0x3e: I.seg_prefix=TRUE; I.prefix_base=I.sregs[DS]<<4; next = FETCHOP; CLK(2); break;
+		case 0x26: I.seg_prefix=TRUE; I.prefix_base=I.sregs[ES]; next = FETCHOP; CLK(2); break;
+		case 0x2e: I.seg_prefix=TRUE; I.prefix_base=I.sregs[CS]; next = FETCHOP; CLK(2); break;
+		case 0x36: I.seg_prefix=TRUE; I.prefix_base=I.sregs[SS]; next = FETCHOP; CLK(2); break;
+		case 0x3e: I.seg_prefix=TRUE; I.prefix_base=I.sregs[DS]; next = FETCHOP; CLK(2); break;
 	}
 
 	switch(next) {

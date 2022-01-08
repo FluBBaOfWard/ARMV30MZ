@@ -29,6 +29,10 @@
 
 	.global i_insb
 	.global i_insw
+	.global i_movsb
+	.global i_movsw
+	.global i_lodsb
+	.global i_lodsw
 	.global i_scasb
 	.global i_scasw
 	.global i_stosb
@@ -379,7 +383,6 @@ _26:	;@ ES prefix
 	mov r0,#1
 	ldrh r1,[v30ptr,#v30SRegES]
 	strb r0,[v30ptr,#v30SegPrefix]
-	mov r1,r1,lsl#4
 	str r1,[v30ptr,#v30PrefixBase]
 
 	ldr r2,[v30ptr,#v30ICount]
@@ -474,7 +477,6 @@ _2E:	;@ CS prefix
 	mov r0,#1
 	ldrh r1,[v30ptr,#v30SRegCS]
 	strb r0,[v30ptr,#v30SegPrefix]
-	mov r1,r1,lsl#4
 	str r1,[v30ptr,#v30PrefixBase]
 
 	ldr r2,[v30ptr,#v30ICount]
@@ -569,7 +571,6 @@ _36:	;@ SS prefix
 	mov r0,#1
 	ldrh r1,[v30ptr,#v30SRegSS]
 	strb r0,[v30ptr,#v30SegPrefix]
-	mov r1,r1,lsl#4
 	str r1,[v30ptr,#v30PrefixBase]
 
 	ldr r2,[v30ptr,#v30ICount]
@@ -656,7 +657,6 @@ _3E:	;@ DS prefix
 	mov r0,#1
 	ldrh r1,[v30ptr,#v30SRegDS]
 	strb r0,[v30ptr,#v30SegPrefix]
-	mov r1,r1,lsl#4
 	str r1,[v30ptr,#v30PrefixBase]
 
 	ldr r2,[v30ptr,#v30ICount]
@@ -1659,12 +1659,14 @@ _9B:	;@ POLL, poll the "poll" pin?
 	bx lr
 
 ;@----------------------------------------------------------------------------
-;@i_mov_aldisp:
-_A0:	;@ MOV ALDISP, can have prefix_base
+i_mov_aldisp:
+_A0:	;@ MOV ALDISP
 ;@----------------------------------------------------------------------------
-	ldrh r0,[v30ptr,#v30SRegDS]
 	stmfd sp!,{r4,lr}
-	mov r4,r0
+	ldrb r2,[v30ptr,#v30SegPrefix]
+	cmp r2,#0
+	ldrheq r4,[v30ptr,#v30SRegDS]
+	ldrne r4,[v30ptr,#v30PrefixBase]
 	ldrh r1,[v30ptr,#v30IP]
 	ldrh r0,[v30ptr,#v30SRegCS]
 	add r2,r1,#2
@@ -1676,6 +1678,132 @@ _A0:	;@ MOV ALDISP, can have prefix_base
 	strb r0,[v30ptr,#v30RegAL]
 	ldr r1,[v30ptr,#v30ICount]
 	sub r1,r1,#1
+	str r1,[v30ptr,#v30ICount]
+	ldmfd sp!,{r4,pc}
+;@----------------------------------------------------------------------------
+i_mov_axdisp:
+_A1:	;@ MOV AXDISP
+;@----------------------------------------------------------------------------
+	stmfd sp!,{r4,lr}
+	ldrb r2,[v30ptr,#v30SegPrefix]
+	cmp r2,#0
+	ldrheq r4,[v30ptr,#v30SRegDS]
+	ldrne r4,[v30ptr,#v30PrefixBase]
+	ldrh r1,[v30ptr,#v30IP]
+	ldrh r0,[v30ptr,#v30SRegCS]
+	add r2,r1,#2
+	add r0,r1,r0,lsl#4
+	strh r2,[v30ptr,#v30IP]
+	bl cpu_readmem20w
+	add r0,r0,r4,lsl#4
+	bl cpu_readmem20w
+	strh r0,[v30ptr,#v30RegAW]
+	ldr r1,[v30ptr,#v30ICount]
+	sub r1,r1,#1
+	str r1,[v30ptr,#v30ICount]
+	ldmfd sp!,{r4,pc}
+;@----------------------------------------------------------------------------
+i_mov_dispal:
+_A2:	;@ MOV DISPAL
+;@----------------------------------------------------------------------------
+	stmfd sp!,{r4,lr}
+	ldrb r2,[v30ptr,#v30SegPrefix]
+	cmp r2,#0
+	ldrheq r4,[v30ptr,#v30SRegDS]
+	ldrne r4,[v30ptr,#v30PrefixBase]
+	ldrh r1,[v30ptr,#v30IP]
+	ldrh r0,[v30ptr,#v30SRegCS]
+	add r2,r1,#2
+	add r0,r1,r0,lsl#4
+	strh r2,[v30ptr,#v30IP]
+	bl cpu_readmem20w
+	add r0,r0,r4,lsl#4
+	ldrb r1,[v30ptr,#v30RegAL]
+	bl cpu_writemem20
+	ldr r1,[v30ptr,#v30ICount]
+	sub r1,r1,#1
+	str r1,[v30ptr,#v30ICount]
+	ldmfd sp!,{r4,pc}
+;@----------------------------------------------------------------------------
+i_mov_dispax:
+_A3:	;@ MOV DISPAX
+;@----------------------------------------------------------------------------
+	stmfd sp!,{r4,lr}
+	ldrb r2,[v30ptr,#v30SegPrefix]
+	cmp r2,#0
+	ldrheq r4,[v30ptr,#v30SRegDS]
+	ldrne r4,[v30ptr,#v30PrefixBase]
+	ldrh r1,[v30ptr,#v30IP]
+	ldrh r0,[v30ptr,#v30SRegCS]
+	add r2,r1,#2
+	add r0,r1,r0,lsl#4
+	strh r2,[v30ptr,#v30IP]
+	bl cpu_readmem20w
+	add r0,r0,r4,lsl#4
+	ldrh r1,[v30ptr,#v30RegAW]
+	bl cpu_writemem20w
+	ldr r1,[v30ptr,#v30ICount]
+	sub r1,r1,#1
+	str r1,[v30ptr,#v30ICount]
+	ldmfd sp!,{r4,pc}
+;@----------------------------------------------------------------------------
+i_movsb:
+_A4:	;@ MOVSB
+;@----------------------------------------------------------------------------
+	stmfd sp!,{r4,lr}
+	ldrb r2,[v30ptr,#v30SegPrefix]
+	cmp r2,#0
+	ldrheq r0,[v30ptr,#v30SRegDS]
+	ldrne r0,[v30ptr,#v30PrefixBase]
+	ldrb r4,[v30ptr,#v30DF]
+	ldrh r1,[v30ptr,#v30RegIX]
+	cmp r4,#0
+	addeq r2,r1,#1
+	subne r2,r1,#1
+	add r0,r1,r0,lsl#4
+	strh r2,[v30ptr,#v30RegIX]
+	bl cpu_readmem20
+	mov r1,r0
+	ldrh r3,[v30ptr,#v30RegIY]
+	ldrh r0,[v30ptr,#v30SRegES]
+	cmp r4,#0
+	addeq r2,r3,#1
+	subne r2,r3,#1
+	add r0,r3,r0,lsl#4
+	strh r2,[v30ptr,#v30RegIY]
+	bl cpu_writemem20
+	ldr r1,[v30ptr,#v30ICount]
+	sub r1,r1,#5
+	str r1,[v30ptr,#v30ICount]
+	ldmfd sp!,{r4,pc}
+;@----------------------------------------------------------------------------
+i_movsw:
+_A5:	;@ MOVSW
+;@----------------------------------------------------------------------------
+	stmfd sp!,{r4,lr}
+	ldrb r2,[v30ptr,#v30SegPrefix]
+	cmp r2,#0
+	ldrheq r0,[v30ptr,#v30SRegDS]
+	ldrne r0,[v30ptr,#v30PrefixBase]
+	ldrb r4,[v30ptr,#v30DF]
+	ldrh r1,[v30ptr,#v30RegIX]
+	cmp r4,#0
+	addeq r2,r1,#2
+	subne r2,r1,#2
+	add r0,r1,r0,lsl#4
+	strh r2,[v30ptr,#v30RegIX]
+	bl cpu_readmem20w
+	mov r1,r0
+	ldrh r3,[v30ptr,#v30RegIY]
+	ldrh r0,[v30ptr,#v30SRegES]
+	cmp r4,#0
+	addeq r2,r3,#2
+	subne r2,r3,#2
+	add r0,r3,r0,lsl#4
+	strh r2,[v30ptr,#v30RegIY]
+	bl cpu_writemem20w
+	ldr r1,[v30ptr,#v30ICount]
+	sub r1,r1,#5
 	str r1,[v30ptr,#v30ICount]
 	ldmfd sp!,{r4,pc}
 
@@ -1756,6 +1884,50 @@ _AB:	;@ STOSW
 	ldr r0,[v30ptr,#v30ICount]
 	sub r0,r0,#3
 	str r0,[v30ptr,#v30ICount]
+	ldmfd sp!,{pc}
+;@----------------------------------------------------------------------------
+i_lodsb:
+_AC:	;@ LODSB
+;@----------------------------------------------------------------------------
+	stmfd sp!,{lr}
+	ldrb r2,[v30ptr,#v30SegPrefix]
+	cmp r2,#0
+	ldrheq r0,[v30ptr,#v30SRegDS]
+	ldrne r0,[v30ptr,#v30PrefixBase]
+	ldrb r2,[v30ptr,#v30DF]
+	ldrh r1,[v30ptr,#v30RegIX]
+	cmp r2,#0
+	addeq r2,r1,#1
+	subne r2,r1,#1
+	add r0,r1,r0,lsl#4
+	strh r2,[v30ptr,#v30RegIX]
+	bl cpu_readmem20
+	strb r0,[v30ptr,#v30RegAL]
+	ldr r1,[v30ptr,#v30ICount]
+	sub r1,r1,#3
+	str r1,[v30ptr,#v30ICount]
+	ldmfd sp!,{pc}
+;@----------------------------------------------------------------------------
+i_lodsw:
+_AD:	;@ LODSW
+;@----------------------------------------------------------------------------
+	stmfd sp!,{lr}
+	ldrb r2,[v30ptr,#v30SegPrefix]
+	cmp r2,#0
+	ldrheq r0,[v30ptr,#v30SRegDS]
+	ldrne r0,[v30ptr,#v30PrefixBase]
+	ldrb r2,[v30ptr,#v30DF]
+	ldrh r1,[v30ptr,#v30RegIX]
+	cmp r2,#0
+	addeq r2,r1,#2
+	subne r2,r1,#2
+	add r0,r1,r0,lsl#4
+	strh r2,[v30ptr,#v30RegIX]
+	bl cpu_readmem20w
+	strh r0,[v30ptr,#v30RegAW]
+	ldr r1,[v30ptr,#v30ICount]
+	sub r1,r1,#3
+	str r1,[v30ptr,#v30ICount]
 	ldmfd sp!,{pc}
 ;@----------------------------------------------------------------------------
 i_scasb:
@@ -2654,8 +2826,7 @@ EA_000:	;@
 	add r3,r3,r1
 	mov r3,r3,lsl#16
 	mov r3,r3,lsr#16
-	moveq r0,r0,lsl#4
-	add r0,r0,r3
+	add r0,r3,r0,lsl#4
 	strh r3,[v30ptr,#v30EO]
 	str r0,[v30ptr,#v30EA]
 	bx lr
@@ -2671,8 +2842,7 @@ EA_001:	;@
 	add r3,r3,r1
 	mov r3,r3,lsl#16
 	mov r3,r3,lsr#16
-	moveq r0,r0,lsl#4
-	add r0,r0,r3
+	add r0,r3,r0,lsl#4
 	strh r3,[v30ptr,#v30EO]
 	str r0,[v30ptr,#v30EA]
 	bx lr
@@ -2688,8 +2858,7 @@ EA_002:	;@
 	add r3,r3,r1
 	mov r3,r3,lsl#16
 	mov r3,r3,lsr#16
-	moveq r0,r0,lsl#4
-	add r0,r0,r3
+	add r0,r3,r0,lsl#4
 	strh r3,[v30ptr,#v30EO]
 	str r0,[v30ptr,#v30EA]
 	bx lr
@@ -2705,8 +2874,7 @@ EA_003:	;@
 	add r3,r3,r1
 	mov r3,r3,lsl#16
 	mov r3,r3,lsr#16
-	moveq r0,r0,lsl#4
-	add r0,r0,r3
+	add r0,r3,r0,lsl#4
 	strh r3,[v30ptr,#v30EO]
 	str r0,[v30ptr,#v30EA]
 	bx lr
@@ -2718,8 +2886,7 @@ EA_004:	;@
 	cmp r1,#0
 	ldrheq r0,[v30ptr,#v30SRegDS]
 	ldrne r0,[v30ptr,#v30PrefixBase]
-	moveq r0,r0,lsl#4
-	add r0,r0,r2
+	add r0,r2,r0,lsl#4
 	strh r2,[v30ptr,#v30EO]
 	str r0,[v30ptr,#v30EA]
 	bx lr
@@ -2731,8 +2898,7 @@ EA_005:	;@
 	cmp r1,#0
 	ldrheq r0,[v30ptr,#v30SRegDS]
 	ldrne r0,[v30ptr,#v30PrefixBase]
-	moveq r0,r0,lsl#4
-	add r0,r0,r2
+	add r0,r2,r0,lsl#4
 	strh r2,[v30ptr,#v30EO]
 	str r0,[v30ptr,#v30EA]
 	bx lr
@@ -2751,8 +2917,7 @@ EA_006:	;@
 	cmp r1,#0
 	ldrheq r0,[v30ptr,#v30SRegDS]
 	ldrne r0,[v30ptr,#v30PrefixBase]
-	moveq r0,r0,lsl#4
-	add r0,r0,r2
+	add r0,r2,r0,lsl#4
 	strh r2,[v30ptr,#v30EO]
 	str r0,[v30ptr,#v30EA]
 	ldmfd sp!,{pc}
@@ -2764,8 +2929,7 @@ EA_007:	;@
 	cmp r1,#0
 	ldrheq r0,[v30ptr,#v30SRegDS]
 	ldrne r0,[v30ptr,#v30PrefixBase]
-	moveq r0,r0,lsl#4
-	add r0,r0,r2
+	add r0,r2,r0,lsl#4
 	strh r2,[v30ptr,#v30EO]
 	str r0,[v30ptr,#v30EA]
 	bx lr
@@ -2790,8 +2954,7 @@ EA_100:	;@
 	add r3,r3,r0,asr#24
 	mov r3,r3,lsl#16
 	mov r3,r3,lsr#16
-	moveq r2,r2,lsl#4
-	add r0,r2,r3
+	add r0,r3,r2,lsl#4
 	strh r3,[v30ptr,#v30EO]
 	str r0,[v30ptr,#v30EA]
 	ldmfd sp!,{pc}
@@ -2816,8 +2979,7 @@ EA_101:	;@
 	add r3,r3,r0,asr#24
 	mov r3,r3,lsl#16
 	mov r3,r3,lsr#16
-	moveq r2,r2,lsl#4
-	add r0,r2,r3
+	add r0,r3,r2,lsl#4
 	strh r3,[v30ptr,#v30EO]
 	str r0,[v30ptr,#v30EA]
 	ldmfd sp!,{pc}
@@ -2842,8 +3004,7 @@ EA_102:	;@
 	add r3,r3,r0,asr#24
 	mov r3,r3,lsl#16
 	mov r3,r3,lsr#16
-	moveq r2,r2,lsl#4
-	add r0,r2,r3
+	add r0,r3,r2,lsl#4
 	strh r3,[v30ptr,#v30EO]
 	str r0,[v30ptr,#v30EA]
 	ldmfd sp!,{pc}
@@ -2868,8 +3029,7 @@ EA_103:	;@
 	add r3,r3,r0,asr#24
 	mov r3,r3,lsl#16
 	mov r3,r3,lsr#16
-	moveq r2,r2,lsl#4
-	add r0,r2,r3
+	add r0,r3,r2,lsl#4
 	strh r3,[v30ptr,#v30EO]
 	str r0,[v30ptr,#v30EA]
 	ldmfd sp!,{pc}
@@ -2892,8 +3052,7 @@ EA_104:	;@
 	add r3,r3,r0,asr#24
 	mov r3,r3,lsl#16
 	mov r3,r3,lsr#16
-	moveq r2,r2,lsl#4
-	add r0,r2,r3
+	add r0,r3,r2,lsl#4
 	strh r3,[v30ptr,#v30EO]
 	str r0,[v30ptr,#v30EA]
 	ldmfd sp!,{pc}
@@ -2916,8 +3075,7 @@ EA_105:	;@
 	add r3,r3,r0,asr#24
 	mov r3,r3,lsl#16
 	mov r3,r3,lsr#16
-	moveq r2,r2,lsl#4
-	add r0,r2,r3
+	add r0,r3,r2,lsl#4
 	strh r3,[v30ptr,#v30EO]
 	str r0,[v30ptr,#v30EA]
 	ldmfd sp!,{pc}
@@ -2940,8 +3098,7 @@ EA_106:	;@
 	add r3,r3,r0,asr#24
 	mov r3,r3,lsl#16
 	mov r3,r3,lsr#16
-	moveq r2,r2,lsl#4
-	add r0,r2,r3
+	add r0,r3,r2,lsl#4
 	strh r3,[v30ptr,#v30EO]
 	str r0,[v30ptr,#v30EA]
 	ldmfd sp!,{pc}
@@ -2964,8 +3121,7 @@ EA_107:	;@
 	add r3,r3,r0,asr#24
 	mov r3,r3,lsl#16
 	mov r3,r3,lsr#16
-	moveq r2,r2,lsl#4
-	add r0,r2,r3
+	add r0,r3,r2,lsl#4
 	strh r3,[v30ptr,#v30EO]
 	str r0,[v30ptr,#v30EA]
 	ldmfd sp!,{pc}
@@ -2989,8 +3145,7 @@ EA_200:	;@
 	add r3,r3,r0
 	mov r3,r3,lsl#16
 	mov r3,r3,lsr#16
-	moveq r2,r2,lsl#4
-	add r0,r2,r3
+	add r0,r3,r2,lsl#4
 	strh r3,[v30ptr,#v30EO]
 	str r0,[v30ptr,#v30EA]
 	ldmfd sp!,{pc}
@@ -3014,8 +3169,7 @@ EA_201:	;@
 	add r3,r3,r0
 	mov r3,r3,lsl#16
 	mov r3,r3,lsr#16
-	moveq r2,r2,lsl#4
-	add r0,r2,r3
+	add r0,r3,r2,lsl#4
 	strh r3,[v30ptr,#v30EO]
 	str r0,[v30ptr,#v30EA]
 	ldmfd sp!,{pc}
@@ -3039,8 +3193,7 @@ EA_202:	;@
 	add r3,r3,r0
 	mov r3,r3,lsl#16
 	mov r3,r3,lsr#16
-	moveq r2,r2,lsl#4
-	add r0,r2,r3
+	add r0,r3,r2,lsl#4
 	strh r3,[v30ptr,#v30EO]
 	str r0,[v30ptr,#v30EA]
 	ldmfd sp!,{pc}
@@ -3064,8 +3217,7 @@ EA_203:	;@
 	add r3,r3,r0
 	mov r3,r3,lsl#16
 	mov r3,r3,lsr#16
-	moveq r2,r2,lsl#4
-	add r0,r2,r3
+	add r0,r3,r2,lsl#4
 	strh r3,[v30ptr,#v30EO]
 	str r0,[v30ptr,#v30EA]
 	ldmfd sp!,{pc}
@@ -3087,8 +3239,7 @@ EA_204:	;@
 	add r3,r3,r0
 	mov r3,r3,lsl#16
 	mov r3,r3,lsr#16
-	moveq r2,r2,lsl#4
-	add r0,r2,r3
+	add r0,r3,r2,lsl#4
 	strh r3,[v30ptr,#v30EO]
 	str r0,[v30ptr,#v30EA]
 	ldmfd sp!,{pc}
@@ -3110,8 +3261,7 @@ EA_205:	;@
 	add r3,r3,r0
 	mov r3,r3,lsl#16
 	mov r3,r3,lsr#16
-	moveq r2,r2,lsl#4
-	add r0,r2,r3
+	add r0,r3,r2,lsl#4
 	strh r3,[v30ptr,#v30EO]
 	str r0,[v30ptr,#v30EA]
 	ldmfd sp!,{pc}
@@ -3133,8 +3283,7 @@ EA_206:	;@
 	add r3,r3,r0
 	mov r3,r3,lsl#16
 	mov r3,r3,lsr#16
-	moveq r2,r2,lsl#4
-	add r0,r2,r3
+	add r0,r3,r2,lsl#4
 	strh r3,[v30ptr,#v30EO]
 	str r0,[v30ptr,#v30EA]
 	ldmfd sp!,{pc}
@@ -3156,8 +3305,7 @@ EA_207:	;@
 	add r3,r3,r0
 	mov r3,r3,lsl#16
 	mov r3,r3,lsr#16
-	moveq r2,r2,lsl#4
-	add r0,r2,r3
+	add r0,r3,r2,lsl#4
 	strh r3,[v30ptr,#v30EO]
 	str r0,[v30ptr,#v30EA]
 	ldmfd sp!,{pc}
