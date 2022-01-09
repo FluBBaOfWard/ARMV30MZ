@@ -273,8 +273,8 @@
 ;@----------------------------------------------------------------------------
 	.macro adc8
 	ldr r3,[v30ptr,#v30CarryVal]
-	movs r3,r3,lsr#1
-	subcs r0,r0,#0x100
+	cmp r3,#0
+	subne r0,r0,#0x100
 	mov r1,r1,lsl#24
 	eor r2,r1,r0,lsl#24
 	adcs r0,r1,r0,ror#8
@@ -294,8 +294,8 @@
 
 	.macro adc16
 	ldr r3,[v30ptr,#v30CarryVal]
-	movs r3,r3,lsr#1
-	subcs r0,r0,#0x10000
+	cmp r3,#0
+	subne r0,r0,#0x10000
 	mov r1,r1,lsl#16
 	eor r2,r1,r0,lsl#16
 	adcs r0,r1,r0,ror#16
@@ -450,8 +450,8 @@
 ;@----------------------------------------------------------------------------
 	.macro sbb8
 	ldr r3,[v30ptr,#v30CarryVal]
-	movs r3,r3,lsr#1
-	orrcs r0,r0,#0x80000000
+	cmp r3,#0
+	orrne r0,r0,#0x80000000
 	mov r1,r1,lsl#24
 	eor r2,r1,r0,lsl#24
 	subs r0,r1,r0,ror#8
@@ -472,8 +472,8 @@
 
 	.macro sbb16
 	ldr r3,[v30ptr,#v30CarryVal]
-	movs r3,r3,lsr#1
-	orrcs r0,r0,#0x80000000
+	cmp r3,#0
+	orrne r0,r0,#0x80000000
 	mov r1,r1,lsl#16
 	eor r2,r1,r0,lsl#16
 	subs r0,r1,r0,ror#16

@@ -415,7 +415,7 @@ _27:	;@ DAA
 	ldr r1,[v30ptr,#v30AuxVal]
 	ldr r2,[v30ptr,#v30CarryVal]
 	mov r3,r0,ror#4
-	cmn r3,#0x60000000
+	cmp r3,#0xA0000000
 	movcs r1,#0x10
 	cmp r1,#0
 	addne r0,r0,#0x06
@@ -509,7 +509,7 @@ _2F:	;@ DAS
 	ldr r1,[v30ptr,#v30AuxVal]
 	ldr r2,[v30ptr,#v30CarryVal]
 	mov r3,r0,ror#4
-	cmn r3,#0x60000000
+	cmp r3,#0xA0000000
 	movcs r1,#0x10
 	cmp r1,#0
 	subne r0,r0,#0x06
@@ -611,6 +611,7 @@ _37:	;@ AAA
 	strbne r2,[v30ptr,#v30RegAH]
 	mov r0,r0,lsr#28
 	str r1,[v30ptr,#v30AuxVal]
+	mov r1,r1,lsr#4
 	str r1,[v30ptr,#v30CarryVal]
 	strb r0,[v30ptr,#v30RegAL]
 	ldr r1,[v30ptr,#v30ICount]
@@ -697,6 +698,7 @@ _3F:	;@ AAS
 	strbne r2,[v30ptr,#v30RegAH]
 	mov r0,r0,lsr#28
 	str r1,[v30ptr,#v30AuxVal]
+	mov r1,r1,lsr#4
 	str r1,[v30ptr,#v30CarryVal]
 	strb r0,[v30ptr,#v30RegAL]
 	ldr r1,[v30ptr,#v30ICount]
