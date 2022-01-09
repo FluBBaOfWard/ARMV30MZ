@@ -9,6 +9,8 @@ enum {
 /* Public variables */
 extern int no_interrupt;
 
+extern void nec_interrupt(UINT8 int_num);
+extern void nec_int(DWORD wektor);
 extern void (*nec_instruction[256])(void);
 extern unsigned (*GetEA[192])(void);
 extern UINT8 PZSTable[256];

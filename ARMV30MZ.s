@@ -45,6 +45,8 @@
 	.global I
 	.global no_interrupt
 	.global nec_instruction
+	.global nec_interrupt
+	.global nec_int
 	.global GetEA
 
 	.global V30OpTable
@@ -1269,38 +1271,42 @@ _6F:	;@ OUTSW
 	ldmfd sp!,{r4,r5,pc}
 
 ;@----------------------------------------------------------------------------
-i_jo:
-_70:	;@ JMP Overflow
+i_bv:
+_70:	;@ Branch if Overflow
 ;@----------------------------------------------------------------------------
 	jmpne v30OverVal
 ;@----------------------------------------------------------------------------
-i_jno:
-_71:	;@ JMP Not Overflow
+i_bnv:
+_71:	;@ Branch if Not Overflow
 ;@----------------------------------------------------------------------------
 	jmpeq v30OverVal
 ;@----------------------------------------------------------------------------
-i_jc:
-_72:	;@ JMP Carry
+i_bc:
+i_bl:
+_72:	;@ Branch if Carry / Branch if Lower
 ;@----------------------------------------------------------------------------
 	jmpne v30CarryVal
 ;@----------------------------------------------------------------------------
-i_jnc:
-_73:	;@ JMP Not Carry
+i_bnc:
+i_bnl:
+_73:	;@ Branch if Not Carry / Branch if Not Lower
 ;@----------------------------------------------------------------------------
 	jmpeq v30CarryVal
 ;@----------------------------------------------------------------------------
-i_jz:
-_74:	;@ JMP Zero
+i_be:
+i_bz:
+_74:	;@ Branch if Equal / Branch if Zero
 ;@----------------------------------------------------------------------------
 	jmpeq v30ZeroVal
 ;@----------------------------------------------------------------------------
-i_jnz:
-_75:	;@ JMP Not Zero
+i_bne:
+i_bnz:
+_75:	;@ Branch if Not Equal / Branch if Not Zero
 ;@----------------------------------------------------------------------------
 	jmpne v30ZeroVal
 ;@----------------------------------------------------------------------------
-i_jce:
-_76:	;@ JMP CE
+i_bnh:
+_76:	;@ Branch if Not Higher
 ;@----------------------------------------------------------------------------
 	stmfd sp!,{r4,lr}
 	ldrh r1,[v30ptr,#v30IP]
@@ -1322,8 +1328,8 @@ _76:	;@ JMP CE
 	str r1,[v30ptr,#v30ICount]
 	ldmfd sp!,{r4,pc}
 ;@----------------------------------------------------------------------------
-i_jnce:
-_77:	;@ JMP Not CE
+i_bh:
+_77:	;@ Branch if Higher
 ;@----------------------------------------------------------------------------
 	stmfd sp!,{r4,lr}
 	ldrh r1,[v30ptr,#v30IP]
@@ -1345,8 +1351,8 @@ _77:	;@ JMP Not CE
 	str r1,[v30ptr,#v30ICount]
 	ldmfd sp!,{r4,pc}
 ;@----------------------------------------------------------------------------
-i_js:
-_78:	;@ JMP Sign
+i_bn:
+_78:	;@ Branch if Negative
 ;@----------------------------------------------------------------------------
 	stmfd sp!,{r4,lr}
 	ldrh r3,[v30ptr,#v30IP]
@@ -1365,8 +1371,8 @@ _78:	;@ JMP Sign
 	str r3,[v30ptr,#v30ICount]
 	ldmfd sp!,{r4,pc}
 ;@----------------------------------------------------------------------------
-i_jns:
-_79:	;@ JMP Not Sign
+i_bp:
+_79:	;@ Branch if Positive
 ;@----------------------------------------------------------------------------
 	stmfd sp!,{r4,lr}
 	ldrh r3,[v30ptr,#v30IP]
@@ -1385,8 +1391,8 @@ _79:	;@ JMP Not Sign
 	str r3,[v30ptr,#v30ICount]
 	ldmfd sp!,{r4,pc}
 ;@----------------------------------------------------------------------------
-i_jp:
-_7A:	;@ JMP Parity
+i_bpe:
+_7A:	;@ Branch if Parity Even
 ;@----------------------------------------------------------------------------
 	stmfd sp!,{r4,lr}
 	ldrh r1,[v30ptr,#v30IP]
@@ -1407,8 +1413,8 @@ _7A:	;@ JMP Parity
 	str r1,[v30ptr,#v30ICount]
 	ldmfd sp!,{r4,pc}
 ;@----------------------------------------------------------------------------
-i_jnp:
-_7B:	;@ JMP Not Parity
+i_bpo:
+_7B:	;@ Branch if Parity Odd
 ;@----------------------------------------------------------------------------
 	stmfd sp!,{r4,lr}
 	ldrh r1,[v30ptr,#v30IP]
@@ -1429,25 +1435,119 @@ _7B:	;@ JMP Not Parity
 	str r1,[v30ptr,#v30ICount]
 	ldmfd sp!,{r4,pc}
 ;@----------------------------------------------------------------------------
-;@i_jl:
-;@_7C:	;@ JMP Overflow
+i_blt:
+_7C:	;@ Branch if Less Than
 ;@----------------------------------------------------------------------------
-;@	jmpne v30OverVal
+	stmfd sp!,{r4,lr}
+	ldrh r1,[v30ptr,#v30IP]
+	ldrh r0,[v30ptr,#v30SRegCS]
+	add	r4,r1,#1
+	add	r0,r1,r0,asl#4
+	bl cpu_readmem20
+	ldr r2,[v30ptr,#v30OverVal]
+	ldr r3,[v30ptr,#v30SignVal]
+	ldr r1,[v30ptr,#v30ICount]
+	cmp	r2,#0
+	movne r2,#1
+	cmp r3,#0
+	movpl r3,#0
+	movmi r3,#1
+	eors r2,r2,r3
+	movne r0,r0,lsl#24
+	addne r4,r4,r0,asr#24
+	subne r1,r1,#3
+	subeq r1,r1,#1
+	strh r4,[v30ptr,#v30IP]
+	str r1,[v30ptr,#v30ICount]
+	ldmfd sp!,{r4,pc}
 ;@----------------------------------------------------------------------------
-;@i_jnl:
-;@_7D:	;@ JMP Not Overflow
+i_bge:
+_7D:	;@ Branch if Greater than or Equal
 ;@----------------------------------------------------------------------------
-;@	jmpeq v30OverVal
+	stmfd sp!,{r4,lr}
+	ldrh r1,[v30ptr,#v30IP]
+	ldrh r0,[v30ptr,#v30SRegCS]
+	add	r4,r1,#1
+	add	r0,r1,r0,asl#4
+	bl cpu_readmem20
+	ldr r2,[v30ptr,#v30OverVal]
+	ldr r3,[v30ptr,#v30SignVal]
+	ldr r1,[v30ptr,#v30ICount]
+	cmp	r2,#0
+	movne r2,#1
+	cmp r3,#0
+	movpl r3,#0
+	movmi r3,#1
+	eors r2,r2,r3
+	moveq r0,r0,lsl#24
+	addeq r4,r4,r0,asr#24
+	subeq r1,r1,#3
+	subne r1,r1,#1
+	strh r4,[v30ptr,#v30IP]
+	str r1,[v30ptr,#v30ICount]
+	ldmfd sp!,{r4,pc}
 ;@----------------------------------------------------------------------------
-;@i_jle:
-;@_7E:	;@ JMP Overflow
+i_ble:
+_7E:	;@ Branch if Less than or Equal
 ;@----------------------------------------------------------------------------
-;@	jmpne v30OverVal
+	stmfd sp!,{r4,lr}
+	ldrh r1,[v30ptr,#v30IP]
+	ldrh r0,[v30ptr,#v30SRegCS]
+	add	r4,r1,#1
+	add	r0,r1,r0,asl#4
+	bl cpu_readmem20
+	ldr r2,[v30ptr,#v30OverVal]
+	ldr r3,[v30ptr,#v30SignVal]
+	ldr r1,[v30ptr,#v30ZeroVal]
+	cmp	r2,#0
+	movne r2,#1
+	cmp r3,#0
+	movpl r3,#0
+	movmi r3,#1
+	cmp r1,#0
+	movne r1,#0
+	moveq r1,#1
+	eor r2,r2,r3
+	orrs r2,r2,r1
+	ldr r1,[v30ptr,#v30ICount]
+	movne r0,r0,lsl#24
+	addne r4,r4,r0,asr#24
+	subne r1,r1,#3
+	subeq r1,r1,#1
+	strh r4,[v30ptr,#v30IP]
+	str r1,[v30ptr,#v30ICount]
+	ldmfd sp!,{r4,pc}
 ;@----------------------------------------------------------------------------
-;@i_jnle:
-;@_7F:	;@ JMP Not Overflow
+i_bgt:
+_7F:	;@ Branch if Greater Than
 ;@----------------------------------------------------------------------------
-;@	jmpeq v30OverVal
+	stmfd sp!,{r4,lr}
+	ldrh r1,[v30ptr,#v30IP]
+	ldrh r0,[v30ptr,#v30SRegCS]
+	add	r4,r1,#1
+	add	r0,r1,r0,asl#4
+	bl cpu_readmem20
+	ldr r2,[v30ptr,#v30OverVal]
+	ldr r3,[v30ptr,#v30SignVal]
+	ldr r1,[v30ptr,#v30ZeroVal]
+	cmp	r2,#0
+	movne r2,#1
+	cmp r3,#0
+	movpl r3,#0
+	movmi r3,#1
+	cmp r1,#0
+	movne r1,#0
+	moveq r1,#1
+	eor r2,r2,r3
+	orrs r2,r2,r1
+	ldr r1,[v30ptr,#v30ICount]
+	moveq r0,r0,lsl#24
+	addeq r4,r4,r0,asr#24
+	subeq r1,r1,#3
+	subne r1,r1,#1
+	strh r4,[v30ptr,#v30IP]
+	str r1,[v30ptr,#v30ICount]
+	ldmfd sp!,{r4,pc}
 
 ;@----------------------------------------------------------------------------
 i_mov_r16w:
@@ -2395,22 +2495,6 @@ _C3:	;@ RET
 	str r1,[v30ptr,#v30ICount]
 	ldmfd sp!,{pc}
 ;@----------------------------------------------------------------------------
-i_dispose:
-_C9:	;@ DISPOSE
-;@----------------------------------------------------------------------------
-	stmfd sp!,{lr}
-	ldrh r1,[v30ptr,#v30RegBP]
-	ldrh r0,[v30ptr,#v30SRegSS]
-	add r2,r1,#2
-	add r0,r1,r0,lsl#4
-	strh r2,[v30ptr,#v30RegSP]
-	bl cpu_readmem20w
-	ldr r1,[v30ptr,#v30ICount]
-	strh r0,[v30ptr,#v30RegBP]
-	sub r1,r1,#2
-	str r1,[v30ptr,#v30ICount]
-	ldmfd sp!,{pc}
-;@----------------------------------------------------------------------------
 i_prepare:
 _C8:	;@ PREPARE
 ;@----------------------------------------------------------------------------
@@ -2468,6 +2552,22 @@ _C8:	;@ PREPARE
 	strh r6,[v30ptr,#v30RegSP]
 	str r4,[v30ptr,#v30ICount]
 	ldmfd sp!,{r4-r10,pc}
+;@----------------------------------------------------------------------------
+i_dispose:
+_C9:	;@ DISPOSE
+;@----------------------------------------------------------------------------
+	stmfd sp!,{lr}
+	ldrh r1,[v30ptr,#v30RegBP]
+	ldrh r0,[v30ptr,#v30SRegSS]
+	add r2,r1,#2
+	add r0,r1,r0,lsl#4
+	strh r2,[v30ptr,#v30RegSP]
+	bl cpu_readmem20w
+	ldr r1,[v30ptr,#v30ICount]
+	strh r0,[v30ptr,#v30RegBP]
+	sub r1,r1,#2
+	str r1,[v30ptr,#v30ICount]
+	ldmfd sp!,{pc}
 ;@----------------------------------------------------------------------------
 i_retf_d16:
 _CA:	;@ RETF D16
@@ -3515,13 +3615,60 @@ EA_207:	;@
 	str r0,[v30ptr,#v30EA]
 	ldmfd sp!,{pc}
 
+;@----------------------------------------------------------------------------
+V30SetIRQPin:
+;@----------------------------------------------------------------------------
+;@----------------------------------------------------------------------------
+nec_int:				;@ r0 = vector number * 4
+	.type   nec_int STT_FUNC
+;@----------------------------------------------------------------------------
+	ldrb r1,[v30ptr,#v30IF]
+	cmp r1,#0
+	bxeq lr
+	mov r0,r0,lsr#2
+;@----------------------------------------------------------------------------
+V30SetIRQ:
+nec_interrupt:				;@ r0 = vector number
+	.type   nec_interrupt STT_FUNC
+;@----------------------------------------------------------------------------
+	stmfd sp!,{r4-r7,lr}
+	mov r4,r0
+	bl i_pushf
+	mov r0,#0
+	strb r0,[v30ptr,#v30IF]
+	strb r0,[v30ptr,#v30TF]
+	mov r0,r4,lsl#2
+	bl cpu_readmem20w
+	mov r5,r0
+	mov r0,r4,lsl#2
+	add r0,r0,#2
+	bl cpu_readmem20w
+	mov r4,r0
 
+	ldrh r6,[v30ptr,#v30RegSP]
+	ldrh r7,[v30ptr,#v30SRegSS]
+	sub r6,r6,#2
+	add r0,r6,r7,lsl#4
+	ldrh r1,[v30ptr,#v30SRegCS]
+	bl cpu_writemem20w
+	sub r6,r6,#2
+	add r0,r6,r7,lsl#4
+	strh r6,[v30ptr,#v30RegSP]
+	ldrh r1,[v30ptr,#v30IP]
+	bl cpu_writemem20w
+
+	strh r5,[v30ptr,#v30IP]
+	strh r4,[v30ptr,#v30SRegCS]
+	ldr r0,[v30ptr,#v30ICount]
+	sub r0,r0,#22
+	str r0,[v30ptr,#v30ICount]
+	ldmfd sp!,{r4-r7,pc}
 ;@----------------------------------------------------------------------------
 V30RunXCycles:				;@ r0 = number of cycles to run
 ;@----------------------------------------------------------------------------
 	stmfd sp!,{lr}
 
-	mov r4,r0
+	mov r9,r0
 	str r0,[v30ptr,#v30ICount]
 xLoop:
 	ldr r0,[v30ptr,#v30ICount]
@@ -3536,7 +3683,7 @@ xLoop:
 	adr lr,xLoop
 	ldr pc,[v30ptr,r0,lsl#2]
 xOut:
-	sub r0,r0,r4
+	sub r0,r0,r9
 	ldmfd sp!,{pc}
 ;@----------------------------------------------------------------------------
 V30CheckIRQs:
@@ -3781,22 +3928,22 @@ V30OpTable:
 	.long i_insw
 	.long i_outsb
 	.long i_outsw
-	.long i_jo
-	.long i_jno
-	.long i_jc
-	.long i_jnc
-	.long i_jz
-	.long i_jnz
-	.long i_jce
-	.long i_jnce
-	.long i_js
-	.long i_jns
-	.long i_jp
-	.long i_jnp
-	.long i_jl
-	.long i_jnl
-	.long i_jle
-	.long i_jnle
+	.long i_bv
+	.long i_bnv
+	.long i_bc
+	.long i_bnc
+	.long i_be
+	.long i_bne
+	.long i_bnh
+	.long i_bh
+	.long i_bn
+	.long i_bp
+	.long i_bpe
+	.long i_bpo
+	.long i_blt
+	.long i_bge
+	.long i_ble
+	.long i_bgt
 	.long i_80pre
 	.long i_81pre
 	.long i_82pre

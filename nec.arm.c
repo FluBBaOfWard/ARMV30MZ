@@ -105,7 +105,7 @@ void i_scasw(void);
 
 /***************************************************************************/
 
-void nec_reset (void *param)
+void nec_reset(void *param)
 {
 	unsigned int i, j, c;
 	BREGS reg_name[8] = { AL, CL, DL, BL, AH, CH, DH, BH };
@@ -134,7 +134,7 @@ void nec_reset (void *param)
 		Mod_RM.RM.b[i] = (BREGS)reg_name[i & 7];
 	}
 }
-
+/*
 void nec_interrupt(UINT8 int_num)
 {
 	UINT32 dest_seg, dest_off;
@@ -157,7 +157,7 @@ void nec_int(DWORD wektor)
 		nec_interrupt(wektor/4);
 	}
 }
-
+*/
 /****************************************************************************/
 /*							   OPCODES										*/
 /****************************************************************************/
@@ -326,22 +326,22 @@ OP( 0x6b, i_imul_d8  ) { UINT32 src2; DEF_r16w; src2= (WORD)((INT16)((INT8)FETCH
 //OP( 0x6e, i_outsb    ) { write_port(I.regs.w[DW],GetMemB(DS,I.regs.w[IX])); I.regs.w[IX]+= -2 * I.DF + 1; CLK(7); }
 //OP( 0x6f, i_outsw    ) { UINT16 tmp = GetMemW(DS,I.regs.w[IX]); write_port(I.regs.w[DW],tmp); write_port((I.regs.w[DW]+1),tmp>>8); I.regs.w[IX]+= -4 * I.DF + 2; CLK(7); }
 
-//ITCM_CODE OP( 0x70, i_jo   ) { JMP( OF); }
-//ITCM_CODE OP( 0x71, i_jno  ) { JMP(!OF); }
-//ITCM_CODE OP( 0x72, i_jc   ) { JMP( CF); }
-//ITCM_CODE OP( 0x73, i_jnc  ) { JMP(!CF); }
-//ITCM_CODE OP( 0x74, i_jz   ) { JMP( ZF); }
-//ITCM_CODE OP( 0x75, i_jnz  ) { JMP(!ZF); }
-//ITCM_CODE OP( 0x76, i_jce  ) { JMP(CF || ZF); }
-//ITCM_CODE OP( 0x77, i_jnce ) { JMP(!(CF || ZF)); }
-//ITCM_CODE OP( 0x78, i_js   ) { JMP( SF); }
-//ITCM_CODE OP( 0x79, i_jns  ) { JMP(!SF); }
-//ITCM_CODE OP( 0x7a, i_jp   ) { JMP( PF); }
-//ITCM_CODE OP( 0x7b, i_jnp  ) { JMP(!PF); }
-ITCM_CODE OP( 0x7c, i_jl   ) { JMP((!ZF)&&(SF!=OF)); }
-ITCM_CODE OP( 0x7d, i_jnl  ) { JMP((ZF)||(SF==OF)); }
-ITCM_CODE OP( 0x7e, i_jle  ) { JMP((ZF)||(SF!=OF)); }
-ITCM_CODE OP( 0x7f, i_jnle ) { JMP((!ZF)&&(SF==OF)); }
+//ITCM_CODE OP( 0x70, i_bv  ) { JMP( OF); }
+//ITCM_CODE OP( 0x71, i_bnv ) { JMP(!OF); }
+//ITCM_CODE OP( 0x72, i_bc  ) { JMP( CF); }
+//ITCM_CODE OP( 0x73, i_bnc ) { JMP(!CF); }
+//ITCM_CODE OP( 0x74, i_be  ) { JMP( ZF); }
+//ITCM_CODE OP( 0x75, i_bne ) { JMP(!ZF); }
+//ITCM_CODE OP( 0x76, i_bnh ) { JMP(CF || ZF); }
+//ITCM_CODE OP( 0x77, i_bh  ) { JMP(!(CF || ZF)); }
+//ITCM_CODE OP( 0x78, i_bn  ) { JMP( SF); }
+//ITCM_CODE OP( 0x79, i_bp  ) { JMP(!SF); }
+//ITCM_CODE OP( 0x7a, i_bpe ) { JMP( PF); }
+//ITCM_CODE OP( 0x7b, i_bpo ) { JMP(!PF); }
+//ITCM_CODE OP( 0x7c, i_blt ) { JMP(SF!=OF); }
+//ITCM_CODE OP( 0x7d, i_bge ) { JMP(SF==OF); }
+//ITCM_CODE OP( 0x7e, i_ble ) { JMP((SF!=OF)||(ZF)); }
+//ITCM_CODE OP( 0x7f, i_bgt ) { JMP((SF==OF)&&(!ZF)); }
 
 OP( 0x80, i_80pre   ) { UINT32 dst, src; GetModRM; dst = GetRMByte(ModRM); src = FETCH;
 	CLKM(3,1)

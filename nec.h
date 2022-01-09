@@ -17,7 +17,7 @@ typedef enum { AL,AH,CL,CH,DL,DH,BL,BH,SPL,SPH,BPL,BPH,IXL,IXH,IYL,IYH } BREGS;
 #define NEC_NMI_INT_VECTOR 2
 
 /* Cpu types, steps of 8 to help the cycle count calculation */
-#define V30 8
+//#define V30 8
 
 #ifndef FALSE
 #define FALSE 0

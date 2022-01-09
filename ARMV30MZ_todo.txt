@@ -1,7 +1,6 @@
 ARMV30MZ To do
 --------------
 
-	Convert interrupts to asm!
 	Rename more opcodes.
 	Implement Halt (0xf4) correctly.
 	Poll (0x9b) is used? What pin is this connected to?

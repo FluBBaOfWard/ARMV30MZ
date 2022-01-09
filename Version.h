@@ -1,1 +1,1 @@
-#define ARMV30MZVERSION "V0.3.0"
+#define ARMV30MZVERSION "V0.4.0"

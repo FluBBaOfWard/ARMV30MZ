@@ -2,6 +2,9 @@ ARMV30MZ revision history
 -=-=-=-=-=-=-=-=-=-=-=-=-
 
 
+V0.4.0 - 2022-01-09 (FluBBa)
+	Rewriting the cpu core in asm.
+
 V0.3.0 - 2022-01-09 (FluBBa)
 	Rewrote parts of the cpu core in asm.
 
