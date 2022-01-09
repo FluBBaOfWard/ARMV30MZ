@@ -122,7 +122,7 @@ typedef enum { AL,AH,CL,CH,DL,DH,BL,BH,SPL,SPH,BPL,BPH,IXL,IXH,IYL,IYH } BREGS;
 }
 
 
-
+/*
 #define IncWordReg(Reg)						\
 	unsigned tmp = (unsigned)I.regs.w[Reg];	\
 	unsigned tmp1 = tmp+1;					\
@@ -139,7 +139,7 @@ typedef enum { AL,AH,CL,CH,DL,DH,BL,BH,SPL,SPH,BPL,BPH,IXL,IXH,IYL,IYH } BREGS;
 	SetAF(tmp1,tmp,1);						\
 	SetSZPF_Word(tmp1);						\
 	I.regs.w[Reg]=tmp1
-
+*/
 #define JMP(flag)							\
 	int tmp = (int)((INT8)FETCH);			\
 	if (flag)								\
@@ -151,7 +151,7 @@ typedef enum { AL,AH,CL,CH,DL,DH,BL,BH,SPL,SPH,BPL,BPH,IXL,IXH,IYL,IYH } BREGS;
 	{										\
 		CLK(1);								\
 	}
-
+/*
 #define ADJ4(param1,param2)					\
 	if (AF || ((I.regs.b[AL] & 0xf) > 9))	\
 	{										\
@@ -187,7 +187,7 @@ typedef enum { AL,AH,CL,CH,DL,DH,BL,BH,SPL,SPH,BPL,BPH,IXL,IXH,IYL,IYH } BREGS;
 	tmp = I.regs.w[Reg]; 					\
 	I.regs.w[Reg] = I.regs.w[AW]; 			\
 	I.regs.w[AW] = tmp
-
+*/
 #define ROL_BYTE I.CarryVal = dst & 0x80; dst = (dst << 1)+CF
 #define ROL_WORD I.CarryVal = dst & 0x8000; dst = (dst << 1)+CF
 #define ROR_BYTE I.CarryVal = dst & 0x1; dst = (dst >> 1)+(CF<<7)

@@ -135,23 +135,6 @@ void nec_reset (void *param)
 	}
 }
 
-
-void nec_int(DWORD wektor)
-{
-	DWORD dest_seg, dest_off;
-
-	if (I.IF) {
-		i_pushf();
-		I.TF = I.IF = 0;
-		dest_off = ReadWord(wektor);
-		dest_seg = ReadWord(wektor+2);
-		PUSH(I.sregs[CS]);
-		PUSH(I.ip);
-		I.ip = (WORD)dest_off;
-		I.sregs[CS] = (WORD)dest_seg;
-	}
-}
-
 void nec_interrupt(UINT8 int_num)
 {
 	UINT32 dest_seg, dest_off;
@@ -159,13 +142,20 @@ void nec_interrupt(UINT8 int_num)
 	i_pushf();
 	I.TF = I.IF = 0;
 
-	dest_off = ReadWord((int_num)*4);
-	dest_seg = ReadWord((int_num)*4+2);
+	dest_off = ReadWord(((int)int_num)*4);
+	dest_seg = ReadWord(((int)int_num)*4+2);
 
 	PUSH(I.sregs[CS]);
 	PUSH(I.ip);
 	I.ip = (WORD)dest_off;
 	I.sregs[CS] = (WORD)dest_seg;
+}
+
+void nec_int(DWORD wektor)
+{
+	if (I.IF) {
+		nec_interrupt(wektor/4);
+	}
 }
 
 /****************************************************************************/
@@ -771,12 +761,12 @@ OP( 0xff, i_ffpre ) { UINT32 tmp, tmp1; GetModRM; tmp=GetRMWord(ModRM);
 	}
 }
 
-ITCM_CODE int nec_execute(int cycles)
-{
-	I.ICount = cycles;
-
-	while(I.ICount > 0) {
-		nec_instruction[FETCHOP]();
-	}
-	return cycles - I.ICount;
-}
+//ITCM_CODE int nec_execute(int cycles)
+//{
+//	I.ICount = cycles;
+//
+//	while(I.ICount > 0) {
+//		nec_instruction[FETCHOP]();
+//	}
+//	return cycles - I.ICount;
+//}
