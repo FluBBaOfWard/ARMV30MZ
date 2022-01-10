@@ -395,7 +395,7 @@
 	cmp	r3,#0
 	movne r0,r0,lsl#24
 	addne r4,r4,r0,asr#24
-	subne r1,r1,#3
+	subne r1,r1,#4
 	subeq r1,r1,#1
 	strh r4,[v30ptr,#v30IP]
 	str r1,[v30ptr,#v30ICount]
@@ -414,7 +414,7 @@
 	cmp	r3,#0
 	moveq r0,r0,lsl#24
 	addeq r4,r4,r0,asr#24
-	subeq r1,r1,#3
+	subeq r1,r1,#4
 	subne r1,r1,#1
 	strh r4,[v30ptr,#v30IP]
 	str r1,[v30ptr,#v30ICount]

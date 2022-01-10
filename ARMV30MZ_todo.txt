@@ -2,6 +2,7 @@ ARMV30MZ To do
 --------------
 
 	Rename more opcodes.
+	ADC & SBC are wrong in C code?
 	Implement Halt (0xf4) correctly.
 	Poll (0x9b) is used? What pin is this connected to?
 

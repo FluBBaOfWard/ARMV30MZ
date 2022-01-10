@@ -93,7 +93,7 @@ static struct {
 	GetModRM;							\
 	UINT32 src = GetRMWord(ModRM);		\
 	UINT32 dst = RegWord(ModRM)
-
+/*
 #define DEF_ald8						\
 	UINT32 src = FETCH;					\
 	UINT32 dst = I.regs.b[AL]
@@ -102,3 +102,4 @@ static struct {
 	UINT32 src;							\
 	FETCHWORD(src);						\
 	UINT32 dst = I.regs.w[AW]
+*/

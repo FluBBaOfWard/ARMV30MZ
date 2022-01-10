@@ -86,8 +86,8 @@ typedef enum { AL,AH,CL,CH,DL,DH,BL,BH,SPL,SPH,BPL,BPH,IXL,IXH,IYL,IYH } BREGS;
 #define WriteByte(ea,val) { cpu_writemem20((ea),val); }
 #define WriteWord(ea,val) { /*I.ICount-=(ea)&1;*/ cpu_writemem20w((ea),val); }
 
-#define read_port(port) cpu_readport(port)
-#define write_port(port,val) cpu_writeport(port,val)
+//#define read_port(port) cpu_readport(port)
+//#define write_port(port,val) cpu_writeport(port,val)
 
 #define FETCH (cpu_readop_arg((I.sregs[CS]<<4)+I.ip++))
 #define FETCHOP (cpu_readop((I.sregs[CS]<<4)+I.ip++))
@@ -139,19 +139,19 @@ typedef enum { AL,AH,CL,CH,DL,DH,BL,BH,SPL,SPH,BPL,BPH,IXL,IXH,IYL,IYH } BREGS;
 	SetAF(tmp1,tmp,1);						\
 	SetSZPF_Word(tmp1);						\
 	I.regs.w[Reg]=tmp1
-*/
+
 #define JMP(flag)							\
 	int tmp = (int)((INT8)FETCH);			\
 	if (flag)								\
 	{										\
 		I.ip = (WORD)(I.ip+tmp);			\
-		CLK(3);								\
+		CLK(4);								\
 	}										\
 	else									\
 	{										\
 		CLK(1);								\
 	}
-/*
+
 #define ADJ4(param1,param2)					\
 	if (AF || ((I.regs.b[AL] & 0xf) > 9))	\
 	{										\
