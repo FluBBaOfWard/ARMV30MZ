@@ -47,7 +47,7 @@ static struct {
 
 #define GetRMByte(ModRM)					\
 	((ModRM) >= 0xc0 ? I.regs.b[Mod_RM.RM.b[ModRM]] : ReadByte( (*GetEA[ModRM])() ))
-	
+
 #define PutRMByte(ModRM,val)				\
 {											\
 	if (ModRM >= 0xc0)						\
