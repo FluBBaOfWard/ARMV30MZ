@@ -178,7 +178,7 @@ void i_invalid(void)
 #define OP(num,func_name) void func_name(void)
 
 
-OP( 0x00, i_add_br8  ) { DEF_br8;   ADDB; PutbackRMByte(ModRM,dst); CLKM(3,1); }
+//OP( 0x00, i_add_br8  ) { DEF_br8;   ADDB; PutbackRMByte(ModRM,dst); CLKM(3,1); }
 //OP( 0x01, i_add_wr16 ) { DEF_wr16;  ADDW; PutbackRMWord(ModRM,dst); CLKM(3,1); }
 //OP( 0x02, i_add_r8b  ) { DEF_r8b;   ADDB; RegByte(ModRM)=dst;		CLKM(2,1); }
 //OP( 0x03, i_add_r16w ) { DEF_r16w;  ADDW; RegWord(ModRM)=dst;		CLKM(2,1); }
@@ -187,7 +187,7 @@ OP( 0x00, i_add_br8  ) { DEF_br8;   ADDB; PutbackRMByte(ModRM,dst); CLKM(3,1); }
 //OP( 0x06, i_push_es  ) { PUSH(I.sregs[ES]); CLK(2); }
 //OP( 0x07, i_pop_es   ) { POP(I.sregs[ES]);  CLK(3); }
 
-OP( 0x08, i_or_br8   ) { DEF_br8;   ORB; PutbackRMByte(ModRM,dst); CLKM(3,1); }
+//OP( 0x08, i_or_br8   ) { DEF_br8;   ORB; PutbackRMByte(ModRM,dst); CLKM(3,1); }
 //OP( 0x09, i_or_wr16  ) { DEF_wr16;  ORW; PutbackRMWord(ModRM,dst); CLKM(3,1); }
 //OP( 0x0a, i_or_r8b   ) { DEF_r8b;   ORB; RegByte(ModRM)=dst;	   CLKM(2,1); }
 //OP( 0x0b, i_or_r16w  ) { DEF_r16w;  ORW; RegWord(ModRM)=dst;	   CLKM(2,1); }
@@ -196,7 +196,7 @@ OP( 0x08, i_or_br8   ) { DEF_br8;   ORB; PutbackRMByte(ModRM,dst); CLKM(3,1); }
 //OP( 0x0e, i_push_cs  ) { PUSH(I.sregs[CS]); CLK(2); }
 //OP( 0x0f, i_pop_cs   ) { POP(I.sregs[CS]);  CLK(3); }	// Pop cs at V30MZ?
 
-OP( 0x10, i_adc_br8  ) { DEF_br8;   src+=CF; ADDB; PutbackRMByte(ModRM,dst); CLKM(3,1); }
+//OP( 0x10, i_adc_br8  ) { DEF_br8;   src+=CF; ADDB; PutbackRMByte(ModRM,dst); CLKM(3,1); }
 //OP( 0x11, i_adc_wr16 ) { DEF_wr16;  src+=CF; ADDW; PutbackRMWord(ModRM,dst); CLKM(3,1); }
 //OP( 0x12, i_adc_r8b  ) { DEF_r8b;   src+=CF; ADDB; RegByte(ModRM)=dst;		 CLKM(2,1); }
 //OP( 0x13, i_adc_r16w ) { DEF_r16w;  src+=CF; ADDW; RegWord(ModRM)=dst;		 CLKM(2,1); }
@@ -205,7 +205,7 @@ OP( 0x10, i_adc_br8  ) { DEF_br8;   src+=CF; ADDB; PutbackRMByte(ModRM,dst); CLK
 //OP( 0x16, i_push_ss  ) { PUSH(I.sregs[SS]);  CLK(2); }
 //OP( 0x17, i_pop_ss   ) { POP(I.sregs[SS]);   CLK(3); no_interrupt=1; }
 
-OP( 0x18, i_sbb_br8  ) { DEF_br8;   src+=CF; SUBB; PutbackRMByte(ModRM,dst); CLKM(3,1); }
+//OP( 0x18, i_sbb_br8  ) { DEF_br8;   src+=CF; SUBB; PutbackRMByte(ModRM,dst); CLKM(3,1); }
 //OP( 0x19, i_sbb_wr16 ) { DEF_wr16;  src+=CF; SUBW; PutbackRMWord(ModRM,dst); CLKM(3,1); }
 //OP( 0x1a, i_sbb_r8b  ) { DEF_r8b;   src+=CF; SUBB; RegByte(ModRM)=dst;		 CLKM(2,1); }
 //OP( 0x1b, i_sbb_r16w ) { DEF_r16w;  src+=CF; SUBW; RegWord(ModRM)=dst;		 CLKM(2,1); }
@@ -214,7 +214,7 @@ OP( 0x18, i_sbb_br8  ) { DEF_br8;   src+=CF; SUBB; PutbackRMByte(ModRM,dst); CLK
 //OP( 0x1e, i_push_ds  ) { PUSH(I.sregs[DS]);  CLK(2); }
 //OP( 0x1f, i_pop_ds   ) { POP(I.sregs[DS]);   CLK(3); }
 
-OP( 0x20, i_and_br8  ) { DEF_br8;   ANDB; PutbackRMByte(ModRM,dst); CLKM(3,1); }
+//OP( 0x20, i_and_br8  ) { DEF_br8;   ANDB; PutbackRMByte(ModRM,dst); CLKM(3,1); }
 //OP( 0x21, i_and_wr16 ) { DEF_wr16;  ANDW; PutbackRMWord(ModRM,dst); CLKM(3,1); }
 //OP( 0x22, i_and_r8b  ) { DEF_r8b;   ANDB; RegByte(ModRM)=dst;		CLKM(2,1); }
 //OP( 0x23, i_and_r16w ) { DEF_r16w;  ANDW; RegWord(ModRM)=dst;		CLKM(2,1); }
@@ -223,7 +223,7 @@ OP( 0x20, i_and_br8  ) { DEF_br8;   ANDB; PutbackRMByte(ModRM,dst); CLKM(3,1); }
 //OP( 0x26, i_es       ) { I.seg_prefix=TRUE; I.prefix_base=I.sregs[ES]; CLK(1); nec_instruction[FETCHOP](); I.seg_prefix=FALSE; }
 //OP( 0x27, i_daa      ) { ADJ4(6,0x60);								CLK(10); }
 
-OP( 0x28, i_sub_br8  ) { DEF_br8;   SUBB; PutbackRMByte(ModRM,dst); CLKM(3,1); }
+//OP( 0x28, i_sub_br8  ) { DEF_br8;   SUBB; PutbackRMByte(ModRM,dst); CLKM(3,1); }
 //OP( 0x29, i_sub_wr16 ) { DEF_wr16;  SUBW; PutbackRMWord(ModRM,dst); CLKM(3,1); }
 //OP( 0x2a, i_sub_r8b  ) { DEF_r8b;   SUBB; RegByte(ModRM)=dst;		CLKM(2,1); }
 //OP( 0x2b, i_sub_r16w ) { DEF_r16w;  SUBW; RegWord(ModRM)=dst;		CLKM(2,1); }
@@ -232,7 +232,7 @@ OP( 0x28, i_sub_br8  ) { DEF_br8;   SUBB; PutbackRMByte(ModRM,dst); CLKM(3,1); }
 //OP( 0x2e, i_cs       ) { I.seg_prefix=TRUE; I.prefix_base=I.sregs[CS]; CLK(1); nec_instruction[FETCHOP](); I.seg_prefix=FALSE; }
 //OP( 0x2f, i_das      ) { ADJ4(-6,-0x60);							CLK(10); }
 
-OP( 0x30, i_xor_br8  ) { DEF_br8;   XORB; PutbackRMByte(ModRM,dst); CLKM(3,1); }
+//OP( 0x30, i_xor_br8  ) { DEF_br8;   XORB; PutbackRMByte(ModRM,dst); CLKM(3,1); }
 //OP( 0x31, i_xor_wr16 ) { DEF_wr16;  XORW; PutbackRMWord(ModRM,dst); CLKM(3,1); }
 //OP( 0x32, i_xor_r8b  ) { DEF_r8b;   XORB; RegByte(ModRM)=dst;		CLKM(2,1); }
 //OP( 0x33, i_xor_r16w ) { DEF_r16w;  XORW; RegWord(ModRM)=dst;		CLKM(2,1); }
@@ -241,7 +241,7 @@ OP( 0x30, i_xor_br8  ) { DEF_br8;   XORB; PutbackRMByte(ModRM,dst); CLKM(3,1); }
 //OP( 0x36, i_ss       ) { I.seg_prefix=TRUE; I.prefix_base=I.sregs[SS]; CLK(1); nec_instruction[FETCHOP](); I.seg_prefix=FALSE; }
 //OP( 0x37, i_aaa      ) { ADJB(6,1);									CLK(9); }
 
-OP( 0x38, i_cmp_br8  ) { DEF_br8;   SUBB;					CLKM(2,1); }
+//OP( 0x38, i_cmp_br8  ) { DEF_br8;   SUBB;					CLKM(2,1); }
 //OP( 0x39, i_cmp_wr16 ) { DEF_wr16;  SUBW;					CLKM(2,1); }
 //OP( 0x3a, i_cmp_r8b  ) { DEF_r8b;   SUBB;					CLKM(2,1); }
 //OP( 0x3b, i_cmp_r16w ) { DEF_r16w;  SUBW;					CLKM(2,1); }
@@ -407,9 +407,9 @@ OP( 0x83, i_83pre   ) { UINT32 dst, src; GetModRM; dst = GetRMWord(ModRM); src =
 	}
 }
 
-OP( 0x84, i_test_br8  ) { DEF_br8;  ANDB; CLKM(2,1); }
+//OP( 0x84, i_test_br8  ) { DEF_br8;  ANDB; CLKM(2,1); }
 //OP( 0x85, i_test_wr16 ) { DEF_wr16; ANDW; CLKM(2,1); }
-OP( 0x86, i_xchg_br8  ) { DEF_br8;  RegByte(ModRM)=dst; PutbackRMByte(ModRM,src); CLKM(5,3); }
+//OP( 0x86, i_xchg_br8  ) { DEF_br8;  RegByte(ModRM)=dst; PutbackRMByte(ModRM,src); CLKM(5,3); }
 //OP( 0x87, i_xchg_wr16 ) { DEF_wr16; RegWord(ModRM)=dst; PutbackRMWord(ModRM,src); CLKM(5,3); }
 
 OP( 0x88, i_mov_br8   ) { UINT8  src; GetModRM; src = RegByte(ModRM);   PutRMByte(ModRM,src); CLKM(1,1); }
