@@ -79,6 +79,9 @@ v30NoInterrupt:		.long 0
 v30Opz:				.space 256*4
 v30PZST:			.space 256
 v30EATable:			.space 192*4
+v30ModRm:
+v30ModRmReg:		.space 256
+v30ModRmRm:			.space 256
 v30Size:
 
 ;@----------------------------------------------------------------------------

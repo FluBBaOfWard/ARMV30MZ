@@ -1,13 +1,4 @@
 
-static struct {
-	struct {
-		BREGS b[256];
-	} reg;
-	struct {
-		BREGS b[256];
-	} RM;
-} Mod_RM __attribute__((section(".dtcm")));
-
 #define RegWord(ModRM) I.regs.w[((ModRM & 0x38) >> 3)]
 #define RegByte(ModRM) I.regs.b[Mod_RM.reg.b[ModRM]]
 
@@ -82,12 +73,12 @@ static struct {
 	GetModRM;							\
 	UINT32 src = RegWord(ModRM);		\
     UINT32 dst = GetRMWord(ModRM)
-*/
+
 #define DEF_r8b							\
 	GetModRM;							\
 	UINT32 src = GetRMByte(ModRM);		\
 	UINT32 dst = RegByte(ModRM)
-/*
+
 #define DEF_r16w						\
 	GetModRM;							\
 	UINT32 src = GetRMWord(ModRM);		\

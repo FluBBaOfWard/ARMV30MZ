@@ -47,6 +47,7 @@
 	.global nec_instruction
 	.global nec_interrupt
 	.global nec_int
+	.global Mod_RM
 	.global GetEA
 
 	.global V30OpTable
@@ -93,6 +94,43 @@ _01:	;@ ADD WR16
 	ldr pc,[r1,r0,lsl#2]
 	adr lr,0b
 	b cpu_readmem20w
+;@----------------------------------------------------------------------------
+i_add_r8b:
+_02:	;@ ADD R8b
+;@----------------------------------------------------------------------------
+	stmfd sp!,{r4,lr}
+	ldrh r1,[v30ptr,#v30IP]
+	ldrh r0,[v30ptr,#v30SRegCS]
+	add r2,r1,#1
+	add	r0,r1,r0,asl#4
+	strh r2,[v30ptr,#v30IP]
+	bl cpu_readmem20
+	add r1,v30ptr,r0
+	ldrb r2,[r1,#v30ModRmReg]
+	add r4,v30ptr,r2
+	ldr r3,[v30ptr,#v30ICount]
+	cmp r0,#0xC0
+	bmi 1f
+	ldrb r2,[r1,#v30ModRmRm]
+	add r1,v30ptr,r2
+	ldrb r0,[r1,#v30Regs]
+	sub r3,r3,#1
+	str r3,[v30ptr,#v30ICount]
+0:
+	ldrb r1,[r4,#v30Regs]
+
+	add8
+
+	strb r0,[r4,#v30Regs]
+	ldmfd sp!,{r4,pc}
+1:
+	sub r3,r3,#2
+	str r3,[v30ptr,#v30ICount]
+	add r1,v30ptr,#v30EATable
+	mov lr,pc
+	ldr pc,[r1,r0,lsl#2]
+	adr lr,0b
+	b cpu_readmem20
 ;@----------------------------------------------------------------------------
 i_add_r16w:
 _03:	;@ ADD R16W
@@ -243,6 +281,43 @@ _09:	;@ OR WR16
 	adr lr,0b
 	b cpu_readmem20w
 ;@----------------------------------------------------------------------------
+i_or_r8b:
+_0A:	;@ OR R8b
+;@----------------------------------------------------------------------------
+	stmfd sp!,{r4,lr}
+	ldrh r1,[v30ptr,#v30IP]
+	ldrh r0,[v30ptr,#v30SRegCS]
+	add r2,r1,#1
+	add	r0,r1,r0,asl#4
+	strh r2,[v30ptr,#v30IP]
+	bl cpu_readmem20
+	add r1,v30ptr,r0
+	ldrb r2,[r1,#v30ModRmReg]
+	add r4,v30ptr,r2
+	ldr r3,[v30ptr,#v30ICount]
+	cmp r0,#0xC0
+	bmi 1f
+	ldrb r2,[r1,#v30ModRmRm]
+	add r1,v30ptr,r2
+	ldrb r0,[r1,#v30Regs]
+	sub r3,r3,#1
+	str r3,[v30ptr,#v30ICount]
+0:
+	ldrb r1,[r4,#v30Regs]
+
+	or8
+
+	strb r0,[r4,#v30Regs]
+	ldmfd sp!,{r4,pc}
+1:
+	sub r3,r3,#2
+	str r3,[v30ptr,#v30ICount]
+	add r1,v30ptr,#v30EATable
+	mov lr,pc
+	ldr pc,[r1,r0,lsl#2]
+	adr lr,0b
+	b cpu_readmem20
+;@----------------------------------------------------------------------------
 i_or_r16w:
 _0B:	;@ OR R16W
 ;@----------------------------------------------------------------------------
@@ -391,6 +466,43 @@ _11:	;@ ADC WR16
 	ldr pc,[r1,r0,lsl#2]
 	adr lr,0b
 	b cpu_readmem20w
+;@----------------------------------------------------------------------------
+i_adc_r8b:
+_12:	;@ ADC R8b
+;@----------------------------------------------------------------------------
+	stmfd sp!,{r4,lr}
+	ldrh r1,[v30ptr,#v30IP]
+	ldrh r0,[v30ptr,#v30SRegCS]
+	add r2,r1,#1
+	add	r0,r1,r0,asl#4
+	strh r2,[v30ptr,#v30IP]
+	bl cpu_readmem20
+	add r1,v30ptr,r0
+	ldrb r2,[r1,#v30ModRmReg]
+	add r4,v30ptr,r2
+	ldr r3,[v30ptr,#v30ICount]
+	cmp r0,#0xC0
+	bmi 1f
+	ldrb r2,[r1,#v30ModRmRm]
+	add r1,v30ptr,r2
+	ldrb r0,[r1,#v30Regs]
+	sub r3,r3,#1
+	str r3,[v30ptr,#v30ICount]
+0:
+	ldrb r1,[r4,#v30Regs]
+
+	adc8
+
+	strb r0,[r4,#v30Regs]
+	ldmfd sp!,{r4,pc}
+1:
+	sub r3,r3,#2
+	str r3,[v30ptr,#v30ICount]
+	add r1,v30ptr,#v30EATable
+	mov lr,pc
+	ldr pc,[r1,r0,lsl#2]
+	adr lr,0b
+	b cpu_readmem20
 ;@----------------------------------------------------------------------------
 i_adc_r16w:
 _13:	;@ ADC R16W
@@ -542,6 +654,43 @@ _19:	;@ SBB WR16
 	adr lr,0b
 	b cpu_readmem20w
 ;@----------------------------------------------------------------------------
+i_sbb_r8b:
+_1A:	;@ SBB R8b
+;@----------------------------------------------------------------------------
+	stmfd sp!,{r4,lr}
+	ldrh r1,[v30ptr,#v30IP]
+	ldrh r0,[v30ptr,#v30SRegCS]
+	add r2,r1,#1
+	add	r0,r1,r0,asl#4
+	strh r2,[v30ptr,#v30IP]
+	bl cpu_readmem20
+	add r1,v30ptr,r0
+	ldrb r2,[r1,#v30ModRmReg]
+	add r4,v30ptr,r2
+	ldr r3,[v30ptr,#v30ICount]
+	cmp r0,#0xC0
+	bmi 1f
+	ldrb r2,[r1,#v30ModRmRm]
+	add r1,v30ptr,r2
+	ldrb r0,[r1,#v30Regs]
+	sub r3,r3,#1
+	str r3,[v30ptr,#v30ICount]
+0:
+	ldrb r1,[r4,#v30Regs]
+
+	sbb8
+
+	strb r0,[r4,#v30Regs]
+	ldmfd sp!,{r4,pc}
+1:
+	sub r3,r3,#2
+	str r3,[v30ptr,#v30ICount]
+	add r1,v30ptr,#v30EATable
+	mov lr,pc
+	ldr pc,[r1,r0,lsl#2]
+	adr lr,0b
+	b cpu_readmem20
+;@----------------------------------------------------------------------------
 i_sbb_r16w:
 _1B:	;@ SBB R16W
 ;@----------------------------------------------------------------------------
@@ -690,6 +839,43 @@ _21:	;@ AND WR16
 	ldr pc,[r1,r0,lsl#2]
 	adr lr,0b
 	b cpu_readmem20w
+;@----------------------------------------------------------------------------
+i_and_r8b:
+_22:	;@ AND R8b
+;@----------------------------------------------------------------------------
+	stmfd sp!,{r4,lr}
+	ldrh r1,[v30ptr,#v30IP]
+	ldrh r0,[v30ptr,#v30SRegCS]
+	add r2,r1,#1
+	add	r0,r1,r0,asl#4
+	strh r2,[v30ptr,#v30IP]
+	bl cpu_readmem20
+	add r1,v30ptr,r0
+	ldrb r2,[r1,#v30ModRmReg]
+	add r4,v30ptr,r2
+	ldr r3,[v30ptr,#v30ICount]
+	cmp r0,#0xC0
+	bmi 1f
+	ldrb r2,[r1,#v30ModRmRm]
+	add r1,v30ptr,r2
+	ldrb r0,[r1,#v30Regs]
+	sub r3,r3,#1
+	str r3,[v30ptr,#v30ICount]
+0:
+	ldrb r1,[r4,#v30Regs]
+
+	and8
+
+	strb r0,[r4,#v30Regs]
+	ldmfd sp!,{r4,pc}
+1:
+	sub r3,r3,#2
+	str r3,[v30ptr,#v30ICount]
+	add r1,v30ptr,#v30EATable
+	mov lr,pc
+	ldr pc,[r1,r0,lsl#2]
+	adr lr,0b
+	b cpu_readmem20
 ;@----------------------------------------------------------------------------
 i_and_r16w:
 _23:	;@ AND R16W
@@ -862,6 +1048,43 @@ _29:	;@ SUB WR16
 	adr lr,0b
 	b cpu_readmem20w
 ;@----------------------------------------------------------------------------
+i_sub_r8b:
+_2A:	;@ SUB R8b
+;@----------------------------------------------------------------------------
+	stmfd sp!,{r4,lr}
+	ldrh r1,[v30ptr,#v30IP]
+	ldrh r0,[v30ptr,#v30SRegCS]
+	add r2,r1,#1
+	add	r0,r1,r0,asl#4
+	strh r2,[v30ptr,#v30IP]
+	bl cpu_readmem20
+	add r1,v30ptr,r0
+	ldrb r2,[r1,#v30ModRmReg]
+	add r4,v30ptr,r2
+	ldr r3,[v30ptr,#v30ICount]
+	cmp r0,#0xC0
+	bmi 1f
+	ldrb r2,[r1,#v30ModRmRm]
+	add r1,v30ptr,r2
+	ldrb r0,[r1,#v30Regs]
+	sub r3,r3,#1
+	str r3,[v30ptr,#v30ICount]
+0:
+	ldrb r1,[r4,#v30Regs]
+
+	sub8
+
+	strb r0,[r4,#v30Regs]
+	ldmfd sp!,{r4,pc}
+1:
+	sub r3,r3,#2
+	str r3,[v30ptr,#v30ICount]
+	add r1,v30ptr,#v30EATable
+	mov lr,pc
+	ldr pc,[r1,r0,lsl#2]
+	adr lr,0b
+	b cpu_readmem20
+;@----------------------------------------------------------------------------
 i_sub_r16w:
 _2B:	;@ SUB R16W
 ;@----------------------------------------------------------------------------
@@ -1033,6 +1256,43 @@ _31:	;@ XOR WR16
 	adr lr,0b
 	b cpu_readmem20w
 ;@----------------------------------------------------------------------------
+i_xor_r8b:
+_32:	;@ XOR R8b
+;@----------------------------------------------------------------------------
+	stmfd sp!,{r4,lr}
+	ldrh r1,[v30ptr,#v30IP]
+	ldrh r0,[v30ptr,#v30SRegCS]
+	add r2,r1,#1
+	add	r0,r1,r0,asl#4
+	strh r2,[v30ptr,#v30IP]
+	bl cpu_readmem20
+	add r1,v30ptr,r0
+	ldrb r2,[r1,#v30ModRmReg]
+	add r4,v30ptr,r2
+	ldr r3,[v30ptr,#v30ICount]
+	cmp r0,#0xC0
+	bmi 1f
+	ldrb r2,[r1,#v30ModRmRm]
+	add r1,v30ptr,r2
+	ldrb r0,[r1,#v30Regs]
+	sub r3,r3,#1
+	str r3,[v30ptr,#v30ICount]
+0:
+	ldrb r1,[r4,#v30Regs]
+
+	xor8
+
+	strb r0,[r4,#v30Regs]
+	ldmfd sp!,{r4,pc}
+1:
+	sub r3,r3,#2
+	str r3,[v30ptr,#v30ICount]
+	add r1,v30ptr,#v30EATable
+	mov lr,pc
+	ldr pc,[r1,r0,lsl#2]
+	adr lr,0b
+	b cpu_readmem20
+;@----------------------------------------------------------------------------
 i_xor_r16w:
 _33:	;@ XOR R16W
 ;@----------------------------------------------------------------------------
@@ -1193,6 +1453,42 @@ _39:	;@ CMP WR16
 	ldr pc,[r1,r0,lsl#2]
 	adr lr,0b
 	b cpu_readmem20w
+;@----------------------------------------------------------------------------
+i_cmp_r8b:
+_3A:	;@ CMP R8b
+;@----------------------------------------------------------------------------
+	stmfd sp!,{r4,lr}
+	ldrh r1,[v30ptr,#v30IP]
+	ldrh r0,[v30ptr,#v30SRegCS]
+	add r2,r1,#1
+	add	r0,r1,r0,asl#4
+	strh r2,[v30ptr,#v30IP]
+	bl cpu_readmem20
+	add r1,v30ptr,r0
+	ldrb r2,[r1,#v30ModRmReg]
+	add r4,v30ptr,r2
+	ldr r3,[v30ptr,#v30ICount]
+	cmp r0,#0xC0
+	bmi 1f
+	ldrb r2,[r1,#v30ModRmRm]
+	add r1,v30ptr,r2
+	ldrb r0,[r1,#v30Regs]
+	sub r3,r3,#1
+	str r3,[v30ptr,#v30ICount]
+0:
+	ldrb r1,[r4,#v30Regs]
+
+	sub8
+
+	ldmfd sp!,{r4,pc}
+1:
+	sub r3,r3,#2
+	str r3,[v30ptr,#v30ICount]
+	add r1,v30ptr,#v30EATable
+	mov lr,pc
+	ldr pc,[r1,r0,lsl#2]
+	adr lr,0b
+	b cpu_readmem20
 ;@----------------------------------------------------------------------------
 i_cmp_r16w:
 _3B:	;@ CMP R16W
@@ -1791,7 +2087,7 @@ _69:	;@ IMUL D16
 
 	mul r0,r5,r0
 	movs r1,r0,asr#15
-	mvnnes r1,r1
+	mvnsne r1,r1
 	movne r1,#1
 	str r1,[v30ptr,#v30CarryVal]
 	str r1,[v30ptr,#v30OverVal]
@@ -1863,7 +2159,7 @@ _6B:	;@ IMUL D8
 
 	mul r0,r5,r0
 	movs r1,r0,asr#15
-	mvnnes r1,r1
+	mvnsne r1,r1
 	movne r1,#1
 	str r1,[v30ptr,#v30CarryVal]
 	str r1,[v30ptr,#v30OverVal]
@@ -5188,7 +5484,9 @@ GetEA:
 	.long EA_200, EA_201, EA_202, EA_203, EA_204, EA_205, EA_206, EA_207
 	.long EA_200, EA_201, EA_202, EA_203, EA_204, EA_205, EA_206, EA_207
 	.long EA_200, EA_201, EA_202, EA_203, EA_204, EA_205, EA_206, EA_207
-
+Mod_RM:
+	.space 0x100
+	.space 0x100
 ;@----------------------------------------------------------------------------
 
 #endif // #ifdef __arm__
