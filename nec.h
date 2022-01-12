@@ -26,9 +26,9 @@ typedef enum { AL,AH,CL,CH,DL,DH,BL,BH,SPL,SPH,BPL,BPH,IXL,IXH,IYL,IYH } BREGS;
 
 /* parameter x = result, y = source 1, z = source 2 */
 
-#define SetTF(x)		(I.TF = (x))
-#define SetIF(x)		(I.IF = (x))
-#define SetDF(x)		(I.DF = (x))
+//#define SetTF(x)		(I.TF = (x))
+//#define SetIF(x)		(I.IF = (x))
+//#define SetDF(x)		(I.DF = (x))
 #define SetMD(x)		(I.MF = (x))	/* OB [19.07.99] Mode Flag V30 */
 
 #define SetCFB(x)		(I.CarryVal = (x) & 0x100)
@@ -62,12 +62,12 @@ typedef enum { AL,AH,CL,CH,DL,DH,BL,BH,SPL,SPH,BPL,BPH,IXL,IXH,IYL,IYH } BREGS;
 #define XORW dst^=src; I.CarryVal=I.OverVal=I.AuxVal=0; SetSZPF_Word(dst)
 
 #define CF		(I.CarryVal!=0)
-#define SF		(I.SignVal<0)
+//#define SF		(I.SignVal<0)
 #define ZF		(I.ZeroVal==0)
-#define PF		PZSTable[(BYTE)I.ParityVal]
-#define AF		(I.AuxVal!=0)
-#define OF		(I.OverVal!=0)
-#define MD		(I.MF!=0)
+//#define PF		PZSTable[(BYTE)I.ParityVal]
+//#define AF		(I.AuxVal!=0)
+//#define OF		(I.OverVal!=0)
+//#define MD		(I.MF!=0)
 
 /************************************************************************/
 
@@ -93,19 +93,18 @@ typedef enum { AL,AH,CL,CH,DL,DH,BL,BH,SPL,SPH,BPL,BPH,IXL,IXH,IYL,IYH } BREGS;
 #define FETCHOP (cpu_readop((I.sregs[CS]<<4)+I.ip++))
 #define FETCHWORD(var) { var=cpu_readop_arg_w((I.sregs[CS]<<4)+I.ip); I.ip+=2; }
 #define PUSH(val) { I.regs.w[SP]-=2; WriteWord((((I.sregs[SS]<<4)+I.regs.w[SP])),val); }
-#define POP(var) { var = ReadWord((((I.sregs[SS]<<4)+I.regs.w[SP]))); I.regs.w[SP]+=2; }
-#define PEEK(addr) ((BYTE)cpu_readop_arg(addr))
-#define PEEKOP(addr) ((BYTE)cpu_readop(addr))
+//#define POP(var) { var = ReadWord((((I.sregs[SS]<<4)+I.regs.w[SP]))); I.regs.w[SP]+=2; }
+//#define PEEK(addr) ((BYTE)cpu_readop_arg(addr))
+//#define PEEKOP(addr) ((BYTE)cpu_readop(addr))
 
 #define GetModRM UINT32 ModRM=FETCH
 
 #define CLK(all) I.ICount-=all
 #define CLKM(v30MZm,v30MZ) { I.ICount-=( ModRM >=0xc0 )?v30MZ:v30MZm; }
-
+/*
 #define CompressFlags() (WORD)(CF | (PF << 2) | (AF << 4) | (ZF << 6) \
 				| (SF << 7) | (I.TF << 8) | (I.IF << 9) \
 				| (I.DF << 10) | (OF << 11) | 0x7002)
-
 
 #define ExpandFlags(f) \
 { \
@@ -122,7 +121,6 @@ typedef enum { AL,AH,CL,CH,DL,DH,BL,BH,SPL,SPH,BPL,BPH,IXL,IXH,IYL,IYH } BREGS;
 }
 
 
-/*
 #define IncWordReg(Reg)						\
 	unsigned tmp = (unsigned)I.regs.w[Reg];	\
 	unsigned tmp1 = tmp+1;					\

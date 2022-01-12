@@ -2579,7 +2579,160 @@ _9B:	;@ POLL, poll the "poll" pin?
 	strh r0,[v30ptr,#v30IP]
 	str r1,[v30ptr,#v30ICount]
 	bx lr
+;@----------------------------------------------------------------------------
+i_pushf:
+_9C:	;@ PUSH F
+;@----------------------------------------------------------------------------
+	stmfd sp!,{lr}
 
+	ldr r1,=0x7002
+	ldr r0,[v30ptr,#v30CarryVal]
+	ldrb r2,[v30ptr,#v30ParityVal]
+	add r3,v30ptr,#v30PZST
+	cmp r0,#0
+	orrne r1,r1,#CF
+	ldrb r2,[r3,r2]
+	ldr r0,[v30ptr,#v30AuxVal]
+	ldr r2,[v30ptr,#v30ZeroVal]
+	cmp r2,#0
+	orrne r1,r1,#PF
+	ldr r3,[v30ptr,#v30SignVal]
+	cmp r0,#0
+	orrne r1,r1,#AF
+	ldrb r0,[v30ptr,#v30TF]
+	cmp r2,#0
+	orreq r1,r1,#ZF
+	ldrb r2,[v30ptr,#v30IF]
+	cmp r3,#0
+	orrmi r1,r1,#SF
+	ldrb r3,[v30ptr,#v30DF]
+	cmp r0,#0
+	orrne r1,r1,#TF
+	ldr r0,[v30ptr,#v30OverVal]
+	cmp r2,#0
+	orrne r1,r1,#IF
+	cmp r3,#0
+	orrne r1,r1,#DF
+	cmp r0,#0
+	orrne r1,r1,#OF
+
+	ldrh r2,[v30ptr,#v30RegSP]
+	ldrh r0,[v30ptr,#v30SRegSS]
+	sub r2,r2,#2
+	add r0,r2,r0,lsl#4
+	strh r2,[v30ptr,#v30RegSP]
+	ldr r3,[v30ptr,#v30ICount]
+	sub r3,r3,#2
+	str r3,[v30ptr,#v30ICount]
+	ldmfd sp!,{lr}
+	b cpu_writemem20w
+	.pool
+;@----------------------------------------------------------------------------
+i_popf:
+_9D:	;@ POP F
+;@----------------------------------------------------------------------------
+	stmfd sp!,{lr}
+	ldrh r1,[v30ptr,#v30RegSP]
+	ldrh r0,[v30ptr,#v30SRegSS]
+	add r2,r1,#2
+	add r0,r1,r0,lsl#4
+	strh r2,[v30ptr,#v30RegSP]
+	bl cpu_readmem20w
+	mov r1,#0
+	mov r2,#1
+	mov r3,#-1
+	tst r0,#CF
+	streq r1,[v30ptr,#v30CarryVal]
+	strne r2,[v30ptr,#v30CarryVal]
+	tst r0,#PF
+	strne r1,[v30ptr,#v30ParityVal]
+	streq r2,[v30ptr,#v30ParityVal]
+	tst r0,#AF
+	streq r1,[v30ptr,#v30AuxVal]
+	strne r2,[v30ptr,#v30AuxVal]
+	tst r0,#ZF
+	strne r1,[v30ptr,#v30ZeroVal]
+	streq r2,[v30ptr,#v30ZeroVal]
+	tst r0,#SF
+	streq r1,[v30ptr,#v30SignVal]
+	strne r3,[v30ptr,#v30SignVal]
+	tst r0,#TF
+	strbeq r1,[v30ptr,#v30TF]
+	strbne r2,[v30ptr,#v30TF]
+	tst r0,#IF
+	strbeq r1,[v30ptr,#v30IF]
+	strbne r2,[v30ptr,#v30IF]
+	tst r0,#DF
+	strbeq r1,[v30ptr,#v30DF]
+	strbne r2,[v30ptr,#v30DF]
+	tst r0,#OF
+	streq r1,[v30ptr,#v30OverVal]
+	strne r2,[v30ptr,#v30OverVal]
+
+	ldr r1,[v30ptr,#v30ICount]
+	sub r1,r1,#3
+	str r1,[v30ptr,#v30ICount]
+	ldmfd sp!,{pc}
+;@----------------------------------------------------------------------------
+i_sahf:
+_9E:	;@ SAHF
+;@----------------------------------------------------------------------------
+	stmfd sp!,{lr}
+	ldrb r0,[v30ptr,#v30RegAH]
+
+	mov r1,#0
+	mov r2,#1
+	mov r3,#-1
+	tst r0,#CF
+	streq r1,[v30ptr,#v30CarryVal]
+	strne r2,[v30ptr,#v30CarryVal]
+	tst r0,#PF
+	strne r1,[v30ptr,#v30ParityVal]
+	streq r2,[v30ptr,#v30ParityVal]
+	tst r0,#AF
+	streq r1,[v30ptr,#v30AuxVal]
+	strne r2,[v30ptr,#v30AuxVal]
+	tst r0,#ZF
+	strne r1,[v30ptr,#v30ZeroVal]
+	streq r2,[v30ptr,#v30ZeroVal]
+	tst r0,#SF
+	streq r1,[v30ptr,#v30SignVal]
+	strne r3,[v30ptr,#v30SignVal]
+
+	ldr r1,[v30ptr,#v30ICount]
+	sub r1,r1,#4
+	str r1,[v30ptr,#v30ICount]
+	ldmfd sp!,{pc}
+;@----------------------------------------------------------------------------
+i_lahf:
+_9F:	;@ LAHF
+;@----------------------------------------------------------------------------
+	stmfd sp!,{lr}
+
+	mov r1,#0x02
+	ldr r0,[v30ptr,#v30CarryVal]
+	ldrb r2,[v30ptr,#v30ParityVal]
+	add r3,v30ptr,#v30PZST
+	cmp r0,#0
+	orrne r1,r1,#CF
+	ldrb r2,[r3,r2]
+	ldr r0,[v30ptr,#v30AuxVal]
+	ldr r2,[v30ptr,#v30ZeroVal]
+	cmp r2,#0
+	orrne r1,r1,#PF
+	ldr r3,[v30ptr,#v30SignVal]
+	cmp r0,#0
+	orrne r1,r1,#AF
+	cmp r2,#0
+	orreq r1,r1,#ZF
+	cmp r3,#0
+	orrmi r1,r1,#SF
+
+	strb r1,[v30ptr,#v30RegAH]
+	ldr r3,[v30ptr,#v30ICount]
+	sub r3,r3,#2
+	str r3,[v30ptr,#v30ICount]
+	ldmfd sp!,{pc}
 ;@----------------------------------------------------------------------------
 i_mov_aldisp:
 _A0:	;@ MOV ALDISP

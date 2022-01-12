@@ -25,7 +25,7 @@
 	.equ SF, 0x0080				;@ Sign (negative)
 	.equ ZF, 0x0040				;@ Zero
 		;@   0x0020				;@ 0
-	.equ HF, 0x0010				;@ Half carry
+	.equ AF, 0x0010				;@ Aux / Half carry
 		;@   0x0008				;@ 0
 	.equ PF, 0x0004				;@ Parity
 		;@   0x0002				;@ 1
