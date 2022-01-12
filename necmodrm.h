@@ -8,7 +8,6 @@ static struct {
 	} RM;
 } Mod_RM __attribute__((section(".dtcm")));
 
-//#define RegWord(ModRM) I.regs.w[((ModRM >> 3) & 0x7)]
 #define RegWord(ModRM) I.regs.w[((ModRM & 0x38) >> 3)]
 #define RegByte(ModRM) I.regs.b[Mod_RM.reg.b[ModRM]]
 
@@ -32,7 +31,7 @@ static struct {
 	else									\
 		WriteWord(I.EA, val); 				\
 }
-
+/*
 #define PutImmRMWord(ModRM) 				\
 {											\
 	WORD val;								\
@@ -44,7 +43,7 @@ static struct {
 		WriteWord(I.EA, val);				\
 	}										\
 }
-
+*/
 #define GetRMByte(ModRM)					\
 	((ModRM) >= 0xc0 ? I.regs.b[Mod_RM.RM.b[ModRM]] : ReadByte( (*GetEA[ModRM])() ))
 
@@ -78,22 +77,22 @@ static struct {
 	GetModRM;							\
 	UINT32 src = RegByte(ModRM);		\
     UINT32 dst = GetRMByte(ModRM)
-
+/*
 #define DEF_wr16						\
 	GetModRM;							\
 	UINT32 src = RegWord(ModRM);		\
     UINT32 dst = GetRMWord(ModRM)
-
+*/
 #define DEF_r8b							\
 	GetModRM;							\
 	UINT32 src = GetRMByte(ModRM);		\
 	UINT32 dst = RegByte(ModRM)
-
+/*
 #define DEF_r16w						\
 	GetModRM;							\
 	UINT32 src = GetRMWord(ModRM);		\
 	UINT32 dst = RegWord(ModRM)
-/*
+
 #define DEF_ald8						\
 	UINT32 src = FETCH;					\
 	UINT32 dst = I.regs.b[AL]
