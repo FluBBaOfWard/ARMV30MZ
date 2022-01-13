@@ -2363,6 +2363,49 @@ _61:	;@ POPA
 	sub r0,r0,#1
 	str r0,[v30ptr,#v30ICount]
 	ldmfd sp!,{r4,r5,pc}
+;@----------------------------------------------------------------------------
+i_chkind:
+_62:	;@ CHKIND
+;@----------------------------------------------------------------------------
+	stmfd sp!,{r4-r6,lr}
+	ldrh r1,[v30ptr,#v30IP]
+	ldrh r0,[v30ptr,#v30SRegCS]
+	add r2,r1,#1
+	add	r0,r1,r0,asl#4
+	strh r2,[v30ptr,#v30IP]
+	bl cpu_readmem20
+	and r1,r0,#0x38
+	add r4,v30ptr,r1,lsr#2
+	cmp r0,#0xC0
+	bpl 1f
+	add r1,v30ptr,#v30EATable
+	mov lr,pc
+	ldr pc,[r1,r0,lsl#2]
+	mov r6,r0,ror#16
+	bl cpu_readmem20w
+0:
+	mov r5,r0
+	add r6,r6,#0x20000
+	mov r0,r6,ror#16
+	bl cpu_readmem20w
+	ldrh r1,[r4,#v30Regs]
+
+	ldr r2,[v30ptr,#v30ICount]
+	sub r2,r2,#13
+	cmp r1,r5
+	cmppl r0,r1
+	submi r2,r2,#7
+	str r2,[v30ptr,#v30ICount]
+	ldmfd sp!,{r4-r6,lr}
+	bxpl lr
+	mov r0,#5
+	b nec_interrupt
+1:
+	mov r11,r11					;@ Not correct?
+	and r2,r0,#7
+	add r1,v30ptr,r2,lsl#1
+	ldrh r0,[r1,#v30Regs]
+	b 0b
 
 ;@----------------------------------------------------------------------------
 i_push_d16:
@@ -3040,6 +3083,40 @@ _87:	;@ XCHG WR16
 	adr lr,0b
 	b cpu_readmem20w
 ;@----------------------------------------------------------------------------
+i_mov_br8:
+_88:	;@ MOV BR8
+;@----------------------------------------------------------------------------
+	stmfd sp!,{r4,r5,lr}
+	ldrh r1,[v30ptr,#v30IP]
+	ldrh r0,[v30ptr,#v30SRegCS]
+	add r2,r1,#1
+	add	r0,r1,r0,asl#4
+	strh r2,[v30ptr,#v30IP]
+	bl cpu_readmem20
+	add r5,v30ptr,r0
+	ldrb r2,[r5,#v30ModRmReg]
+	add r1,v30ptr,r2
+	ldrb r4,[r1,#v30Regs]
+
+	ldr r3,[v30ptr,#v30ICount]
+	cmp r0,#0xC0
+	bmi 1f
+	sub r3,r3,#1
+	str r3,[v30ptr,#v30ICount]
+	ldrb r2,[r5,#v30ModRmRm]
+	add r1,v30ptr,r2
+	strb r4,[r1,#v30Regs]
+	ldmfd sp!,{r4,r5,pc}
+1:
+	sub r3,r3,#1
+	str r3,[v30ptr,#v30ICount]
+	add r1,v30ptr,#v30EATable
+	mov lr,pc
+	ldr pc,[r1,r0,lsl#2]
+	mov r1,r4
+	ldmfd sp!,{r4,r5,lr}
+	b cpu_writemem20
+;@----------------------------------------------------------------------------
 i_mov_wr16:
 _89:	;@ MOV WR16
 ;@----------------------------------------------------------------------------
@@ -3071,6 +3148,40 @@ _89:	;@ MOV WR16
 	mov r1,r4
 	ldmfd sp!,{r4,lr}
 	b cpu_writemem20w
+;@----------------------------------------------------------------------------
+i_mov_r8b:
+_8A:	;@ MOV R8B
+;@----------------------------------------------------------------------------
+	stmfd sp!,{r4,r5,lr}
+	ldrh r1,[v30ptr,#v30IP]
+	ldrh r0,[v30ptr,#v30SRegCS]
+	add r2,r1,#1
+	add	r0,r1,r0,asl#4
+	strh r2,[v30ptr,#v30IP]
+	bl cpu_readmem20
+	mov r4,r0
+	add r5,v30ptr,r0
+	ldr r3,[v30ptr,#v30ICount]
+	cmp r4,#0xC0
+	bmi 1f
+	ldrb r2,[r5,#v30ModRmRm]
+	add r1,v30ptr,r2
+	ldrb r0,[r1,#v30Regs]
+	sub r3,r3,#1
+	str r3,[v30ptr,#v30ICount]
+0:
+	ldrb r2,[r5,#v30ModRmReg]
+	add r2,v30ptr,r2
+	strb r0,[r2,#v30Regs]
+	ldmfd sp!,{r4,r5,pc}
+1:
+	sub r3,r3,#1
+	str r3,[v30ptr,#v30ICount]
+	add r1,v30ptr,#v30EATable
+	mov lr,pc
+	ldr pc,[r1,r0,lsl#2]
+	adr lr,0b
+	b cpu_readmem20
 ;@----------------------------------------------------------------------------
 i_mov_r16w:
 _8B:	;@ MOV R16W
@@ -4214,6 +4325,120 @@ _C3:	;@ RET
 	str r1,[v30ptr,#v30ICount]
 	ldmfd sp!,{pc}
 ;@----------------------------------------------------------------------------
+i_les_dw:
+_C4:	;@ LES DW
+;@----------------------------------------------------------------------------
+	stmfd sp!,{r4,r5,lr}
+	ldrh r1,[v30ptr,#v30IP]
+	ldrh r0,[v30ptr,#v30SRegCS]
+	add r2,r1,#1
+	add	r0,r1,r0,asl#4
+	strh r2,[v30ptr,#v30IP]
+	bl cpu_readmem20
+	and r4,r0,#0x38
+	cmp r0,#0xC0
+	bpl 1f
+	add r1,v30ptr,#v30EATable
+	mov lr,pc
+	ldr pc,[r1,r0,lsl#2]
+	mov r5,r0,ror#16
+	bl cpu_readmem20w
+0:
+	add r1,v30ptr,r4,lsr#2
+	strh r0,[r1,#v30Regs]
+	add r5,r5,#0x20000
+	mov r0,r5,ror#16
+	bl cpu_readmem20w
+	strh r0,[v30ptr,#v30SRegES]
+
+	ldr r2,[v30ptr,#v30ICount]
+	sub r2,r2,#6
+	str r2,[v30ptr,#v30ICount]
+	ldmfd sp!,{r4,r5,pc}
+1:
+	mov r11,r11					;@ Not correct?
+	and r2,r0,#7
+	add r1,v30ptr,r2,lsl#1
+	ldrh r0,[r1,#v30Regs]
+	b 0b
+;@----------------------------------------------------------------------------
+i_lds_dw:
+_C5:	;@ LDS DW
+;@----------------------------------------------------------------------------
+	stmfd sp!,{r4,r5,lr}
+	ldrh r1,[v30ptr,#v30IP]
+	ldrh r0,[v30ptr,#v30SRegCS]
+	add r2,r1,#1
+	add	r0,r1,r0,asl#4
+	strh r2,[v30ptr,#v30IP]
+	bl cpu_readmem20
+	and r4,r0,#0x38
+	cmp r0,#0xC0
+	bpl 1f
+	add r1,v30ptr,#v30EATable
+	mov lr,pc
+	ldr pc,[r1,r0,lsl#2]
+	mov r5,r0,ror#16
+	bl cpu_readmem20w
+0:
+	add r1,v30ptr,r4,lsr#2
+	strh r0,[r1,#v30Regs]
+	add r5,r5,#0x20000
+	mov r0,r5,ror#16
+	bl cpu_readmem20w
+	strh r0,[v30ptr,#v30SRegDS]
+
+	ldr r2,[v30ptr,#v30ICount]
+	sub r2,r2,#6
+	str r2,[v30ptr,#v30ICount]
+	ldmfd sp!,{r4,r5,pc}
+1:
+	mov r11,r11					;@ Not correct?
+	and r2,r0,#7
+	add r1,v30ptr,r2,lsl#1
+	ldrh r0,[r1,#v30Regs]
+	b 0b
+;@----------------------------------------------------------------------------
+i_mov_bd8:
+_C6:	;@ MOV BD8
+;@----------------------------------------------------------------------------
+	stmfd sp!,{r4,r5,lr}
+	ldrh r1,[v30ptr,#v30IP]
+	ldrh r0,[v30ptr,#v30SRegCS]
+	add r2,r1,#1
+	add	r0,r1,r0,asl#4
+	strh r2,[v30ptr,#v30IP]
+	bl cpu_readmem20
+	ldr r1,[v30ptr,#v30ICount]
+	sub r1,r1,#1
+	str r1,[v30ptr,#v30ICount]
+	mov r4,r0
+	cmp r0,#0xC0
+	bmi 1f
+	add r1,v30ptr,r0
+	ldrb r2,[r1,#v30ModRmRm]
+	add r0,v30ptr,r2
+0:
+	mov r5,r0
+	ldrh r1,[v30ptr,#v30IP]
+	ldrh r0,[v30ptr,#v30SRegCS]
+	add r2,r1,#1
+	add r0,r1,r0,lsl#4
+	strh r2,[v30ptr,#v30IP]
+	bl cpu_readmem20
+
+	mov r1,r0
+	mov r0,r5
+	cmp r4,#0xC0
+	strbpl r1,[r0,#v30Regs]
+	ldmfd sp!,{r4,r5,lr}
+	bxpl lr
+	b cpu_writemem20
+1:
+	add r1,v30ptr,#v30EATable
+	adr lr,0b
+	ldr pc,[r1,r0,lsl#2]
+;@----------------------------------------------------------------------------
 i_mov_wd16:
 _C7:	;@ MOV WD16
 ;@----------------------------------------------------------------------------
@@ -4230,8 +4455,8 @@ _C7:	;@ MOV WD16
 	mov r4,r0
 	cmp r4,#0xC0
 	bmi 1f
-	and r2,r4,#7
-	add r1,v30ptr,r2,lsl#1
+	and r1,r0,#7
+	add r0,v30ptr,r1,lsl#1
 0:
 	mov r5,r0
 	ldrh r1,[v30ptr,#v30IP]

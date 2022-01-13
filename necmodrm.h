@@ -53,7 +53,7 @@
 	else									\
 		WriteByte(I.EA, val);				\
 }
-
+/*
 #define PutImmRMByte(ModRM) 				\
 {											\
 	if (ModRM >= 0xc0)						\
@@ -68,7 +68,7 @@
 	GetModRM;							\
 	UINT32 src = RegByte(ModRM);		\
     UINT32 dst = GetRMByte(ModRM)
-/*
+
 #define DEF_wr16						\
 	GetModRM;							\
 	UINT32 src = RegWord(ModRM);		\

@@ -310,18 +310,18 @@ void i_invalid(void)
 //	POP(I.regs.w[AW]);
 //	CLK(8);
 //}
-OP( 0x62, i_chkind ) {
-	UINT32 low,high,tmp;
-	GetModRM;
-	low = GetRMWord(ModRM);
-	high= GetNextRMWord;
-	tmp= RegWord(ModRM);
-	if (tmp<low || tmp>high) {
-		nec_interrupt(5);
-		CLK(7);
-	}
-	CLK(13);
-}
+//OP( 0x62, i_chkind ) {
+//	UINT32 low,high,tmp;
+//	GetModRM;
+//	low = GetRMWord(ModRM);
+//	high= GetNextRMWord;
+//	tmp= RegWord(ModRM);
+//	CLK(13);
+//	if (tmp<low || tmp>high) {
+//		CLK(7);
+//		nec_interrupt(5);
+//	}
+//}
 
 // OP 0x63 - 0x67 FPO2, is nop at V30MZ.
 
@@ -412,9 +412,9 @@ OP( 0x83, i_83pre   ) { UINT32 dst, src; GetModRM; dst = GetRMWord(ModRM); src =
 //OP( 0x86, i_xchg_br8  ) { DEF_br8;  RegByte(ModRM)=dst; PutbackRMByte(ModRM,src); CLKM(5,3); }
 //OP( 0x87, i_xchg_wr16 ) { DEF_wr16; RegWord(ModRM)=dst; PutbackRMWord(ModRM,src); CLKM(5,3); }
 
-OP( 0x88, i_mov_br8   ) { UINT8  src; GetModRM; src = RegByte(ModRM);   PutRMByte(ModRM,src); CLKM(1,1); }
+//OP( 0x88, i_mov_br8   ) { UINT8  src; GetModRM; src = RegByte(ModRM);   PutRMByte(ModRM,src); CLKM(1,1); }
 //OP( 0x89, i_mov_wr16  ) { UINT16 src; GetModRM; src = RegWord(ModRM);   PutRMWord(ModRM,src); CLKM(1,1); }
-OP( 0x8a, i_mov_r8b   ) { UINT8  src; GetModRM; src = GetRMByte(ModRM); RegByte(ModRM)=src;   CLKM(1,1); }
+//OP( 0x8a, i_mov_r8b   ) { UINT8  src; GetModRM; src = GetRMByte(ModRM); RegByte(ModRM)=src;   CLKM(1,1); }
 //OP( 0x8b, i_mov_r16w  ) { UINT16 src; GetModRM; src = GetRMWord(ModRM); RegWord(ModRM)=src;   CLKM(1,1); }
 //OP( 0x8c, i_mov_wsreg ) { GetModRM; PutRMWord(ModRM,I.sregs[(ModRM & 0x38) >> 3]);            CLKM(1,1); }
 //OP( 0x8d, i_lea       ) { GetModRM; (void)(*GetEA[ModRM])(); RegWord(ModRM)=I.EO;   CLK(1); }
@@ -525,9 +525,9 @@ OP( 0xc1, i_rotshft_wd8 ) {
 
 //OP( 0xc2, i_ret_d16  ) { UINT32 count; FETCHWORD(count); POP(I.ip); I.regs.w[SP]+=count; CLK(6); }
 //OP( 0xc3, i_ret      ) { POP(I.ip); CLK(6); }
-OP( 0xc4, i_les_dw   ) { GetModRM; WORD tmp = GetRMWord(ModRM); RegWord(ModRM)=tmp; I.sregs[ES] = GetNextRMWord; CLK(6); }
-OP( 0xc5, i_lds_dw   ) { GetModRM; WORD tmp = GetRMWord(ModRM); RegWord(ModRM)=tmp; I.sregs[DS] = GetNextRMWord; CLK(6); }
-OP( 0xc6, i_mov_bd8  ) { GetModRM; PutImmRMByte(ModRM); CLK(1); }
+//OP( 0xc4, i_les_dw   ) { GetModRM; WORD tmp = GetRMWord(ModRM); RegWord(ModRM)=tmp; I.sregs[ES] = GetNextRMWord; CLK(6); }
+//OP( 0xc5, i_lds_dw   ) { GetModRM; WORD tmp = GetRMWord(ModRM); RegWord(ModRM)=tmp; I.sregs[DS] = GetNextRMWord; CLK(6); }
+//OP( 0xc6, i_mov_bd8  ) { GetModRM; PutImmRMByte(ModRM); CLK(1); }
 //OP( 0xc7, i_mov_wd16 ) { GetModRM; PutImmRMWord(ModRM); CLK(1); }
 
 //OP( 0xc8, i_prepare ) {
