@@ -194,7 +194,7 @@ void i_invalid(void)
 //OP( 0x0c, i_or_ald8  ) { DEF_ald8;  ORB; I.regs.b[AL]=dst;		   CLK(1); }
 //OP( 0x0d, i_or_axd16 ) { DEF_axd16; ORW; I.regs.w[AW]=dst;		   CLK(1); }
 //OP( 0x0e, i_push_cs  ) { PUSH(I.sregs[CS]); CLK(2); }
-//OP( 0x0f, i_pop_cs   ) { POP(I.sregs[CS]);  CLK(3); }	// Pop cs at V30MZ?
+//OP( 0x0f, i_pop_cs   ) { POP(I.sregs[CS]);  CLK(3); }	// Invalid at V30MZ?
 
 //OP( 0x10, i_adc_br8  ) { DEF_br8;   src+=CF; ADDB; PutbackRMByte(ModRM,dst); CLKM(3,1); }
 //OP( 0x11, i_adc_wr16 ) { DEF_wr16;  src+=CF; ADDW; PutbackRMWord(ModRM,dst); CLKM(3,1); }
@@ -350,7 +350,7 @@ void i_invalid(void)
 //ITCM_CODE OP( 0x7d, i_bge ) { JMP(SF==OF); }
 //ITCM_CODE OP( 0x7e, i_ble ) { JMP((SF!=OF)||(ZF)); }
 //ITCM_CODE OP( 0x7f, i_bgt ) { JMP((SF==OF)&&(!ZF)); }
-
+/*
 OP( 0x80, i_80pre   ) { UINT32 dst, src; GetModRM; dst = GetRMByte(ModRM); src = FETCH;
 	CLKM(3,1)
 	switch (ModRM & 0x38) {
@@ -406,7 +406,7 @@ OP( 0x83, i_83pre   ) { UINT32 dst, src; GetModRM; dst = GetRMWord(ModRM); src =
 		case 0x38: SUBW;			break; // CMP
 	}
 }
-
+*/
 //OP( 0x84, i_test_br8  ) { DEF_br8;  ANDB; CLKM(2,1); }
 //OP( 0x85, i_test_wr16 ) { DEF_wr16; ANDW; CLKM(2,1); }
 //OP( 0x86, i_xchg_br8  ) { DEF_br8;  RegByte(ModRM)=dst; PutbackRMByte(ModRM,src); CLKM(5,3); }
@@ -487,7 +487,7 @@ OP( 0x83, i_83pre   ) { UINT32 dst, src; GetModRM; dst = GetRMWord(ModRM); src =
 //OP( 0xbe, i_mov_sid16 ) { FETCHWORD(I.regs.w[IX]); CLK(1); }
 //OP( 0xbf, i_mov_did16 ) { FETCHWORD(I.regs.w[IY]); CLK(1); }
 
-OP( 0xc0, i_rotshft_bd8 ) {
+ITCM_CODE OP( 0xc0, i_rotshft_bd8 ) {
 	UINT32 src, dst; UINT8 c;
 	GetModRM; src = (unsigned)GetRMByte(ModRM); dst=src;
 	c=FETCH;
@@ -505,7 +505,7 @@ OP( 0xc0, i_rotshft_bd8 ) {
 	}
 }
 
-OP( 0xc1, i_rotshft_wd8 ) {
+ITCM_CODE OP( 0xc1, i_rotshft_wd8 ) {
 	UINT32 src, dst; UINT8 c;
 	GetModRM; src = (unsigned)GetRMWord(ModRM); dst=src;
 	c=FETCH;
@@ -558,7 +558,7 @@ OP( 0xc1, i_rotshft_wd8 ) {
 //OP( 0xce, i_into     ) { if (OF) { nec_interrupt(4); CLK(13); } else CLK(6); }
 //OP( 0xcf, i_iret     ) { POP(I.ip); POP(I.sregs[CS]); i_popf(); CLK(10); } // -3?
 
-OP( 0xd0, i_rotshft_b ) {
+ITCM_CODE OP( 0xd0, i_rotshft_b ) {
 	UINT32 src, dst; GetModRM; src = (UINT32)GetRMByte(ModRM); dst=src;
 	CLKM(3,1);
 	switch (ModRM & 0x38) {

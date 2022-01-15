@@ -2926,7 +2926,201 @@ _7F:	;@ Branch if Greater Than
 	strh r4,[v30ptr,#v30IP]
 	str r1,[v30ptr,#v30ICount]
 	ldmfd sp!,{r4,pc}
+;@----------------------------------------------------------------------------
+i_80pre:
+_80:	;@ PRE 80
+;@----------------------------------------------------------------------------
+;@----------------------------------------------------------------------------
+i_82pre:
+_82:	;@ PRE 82
+;@----------------------------------------------------------------------------
+	stmfd sp!,{r4-r6,lr}
+	ldrh r1,[v30ptr,#v30IP]
+	ldrh r0,[v30ptr,#v30SRegCS]
+	add r2,r1,#1
+	add	r0,r1,r0,asl#4
+	strh r2,[v30ptr,#v30IP]
+	bl cpu_readmem20
+	mov r4,r0
+	ldr r3,[v30ptr,#v30ICount]
+	cmp r4,#0xC0
+	bmi 1f
+	add r1,v30ptr,r0
+	ldrb r2,[r1,#v30ModRmRm]
+	add r5,v30ptr,r2
+	ldrb r0,[r5,#v30Regs]
+	sub r3,r3,#1
+	str r3,[v30ptr,#v30ICount]
+0:
+	mov r6,r0
+	ldrh r1,[v30ptr,#v30IP]
+	ldrh r0,[v30ptr,#v30SRegCS]
+	add r2,r1,#1
+	add	r0,r1,r0,asl#4
+	strh r2,[v30ptr,#v30IP]
+	bl cpu_readmem20
+	mov r1,r6
 
+	and r2,r4,#0x38
+	ldr pc,[pc,r2,lsr#1]
+	b 2f
+	.long add80, or80, adc80, sbb80, and80, sub80, xor80, cmp80
+add80:
+	add8 r0,r1
+	b 2f
+or80:
+	or8 r0,r1
+	b 2f
+adc80:
+	adc8 r0,r1
+	b 2f
+sbb80:
+	sbb8 r0,r1
+	b 2f
+and80:
+	and8 r0,r1
+	b 2f
+sub80:
+	sub8 r0,r1
+	b 2f
+xor80:
+	xor8 r0,r1
+	b 2f
+cmp80:
+	sub8 r0,r1
+	ldmfd sp!,{r4-r6,pc}
+2:
+	cmp r4,#0xC0
+	strbpl r0,[r5,#v30Regs]
+	ldmfd sp!,{r4-r6,lr}
+	bxpl lr
+	mov r1,r0
+	ldr r0,[v30ptr,#v30EA]
+	b cpu_writemem20
+1:
+	sub r3,r3,#3
+	str r3,[v30ptr,#v30ICount]
+	add r1,v30ptr,#v30EATable
+	mov lr,pc
+	ldr pc,[r1,r0,lsl#2]
+	adr lr,0b
+	b cpu_readmem20
+
+;@----------------------------------------------------------------------------
+i_81pre:
+_81:	;@ PRE 81
+;@----------------------------------------------------------------------------
+	stmfd sp!,{r4-r6,lr}
+	ldrh r1,[v30ptr,#v30IP]
+	ldrh r0,[v30ptr,#v30SRegCS]
+	add r2,r1,#1
+	add	r0,r1,r0,asl#4
+	strh r2,[v30ptr,#v30IP]
+	bl cpu_readmem20
+	mov r4,r0
+	ldr r3,[v30ptr,#v30ICount]
+	cmp r4,#0xC0
+	bmi 1f
+	and r2,r4,#7
+	add r5,v30ptr,r2,lsl#1
+	ldrh r0,[r5,#v30Regs]
+	sub r3,r3,#1
+	str r3,[v30ptr,#v30ICount]
+0:
+	mov r6,r0
+	ldrh r1,[v30ptr,#v30IP]
+	ldrh r0,[v30ptr,#v30SRegCS]
+	add r2,r1,#2
+	add	r0,r1,r0,asl#4
+	strh r2,[v30ptr,#v30IP]
+	bl cpu_readmem20w
+pre81Continue:
+	mov r1,r6
+
+	and r2,r4,#0x38
+	ldr pc,[pc,r2,lsr#1]
+	b 2f
+	.long add81, or81, adc81, sbb81, and81, sub81, xor81, cmp81
+add81:
+	add16 r0,r1
+	b 2f
+or81:
+	or16 r0,r1
+	b 2f
+adc81:
+	adc16 r0,r1
+	b 2f
+sbb81:
+	sbb16 r0,r1
+	b 2f
+and81:
+	and16 r0,r1
+	b 2f
+sub81:
+	sub16 r0,r1
+	b 2f
+xor81:
+	xor16 r0,r1
+	b 2f
+cmp81:
+	sub16 r0,r1
+	ldmfd sp!,{r4-r6,pc}
+2:
+	cmp r4,#0xC0
+	strhpl r0,[r5,#v30Regs]
+	ldmfd sp!,{r4-r6,lr}
+	bxpl lr
+	mov r1,r0
+	ldr r0,[v30ptr,#v30EA]
+	b cpu_writemem20w
+1:
+	sub r3,r3,#3
+	str r3,[v30ptr,#v30ICount]
+	add r1,v30ptr,#v30EATable
+	mov lr,pc
+	ldr pc,[r1,r0,lsl#2]
+	adr lr,0b
+	b cpu_readmem20w
+
+;@----------------------------------------------------------------------------
+i_83pre:
+_83:	;@ PRE 83
+;@----------------------------------------------------------------------------
+	stmfd sp!,{r4-r6,lr}
+	ldrh r1,[v30ptr,#v30IP]
+	ldrh r0,[v30ptr,#v30SRegCS]
+	add r2,r1,#1
+	add	r0,r1,r0,asl#4
+	strh r2,[v30ptr,#v30IP]
+	bl cpu_readmem20
+	mov r4,r0
+	ldr r3,[v30ptr,#v30ICount]
+	cmp r4,#0xC0
+	bmi 1f
+	and r2,r4,#7
+	add r5,v30ptr,r2,lsl#1
+	ldrh r0,[r5,#v30Regs]
+	sub r3,r3,#1
+	str r3,[v30ptr,#v30ICount]
+0:
+	mov r6,r0
+	ldrh r1,[v30ptr,#v30IP]
+	ldrh r0,[v30ptr,#v30SRegCS]
+	add r2,r1,#1
+	add	r0,r1,r0,asl#4
+	strh r2,[v30ptr,#v30IP]
+	bl cpu_readmem20
+	mov r0,r0,lsl#24
+	mov r0,r0,asr#24
+	b pre81Continue
+1:
+	sub r3,r3,#3
+	str r3,[v30ptr,#v30ICount]
+	add r1,v30ptr,#v30EATable
+	mov lr,pc
+	ldr pc,[r1,r0,lsl#2]
+	adr lr,0b
+	b cpu_readmem20w
 ;@----------------------------------------------------------------------------
 i_test_br8:
 _84:	;@ TEST BR8
