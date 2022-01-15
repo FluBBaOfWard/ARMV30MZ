@@ -368,7 +368,7 @@
 	mov r1,r0,lsl#16
 	adds r1,r1,#0x10000
 	movvs r2,#1
-	tst r1,#0xF
+	tst r1,#0xF0000
 	moveq r3,#1
 	mov r1,r1,asr#16
 	ldr r0,[v30ptr,#v30ICount]

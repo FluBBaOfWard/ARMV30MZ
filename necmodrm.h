@@ -5,7 +5,7 @@
 #define GetRMWord(ModRM) 					\
 	((ModRM) >= 0xc0 ? I.regs.w[(ModRM & 0x7)] : ReadWord( (*GetEA[ModRM])() ))
 
-#define GetNextRMWord ReadWord((I.EA&0xf0000)|((I.EA+2)&0xffff))
+//#define GetNextRMWord ReadWord((I.EA&0xf0000)|((I.EA+2)&0xffff))
 
 #define PutRMWord(ModRM,val)				\
 {											\

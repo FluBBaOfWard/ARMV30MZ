@@ -748,26 +748,26 @@ OP( 0xf7, i_f7pre	) { UINT32 tmp,tmp2; UINT32 uresult,uresult2; INT32 result,res
 //OP( 0xfb, i_ei    ) { SetIF(1); CLK(4); }
 //OP( 0xfc, i_cld   ) { SetDF(0); CLK(4); }
 //OP( 0xfd, i_std   ) { SetDF(1); CLK(4); }
-OP( 0xfe, i_fepre ) { UINT32 tmp, tmp1; GetModRM; tmp=GetRMByte(ModRM);
-	switch(ModRM & 0x38) {
-		case 0x00: tmp1 = tmp+1; I.OverVal = (tmp==0x7f); SetAF(tmp1,tmp,1); SetSZPF_Byte(tmp1); PutbackRMByte(ModRM,(BYTE)tmp1); CLKM(3,1); break; // INC
-		case 0x08: tmp1 = tmp-1; I.OverVal = (tmp==0x80); SetAF(tmp1,tmp,1); SetSZPF_Byte(tmp1); PutbackRMByte(ModRM,(BYTE)tmp1); CLKM(3,1); break; // DEC
-		default: i_invalid();
-	}
-}
-OP( 0xff, i_ffpre ) { UINT32 tmp, tmp1; GetModRM; tmp=GetRMWord(ModRM);
-	switch(ModRM & 0x38) {
-		case 0x00: tmp1 = tmp+1; I.OverVal = (tmp==0x7fff); SetAF(tmp1,tmp,1); SetSZPF_Word(tmp1); PutbackRMWord(ModRM,(WORD)tmp1); CLKM(3,1); break; // INC
-		case 0x08: tmp1 = tmp-1; I.OverVal = (tmp==0x8000); SetAF(tmp1,tmp,1); SetSZPF_Word(tmp1); PutbackRMWord(ModRM,(WORD)tmp1); CLKM(3,1); break; // DEC
-		case 0x10: PUSH(I.ip); I.ip = (WORD)tmp; CLKM(6,5); break; // CALL
-		case 0x18: tmp1 = I.sregs[CS]; I.sregs[CS] = GetNextRMWord; PUSH(tmp1); PUSH(I.ip); I.ip = tmp; CLKM(12,1); break; // CALL FAR
-		case 0x20: I.ip = tmp; CLKM(5,4); break; // JMP
-		case 0x28: I.ip = tmp; I.sregs[CS] = GetNextRMWord; CLKM(10,1); break; // JMP FAR
-		case 0x38: // PUSH (undocumented mirror)
-		case 0x30: PUSH(tmp); CLKM(2,1); break;
-		default: ;
-	}
-}
+//OP( 0xfe, i_fepre ) { UINT32 tmp, tmp1; GetModRM; tmp=GetRMByte(ModRM);
+//	switch(ModRM & 0x38) {
+//		case 0x00: tmp1 = tmp+1; I.OverVal = (tmp==0x7f); SetAF(tmp1,tmp,1); SetSZPF_Byte(tmp1); PutbackRMByte(ModRM,(BYTE)tmp1); CLKM(3,1); break; // INC
+//		case 0x08: tmp1 = tmp-1; I.OverVal = (tmp==0x80); SetAF(tmp1,tmp,1); SetSZPF_Byte(tmp1); PutbackRMByte(ModRM,(BYTE)tmp1); CLKM(3,1); break; // DEC
+//		default: i_invalid();
+//	}
+//}
+//OP( 0xff, i_ffpre ) { UINT32 tmp, tmp1; GetModRM; tmp=GetRMWord(ModRM);
+//	switch(ModRM & 0x38) {
+//		case 0x00: tmp1 = tmp+1; I.OverVal = (tmp==0x7fff); SetAF(tmp1,tmp,1); SetSZPF_Word(tmp1); PutbackRMWord(ModRM,(WORD)tmp1); CLKM(3,1); break; // INC
+//		case 0x08: tmp1 = tmp-1; I.OverVal = (tmp==0x8000); SetAF(tmp1,tmp,1); SetSZPF_Word(tmp1); PutbackRMWord(ModRM,(WORD)tmp1); CLKM(3,1); break; // DEC
+//		case 0x10: PUSH(I.ip); I.ip = (WORD)tmp; CLKM(6,5); break; // CALL
+//		case 0x18: tmp1 = I.sregs[CS]; I.sregs[CS] = GetNextRMWord; PUSH(tmp1); PUSH(I.ip); I.ip = tmp; CLKM(12,1); break; // CALL FAR
+//		case 0x20: I.ip = tmp; CLKM(5,4); break; // JMP
+//		case 0x28: I.ip = tmp; I.sregs[CS] = GetNextRMWord; CLKM(10,1); break; // JMP FAR
+//		case 0x38: // PUSH (undocumented mirror)
+//		case 0x30: PUSH(tmp); CLKM(2,1); break;
+//		default: ;
+//	}
+//}
 
 //ITCM_CODE int nec_execute(int cycles)
 //{
