@@ -185,22 +185,22 @@ typedef enum { AL,AH,CL,CH,DL,DH,BL,BH,SPL,SPH,BPL,BPH,IXL,IXH,IYL,IYH } BREGS;
 	tmp = I.regs.w[Reg]; 					\
 	I.regs.w[Reg] = I.regs.w[AW]; 			\
 	I.regs.w[AW] = tmp
-*/
-//#define ROL_BYTE I.CarryVal = dst & 0x80; dst = (dst << 1)+CF
-#define ROL_WORD I.CarryVal = dst & 0x8000; dst = (dst << 1)+CF
-//#define ROR_BYTE I.CarryVal = dst & 0x1; dst = (dst >> 1)+(CF<<7)
-#define ROR_WORD I.CarryVal = dst & 0x1; dst = (dst >> 1)+(CF<<15)
-//#define ROLC_BYTE dst = (dst << 1) + CF; SetCFB(dst)
-#define ROLC_WORD dst = (dst << 1) + CF; SetCFW(dst)
-//#define RORC_BYTE dst = (CF<<8)+dst; I.CarryVal = dst & 0x01; dst >>= 1
-#define RORC_WORD dst = (CF<<16)+dst; I.CarryVal = dst & 0x01; dst >>= 1
-//#define SHL_BYTE(c) dst <<= c; SetCFB(dst); SetSZPF_Byte(dst); PutbackRMByte(ModRM,(BYTE)dst)
-#define SHL_WORD(c) dst <<= c; SetCFW(dst); SetSZPF_Word(dst); PutbackRMWord(ModRM,(WORD)dst)
-//#define SHR_BYTE(c) dst >>= c-1; I.CarryVal = dst & 0x1; dst >>= 1; SetSZPF_Byte(dst); PutbackRMByte(ModRM,(BYTE)dst)
-#define SHR_WORD(c) dst >>= c-1; I.CarryVal = dst & 0x1; dst >>= 1; SetSZPF_Word(dst); PutbackRMWord(ModRM,(WORD)dst)
-//#define SHRA_BYTE(c) dst = ((INT8)dst) >> (c-1); I.CarryVal = dst & 0x1; dst = ((INT8)((BYTE)dst)) >> 1; SetSZPF_Byte(dst); PutbackRMByte(ModRM,(BYTE)dst)
-#define SHRA_WORD(c) dst = ((INT16)dst) >> (c-1); I.CarryVal = dst & 0x1; dst = ((INT16)((WORD)dst)) >> 1; SetSZPF_Word(dst); PutbackRMWord(ModRM,(WORD)dst)
 
+#define ROL_BYTE I.CarryVal = dst & 0x80; dst = (dst << 1)+CF
+#define ROL_WORD I.CarryVal = dst & 0x8000; dst = (dst << 1)+CF
+#define ROR_BYTE I.CarryVal = dst & 0x1; dst = (dst >> 1)+(CF<<7)
+#define ROR_WORD I.CarryVal = dst & 0x1; dst = (dst >> 1)+(CF<<15)
+#define ROLC_BYTE dst = (dst << 1) + CF; SetCFB(dst)
+#define ROLC_WORD dst = (dst << 1) + CF; SetCFW(dst)
+#define RORC_BYTE dst = (CF<<8)+dst; I.CarryVal = dst & 0x01; dst >>= 1
+#define RORC_WORD dst = (CF<<16)+dst; I.CarryVal = dst & 0x01; dst >>= 1
+#define SHL_BYTE(c) dst <<= c; SetCFB(dst); SetSZPF_Byte(dst); PutbackRMByte(ModRM,(BYTE)dst)
+#define SHL_WORD(c) dst <<= c; SetCFW(dst); SetSZPF_Word(dst); PutbackRMWord(ModRM,(WORD)dst)
+#define SHR_BYTE(c) dst >>= c-1; I.CarryVal = dst & 0x1; dst >>= 1; SetSZPF_Byte(dst); PutbackRMByte(ModRM,(BYTE)dst)
+#define SHR_WORD(c) dst >>= c-1; I.CarryVal = dst & 0x1; dst >>= 1; SetSZPF_Word(dst); PutbackRMWord(ModRM,(WORD)dst)
+#define SHRA_BYTE(c) dst = ((INT8)dst) >> (c-1); I.CarryVal = dst & 0x1; dst = ((INT8)((BYTE)dst)) >> 1; SetSZPF_Byte(dst); PutbackRMByte(ModRM,(BYTE)dst)
+#define SHRA_WORD(c) dst = ((INT16)dst) >> (c-1); I.CarryVal = dst & 0x1; dst = ((INT16)((WORD)dst)) >> 1; SetSZPF_Word(dst); PutbackRMWord(ModRM,(WORD)dst)
+*/
 #define DIVUB												\
 	uresult = I.regs.w[AW];									\
 	uresult2 = uresult % tmp;								\

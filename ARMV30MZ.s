@@ -4554,6 +4554,79 @@ shraC0:
 	adr lr,0b
 	b cpu_readmem20
 ;@----------------------------------------------------------------------------
+i_rotshft_wd8:
+_C1:	;@ ROTSHFT WD8
+;@----------------------------------------------------------------------------
+	stmfd sp!,{r4-r6,lr}
+	ldrh r1,[v30ptr,#v30IP]
+	ldrh r0,[v30ptr,#v30SRegCS]
+	add r2,r1,#1
+	add	r0,r1,r0,asl#4
+	strh r2,[v30ptr,#v30IP]
+	bl cpu_readmem20
+	mov r4,r0
+	ldr r3,[v30ptr,#v30ICount]
+	cmp r4,#0xC0
+	bmi 1f
+	and r2,r0,#7
+	add r5,v30ptr,r2,lsl#1
+	ldrh r0,[r5,#v30Regs]
+	sub r3,r3,#3
+	str r3,[v30ptr,#v30ICount]
+0:
+	mov r6,r0
+	ldrh r1,[v30ptr,#v30IP]
+	ldrh r0,[v30ptr,#v30SRegCS]
+	add r2,r1,#1
+	add	r0,r1,r0,asl#4
+	strh r2,[v30ptr,#v30IP]
+	bl cpu_readmem20
+d3Continue:
+	ands r1,r0,#0x1F
+	mov r0,r6
+
+	and r2,r4,#0x38
+	ldrne pc,[pc,r2,lsr#1]
+	b invC1
+	.long rolC1, rorC1, rolcC1, rorcC1, shlC1, shrC1, invC1, shraC1
+rolC1:
+	rol16 r0,r1
+	b 2f
+rorC1:
+	ror16 r0,r1
+	b 2f
+rolcC1:
+	rolc16 r0,r1
+	b 2f
+rorcC1:
+	rorc16 r0,r1
+	b 2f
+shlC1:
+	shl16 r0,r1
+	b 2f
+shrC1:
+	shr16 r0,r1
+	b 2f
+invC1:
+	ldmfd sp!,{r4-r6,pc}
+shraC1:
+	shra16 r0,r1
+2:
+	cmp r4,#0xC0
+	strhpl r1,[r5,#v30Regs]
+	ldmfdpl sp!,{r4-r6,pc}
+	ldr r0,[v30ptr,#v30EA]
+	ldmfd sp!,{r4-r6,lr}
+	b cpu_writemem20w
+1:
+	sub r3,r3,#5
+	str r3,[v30ptr,#v30ICount]
+	add r1,v30ptr,#v30EATable
+	mov lr,pc
+	ldr pc,[r1,r0,lsl#2]
+	adr lr,0b
+	b cpu_readmem20w
+;@----------------------------------------------------------------------------
 i_ret_d16:
 _C2:	;@ RET D16
 ;@----------------------------------------------------------------------------
@@ -4957,6 +5030,38 @@ _D0:	;@ ROTSHFT B
 	adr lr,0b
 	b cpu_readmem20
 ;@----------------------------------------------------------------------------
+i_rotshft_w:
+_D1:	;@ ROTSHFT W
+;@----------------------------------------------------------------------------
+	stmfd sp!,{r4-r6,lr}
+	ldrh r1,[v30ptr,#v30IP]
+	ldrh r0,[v30ptr,#v30SRegCS]
+	add r2,r1,#1
+	add	r0,r1,r0,asl#4
+	strh r2,[v30ptr,#v30IP]
+	bl cpu_readmem20
+	mov r4,r0
+	ldr r3,[v30ptr,#v30ICount]
+	cmp r4,#0xC0
+	bmi 1f
+	and r2,r0,#7
+	add r5,v30ptr,r2,lsl#1
+	ldrh r0,[r5,#v30Regs]
+	sub r3,r3,#1
+	str r3,[v30ptr,#v30ICount]
+0:
+	mov r6,r0
+	mov r0,#1
+	b d3Continue
+1:
+	sub r3,r3,#3
+	str r3,[v30ptr,#v30ICount]
+	add r1,v30ptr,#v30EATable
+	mov lr,pc
+	ldr pc,[r1,r0,lsl#2]
+	adr lr,0b
+	b cpu_readmem20w
+;@----------------------------------------------------------------------------
 i_rotshft_bcl:
 _D2:	;@ ROTSHFT BCL
 ;@----------------------------------------------------------------------------
@@ -4989,6 +5094,38 @@ _D2:	;@ ROTSHFT BCL
 	ldr pc,[r1,r0,lsl#2]
 	adr lr,0b
 	b cpu_readmem20
+;@----------------------------------------------------------------------------
+i_rotshft_wcl:
+_D3:	;@ ROTSHFT WCL
+;@----------------------------------------------------------------------------
+	stmfd sp!,{r4-r6,lr}
+	ldrh r1,[v30ptr,#v30IP]
+	ldrh r0,[v30ptr,#v30SRegCS]
+	add r2,r1,#1
+	add	r0,r1,r0,asl#4
+	strh r2,[v30ptr,#v30IP]
+	bl cpu_readmem20
+	mov r4,r0
+	ldr r3,[v30ptr,#v30ICount]
+	cmp r4,#0xC0
+	bmi 1f
+	and r2,r0,#7
+	add r5,v30ptr,r2,lsl#1
+	ldrh r0,[r5,#v30Regs]
+	sub r3,r3,#3
+	str r3,[v30ptr,#v30ICount]
+0:
+	mov r6,r0
+	ldrb r0,[v30ptr,#v30RegCL]
+	b d3Continue
+1:
+	sub r3,r3,#5
+	str r3,[v30ptr,#v30ICount]
+	add r1,v30ptr,#v30EATable
+	mov lr,pc
+	ldr pc,[r1,r0,lsl#2]
+	adr lr,0b
+	b cpu_readmem20w
 ;@----------------------------------------------------------------------------
 i_aam:
 _D4:	;@ AAM

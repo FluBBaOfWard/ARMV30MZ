@@ -504,8 +504,8 @@ OP( 0xc0, i_rotshft_bd8 ) {
 		case 0x38: SHRA_BYTE(c); break;
 	}
 }
-*/
-ITCM_CODE OP( 0xc1, i_rotshft_wd8 ) {
+
+OP( 0xc1, i_rotshft_wd8 ) {
 	UINT32 src, dst; UINT8 c;
 	GetModRM; src = (unsigned)GetRMWord(ModRM); dst=src;
 	c=FETCH;
@@ -522,7 +522,7 @@ ITCM_CODE OP( 0xc1, i_rotshft_wd8 ) {
 		case 0x38: SHRA_WORD(c); break;
 	}
 }
-
+*/
 //OP( 0xc2, i_ret_d16  ) { UINT32 count; FETCHWORD(count); POP(I.ip); I.regs.w[SP]+=count; CLK(6); }
 //OP( 0xc3, i_ret      ) { POP(I.ip); CLK(6); }
 //OP( 0xc4, i_les_dw   ) { GetModRM; WORD tmp = GetRMWord(ModRM); RegWord(ModRM)=tmp; I.sregs[ES] = GetNextRMWord; CLK(6); }
@@ -558,7 +558,7 @@ ITCM_CODE OP( 0xc1, i_rotshft_wd8 ) {
 //OP( 0xce, i_into     ) { if (OF) { nec_interrupt(4); CLK(13); } else CLK(6); }
 //OP( 0xcf, i_iret     ) { POP(I.ip); POP(I.sregs[CS]); i_popf(); CLK(10); } // -3?
 /*
-ITCM_CODE OP( 0xd0, i_rotshft_b ) {
+OP( 0xd0, i_rotshft_b ) {
 	UINT32 src, dst; GetModRM; src = (UINT32)GetRMByte(ModRM); dst=src;
 	CLKM(3,1);
 	switch (ModRM & 0x38) {
@@ -572,7 +572,7 @@ ITCM_CODE OP( 0xd0, i_rotshft_b ) {
 		case 0x38: SHRA_BYTE(1); I.OverVal = 0; break;
 	}
 }
-*/
+
 OP( 0xd1, i_rotshft_w ) {
 	UINT32 src, dst; GetModRM; src = (UINT32)GetRMWord(ModRM); dst=src;
 	CLKM(3,1);
@@ -587,7 +587,7 @@ OP( 0xd1, i_rotshft_w ) {
 		case 0x38: SHRA_WORD(1); I.AuxVal = 1;I.OverVal = 0; break;
 	}
 }
-/*
+
 OP( 0xd2, i_rotshft_bcl ) {
 	UINT32 src, dst; UINT8 c; GetModRM; src = (UINT32)GetRMByte(ModRM); dst=src;
 	c=I.regs.b[CL];
@@ -604,7 +604,7 @@ OP( 0xd2, i_rotshft_bcl ) {
 		case 0x38: SHRA_BYTE(c); break;
 	}
 }
-*/
+
 OP( 0xd3, i_rotshft_wcl ) {
 	UINT32 src, dst; UINT8 c; GetModRM; src = (UINT32)GetRMWord(ModRM); dst=src;
 	c=I.regs.b[CL];
@@ -621,7 +621,7 @@ OP( 0xd3, i_rotshft_wcl ) {
 		case 0x38: SHRA_WORD(c); break;
 	}
 }
-
+*/
 //OP( 0xd4, i_aam    ) { UINT32 mult=FETCH; mult=0; I.regs.b[AH] = I.regs.b[AL] / 10; I.regs.b[AL] %= 10; SetSZPF_Word(I.regs.w[AW]); CLK(17); }
 //OP( 0xd5, i_aad    ) { UINT32 mult=FETCH; mult=0; I.regs.b[AL] = I.regs.b[AH] * 10 + I.regs.b[AL]; I.regs.b[AH] = 0; SetSZPF_Byte(I.regs.b[AL]); CLK(6); }
 // OP 0xd6 - undocumented mirror of OP 0xd7

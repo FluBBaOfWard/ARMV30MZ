@@ -1,7 +1,6 @@
 ARMV30MZ To do
 --------------
 
-	Do the rotate/shift opcodes!
 	Rename more opcodes.
 	ADC & SBC are wrong in C code?
 	Implement Halt (0xf4) correctly.

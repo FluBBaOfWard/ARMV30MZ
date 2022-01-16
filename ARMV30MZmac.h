@@ -522,7 +522,6 @@
 	.endm
 
 	.macro ror16 dst src
-	orr \dst,\dst,\dst,lsl#8
 	orr \dst,\dst,\dst,lsl#16
 	mov r2,#0
 	movs \dst,\dst,ror \src
@@ -555,7 +554,7 @@
 	.endm
 
 	.macro rorc16 dst src
-	movs \dst,\dst,lsl#16
+	mov \dst,\dst,lsl#16
 	ldr r2,[v30ptr,#v30CarryVal]
 	cmp r2,#0
 	orrne \dst,\dst,#0x00008000
