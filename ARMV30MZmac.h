@@ -420,7 +420,6 @@
 	str r1,[v30ptr,#v30ICount]
 	ldmfd sp!,{r4,pc}
 	.endm
-
 ;@----------------------------------------------------------------------------
 	.macro or8 src dst
 	mov \dst,\dst,lsl#24
@@ -447,50 +446,232 @@
 	str \src,[v30ptr,#v30ZeroVal]
 	str \src,[v30ptr,#v30ParityVal]
 	.endm
+
 ;@----------------------------------------------------------------------------
-	.macro sbb8 src dst
-	ldr r3,[v30ptr,#v30CarryVal]
-	cmp r3,#0
-	orrne \src,\src,#0x80000000
+	.macro rol8 dst src
+	and \src,\src,#0xF
+	orr \dst,\dst,\dst,lsl#8
+	orr \dst,\dst,\dst,lsl#16
+	movs \dst,\dst,lsl \src
+	mov \src,\dst,lsr#24
+	and r2,\src,#1
+	str r2,[v30ptr,#v30CarryVal]
+	eorpl r2,r2,#1
+	str r2,[v30ptr,#v30OverVal]
+	.endm
+
+	.macro rol16 dst src
+	cmp \src,#0x10
+	andne \src,\src,#0xF
+	orr \dst,\dst,\dst,lsl#16
+	movs \dst,\dst,lsl \src
+	mov \src,\dst,lsr#16
+	and r2,\src,#1
+	str r2,[v30ptr,#v30CarryVal]
+	eorpl r2,r2,#1
+	str r2,[v30ptr,#v30OverVal]
+	.endm
+;@----------------------------------------------------------------------------
+	.macro rolc8 dst src
+	ldr r2,[v30ptr,#v30CarryVal]
+	cmp r2,#0
+	orrne \dst,\dst,#0x100
+9:
+	tst \dst,\dst,lsr#9
+	adc \dst,\dst,\dst
+	subs \src,\src,#1
+	bhi 9b
+	movs \dst,\dst,lsl#24
+	movcc r2,#0
+	movcs r2,#1
+	str r2,[v30ptr,#v30CarryVal]
+	eorpl r2,r2,#1
+	str r2,[v30ptr,#v30OverVal]
+	mov \src,\dst,lsr#24
+	.endm
+
+	.macro rolc16 dst src
+	ldr r2,[v30ptr,#v30CarryVal]
+	cmp r2,#0
+	orrne \dst,\dst,#0x10000
+10:
+	tst \dst,\dst,lsr#17
+	adc \dst,\dst,\dst
+	subs \src,\src,#1
+	bhi 10b
+	movs \dst,\dst,lsl#16
+	movcc r2,#0
+	movcs r2,#1
+	str r2,[v30ptr,#v30CarryVal]
+	eorpl r2,r2,#1
+	str r2,[v30ptr,#v30OverVal]
+	mov \src,\dst,lsr#16
+	.endm
+;@----------------------------------------------------------------------------
+	.macro ror8 dst src
+	orr \dst,\dst,\dst,lsl#8
+	orr \dst,\dst,\dst,lsl#16
+	mov r2,#0
+	movs \dst,\dst,ror \src
+	movcs r2,#1
+	str r2,[v30ptr,#v30CarryVal]
+	tst \dst,#0x40000000
+	eorne r2,r2,#1
+	str r2,[v30ptr,#v30OverVal]
+	mov \src,\dst,lsr#24
+	.endm
+
+	.macro ror16 dst src
+	orr \dst,\dst,\dst,lsl#8
+	orr \dst,\dst,\dst,lsl#16
+	mov r2,#0
+	movs \dst,\dst,ror \src
+	movcs r2,#1
+	str r2,[v30ptr,#v30CarryVal]
+	tst \dst,#0x40000000
+	eorne r2,r2,#1
+	str r2,[v30ptr,#v30OverVal]
+	mov \src,\dst,lsr#16
+	.endm
+;@----------------------------------------------------------------------------
+	.macro rorc8 dst src
 	mov \dst,\dst,lsl#24
-	eor r2,\dst,\src,lsl#24
-	subs \src,\dst,\src,ror#8
-	eor r2,r2,\src
-	mov \dst,#0
-	adc r3,\dst,#0
-	eor r3,r3,#1
-	movvs \dst,#1
-	str r3,[v30ptr,#v30CarryVal]
-	str \dst,[v30ptr,#v30OverVal]
-	and r2,r2,#0x10000000
-	mov \src,\src,asr#24
+	ldr r2,[v30ptr,#v30CarryVal]
+	cmp r2,#0
+	orrne \dst,\dst,#0x00800000
+11:
+	tst \dst,\dst,lsr#24
+	rrx \dst,\dst
+	subs \src,\src,#1
+	bhi 11b
+	movs \src,\dst,lsr#24
+	movcc r2,#0
+	movcs r2,#1
+	str r2,[v30ptr,#v30CarryVal]
+	eor r2,\src,\src,lsr#1
+	ands r2,r2,#0x40
+	movne r2,#1
+	str r2,[v30ptr,#v30OverVal]
+	.endm
+
+	.macro rorc16 dst src
+	movs \dst,\dst,lsl#16
+	ldr r2,[v30ptr,#v30CarryVal]
+	cmp r2,#0
+	orrne \dst,\dst,#0x00008000
+12:
+	tst \dst,\dst,lsr#16
+	rrx \dst,\dst
+	subs \src,\src,#1
+	bhi 12b
+	movs \src,\dst,lsr#16
+	movcc r2,#0
+	movcs r2,#1
+	str r2,[v30ptr,#v30CarryVal]
+	eor r2,\src,\src,lsr#1
+	ands r2,r2,#0x4000
+	movne r2,#1
+	str r2,[v30ptr,#v30OverVal]
+	.endm
+;@----------------------------------------------------------------------------
+	.macro shl8 dst src
+	add \src,\src,#24
+	movs \dst,\dst,lsl \src
+	mov \src,\dst,asr#24
+	movcc r2,#0
+	movcs r2,#1
+	str r2,[v30ptr,#v30CarryVal]
+	eorpl r2,r2,#1
+	str r2,[v30ptr,#v30OverVal]
+	and r2,\src,#0x10
 	str r2,[v30ptr,#v30AuxVal]
 	str \src,[v30ptr,#v30SignVal]
 	str \src,[v30ptr,#v30ZeroVal]
 	str \src,[v30ptr,#v30ParityVal]
 	.endm
 
-	.macro sbb16 src dst
-	ldr r3,[v30ptr,#v30CarryVal]
-	cmp r3,#0
-	orrne \src,\src,#0x80000000
-	mov \dst,\dst,lsl#16
-	eor r2,\dst,\src,lsl#16
-	subs \src,\dst,\src,ror#16
-	eor r2,r2,\src
-	mov \dst,#0
-	adc r3,\dst,#0
-	eor r3,r3,#1
-	movvs \dst,#1
-	str r3,[v30ptr,#v30CarryVal]
-	str \dst,[v30ptr,#v30OverVal]
-	and r2,r2,#0x00100000
-	mov \src,\src,asr#16
+	.macro shl16 dst src
+	add \src,\src,#16
+	movs \dst,\dst,lsl \src
+	mov \src,\dst,asr#16
+	movcc r2,#0
+	movcs r2,#1
+	str r2,[v30ptr,#v30CarryVal]
+	eorpl r2,r2,#1
+	str r2,[v30ptr,#v30OverVal]
+	and r2,\src,#0x10
 	str r2,[v30ptr,#v30AuxVal]
 	str \src,[v30ptr,#v30SignVal]
 	str \src,[v30ptr,#v30ZeroVal]
 	str \src,[v30ptr,#v30ParityVal]
 	.endm
+;@----------------------------------------------------------------------------
+	.macro shr8 dst src
+	movs \src,\dst,lsr \src
+	movcc r2,#0
+	movcs r2,#1
+	str r2,[v30ptr,#v30CarryVal]
+	ands r2,\src,#0x40
+	movne r2,#1
+	str r2,[v30ptr,#v30OverVal]
+	and r2,\src,#0x10
+	str r2,[v30ptr,#v30AuxVal]
+	str \src,[v30ptr,#v30SignVal]
+	str \src,[v30ptr,#v30ZeroVal]
+	str \src,[v30ptr,#v30ParityVal]
+	.endm
+
+	.macro shr16 dst src
+	movs \src,\dst,lsr \src
+	movcc r2,#0
+	movcs r2,#1
+	str r2,[v30ptr,#v30CarryVal]
+	ands r2,\src,#0x4000
+	movne r2,#1
+	str r2,[v30ptr,#v30OverVal]
+	and r2,\src,#0x10
+	str r2,[v30ptr,#v30AuxVal]
+	str \src,[v30ptr,#v30SignVal]
+	str \src,[v30ptr,#v30ZeroVal]
+	str \src,[v30ptr,#v30ParityVal]
+	.endm
+;@----------------------------------------------------------------------------
+	.macro shra8 dst src
+	mov \dst,\dst,lsl#24
+	mov \dst,\dst,asr \src
+	movs \src,\dst,asr#24
+	movcc r2,#0
+	movcs r2,#1
+	str r2,[v30ptr,#v30CarryVal]
+	eor r2,\src,\src,lsr#1
+	ands r2,r2,#0x40
+	movne r2,#1
+	str r2,[v30ptr,#v30OverVal]
+	and r2,\src,#0x10
+	str r2,[v30ptr,#v30AuxVal]
+	str \src,[v30ptr,#v30SignVal]
+	str \src,[v30ptr,#v30ZeroVal]
+	str \src,[v30ptr,#v30ParityVal]
+	.endm
+
+	.macro shra16 dst src
+	mov \dst,\dst,lsl#16
+	mov \dst,\dst,asr \src
+	movs \src,\dst,asr#16
+	movcc r2,#0
+	movcs r2,#1
+	str r2,[v30ptr,#v30CarryVal]
+	eor r2,\src,\src,lsr#1
+	ands r2,\src,#0x4000
+	movne r2,#1
+	str r2,[v30ptr,#v30OverVal]
+	and r2,\src,#0x10
+	str r2,[v30ptr,#v30AuxVal]
+	str \src,[v30ptr,#v30SignVal]
+	str \src,[v30ptr,#v30ZeroVal]
+	str \src,[v30ptr,#v30ParityVal]
+	.endm
+
 ;@----------------------------------------------------------------------------
 	.macro sub8 src dst
 	mov \dst,\dst,lsl#24
@@ -529,6 +710,51 @@
 	str \src,[v30ptr,#v30ZeroVal]
 	str \src,[v30ptr,#v30ParityVal]
 	.endm
+;@----------------------------------------------------------------------------
+	.macro subc8 src dst
+	ldr r3,[v30ptr,#v30CarryVal]
+	cmp r3,#0
+	orrne \src,\src,#0x80000000
+	mov \dst,\dst,lsl#24
+	eor r2,\dst,\src,lsl#24
+	subs \src,\dst,\src,ror#8
+	eor r2,r2,\src
+	mov \dst,#0
+	adc r3,\dst,#0
+	eor r3,r3,#1
+	movvs \dst,#1
+	str r3,[v30ptr,#v30CarryVal]
+	str \dst,[v30ptr,#v30OverVal]
+	and r2,r2,#0x10000000
+	mov \src,\src,asr#24
+	str r2,[v30ptr,#v30AuxVal]
+	str \src,[v30ptr,#v30SignVal]
+	str \src,[v30ptr,#v30ZeroVal]
+	str \src,[v30ptr,#v30ParityVal]
+	.endm
+
+	.macro subc16 src dst
+	ldr r3,[v30ptr,#v30CarryVal]
+	cmp r3,#0
+	orrne \src,\src,#0x80000000
+	mov \dst,\dst,lsl#16
+	eor r2,\dst,\src,lsl#16
+	subs \src,\dst,\src,ror#16
+	eor r2,r2,\src
+	mov \dst,#0
+	adc r3,\dst,#0
+	eor r3,r3,#1
+	movvs \dst,#1
+	str r3,[v30ptr,#v30CarryVal]
+	str \dst,[v30ptr,#v30OverVal]
+	and r2,r2,#0x00100000
+	mov \src,\src,asr#16
+	str r2,[v30ptr,#v30AuxVal]
+	str \src,[v30ptr,#v30SignVal]
+	str \src,[v30ptr,#v30ZeroVal]
+	str \src,[v30ptr,#v30ParityVal]
+	.endm
+
 ;@----------------------------------------------------------------------------
 	.macro xor8 src dst
 	mov \src,\src,lsl#24

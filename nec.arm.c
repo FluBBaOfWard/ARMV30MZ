@@ -486,8 +486,8 @@ OP( 0x83, i_83pre   ) { UINT32 dst, src; GetModRM; dst = GetRMWord(ModRM); src =
 //OP( 0xbd, i_mov_bpd16 ) { FETCHWORD(I.regs.w[BP]); CLK(1); }
 //OP( 0xbe, i_mov_sid16 ) { FETCHWORD(I.regs.w[IX]); CLK(1); }
 //OP( 0xbf, i_mov_did16 ) { FETCHWORD(I.regs.w[IY]); CLK(1); }
-
-ITCM_CODE OP( 0xc0, i_rotshft_bd8 ) {
+/*
+OP( 0xc0, i_rotshft_bd8 ) {
 	UINT32 src, dst; UINT8 c;
 	GetModRM; src = (unsigned)GetRMByte(ModRM); dst=src;
 	c=FETCH;
@@ -504,7 +504,7 @@ ITCM_CODE OP( 0xc0, i_rotshft_bd8 ) {
 		case 0x38: SHRA_BYTE(c); break;
 	}
 }
-
+*/
 ITCM_CODE OP( 0xc1, i_rotshft_wd8 ) {
 	UINT32 src, dst; UINT8 c;
 	GetModRM; src = (unsigned)GetRMWord(ModRM); dst=src;
@@ -557,7 +557,7 @@ ITCM_CODE OP( 0xc1, i_rotshft_wd8 ) {
 //OP( 0xcd, i_int      ) { nec_interrupt(FETCH); CLK(10); }
 //OP( 0xce, i_into     ) { if (OF) { nec_interrupt(4); CLK(13); } else CLK(6); }
 //OP( 0xcf, i_iret     ) { POP(I.ip); POP(I.sregs[CS]); i_popf(); CLK(10); } // -3?
-
+/*
 ITCM_CODE OP( 0xd0, i_rotshft_b ) {
 	UINT32 src, dst; GetModRM; src = (UINT32)GetRMByte(ModRM); dst=src;
 	CLKM(3,1);
@@ -572,7 +572,7 @@ ITCM_CODE OP( 0xd0, i_rotshft_b ) {
 		case 0x38: SHRA_BYTE(1); I.OverVal = 0; break;
 	}
 }
-
+*/
 OP( 0xd1, i_rotshft_w ) {
 	UINT32 src, dst; GetModRM; src = (UINT32)GetRMWord(ModRM); dst=src;
 	CLKM(3,1);
@@ -587,34 +587,34 @@ OP( 0xd1, i_rotshft_w ) {
 		case 0x38: SHRA_WORD(1); I.AuxVal = 1;I.OverVal = 0; break;
 	}
 }
-
+/*
 OP( 0xd2, i_rotshft_bcl ) {
 	UINT32 src, dst; UINT8 c; GetModRM; src = (UINT32)GetRMByte(ModRM); dst=src;
 	c=I.regs.b[CL];
 	CLKM(5,3);
 	c&=0x1f;
 	if (c) switch (ModRM & 0x38) {
-		case 0x00: do { ROL_BYTE;  c--; CLK(1); } while (c>0); PutbackRMByte(ModRM,(BYTE)dst); break;
-		case 0x08: do { ROR_BYTE;  c--; CLK(1); } while (c>0); PutbackRMByte(ModRM,(BYTE)dst); break;
-		case 0x10: do { ROLC_BYTE; c--; CLK(1); } while (c>0); PutbackRMByte(ModRM,(BYTE)dst); break;
-		case 0x18: do { RORC_BYTE; c--; CLK(1); } while (c>0); PutbackRMByte(ModRM,(BYTE)dst); break;
+		case 0x00: do { ROL_BYTE;  c--; } while (c>0); PutbackRMByte(ModRM,(BYTE)dst); break;
+		case 0x08: do { ROR_BYTE;  c--; } while (c>0); PutbackRMByte(ModRM,(BYTE)dst); break;
+		case 0x10: do { ROLC_BYTE; c--; } while (c>0); PutbackRMByte(ModRM,(BYTE)dst); break;
+		case 0x18: do { RORC_BYTE; c--; } while (c>0); PutbackRMByte(ModRM,(BYTE)dst); break;
 		case 0x20: SHL_BYTE(c); I.AuxVal = 1; break;
 		case 0x28: SHR_BYTE(c); I.AuxVal = 1; break;
 		case 0x30: break;
 		case 0x38: SHRA_BYTE(c); break;
 	}
 }
-
+*/
 OP( 0xd3, i_rotshft_wcl ) {
 	UINT32 src, dst; UINT8 c; GetModRM; src = (UINT32)GetRMWord(ModRM); dst=src;
 	c=I.regs.b[CL];
 	c&=0x1f;
 	CLKM(5,3);
 	if (c) switch (ModRM & 0x38) {
-		case 0x00: do { ROL_WORD;  c--; CLK(1); } while (c>0); PutbackRMWord(ModRM,(WORD)dst); break;
-		case 0x08: do { ROR_WORD;  c--; CLK(1); } while (c>0); PutbackRMWord(ModRM,(WORD)dst); break;
-		case 0x10: do { ROLC_WORD; c--; CLK(1); } while (c>0); PutbackRMWord(ModRM,(WORD)dst); break;
-		case 0x18: do { RORC_WORD; c--; CLK(1); } while (c>0); PutbackRMWord(ModRM,(WORD)dst); break;
+		case 0x00: do { ROL_WORD;  c--; } while (c>0); PutbackRMWord(ModRM,(WORD)dst); break;
+		case 0x08: do { ROR_WORD;  c--; } while (c>0); PutbackRMWord(ModRM,(WORD)dst); break;
+		case 0x10: do { ROLC_WORD; c--; } while (c>0); PutbackRMWord(ModRM,(WORD)dst); break;
+		case 0x18: do { RORC_WORD; c--; } while (c>0); PutbackRMWord(ModRM,(WORD)dst); break;
 		case 0x20: SHL_WORD(c); I.AuxVal = 1; break;
 		case 0x28: SHR_WORD(c); I.AuxVal = 1; break;
 		case 0x30: break;
