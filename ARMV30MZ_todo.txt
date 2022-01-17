@@ -1,9 +1,12 @@
 ARMV30MZ To do
 --------------
 
+	Optimize cycle counting when all opcodes are converted to ARM asm.
 	Rename more opcodes.
-	ADC & SBC are wrong in C code?
 	Implement Halt (0xf4) correctly.
+	Make 26, 2E, 36 & 3E share code.
+	ADC & SBC are wrong in C code?
 	Poll (0x9b) is used? What pin is this connected to?
 
-	SP can get borked when pushing, should be masked?
+	SP can get borked when pushing/poping, should be masked?
+		Make it use the top 16bit.

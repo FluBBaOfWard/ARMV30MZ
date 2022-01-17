@@ -31,12 +31,12 @@ typedef enum { AL,AH,CL,CH,DL,DH,BL,BH,SPL,SPH,BPL,BPH,IXL,IXH,IYL,IYH } BREGS;
 //#define SetDF(x)		(I.DF = (x))
 #define SetMD(x)		(I.MF = (x))	/* OB [19.07.99] Mode Flag V30 */
 
-#define SetCFB(x)		(I.CarryVal = (x) & 0x100)
-#define SetCFW(x)		(I.CarryVal = (x) & 0x10000)
-#define SetAF(x,y,z)	(I.AuxVal = ((x) ^ ((y) ^ (z))) & 0x10)
-#define SetSF(x)		(I.SignVal = (x))
-#define SetZF(x)		(I.ZeroVal = (x))
-#define SetPF(x)		(I.ParityVal = (x))
+//#define SetCFB(x)		(I.CarryVal = (x) & 0x100)
+//#define SetCFW(x)		(I.CarryVal = (x) & 0x10000)
+//#define SetAF(x,y,z)	(I.AuxVal = ((x) ^ ((y) ^ (z))) & 0x10)
+//#define SetSF(x)		(I.SignVal = (x))
+//#define SetZF(x)		(I.ZeroVal = (x))
+//#define SetPF(x)		(I.ParityVal = (x))
 
 #define SetSZPF_Byte(x) (I.SignVal=I.ZeroVal=I.ParityVal=(INT8)(x))
 #define SetSZPF_Word(x) (I.SignVal=I.ZeroVal=I.ParityVal=(INT16)(x))
@@ -61,7 +61,7 @@ typedef enum { AL,AH,CL,CH,DL,DH,BL,BH,SPL,SPH,BPL,BPH,IXL,IXH,IYL,IYH } BREGS;
 #define XORB dst^=src; I.CarryVal=I.OverVal=I.AuxVal=0; SetSZPF_Byte(dst)
 #define XORW dst^=src; I.CarryVal=I.OverVal=I.AuxVal=0; SetSZPF_Word(dst)
 */
-#define CF		(I.CarryVal!=0)
+//#define CF		(I.CarryVal!=0)
 //#define SF		(I.SignVal<0)
 #define ZF		(I.ZeroVal==0)
 //#define PF		PZSTable[(BYTE)I.ParityVal]
@@ -92,7 +92,7 @@ typedef enum { AL,AH,CL,CH,DL,DH,BL,BH,SPL,SPH,BPL,BPH,IXL,IXH,IYL,IYH } BREGS;
 #define FETCH (cpu_readop_arg((I.sregs[CS]<<4)+I.ip++))
 #define FETCHOP (cpu_readop((I.sregs[CS]<<4)+I.ip++))
 #define FETCHWORD(var) { var=cpu_readop_arg_w((I.sregs[CS]<<4)+I.ip); I.ip+=2; }
-#define PUSH(val) { I.regs.w[SP]-=2; WriteWord((((I.sregs[SS]<<4)+I.regs.w[SP])),val); }
+//#define PUSH(val) { I.regs.w[SP]-=2; WriteWord((((I.sregs[SS]<<4)+I.regs.w[SP])),val); }
 //#define POP(var) { var = ReadWord((((I.sregs[SS]<<4)+I.regs.w[SP]))); I.regs.w[SP]+=2; }
 //#define PEEK(addr) ((BYTE)cpu_readop_arg(addr))
 //#define PEEKOP(addr) ((BYTE)cpu_readop(addr))

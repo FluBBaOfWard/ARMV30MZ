@@ -4017,7 +4017,7 @@ _A6:	;@ CMPSB
 	sub8 r0,r1
 
 	ldr r0,[v30ptr,#v30ICount]
-	sub r0,r0,#5
+	sub r0,r0,#6
 	str r0,[v30ptr,#v30ICount]
 	ldmfd sp!,{r4,pc}
 ;@----------------------------------------------------------------------------
@@ -4052,7 +4052,7 @@ _A7:	;@ CMPSW
 	sub16 r0,r1
 
 	ldr r0,[v30ptr,#v30ICount]
-	sub r0,r0,#5
+	sub r0,r0,#6
 	str r0,[v30ptr,#v30ICount]
 	ldmfd sp!,{r4,pc}
 ;@----------------------------------------------------------------------------
@@ -5153,6 +5153,7 @@ _D4:	;@ AAM
 	str r3,[v30ptr,#v30ZeroVal]
 	str r3,[v30ptr,#v30ParityVal]
 	ldmfd sp!,{pc}
+	.pool
 ;@----------------------------------------------------------------------------
 i_aad:
 _D5:	;@ AAD
@@ -5507,6 +5508,325 @@ _F0:	;@ LOCK
 	sub r1,r1,#1
 	str r1,[v30ptr,#v30ICount]
 	bx lr
+;@----------------------------------------------------------------------------
+i_repe:
+_F3:	;@ REPE
+;@----------------------------------------------------------------------------
+	stmfd sp!,{r4-r6,lr}
+	ldrh r1,[v30ptr,#v30IP]
+	ldrh r5,[v30ptr,#v30SRegCS]
+	add r4,r1,#1
+	add	r0,r1,r5,asl#4
+	bl cpu_readmem20
+	and r1,r0,#0xE7
+	cmp r1,#0x26
+	bne noF3Prefix
+	and r1,r0,#0x18
+	add r1,v30ptr,r1,lsr#2
+	mov r0,#1
+	ldrh r2,[r1,#v30SRegs]
+	strb r0,[v30ptr,#v30SegPrefix]
+	str r2,[v30ptr,#v30PrefixBase]
+
+	ldr r1,[v30ptr,#v30ICount]
+	sub r1,r1,#2
+	str r1,[v30ptr,#v30ICount]
+	add	r0,r4,r5,asl#4
+	add r4,r4,#1
+	bl cpu_readmem20
+noF3Prefix:
+	strh r4,[v30ptr,#v30IP]
+	ldrh r4,[v30ptr,#v30RegCW]
+	sub r3,r0,#0x6C
+	cmp r3,#0x43
+	ldrls pc,[pc,r3,lsl#2]
+	b f3Default
+	.long f36c
+	.long f36d
+	.long f36e
+	.long f36f
+	.long	f3Default
+	.long	f3Default
+	.long	f3Default
+	.long	f3Default
+	.long	f3Default
+	.long	f3Default
+	.long	f3Default
+	.long	f3Default
+	.long	f3Default
+	.long	f3Default
+	.long	f3Default
+	.long	f3Default
+	.long	f3Default
+	.long	f3Default
+	.long	f3Default
+	.long	f3Default
+	.long	f3Default
+	.long	f3Default
+	.long	f3Default
+	.long	f3Default
+	.long	f3Default
+	.long	f3Default
+	.long	f3Default
+	.long	f3Default
+	.long	f3Default
+	.long	f3Default
+	.long	f3Default
+	.long	f3Default
+	.long	f3Default
+	.long	f3Default
+	.long	f3Default
+	.long	f3Default
+	.long	f3Default
+	.long	f3Default
+	.long	f3Default
+	.long	f3Default
+	.long	f3Default
+	.long	f3Default
+	.long	f3Default
+	.long	f3Default
+	.long	f3Default
+	.long	f3Default
+	.long	f3Default
+	.long	f3Default
+	.long	f3Default
+	.long	f3Default
+	.long	f3Default
+	.long	f3Default
+	.long	f3Default
+	.long	f3Default
+	.long	f3Default
+	.long	f3Default
+	.long f3a4
+	.long f3a5
+	.long f3a6
+	.long f3a7
+	.long	f3Default
+	.long	f3Default
+	.long f3aa
+	.long f3ab
+	.long f3ac
+	.long f3ad
+	.long f3ae
+	.long f3af
+
+f36c:
+	ldr r1,[v30ptr,#v30ICount]
+	sub r1,r1,#5
+	str r1,[v30ptr,#v30ICount]
+	cmp r4,#1
+	bmi f3End
+0:	bl i_insb
+	subs r4,r4,#1
+	bne 0b
+	b f3End
+
+f36d:
+	ldr r1,[v30ptr,#v30ICount]
+	sub r1,r1,#5
+	str r1,[v30ptr,#v30ICount]
+	cmp r4,#1
+	bmi f3End
+0:	bl i_insw
+	subs r4,r4,#1
+	bne 0b
+	b f3End
+
+f36e:
+	ldr r1,[v30ptr,#v30ICount]
+	sub r1,r1,#5
+	str r1,[v30ptr,#v30ICount]
+	cmp r4,#1
+	bmi f3End
+0:	bl i_outsb
+	ldr r1,[v30ptr,#v30ICount]
+	add r1,r1,#1
+	str r1,[v30ptr,#v30ICount]
+	subs r4,r4,#1
+	bne 0b
+	b f3End
+
+f36f:
+	ldr r1,[v30ptr,#v30ICount]
+	sub r1,r1,#5
+	str r1,[v30ptr,#v30ICount]
+	cmp r4,#1
+	bmi f3End
+0:	bl i_outsw
+	ldr r1,[v30ptr,#v30ICount]
+	add r1,r1,#1
+	str r1,[v30ptr,#v30ICount]
+	subs r4,r4,#1
+	bne 0b
+	b f3End
+
+f3a4:
+	ldr r1,[v30ptr,#v30ICount]
+	sub r1,r1,#5
+	str r1,[v30ptr,#v30ICount]
+	cmp r4,#1
+	bmi f3End
+0:	bl i_movsb
+	ldr r1,[v30ptr,#v30ICount]
+	sub r1,r1,#2
+	str r1,[v30ptr,#v30ICount]
+	subs r4,r4,#1
+	bne 0b
+	b f3End
+
+f3a5:
+	ldr r1,[v30ptr,#v30ICount]
+	sub r1,r1,#2
+	str r1,[v30ptr,#v30ICount]
+	cmp r4,#1
+	bmi f3End
+0:	bl i_movsw
+	subs r4,r4,#1
+	bne 0b
+	b f3End
+
+f3a6:
+	ldr r1,[v30ptr,#v30ICount]
+	sub r1,r1,#5
+	str r1,[v30ptr,#v30ICount]
+	cmp r4,#1
+	bmi f3End
+0:	bl i_cmpsb
+	ldr r1,[v30ptr,#v30ICount]
+	sub r1,r1,#4
+	str r1,[v30ptr,#v30ICount]
+	ldr r0,[v30ptr,#v30ZeroVal]
+	cmp r0,#0
+	movne r0,#0
+	moveq r0,#1
+	subs r4,r4,#1
+	cmpne r0,#0
+	bne 0b
+	b f3End
+
+f3a7:
+	ldr r1,[v30ptr,#v30ICount]
+	sub r1,r1,#5
+	str r1,[v30ptr,#v30ICount]
+	cmp r4,#1
+	bmi f3End
+0:	bl i_cmpsw
+	ldr r1,[v30ptr,#v30ICount]
+	sub r1,r1,#4
+	str r1,[v30ptr,#v30ICount]
+	ldr r0,[v30ptr,#v30ZeroVal]
+	cmp r0,#0
+	movne r0,#0
+	moveq r0,#1
+	subs r4,r4,#1
+	cmpne r0,#0
+	bne 0b
+	b f3End
+
+f3aa:
+	ldr r1,[v30ptr,#v30ICount]
+	sub r1,r1,#5
+	str r1,[v30ptr,#v30ICount]
+	cmp r4,#1
+	bmi f3End
+0:	bl i_stosb
+	ldr r1,[v30ptr,#v30ICount]
+	sub r1,r1,#3
+	str r1,[v30ptr,#v30ICount]
+	subs r4,r4,#1
+	bne 0b
+	b f3End
+
+f3ab:
+	ldr r1,[v30ptr,#v30ICount]
+	sub r1,r1,#5
+	str r1,[v30ptr,#v30ICount]
+	cmp r4,#1
+	bmi f3End
+0:	bl i_stosw
+	ldr r1,[v30ptr,#v30ICount]
+	sub r1,r1,#3
+	str r1,[v30ptr,#v30ICount]
+	subs r4,r4,#1
+	bne 0b
+	b f3End
+
+f3ac:
+	ldr r1,[v30ptr,#v30ICount]
+	sub r1,r1,#5
+	str r1,[v30ptr,#v30ICount]
+	cmp r4,#1
+	bmi f3End
+0:	bl i_lodsb
+	ldr r1,[v30ptr,#v30ICount]
+	sub r1,r1,#3
+	str r1,[v30ptr,#v30ICount]
+	subs r4,r4,#1
+	bne 0b
+	b f3End
+
+f3ad:
+	ldr r1,[v30ptr,#v30ICount]
+	sub r1,r1,#5
+	str r1,[v30ptr,#v30ICount]
+	cmp r4,#1
+	bmi f3End
+0:	bl i_lodsw
+	ldr r1,[v30ptr,#v30ICount]
+	sub r1,r1,#3
+	str r1,[v30ptr,#v30ICount]
+	subs r4,r4,#1
+	bne 0b
+	b f3End
+
+f3ae:
+	ldr r1,[v30ptr,#v30ICount]
+	sub r1,r1,#5
+	str r1,[v30ptr,#v30ICount]
+	cmp r4,#1
+	bmi f3End
+0:	bl i_scasb
+	ldr r1,[v30ptr,#v30ICount]
+	sub r1,r1,#4
+	str r1,[v30ptr,#v30ICount]
+	ldr r0,[v30ptr,#v30ZeroVal]
+	cmp r0,#0
+	movne r0,#0
+	moveq r0,#1
+	subs r4,r4,#1
+	cmpne r0,#0
+	bne 0b
+	b f3End
+
+f3af:
+	ldr r1,[v30ptr,#v30ICount]
+	sub r1,r1,#5
+	str r1,[v30ptr,#v30ICount]
+	cmp r4,#1
+	bmi f3End
+0:	bl i_scasw
+	ldr r1,[v30ptr,#v30ICount]
+	sub r1,r1,#4
+	str r1,[v30ptr,#v30ICount]
+	ldr r0,[v30ptr,#v30ZeroVal]
+	cmp r0,#0
+	movne r0,#0
+	moveq r0,#1
+	subs r4,r4,#1
+	cmpne r0,#0
+	bne 0b
+	b f3End
+
+f3Default:
+	adr lr,f3DefEnd
+	ldr pc,[v30ptr,r0,lsl#2]
+
+f3End:
+	strh r4,[v30ptr,#v30RegCW]
+f3DefEnd:
+	mov r0,#0
+	strb r0,[v30ptr,#v30SegPrefix]
+	ldmfd sp!,{r4-r6,pc}
 ;@----------------------------------------------------------------------------
 i_hlt:
 _F4:	;@ HLT
@@ -6330,6 +6650,8 @@ V30RunXCycles:				;@ r0 = number of cycles to run
 	stmfd sp!,{lr}
 
 	mov r9,r0
+	ldr r1,[v30ptr,#v30ICount]
+	add r0,r0,r1
 	str r0,[v30ptr,#v30ICount]
 xLoop:
 	ldr r0,[v30ptr,#v30ICount]

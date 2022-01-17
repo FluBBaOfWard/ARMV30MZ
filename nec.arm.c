@@ -685,7 +685,8 @@ ITCM_CODE OP( 0xf2, i_repne   ) { UINT32 next = FETCHOP; UINT16 c = I.regs.w[CW]
 	}
 	I.seg_prefix=FALSE;
 }
-ITCM_CODE OP( 0xf3, i_repe	 ) { UINT32 next = FETCHOP; UINT16 c = I.regs.w[CW];
+/*
+OP( 0xf3, i_repe	 ) { UINT32 next = FETCHOP; UINT16 c = I.regs.w[CW];
 	switch(next) { // Segments
 		case 0x26: I.seg_prefix=TRUE; I.prefix_base=I.sregs[ES]; next = FETCHOP; CLK(2); break;
 		case 0x2e: I.seg_prefix=TRUE; I.prefix_base=I.sregs[CS]; next = FETCHOP; CLK(2); break;
@@ -712,6 +713,7 @@ ITCM_CODE OP( 0xf3, i_repe	 ) { UINT32 next = FETCHOP; UINT16 c = I.regs.w[CW];
 	}
 	I.seg_prefix=FALSE;
 }
+*/
 //OP( 0xf4, i_hlt ) { I.ICount=0; }
 //OP( 0xf5, i_cmc ) { I.CarryVal = !CF; CLK(4); }
 OP( 0xf6, i_f6pre ) { UINT32 tmp; UINT32 uresult,uresult2; INT32 result,result2;
