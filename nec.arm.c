@@ -657,8 +657,8 @@ OP( 0xd3, i_rotshft_wcl ) {
 		else					\
 			I.ip-=(UINT16)2;	\
 		break;}
-
-ITCM_CODE OP( 0xf2, i_repne   ) { UINT32 next = FETCHOP; UINT16 c = I.regs.w[CW];
+/*
+OP( 0xf2, i_repne   ) { UINT32 next = FETCHOP; UINT16 c = I.regs.w[CW];
 	switch(next) { // Segments
 		case 0x26: I.seg_prefix=TRUE; I.prefix_base=I.sregs[ES]; next = FETCHOP; CLK(2); break;
 		case 0x2e: I.seg_prefix=TRUE; I.prefix_base=I.sregs[CS]; next = FETCHOP; CLK(2); break;
@@ -685,7 +685,7 @@ ITCM_CODE OP( 0xf2, i_repne   ) { UINT32 next = FETCHOP; UINT16 c = I.regs.w[CW]
 	}
 	I.seg_prefix=FALSE;
 }
-/*
+
 OP( 0xf3, i_repe	 ) { UINT32 next = FETCHOP; UINT16 c = I.regs.w[CW];
 	switch(next) { // Segments
 		case 0x26: I.seg_prefix=TRUE; I.prefix_base=I.sregs[ES]; next = FETCHOP; CLK(2); break;

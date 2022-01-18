@@ -63,7 +63,7 @@ typedef enum { AL,AH,CL,CH,DL,DH,BL,BH,SPL,SPH,BPL,BPH,IXL,IXH,IYL,IYH } BREGS;
 */
 //#define CF		(I.CarryVal!=0)
 //#define SF		(I.SignVal<0)
-#define ZF		(I.ZeroVal==0)
+//#define ZF		(I.ZeroVal==0)
 //#define PF		PZSTable[(BYTE)I.ParityVal]
 //#define AF		(I.AuxVal!=0)
 //#define OF		(I.OverVal!=0)

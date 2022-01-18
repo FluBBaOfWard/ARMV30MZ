@@ -5509,6 +5509,171 @@ _F0:	;@ LOCK
 	str r1,[v30ptr,#v30ICount]
 	bx lr
 ;@----------------------------------------------------------------------------
+i_repne:
+_F2:	;@ REPNE
+;@----------------------------------------------------------------------------
+	stmfd sp!,{r4-r6,lr}
+	ldrh r1,[v30ptr,#v30IP]
+	ldrh r5,[v30ptr,#v30SRegCS]
+	add r4,r1,#1
+	add	r0,r1,r5,asl#4
+	bl cpu_readmem20
+	and r1,r0,#0xE7
+	cmp r1,#0x26
+	bne noF2Prefix
+	and r1,r0,#0x18
+	add r1,v30ptr,r1,lsr#2
+	mov r0,#1
+	ldrh r2,[r1,#v30SRegs]
+	strb r0,[v30ptr,#v30SegPrefix]
+	str r2,[v30ptr,#v30PrefixBase]
+
+	ldr r1,[v30ptr,#v30ICount]
+	sub r1,r1,#2
+	str r1,[v30ptr,#v30ICount]
+	add	r0,r4,r5,asl#4
+	add r4,r4,#1
+	bl cpu_readmem20
+noF2Prefix:
+	strh r4,[v30ptr,#v30IP]
+	ldrh r4,[v30ptr,#v30RegCW]
+	sub r3,r0,#0x6C
+	cmp r3,#0x43
+	ldrls pc,[pc,r3,lsl#2]
+	b f3Default
+	.long f36c
+	.long f36d
+	.long f36e
+	.long f36f
+	.long	f3Default
+	.long	f3Default
+	.long	f3Default
+	.long	f3Default
+	.long	f3Default
+	.long	f3Default
+	.long	f3Default
+	.long	f3Default
+	.long	f3Default
+	.long	f3Default
+	.long	f3Default
+	.long	f3Default
+	.long	f3Default
+	.long	f3Default
+	.long	f3Default
+	.long	f3Default
+	.long	f3Default
+	.long	f3Default
+	.long	f3Default
+	.long	f3Default
+	.long	f3Default
+	.long	f3Default
+	.long	f3Default
+	.long	f3Default
+	.long	f3Default
+	.long	f3Default
+	.long	f3Default
+	.long	f3Default
+	.long	f3Default
+	.long	f3Default
+	.long	f3Default
+	.long	f3Default
+	.long	f3Default
+	.long	f3Default
+	.long	f3Default
+	.long	f3Default
+	.long	f3Default
+	.long	f3Default
+	.long	f3Default
+	.long	f3Default
+	.long	f3Default
+	.long	f3Default
+	.long	f3Default
+	.long	f3Default
+	.long	f3Default
+	.long	f3Default
+	.long	f3Default
+	.long	f3Default
+	.long	f3Default
+	.long	f3Default
+	.long	f3Default
+	.long	f3Default
+	.long f3a4
+	.long f3a5
+	.long f2a6
+	.long f2a7
+	.long	f3Default
+	.long	f3Default
+	.long f3aa
+	.long f3ab
+	.long f3ac
+	.long f3ad
+	.long f2ae
+	.long f2af
+
+f2a6:
+	ldr r1,[v30ptr,#v30ICount]
+	sub r1,r1,#5
+	str r1,[v30ptr,#v30ICount]
+	cmp r4,#1
+	bmi f3End
+0:	bl i_cmpsb
+	ldr r1,[v30ptr,#v30ICount]
+	sub r1,r1,#3
+	str r1,[v30ptr,#v30ICount]
+	subs r4,r4,#1
+	ldrne r0,[v30ptr,#v30ZeroVal]
+	cmpne r0,#0
+	bne 0b
+	b f3End
+
+f2a7:
+	ldr r1,[v30ptr,#v30ICount]
+	sub r1,r1,#5
+	str r1,[v30ptr,#v30ICount]
+	cmp r4,#1
+	bmi f3End
+0:	bl i_cmpsw
+	ldr r1,[v30ptr,#v30ICount]
+	sub r1,r1,#3
+	str r1,[v30ptr,#v30ICount]
+	subs r4,r4,#1
+	ldrne r0,[v30ptr,#v30ZeroVal]
+	cmpne r0,#0
+	bne 0b
+	b f3End
+
+f2ae:
+	ldr r1,[v30ptr,#v30ICount]
+	sub r1,r1,#5
+	str r1,[v30ptr,#v30ICount]
+	cmp r4,#1
+	bmi f3End
+0:	bl i_scasb
+	ldr r1,[v30ptr,#v30ICount]
+	sub r1,r1,#5
+	str r1,[v30ptr,#v30ICount]
+	subs r4,r4,#1
+	ldrne r0,[v30ptr,#v30ZeroVal]
+	cmpne r0,#0
+	bne 0b
+	b f3End
+
+f2af:
+	ldr r1,[v30ptr,#v30ICount]
+	sub r1,r1,#5
+	str r1,[v30ptr,#v30ICount]
+	cmp r4,#1
+	bmi f3End
+0:	bl i_scasw
+	ldr r1,[v30ptr,#v30ICount]
+	sub r1,r1,#5
+	str r1,[v30ptr,#v30ICount]
+	subs r4,r4,#1
+	ldrne r0,[v30ptr,#v30ZeroVal]
+	cmpne r0,#0
+	bne 0b
+	b f3End
+;@----------------------------------------------------------------------------
 i_repe:
 _F3:	;@ REPE
 ;@----------------------------------------------------------------------------
