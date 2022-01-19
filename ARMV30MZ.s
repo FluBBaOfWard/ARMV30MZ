@@ -6013,6 +6013,151 @@ _F5:	;@ CMC
 	str r1,[v30ptr,#v30ICount]
 	bx lr
 ;@----------------------------------------------------------------------------
+i_f6pre:
+_F6:	;@ PRE F6
+;@----------------------------------------------------------------------------
+	stmfd sp!,{r4-r6,lr}
+	ldrh r1,[v30ptr,#v30IP]
+	ldrh r0,[v30ptr,#v30SRegCS]
+	add r2,r1,#1
+	add	r0,r1,r0,asl#4
+	strh r2,[v30ptr,#v30IP]
+	bl cpu_readmem20
+	mov r4,r0
+	ldr r6,[v30ptr,#v30ICount]
+	cmp r4,#0xC0
+	bmi 1f
+	add r1,v30ptr,r0
+	ldrb r2,[r1,#v30ModRmRm]
+	add r5,v30ptr,r2
+	ldrb r0,[r5,#v30Regs]
+0:
+	and r2,r4,#0x38
+	ldr pc,[pc,r2,lsr#1]
+	nop
+	.long testF6, testF6, notF6, negF6, muluF6, mulF6, divubF6, divbF6
+testF6:
+	sub r6,r6,#1
+	str r6,[v30ptr,#v30ICount]
+	mov r4,r0
+	ldrh r1,[v30ptr,#v30IP]
+	ldrh r0,[v30ptr,#v30SRegCS]
+	add r2,r1,#1
+	add	r0,r1,r0,asl#4
+	strh r2,[v30ptr,#v30IP]
+	bl cpu_readmem20
+	and8 r0,r4
+	ldmfd sp!,{r4-r6,pc}
+notF6:
+	sub r6,r6,#1
+	mvn r1,r0
+	cmp r4,#0xC0
+	submi r6,r6,#1
+	str r6,[v30ptr,#v30ICount]
+	strbpl r1,[r5,#v30Regs]
+	mov r0,r5
+	ldmfd sp!,{r4-r6,lr}
+	bxpl lr
+	b cpu_writemem20
+negF6:
+	sub r6,r6,#1
+	movs r1,r0
+	movne r1,#1
+	str r1,[v30ptr,#v30CarryVal]
+	mov r0,r0,lsl#24
+	rsb r1,r0,#0
+	mov r1,r1,asr#24
+	str r1,[v30ptr,#v30SignVal]
+	str r1,[v30ptr,#v30ZeroVal]
+	str r1,[v30ptr,#v30ParityVal]
+	cmp r4,#0xC0
+	submi r6,r6,#1
+	str r6,[v30ptr,#v30ICount]
+	strbpl r1,[r5,#v30Regs]
+	mov r0,r5
+	ldmfd sp!,{r4-r6,lr}
+	bxpl lr
+	b cpu_writemem20
+muluF6:
+	sub r6,r6,#3
+	str r6,[v30ptr,#v30ICount]
+	ldrb r1,[v30ptr,#v30RegAL]
+	mul r2,r0,r1
+	strh r2,[v30ptr,#v30RegAW]
+	movs r2,r2,lsr#8
+	movne r2,#1
+	str r2,[v30ptr,#v30CarryVal]
+	str r2,[v30ptr,#v30OverVal]
+	ldmfd sp!,{r4-r6,pc}
+mulF6:
+	sub r6,r6,#3
+	str r6,[v30ptr,#v30ICount]
+	ldrsb r1,[v30ptr,#v30RegAL]
+	mov r0,r0,lsl#24
+	mov r0,r0,asr#24
+	mul r2,r0,r1
+	strh r2,[v30ptr,#v30RegAW]
+	movs r1,r2,asr#7
+	mvnsne r1,r1
+	movne r1,#1
+	str r1,[v30ptr,#v30CarryVal]
+	str r1,[v30ptr,#v30OverVal]
+	ldmfd sp!,{r4-r6,pc}
+divubF6:
+	sub r6,r6,#15
+	str r6,[v30ptr,#v30ICount]
+	ldmfd sp!,{r4-r6,lr}
+	movs r1,r0
+	beq nec_interrupt			;@ r0 = 0
+	ldrh r0,[v30ptr,#v30RegAW]
+
+#ifdef GBA
+	swi 0x060000				;@ GBA BIOS Div, r0/r1.
+#elif NDS
+	swi 0x090000				;@ NDS BIOS Div, r0/r1.
+#else
+	#error "Needs an implementation of division"
+#endif
+
+	strb r0,[v30ptr,#v30RegAL]
+	strb r1,[v30ptr,#v30RegAH]
+	movs r0,r0,lsr#8
+	movne r0,#0
+	bne nec_interrupt			;@ r0 = 0
+	bx lr
+divbF6:
+	sub r6,r6,#17
+	str r6,[v30ptr,#v30ICount]
+	ldmfd sp!,{r4-r6,lr}
+	movs r0,r0,lsl#24
+	mov r1,r0,asr#24
+	beq nec_interrupt			;@ r0 = 0
+	ldrsh r0,[v30ptr,#v30RegAW]
+
+#ifdef GBA
+	swi 0x060000				;@ GBA BIOS Div, r0/r1.
+#elif NDS
+	swi 0x090000				;@ NDS BIOS Div, r0/r1.
+#else
+	#error "Needs an implementation of division"
+#endif
+
+	strb r0,[v30ptr,#v30RegAL]
+	strb r1,[v30ptr,#v30RegAH]
+	movs r1,r0,asr#7
+	mvnsne r1,r1
+	movne r0,#0
+	bne nec_interrupt			;@ r0 = 0
+	bx lr
+1:
+	sub r6,r6,#1
+	add r1,v30ptr,#v30EATable
+	mov lr,pc
+	ldr pc,[r1,r0,lsl#2]
+	mov r5,r0
+	adr lr,0b
+	b cpu_readmem20
+;@----------------------------------------------------------------------------
 i_f7pre:
 _F7:	;@ PRE F7
 ;@----------------------------------------------------------------------------

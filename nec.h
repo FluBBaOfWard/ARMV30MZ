@@ -30,17 +30,17 @@ typedef enum { AL,AH,CL,CH,DL,DH,BL,BH,SPL,SPH,BPL,BPH,IXL,IXH,IYL,IYH } BREGS;
 //#define SetIF(x)		(I.IF = (x))
 //#define SetDF(x)		(I.DF = (x))
 #define SetMD(x)		(I.MF = (x))	/* OB [19.07.99] Mode Flag V30 */
-
-//#define SetCFB(x)		(I.CarryVal = (x) & 0x100)
-//#define SetCFW(x)		(I.CarryVal = (x) & 0x10000)
-//#define SetAF(x,y,z)	(I.AuxVal = ((x) ^ ((y) ^ (z))) & 0x10)
-//#define SetSF(x)		(I.SignVal = (x))
-//#define SetZF(x)		(I.ZeroVal = (x))
-//#define SetPF(x)		(I.ParityVal = (x))
+/*
+#define SetCFB(x)		(I.CarryVal = (x) & 0x100)
+#define SetCFW(x)		(I.CarryVal = (x) & 0x10000)
+#define SetAF(x,y,z)	(I.AuxVal = ((x) ^ ((y) ^ (z))) & 0x10)
+#define SetSF(x)		(I.SignVal = (x))
+#define SetZF(x)		(I.ZeroVal = (x))
+#define SetPF(x)		(I.ParityVal = (x))
 
 #define SetSZPF_Byte(x) (I.SignVal=I.ZeroVal=I.ParityVal=(INT8)(x))
-//#define SetSZPF_Word(x) (I.SignVal=I.ZeroVal=I.ParityVal=(INT16)(x))
-/*
+#define SetSZPF_Word(x) (I.SignVal=I.ZeroVal=I.ParityVal=(INT16)(x))
+
 #define SetOFW_Add(x,y,z)	(I.OverVal = ((x) ^ (y)) & ((x) ^ (z)) & 0x8000)
 #define SetOFB_Add(x,y,z)	(I.OverVal = ((x) ^ (y)) & ((x) ^ (z)) & 0x80)
 #define SetOFW_Sub(x,y,z)	(I.OverVal = ((z) ^ (y)) & ((z) ^ (x)) & 0x8000)
@@ -60,48 +60,48 @@ typedef enum { AL,AH,CL,CH,DL,DH,BL,BH,SPL,SPH,BPL,BPH,IXL,IXH,IYL,IYH } BREGS;
 
 #define XORB dst^=src; I.CarryVal=I.OverVal=I.AuxVal=0; SetSZPF_Byte(dst)
 #define XORW dst^=src; I.CarryVal=I.OverVal=I.AuxVal=0; SetSZPF_Word(dst)
+
+#define CF		(I.CarryVal!=0)
+#define SF		(I.SignVal<0)
+#define ZF		(I.ZeroVal==0)
+#define PF		PZSTable[(BYTE)I.ParityVal]
+#define AF		(I.AuxVal!=0)
+#define OF		(I.OverVal!=0)
+#define MD		(I.MF!=0)
 */
-//#define CF		(I.CarryVal!=0)
-//#define SF		(I.SignVal<0)
-//#define ZF		(I.ZeroVal==0)
-//#define PF		PZSTable[(BYTE)I.ParityVal]
-//#define AF		(I.AuxVal!=0)
-//#define OF		(I.OverVal!=0)
-//#define MD		(I.MF!=0)
-
 /************************************************************************/
+/*
+#define SegBase(Seg) (I.sregs[Seg] << 4)
 
-//#define SegBase(Seg) (I.sregs[Seg] << 4)
+#define DefaultBase(Seg) ((I.seg_prefix && (Seg==DS || Seg==SS)) ? I.prefix_base << 4 : I.sregs[Seg] << 4)
 
-//#define DefaultBase(Seg) ((I.seg_prefix && (Seg==DS || Seg==SS)) ? I.prefix_base << 4 : I.sregs[Seg] << 4)
+#define GetMemB(Seg,Off) ((UINT8)ReadByte((DefaultBase(Seg)+(Off))))
+#define GetMemW(Seg,Off) ((UINT16)ReadWord((DefaultBase(Seg)+(Off))))
 
-//#define GetMemB(Seg,Off) ((UINT8)ReadByte((DefaultBase(Seg)+(Off))))
-//#define GetMemW(Seg,Off) ((UINT16)ReadWord((DefaultBase(Seg)+(Off))))
-
-//#define PutMemB(Seg,Off,x) { WriteByte((DefaultBase(Seg)+(Off)),(x)); }
-//#define PutMemW(Seg,Off,x) { WriteWord((DefaultBase(Seg)+(Off)),(x)); }
-
-#define ReadByte(ea) ((BYTE)cpu_readmem20((ea)))
+#define PutMemB(Seg,Off,x) { WriteByte((DefaultBase(Seg)+(Off)),(x)); }
+#define PutMemW(Seg,Off,x) { WriteWord((DefaultBase(Seg)+(Off)),(x)); }
+*/
+//#define ReadByte(ea) ((BYTE)cpu_readmem20((ea)))
 //#define ReadWord(ea) (/*I.ICount-=(ea)&1;*/ cpu_readmem20w((ea)))
-#define WriteByte(ea,val) { cpu_writemem20((ea),val); }
+//#define WriteByte(ea,val) { cpu_writemem20((ea),val); }
 //#define WriteWord(ea,val) { /*I.ICount-=(ea)&1;*/ cpu_writemem20w((ea),val); }
-
-//#define read_port(port) cpu_readport(port)
-//#define write_port(port,val) cpu_writeport(port,val)
+/*
+#define read_port(port) cpu_readport(port)
+#define write_port(port,val) cpu_writeport(port,val)
 
 #define FETCH (cpu_readop_arg((I.sregs[CS]<<4)+I.ip++))
-//#define FETCHOP (cpu_readop((I.sregs[CS]<<4)+I.ip++))
-//#define FETCHWORD(var) { var=cpu_readop_arg_w((I.sregs[CS]<<4)+I.ip); I.ip+=2; }
-//#define PUSH(val) { I.regs.w[SP]-=2; WriteWord((((I.sregs[SS]<<4)+I.regs.w[SP])),val); }
-//#define POP(var) { var = ReadWord((((I.sregs[SS]<<4)+I.regs.w[SP]))); I.regs.w[SP]+=2; }
-//#define PEEK(addr) ((BYTE)cpu_readop_arg(addr))
-//#define PEEKOP(addr) ((BYTE)cpu_readop(addr))
+#define FETCHOP (cpu_readop((I.sregs[CS]<<4)+I.ip++))
+#define FETCHWORD(var) { var=cpu_readop_arg_w((I.sregs[CS]<<4)+I.ip); I.ip+=2; }
+#define PUSH(val) { I.regs.w[SP]-=2; WriteWord((((I.sregs[SS]<<4)+I.regs.w[SP])),val); }
+#define POP(var) { var = ReadWord((((I.sregs[SS]<<4)+I.regs.w[SP]))); I.regs.w[SP]+=2; }
+#define PEEK(addr) ((BYTE)cpu_readop_arg(addr))
+#define PEEKOP(addr) ((BYTE)cpu_readop(addr))
 
 #define GetModRM UINT32 ModRM=FETCH
 
 #define CLK(all) I.ICount-=all
 #define CLKM(v30MZm,v30MZ) { I.ICount-=( ModRM >=0xc0 )?v30MZ:v30MZm; }
-/*
+
 #define CompressFlags() (WORD)(CF | (PF << 2) | (AF << 4) | (ZF << 6) \
 				| (SF << 7) | (I.TF << 8) | (I.IF << 9) \
 				| (I.DF << 10) | (OF << 11) | 0x7002)
@@ -200,7 +200,7 @@ typedef enum { AL,AH,CL,CH,DL,DH,BL,BH,SPL,SPH,BPL,BPH,IXL,IXH,IYL,IYH } BREGS;
 #define SHR_WORD(c) dst >>= c-1; I.CarryVal = dst & 0x1; dst >>= 1; SetSZPF_Word(dst); PutbackRMWord(ModRM,(WORD)dst)
 #define SHRA_BYTE(c) dst = ((INT8)dst) >> (c-1); I.CarryVal = dst & 0x1; dst = ((INT8)((BYTE)dst)) >> 1; SetSZPF_Byte(dst); PutbackRMByte(ModRM,(BYTE)dst)
 #define SHRA_WORD(c) dst = ((INT16)dst) >> (c-1); I.CarryVal = dst & 0x1; dst = ((INT16)((WORD)dst)) >> 1; SetSZPF_Word(dst); PutbackRMWord(ModRM,(WORD)dst)
-*/
+
 #define DIVUB												\
 	uresult = I.regs.w[AW];									\
 	uresult2 = uresult % tmp;								\
@@ -220,7 +220,7 @@ typedef enum { AL,AH,CL,CH,DL,DH,BL,BH,SPL,SPH,BPL,BPH,IXL,IXH,IYL,IYH } BREGS;
 		I.regs.b[AL] = result;								\
 		I.regs.b[AH] = result2;								\
 	}
-/*
+
 #define DIVUW												\
 	uresult = (((UINT32)I.regs.w[DW]) << 16) | I.regs.w[AW];\
 	uresult2 = uresult % tmp;								\

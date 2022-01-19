@@ -9,10 +9,10 @@ enum {
 /* Public variables */
 extern int no_interrupt;
 
-extern void nec_interrupt(UINT8 int_num);
-extern void nec_int(DWORD wektor);
-extern void (*nec_instruction[256])(void);
-extern unsigned (*GetEA[192])(void);
+//extern void nec_interrupt(UINT8 int_num);
+//extern void nec_int(DWORD wektor);
+//extern void (*nec_instruction[256])(void);
+//extern unsigned (*GetEA[192])(void);
 extern UINT8 PZSTable[256];
 
 
@@ -20,6 +20,5 @@ void nec_set_reg(int regnum, unsigned val);
 int nec_execute(int cycles);	
 unsigned nec_get_reg(int regnum);
 void nec_reset(void *param);
-void nec_int(unsigned int wektor);
 
 #endif

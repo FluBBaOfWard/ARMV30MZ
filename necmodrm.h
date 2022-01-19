@@ -1,7 +1,7 @@
-
-//#define RegWord(ModRM) I.regs.w[((ModRM & 0x38) >> 3)]
-//#define RegByte(ModRM) I.regs.b[Mod_RM.reg.b[ModRM]]
 /*
+#define RegWord(ModRM) I.regs.w[((ModRM & 0x38) >> 3)]
+#define RegByte(ModRM) I.regs.b[Mod_RM.reg.b[ModRM]]
+
 #define GetRMWord(ModRM) 					\
 	((ModRM) >= 0xc0 ? I.regs.w[(ModRM & 0x7)] : ReadWord( (*GetEA[ModRM])() ))
 
@@ -34,10 +34,10 @@
 		WriteWord(I.EA, val);				\
 	}										\
 }
-*/
+
 #define GetRMByte(ModRM)					\
 	((ModRM) >= 0xc0 ? I.regs.b[Mod_RM.RM.b[ModRM]] : ReadByte( (*GetEA[ModRM])() ))
-/*
+
 #define PutRMByte(ModRM,val)				\
 {											\
 	if (ModRM >= 0xc0)						\
@@ -45,7 +45,7 @@
 	else									\
 		WriteByte((*GetEA[ModRM])(), val);	\
 }
-*/
+
 #define PutbackRMByte(ModRM,val)			\
 {											\
 	if (ModRM >= 0xc0)						\
@@ -53,7 +53,7 @@
 	else									\
 		WriteByte(I.EA, val);				\
 }
-/*
+
 #define PutImmRMByte(ModRM) 				\
 {											\
 	if (ModRM >= 0xc0)						\

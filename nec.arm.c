@@ -94,7 +94,7 @@ extern Mod_Struct Mod_RM;
 /* For INTR interrupts, the level is caught on the bus during an INTA cycle */
 
 //#include "necea.h"
-#include "necmodrm.h"
+//#include "necmodrm.h"
 
 /***************************************************************************/
 
@@ -159,7 +159,7 @@ void nec_int(DWORD wektor)
 //	CLK(10);
 //}
 
-#define OP(num,func_name) void func_name(void)
+//#define OP(num,func_name) void func_name(void)
 
 
 //OP( 0x00, i_add_br8  ) { DEF_br8;   ADDB; PutbackRMByte(ModRM,dst); CLKM(3,1); }
@@ -634,6 +634,7 @@ OP( 0xd3, i_rotshft_wcl ) {
 //OP( 0xef, i_outdxax  ) { UINT32 port = I.regs.w[DW]; write_port(port, I.regs.b[AL]); write_port(port+1, I.regs.b[AH]); CLK(6); }
 
 //OP( 0xf0, i_lock     ) { no_interrupt=1; CLK(1); }
+/*
 #define THROUGH 				\
 	if(I.ICount<0){			\
 		if(I.seg_prefix)			\
@@ -641,7 +642,7 @@ OP( 0xd3, i_rotshft_wcl ) {
 		else					\
 			I.ip-=(UINT16)2;	\
 		break;}
-/*
+
 OP( 0xf2, i_repne   ) { UINT32 next = FETCHOP; UINT16 c = I.regs.w[CW];
 	switch(next) { // Segments
 		case 0x26: I.seg_prefix=TRUE; I.prefix_base=I.sregs[ES]; next = FETCHOP; CLK(2); break;
@@ -697,9 +698,9 @@ OP( 0xf3, i_repe	 ) { UINT32 next = FETCHOP; UINT16 c = I.regs.w[CW];
 	}
 	I.seg_prefix=FALSE;
 }
-*/
-//OP( 0xf4, i_hlt ) { I.ICount=0; }
-//OP( 0xf5, i_cmc ) { I.CarryVal = !CF; CLK(4); }
+
+OP( 0xf4, i_hlt ) { I.ICount=0; }
+OP( 0xf5, i_cmc ) { I.CarryVal = !CF; CLK(4); }
 OP( 0xf6, i_f6pre ) { UINT32 tmp; UINT32 uresult,uresult2; INT32 result,result2;
 	GetModRM; tmp = GetRMByte(ModRM);
 	switch (ModRM & 0x38) {
@@ -713,7 +714,7 @@ OP( 0xf6, i_f6pre ) { UINT32 tmp; UINT32 uresult,uresult2; INT32 result,result2;
 		case 0x38: if (tmp) { DIVB;  } else nec_interrupt(0); CLKM(18,17); break;
 	}
 }
-/*
+ 
 OP( 0xf7, i_f7pre	) { UINT32 tmp,tmp2; UINT32 uresult,uresult2; INT32 result,result2;
 	GetModRM; tmp = GetRMWord(ModRM);
 	switch (ModRM & 0x38) {
