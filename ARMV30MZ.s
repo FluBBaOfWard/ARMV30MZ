@@ -3108,8 +3108,8 @@ _83:	;@ PRE 83
 	add	r0,r1,r0,asl#4
 	strh r2,[v30ptr,#v30IP]
 	bl cpu_readmem20
-	mov r0,r0,lsl#24
-	mov r0,r0,asr#24
+	tst r0,#0x80
+	orrne r0,r0,#0xFF00
 	b pre81Continue
 1:
 	sub r3,r3,#3
