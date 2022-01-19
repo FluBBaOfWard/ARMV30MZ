@@ -1,12 +1,12 @@
 
 //#define RegWord(ModRM) I.regs.w[((ModRM & 0x38) >> 3)]
 //#define RegByte(ModRM) I.regs.b[Mod_RM.reg.b[ModRM]]
-
+/*
 #define GetRMWord(ModRM) 					\
 	((ModRM) >= 0xc0 ? I.regs.w[(ModRM & 0x7)] : ReadWord( (*GetEA[ModRM])() ))
 
-//#define GetNextRMWord ReadWord((I.EA&0xf0000)|((I.EA+2)&0xffff))
-/*
+#define GetNextRMWord ReadWord((I.EA&0xf0000)|((I.EA+2)&0xffff))
+
 #define PutRMWord(ModRM,val)				\
 {											\
 	if (ModRM >= 0xc0)						\
@@ -14,7 +14,7 @@
 	else									\
 		WriteWord((*GetEA[ModRM])(), val);	\
 }
-*/
+
 #define PutbackRMWord(ModRM,val)			\
 { 							     			\
 	if (ModRM >= 0xc0)						\
@@ -22,7 +22,7 @@
 	else									\
 		WriteWord(I.EA, val); 				\
 }
-/*
+
 #define PutImmRMWord(ModRM) 				\
 {											\
 	WORD val;								\

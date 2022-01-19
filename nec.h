@@ -39,7 +39,7 @@ typedef enum { AL,AH,CL,CH,DL,DH,BL,BH,SPL,SPH,BPL,BPH,IXL,IXH,IYL,IYH } BREGS;
 //#define SetPF(x)		(I.ParityVal = (x))
 
 #define SetSZPF_Byte(x) (I.SignVal=I.ZeroVal=I.ParityVal=(INT8)(x))
-#define SetSZPF_Word(x) (I.SignVal=I.ZeroVal=I.ParityVal=(INT16)(x))
+//#define SetSZPF_Word(x) (I.SignVal=I.ZeroVal=I.ParityVal=(INT16)(x))
 /*
 #define SetOFW_Add(x,y,z)	(I.OverVal = ((x) ^ (y)) & ((x) ^ (z)) & 0x8000)
 #define SetOFB_Add(x,y,z)	(I.OverVal = ((x) ^ (y)) & ((x) ^ (z)) & 0x80)
@@ -82,16 +82,16 @@ typedef enum { AL,AH,CL,CH,DL,DH,BL,BH,SPL,SPH,BPL,BPH,IXL,IXH,IYL,IYH } BREGS;
 //#define PutMemW(Seg,Off,x) { WriteWord((DefaultBase(Seg)+(Off)),(x)); }
 
 #define ReadByte(ea) ((BYTE)cpu_readmem20((ea)))
-#define ReadWord(ea) (/*I.ICount-=(ea)&1;*/ cpu_readmem20w((ea)))
+//#define ReadWord(ea) (/*I.ICount-=(ea)&1;*/ cpu_readmem20w((ea)))
 #define WriteByte(ea,val) { cpu_writemem20((ea),val); }
-#define WriteWord(ea,val) { /*I.ICount-=(ea)&1;*/ cpu_writemem20w((ea),val); }
+//#define WriteWord(ea,val) { /*I.ICount-=(ea)&1;*/ cpu_writemem20w((ea),val); }
 
 //#define read_port(port) cpu_readport(port)
 //#define write_port(port,val) cpu_writeport(port,val)
 
 #define FETCH (cpu_readop_arg((I.sregs[CS]<<4)+I.ip++))
-#define FETCHOP (cpu_readop((I.sregs[CS]<<4)+I.ip++))
-#define FETCHWORD(var) { var=cpu_readop_arg_w((I.sregs[CS]<<4)+I.ip); I.ip+=2; }
+//#define FETCHOP (cpu_readop((I.sregs[CS]<<4)+I.ip++))
+//#define FETCHWORD(var) { var=cpu_readop_arg_w((I.sregs[CS]<<4)+I.ip); I.ip+=2; }
 //#define PUSH(val) { I.regs.w[SP]-=2; WriteWord((((I.sregs[SS]<<4)+I.regs.w[SP])),val); }
 //#define POP(var) { var = ReadWord((((I.sregs[SS]<<4)+I.regs.w[SP]))); I.regs.w[SP]+=2; }
 //#define PEEK(addr) ((BYTE)cpu_readop_arg(addr))
@@ -220,7 +220,7 @@ typedef enum { AL,AH,CL,CH,DL,DH,BL,BH,SPL,SPH,BPL,BPH,IXL,IXH,IYL,IYH } BREGS;
 		I.regs.b[AL] = result;								\
 		I.regs.b[AH] = result2;								\
 	}
-
+/*
 #define DIVUW												\
 	uresult = (((UINT32)I.regs.w[DW]) << 16) | I.regs.w[AW];\
 	uresult2 = uresult % tmp;								\
@@ -240,5 +240,5 @@ typedef enum { AL,AH,CL,CH,DL,DH,BL,BH,SPL,SPH,BPL,BPH,IXL,IXH,IYL,IYH } BREGS;
 		I.regs.w[AW]=result;								\
 		I.regs.w[DW]=result2;								\
 	}
-
+*/
 #endif	// __NEC_H__

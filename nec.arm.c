@@ -96,22 +96,6 @@ extern Mod_Struct Mod_RM;
 //#include "necea.h"
 #include "necmodrm.h"
 
-void i_pushf(void);
-void i_insb(void);
-void i_insw(void);
-void i_outsb(void);
-void i_outsw(void);
-void i_movsb(void);
-void i_movsw(void);
-void i_cmpsb(void);
-void i_cmpsw(void);
-void i_stosb(void);
-void i_stosw(void);
-void i_lodsb(void);
-void i_lodsw(void);
-void i_scasb(void);
-void i_scasw(void);
-
 /***************************************************************************/
 
 void nec_reset(void *param)
@@ -170,10 +154,10 @@ void nec_int(DWORD wektor)
 /*							   OPCODES										*/
 /****************************************************************************/
 
-void i_invalid(void)
-{
-	CLK(10);
-}
+//void i_invalid(void)
+//{
+//	CLK(10);
+//}
 
 #define OP(num,func_name) void func_name(void)
 
@@ -729,7 +713,7 @@ OP( 0xf6, i_f6pre ) { UINT32 tmp; UINT32 uresult,uresult2; INT32 result,result2;
 		case 0x38: if (tmp) { DIVB;  } else nec_interrupt(0); CLKM(18,17); break;
 	}
 }
-
+/*
 OP( 0xf7, i_f7pre	) { UINT32 tmp,tmp2; UINT32 uresult,uresult2; INT32 result,result2;
 	GetModRM; tmp = GetRMWord(ModRM);
 	switch (ModRM & 0x38) {
@@ -743,7 +727,7 @@ OP( 0xf7, i_f7pre	) { UINT32 tmp,tmp2; UINT32 uresult,uresult2; INT32 result,res
 		case 0x38: if (tmp) { DIVW;  } else nec_interrupt(0); CLKM(25,24); break;
 	}
 }
-
+*/
 //OP( 0xf8, i_clc   ) { I.CarryVal = 0; CLK(4); }
 //OP( 0xf9, i_stc   ) { I.CarryVal = 1; CLK(4); }
 //OP( 0xfa, i_di    ) { SetIF(0); CLK(4); }
