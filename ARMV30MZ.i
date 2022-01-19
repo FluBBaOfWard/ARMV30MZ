@@ -72,7 +72,8 @@ v30IF:				.byte 0
 v30DF:				.byte 0
 v30MF:				.byte 0
 v30SegPrefix:		.byte 0
-					.space 3
+v30Halt:			.byte 0
+					.space 2
 ;@--------------------------------
 
 v30NoInterrupt:		.long 0

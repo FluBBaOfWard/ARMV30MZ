@@ -5998,7 +5998,14 @@ _F4:	;@ HLT
 ;@----------------------------------------------------------------------------
 	mov r0,#0
 	str r0,[v30ptr,#v30ICount]
+	stmfd sp!,{lr}
+	adr r0,hltText
+	blx debugOutput
+	ldmfd sp!,{lr}
 	bx lr
+hltText:
+	.string "Halt used!"
+	.align 2
 ;@----------------------------------------------------------------------------
 i_cmc:
 _F5:	;@ CMC
