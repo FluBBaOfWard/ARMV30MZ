@@ -1,9 +1,7 @@
 ARMV30MZ To do
 --------------
 
-	Optimize cycle counting when all opcodes are converted to ARM asm.
 	Rename more opcodes.
-	Implement Halt (0xf4) correctly.
 	Make 26, 2E, 36 & 3E share code?
 	ADC & SBC are wrong in C code?
 	Poll (0x9b) is used? What pin is this connected to?

@@ -85,14 +85,14 @@
 	.endm
 
 	.macro executeOpcode count
-	subs cycles,cycles,#(\count)*CYCLE
+	subs v30cyc,v30cyc,#(\count)*CYCLE
 	ldrpl pc,[v30ptr,r0,lsl#2]
 	b outOfCycles
 	.endm
 
 /*
 	.macro fetch count
-	subs cycles,cycles,#(\count)*CYCLE
+	subs v30cyc,v30cyc,#(\count)*CYCLE
 	b fetchDebug
 	.endm
 */
@@ -101,7 +101,7 @@
 	executeOpcode \count
 	.endm
 /*	.macro fetch count
-	subs cycles,cycles,#(\count)*CYCLE
+	subs v30cyc,v30cyc,#(\count)*CYCLE
 	ldrplb r0,[v30pc],#1
 	ldrpl pc,[v30ptr,r0,lsl#2]
 	ldr pc,[v30ptr,#v30NextTimeout]
@@ -113,7 +113,7 @@
 	.endm
 
 	.macro eatCycles count
-	sub cycles,cycles,#(\count)*CYCLE
+	sub v30cyc,v30cyc,#(\count)*CYCLE
 	.endm
 
 	.macro readMem8
@@ -349,15 +349,13 @@
 	tst r0,#0xF
 	moveq r3,#1
 	mov r1,r1,asr#16
-	ldr r0,[v30ptr,#v30ICount]
 	strh r1,[v30ptr,#\reg]
 	str r2,[v30ptr,#v30OverVal]
 	str r3,[v30ptr,#v30AuxVal]
 	str r1,[v30ptr,#v30SignVal]
 	str r1,[v30ptr,#v30ZeroVal]
 	str r1,[v30ptr,#v30ParityVal]
-	sub	r0,r0,#1
-	str r0,[v30ptr,#v30ICount]
+	eatCycles 1
 	bx lr
 	.endm
 ;@----------------------------------------------------------------------------
@@ -371,15 +369,13 @@
 	tst r1,#0xF0000
 	moveq r3,#1
 	mov r1,r1,asr#16
-	ldr r0,[v30ptr,#v30ICount]
 	strh r1,[v30ptr,#\reg]
 	str r2,[v30ptr,#v30OverVal]
 	str r3,[v30ptr,#v30AuxVal]
 	str r1,[v30ptr,#v30SignVal]
 	str r1,[v30ptr,#v30ZeroVal]
 	str r1,[v30ptr,#v30ParityVal]
-	sub	r0,r0,#1
-	str r0,[v30ptr,#v30ICount]
+	eatCycles 1
 	bx lr
 	.endm
 ;@----------------------------------------------------------------------------
@@ -391,14 +387,12 @@
 	add	r0,r1,r0,lsl#4
 	bl cpu_readmem20
 	ldr r3,[v30ptr,#\flag]
-	ldr r1,[v30ptr,#v30ICount]
 	cmp	r3,#0
 	movne r0,r0,lsl#24
 	addne r4,r4,r0,asr#24
-	subne r1,r1,#4
-	subeq r1,r1,#1
+	subne v30cyc,v30cyc,#4*CYCLE
+	subeq v30cyc,v30cyc,#1*CYCLE
 	strh r4,[v30ptr,#v30IP]
-	str r1,[v30ptr,#v30ICount]
 	ldmfd sp!,{r4,pc}
 	.endm
 
@@ -410,14 +404,12 @@
 	add	r0,r1,r0,lsl#4
 	bl cpu_readmem20
 	ldr r3,[v30ptr,#\flag]
-	ldr r1,[v30ptr,#v30ICount]
 	cmp	r3,#0
 	moveq r0,r0,lsl#24
 	addeq r4,r4,r0,asr#24
-	subeq r1,r1,#4
-	subne r1,r1,#1
+	subeq v30cyc,v30cyc,#4*CYCLE
+	subne v30cyc,v30cyc,#1*CYCLE
 	strh r4,[v30ptr,#v30IP]
-	str r1,[v30ptr,#v30ICount]
 	ldmfd sp!,{r4,pc}
 	.endm
 ;@----------------------------------------------------------------------------
