@@ -16,7 +16,7 @@
 
 
 	.global V30Reset
-	.global v30SetIRQPin
+	.global V30SetIRQPin
 	.global V30SetNMIPin
 	.global V30SetResetPin
 	.global V30RestoreAndRunXCycles
@@ -2497,10 +2497,10 @@ i_bn:
 _78:	;@ Branch if Negative
 ;@----------------------------------------------------------------------------
 	stmfd sp!,{r4,lr}
-	ldrh r3,[v30ptr,#v30IP]
+	ldrh r1,[v30ptr,#v30IP]
 	ldrh r0,[v30ptr,#v30SRegCS]
-	add r4,r3,#1
-	add r0,r3,r0,lsl#4
+	add r4,r1,#1
+	add r0,r1,r0,lsl#4
 	bl cpu_readmem20
 	ldr r1,[v30ptr,#v30SignVal]
 	cmp r1,#0
@@ -2515,10 +2515,10 @@ i_bp:
 _79:	;@ Branch if Positive
 ;@----------------------------------------------------------------------------
 	stmfd sp!,{r4,lr}
-	ldrh r3,[v30ptr,#v30IP]
+	ldrh r1,[v30ptr,#v30IP]
 	ldrh r0,[v30ptr,#v30SRegCS]
-	add r4,r3,#1
-	add r0,r3,r0,lsl#4
+	add r4,r1,#1
+	add r0,r1,r0,lsl#4
 	bl cpu_readmem20
 	ldr r1,[v30ptr,#v30SignVal]
 	cmp r1,#0
@@ -6467,8 +6467,12 @@ EA_207:	;@
 ;@----------------------------------------------------------------------------
 V30SetIRQPin:
 ;@----------------------------------------------------------------------------
+	cmp r0,#0
+	movne r0,#0x01
+	strb r0,[v30ptr,#v30IrqPin]
+	bx lr
 ;@----------------------------------------------------------------------------
-nec_int:				;@ r0 = vector number * 4
+nec_int:					;@ r0 = vector number
 	.type   nec_int STT_FUNC
 ;@----------------------------------------------------------------------------
 	mov r1,#0
@@ -6476,23 +6480,21 @@ nec_int:				;@ r0 = vector number * 4
 	ldrb r1,[v30ptr,#v30IF]
 	cmp r1,#0
 	bxeq lr
-	mov r0,r0,lsr#2
 ;@----------------------------------------------------------------------------
 V30SetIRQ:
 nec_interrupt:				;@ r0 = vector number
 	.type   nec_interrupt STT_FUNC
 ;@----------------------------------------------------------------------------
 	stmfd sp!,{r4-r7,lr}
-	mov r4,r0
+	mov r4,r0,lsl#2
 	bl i_pushf
 	mov r0,#0
 	strb r0,[v30ptr,#v30IF]
 	strb r0,[v30ptr,#v30TF]
-	mov r0,r4,lsl#2
+	mov r0,r4
 	bl cpu_readmem20w
 	mov r5,r0
-	mov r0,r4,lsl#2
-	add r0,r0,#2
+	add r0,r4,#2
 	bl cpu_readmem20w
 	mov r4,r0
 
@@ -6537,7 +6539,7 @@ xLoop:
 	ldr pc,[v30ptr,r0,lsl#2]
 xOut:
 	str v30cyc,[v30ptr,#v30ICount]
-	sub r0,v30cyc,r9
+	rsb r0,r9,v30cyc,lsr#CYC_SHIFT
 	ldmfd sp!,{pc}
 ;@----------------------------------------------------------------------------
 V30CheckIRQs:
@@ -6563,6 +6565,12 @@ i_invalid:
 ;@----------------------------------------------------------------------------
 	eatCycles 10
 	bx lr
+;@----------------------------------------------------------------------------
+V30IrqVectorDummy:
+;@----------------------------------------------------------------------------
+	mov r0,#0xFF
+	bx lr
+
 ;@----------------------------------------------------------------------------
 V30Reset:					;@ r11=v30ptr
 ;@ Called by cpuReset, (r0-r3,r12 are free to use)
