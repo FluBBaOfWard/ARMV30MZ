@@ -63,7 +63,7 @@ v30IntVector:		.long 0
 v30PendingIrq:		.long 0
 v30NmiState:		.long 0
 v30IrqState:		.long 0
-v30IrqCallback:		.long 0
+v30IrqVectorFunc:	.long 0
 v30PrefixBase:		.long 0
 v30IP:				.short 0
 v30EO:				.short 0
