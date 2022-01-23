@@ -1,6 +1,9 @@
 ARMV30MZ To do
 --------------
 
+	Use a register for flags? Or PC?
+	CallFar (9A) uses r4-r7.
+	Prepare (C8) uses r4-r9.
 	Rename more opcodes.
 	Make 26, 2E, 36 & 3E share code?
 	ADC & SBC are wrong in C code?

@@ -2,8 +2,9 @@ ARMV30MZ revision history
 -=-=-=-=-=-=-=-=-=-=-=-=-
 
 
-V0.4.1 - 2022-01-20 (FluBBa)
+V0.4.1 - 2022-01-23 (FluBBa)
 	Optimized cycle counting.
+	Fixed Halt and interrupt handling.
 
 V0.4.0 - 2022-01-19 (FluBBa)
 	Rewritten the cpu core in asm.

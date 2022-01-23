@@ -46,7 +46,6 @@
 	.global no_interrupt
 	.global nec_instruction
 	.global nec_interrupt
-	.global nec_int
 	.global Mod_RM
 	.global GetEA
 
@@ -3341,11 +3340,11 @@ _9A:	;@ CALL FAR
 	add r1,r4,#2
 	sub r6,r6,#2
 	add r0,r6,r7,lsl#4
-	bl cpu_writemem20w
-
 	strh r6,[v30ptr,#v30RegSP]
 	eatCycles 7
-	ldmfd sp!,{r4-r7,pc}
+	ldmfd sp!,{r4-r7,lr}
+	b cpu_writemem20w
+
 ;@----------------------------------------------------------------------------
 i_poll:
 _9B:	;@ POLL, poll the "poll" pin?
@@ -4400,13 +4399,13 @@ _C8:	;@ PREPARE
 	eatCycles 8
 	ldrh r1,[v30ptr,#v30IP]
 	ldrh r5,[v30ptr,#v30SRegCS]
-	add r6,r1,#2
+	add r4,r1,#2
 	add r0,r1,r5,lsl#4
 	bl cpu_readmem20w
 	stmfd sp!,{r0}				;@ temp
-	add r0,r6,r5,lsl#4
-	add r6,r6,#1
-	strh r6,[v30ptr,#v30IP]
+	add r0,r4,r5,lsl#4
+	add r4,r4,#1
+	strh r4,[v30ptr,#v30IP]
 	bl cpu_readmem20
 	and r5,r0,#0x1F
 
@@ -5433,9 +5432,11 @@ f3DefEnd:
 i_hlt:
 _F4:	;@ HLT
 ;@----------------------------------------------------------------------------
-	and v30cyc,v30cyc,#CYC_MASK
-	mov r0,#1
-	strb r0,[v30ptr,#v30Halt]
+	ldrb r0,[v30ptr,#v30IrqPin]
+	cmp r0,#0
+	andeq v30cyc,v30cyc,#CYC_MASK
+	moveq r0,#1
+	strbeq r0,[v30ptr,#v30Halt]
 	bx lr
 ;@----------------------------------------------------------------------------
 i_cmc:
@@ -6455,30 +6456,23 @@ EA_207:	;@
 	ldmfd sp!,{pc}
 
 ;@----------------------------------------------------------------------------
-V30SetIRQPin:
+V30SetIRQPin:			;@ r0=pin state
 ;@----------------------------------------------------------------------------
 	cmp r0,#0
 	movne r0,#0x01
 	strb r0,[v30ptr,#v30IrqPin]
+	movne r0,#0
+	strbne r0,[v30ptr,#v30Halt]
 	bx lr
-
 ;@----------------------------------------------------------------------------
 doV30IRQ:
 ;@----------------------------------------------------------------------------
 	stmfd sp!,{lr}
-	bl getInterruptVector
+	mov lr,pc
+	ldr pc,[v30ptr,#v30IrqVectorFunc]
 	bl nec_interrupt
 	ldmfd sp!,{lr}
 	b contExe
-;@----------------------------------------------------------------------------
-nec_int:					;@ r0 = vector number
-	.type   nec_int STT_FUNC
-;@----------------------------------------------------------------------------
-	mov r1,#0
-	strb r1,[v30ptr,#v30Halt]
-	ldrb r1,[v30ptr,#v30IF]
-	cmp r1,#0
-	bxeq lr
 ;@----------------------------------------------------------------------------
 V30SetIRQ:
 nec_interrupt:				;@ r0 = vector number
@@ -6524,14 +6518,9 @@ V30RunXCycles:				;@ r0 = number of cycles to run
 ;@----------------------------------------------------------------------------
 V30CheckIRQs:
 ;@----------------------------------------------------------------------------
-//	ldrb r1,[v30ptr,#v30Halt]
-//	ldr r0,[v30ptr,#v30IrqPin]
-//	cmp r0,#0
-//	movne r1,#0
-//	strb r1,[v30ptr,#v30Halt]
-//	ldrb r1,[v30ptr,#v30IF]
-//	cmpne r1,#0
-//	bne doV30IRQ
+	ldrh r0,[v30ptr,#v30IrqPin]		;@ Irq pin and IF
+	ands r1,r0,r0,lsr#8
+	bne doV30IRQ
 contExe:
 	ldrb r1,[v30ptr,#v30Halt]
 	cmp r1,#0
@@ -6674,7 +6663,7 @@ defaultV30:
 	.space 16*4		;@ v30ReadTbl $00000-FFFFF
 	.space 16*4		;@ v30WriteTbl $00000-FFFFF
 v30StateStart:
-I:				.space 23*4
+I:				.space 22*4
 no_interrupt:	.long 0
 
 v30StateEnd:
