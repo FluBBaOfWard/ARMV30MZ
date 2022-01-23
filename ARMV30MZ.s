@@ -237,16 +237,14 @@ _05:	;@ ADD AXD16
 i_push_es:
 _06:	;@ PUSH ES
 ;@----------------------------------------------------------------------------
-	stmfd sp!,{lr}
 	ldrh r1,[v30ptr,#v30RegSP]
 	ldrh r0,[v30ptr,#v30SRegSS]
 	sub r1,r1,#2
 	add r0,r1,r0,lsl#4
 	strh r1,[v30ptr,#v30RegSP]
 	ldrh r1,[v30ptr,#v30SRegES]
-	bl cpu_writemem20w
 	eatCycles 2
-	ldmfd sp!,{pc}
+	b cpu_writemem20w
 ;@----------------------------------------------------------------------------
 i_pop_es:
 _07:	;@ POP ES
@@ -445,16 +443,14 @@ _0D:	;@ OR AXD16
 i_push_cs:
 _0E:	;@ PUSH CS
 ;@----------------------------------------------------------------------------
-	stmfd sp!,{lr}
 	ldrh r1,[v30ptr,#v30RegSP]
 	ldrh r0,[v30ptr,#v30SRegSS]
 	sub r1,r1,#2
 	add r0,r1,r0,lsl#4
 	strh r1,[v30ptr,#v30RegSP]
 	ldrh r1,[v30ptr,#v30SRegCS]
-	bl cpu_writemem20w
 	eatCycles 2
-	ldmfd sp!,{pc}
+	b cpu_writemem20w
 ;@----------------------------------------------------------------------------
 i_pop_cs:
 _0F:	;@ POP CS
@@ -653,15 +649,13 @@ _15:	;@ ADC AXD16
 i_push_ss:
 _16:	;@ PUSH SS
 ;@----------------------------------------------------------------------------
-	stmfd sp!,{lr}
 	ldrh r2,[v30ptr,#v30RegSP]
 	ldrh r1,[v30ptr,#v30SRegSS]
 	sub r2,r2,#2
 	add r0,r2,r1,lsl#4
 	strh r2,[v30ptr,#v30RegSP]
-	bl cpu_writemem20w
 	eatCycles 2
-	ldmfd sp!,{pc}
+	b cpu_writemem20w
 ;@----------------------------------------------------------------------------
 i_pop_ss:
 _17:	;@ POP SS
@@ -862,16 +856,14 @@ _1D:	;@ SBB AXD16
 i_push_ds:
 _1E:	;@ PUSH DS
 ;@----------------------------------------------------------------------------
-	stmfd sp!,{lr}
 	ldrh r1,[v30ptr,#v30RegSP]
 	ldrh r0,[v30ptr,#v30SRegSS]
 	sub r1,r1,#2
 	add r0,r1,r0,lsl#4
 	strh r1,[v30ptr,#v30RegSP]
 	ldrh r1,[v30ptr,#v30SRegDS]
-	bl cpu_writemem20w
 	eatCycles 2
-	ldmfd sp!,{pc}
+	b cpu_writemem20w
 ;@----------------------------------------------------------------------------
 i_pop_ds:
 _1F:	;@ POP DS
@@ -2210,9 +2202,9 @@ _68:	;@ PUSH D16
 	sub r2,r2,#2
 	add r0,r2,r0,lsl#4
 	strh r2,[v30ptr,#v30RegSP]
-	bl cpu_writemem20w
 	eatCycles 1
-	ldmfd sp!,{pc}
+	ldmfd sp!,{lr}
+	b cpu_writemem20w
 ;@----------------------------------------------------------------------------
 i_imul_d16:
 _69:	;@ IMUL D16
@@ -2340,9 +2332,9 @@ _6C:	;@ INSB
 	subne r3,r2,#1
 	add r0,r2,r0,lsl#4
 	strh r3,[v30ptr,#v30RegIY]
-	bl cpu_writemem20
 	eatCycles 6
-	ldmfd sp!,{pc}
+	ldmfd sp!,{lr}
+	b cpu_writemem20
 ;@----------------------------------------------------------------------------
 i_insw:
 _6D:	;@ INSW
@@ -2363,9 +2355,9 @@ _6D:	;@ INSW
 	subne r3,r2,#2
 	add r0,r2,r0,lsl#4
 	strh r3,[v30ptr,#v30RegIY]
-	bl cpu_writemem20w
 	eatCycles 6
-	ldmfd sp!,{r4,r5,pc}
+	ldmfd sp!,{r4,r5,lr}
+	b cpu_writemem20w
 ;@----------------------------------------------------------------------------
 i_outsb:
 _6E:	;@ OUTSB
@@ -3005,31 +2997,31 @@ _87:	;@ XCHG WR16
 i_mov_br8:
 _88:	;@ MOV BR8
 ;@----------------------------------------------------------------------------
-	stmfd sp!,{r4,r5,lr}
+	stmfd sp!,{r4,lr}
 	ldrh r1,[v30ptr,#v30IP]
 	ldrh r0,[v30ptr,#v30SRegCS]
 	add r2,r1,#1
 	add	r0,r1,r0,asl#4
 	strh r2,[v30ptr,#v30IP]
 	bl cpu_readmem20
-	add r5,v30ptr,r0
-	ldrb r2,[r5,#v30ModRmReg]
-	add r1,v30ptr,r2
-	ldrb r4,[r1,#v30Regs]
+	add r3,v30ptr,r0
+	ldrb r2,[r3,#v30ModRmReg]
+	add r2,v30ptr,r2
+	ldrb r4,[r2,#v30Regs]
 
 	eatCycles 1
 	cmp r0,#0xC0
 	bmi 1f
-	ldrb r2,[r5,#v30ModRmRm]
-	add r1,v30ptr,r2
-	strb r4,[r1,#v30Regs]
-	ldmfd sp!,{r4,r5,pc}
+	ldrb r2,[r3,#v30ModRmRm]
+	add r2,v30ptr,r2
+	strb r4,[r2,#v30Regs]
+	ldmfd sp!,{r4,pc}
 1:
-	add r1,v30ptr,#v30EATable
+	add r2,v30ptr,#v30EATable
 	mov lr,pc
-	ldr pc,[r1,r0,lsl#2]
+	ldr pc,[r2,r0,lsl#2]
 	mov r1,r4
-	ldmfd sp!,{r4,r5,lr}
+	ldmfd sp!,{r4,lr}
 	b cpu_writemem20
 ;@----------------------------------------------------------------------------
 i_mov_wr16:
@@ -4877,9 +4869,9 @@ _E6:	;@ OUTAL
 	strh r2,[v30ptr,#v30IP]
 	bl cpu_readmem20
 	ldrb r1,[v30ptr,#v30RegAL]
-	bl cpu_writeport
 	eatCycles 6
-	ldmfd sp!,{pc}
+	ldmfd sp!,{lr}
+	b cpu_writeport
 ;@----------------------------------------------------------------------------
 i_outax:
 _E7:	;@ OUTAX
@@ -4896,9 +4888,9 @@ _E7:	;@ OUTAX
 	bl cpu_writeport
 	ldrb r1,[v30ptr,#v30RegAH]
 	add r0,r4,#1
-	bl cpu_writeport
 	eatCycles 6
-	ldmfd sp!,{r4,pc}
+	ldmfd sp!,{r4,lr}
+	b cpu_writeport
 
 ;@----------------------------------------------------------------------------
 i_call_d16:
@@ -4917,9 +4909,9 @@ _E8:	;@ CALL D16
 	sub r2,r2,#2
 	add r0,r2,r0,lsl#4
 	strh r2,[v30ptr,#v30RegSP]
-	bl cpu_writemem20w
 	eatCycles 5
-	ldmfd sp!,{r4,pc}
+	ldmfd sp!,{r4,lr}
+	b cpu_writemem20w
 ;@----------------------------------------------------------------------------
 i_jmp_d16:
 _E9:	;@ JMP D16
@@ -4995,12 +4987,10 @@ _ED:	;@ INAXDX
 i_outdxal:
 _EE:	;@ OUTDXAL
 ;@----------------------------------------------------------------------------
-	stmfd sp!,{lr}
 	ldrh r0,[v30ptr,#v30RegDW]
 	ldrb r1,[v30ptr,#v30RegAL]
-	bl cpu_writeport
 	eatCycles 6
-	ldmfd sp!,{pc}
+	b cpu_writeport
 ;@----------------------------------------------------------------------------
 i_outdxax:
 _EF:	;@ OUTDXAX
@@ -5012,9 +5002,9 @@ _EF:	;@ OUTDXAX
 	bl cpu_writeport
 	ldrb r1,[v30ptr,#v30RegAH]
 	add r0,r4,#1
-	bl cpu_writeport
 	eatCycles 6
-	ldmfd sp!,{r4,pc}
+	ldmfd sp!,{r4,lr}
+	b cpu_writeport
 
 ;@----------------------------------------------------------------------------
 i_lock:
@@ -6471,6 +6461,15 @@ V30SetIRQPin:
 	movne r0,#0x01
 	strb r0,[v30ptr,#v30IrqPin]
 	bx lr
+
+;@----------------------------------------------------------------------------
+doV30IRQ:
+;@----------------------------------------------------------------------------
+	stmfd sp!,{lr}
+	bl getInterruptVector
+	bl nec_interrupt
+	ldmfd sp!,{lr}
+	b contExe
 ;@----------------------------------------------------------------------------
 nec_int:					;@ r0 = vector number
 	.type   nec_int STT_FUNC
@@ -6515,17 +6514,32 @@ nec_interrupt:				;@ r0 = vector number
 	eatCycles 22
 	ldmfd sp!,{r4-r7,pc}
 ;@----------------------------------------------------------------------------
+V30RestoreAndRunXCycles:	;@ r0 = number of cycles to run
+;@----------------------------------------------------------------------------
+	ldr v30cyc,[v30ptr,#v30ICount]
+;@----------------------------------------------------------------------------
 V30RunXCycles:				;@ r0 = number of cycles to run
 ;@----------------------------------------------------------------------------
+	add v30cyc,v30cyc,r0,lsl#CYC_SHIFT
+;@----------------------------------------------------------------------------
+V30CheckIRQs:
+;@----------------------------------------------------------------------------
+//	ldrb r1,[v30ptr,#v30Halt]
+//	ldr r0,[v30ptr,#v30IrqPin]
+//	cmp r0,#0
+//	movne r1,#0
+//	strb r1,[v30ptr,#v30Halt]
+//	ldrb r1,[v30ptr,#v30IF]
+//	cmpne r1,#0
+//	bne doV30IRQ
+contExe:
 	ldrb r1,[v30ptr,#v30Halt]
 	cmp r1,#0
-	bxne lr
-
+	andne v30cyc,v30cyc,#CYC_MASK
+;@----------------------------------------------------------------------------
+V30Go:						;@ Continue running
+;@----------------------------------------------------------------------------
 	stmfd sp!,{lr}
-
-	mov r9,r0
-	ldr v30cyc,[v30ptr,#v30ICount]
-	add v30cyc,v30cyc,r0,lsl#CYC_SHIFT
 xLoop:
 	cmp v30cyc,#0
 	ble xOut
@@ -6538,23 +6552,7 @@ xLoop:
 	adr lr,xLoop
 	ldr pc,[v30ptr,r0,lsl#2]
 xOut:
-	str v30cyc,[v30ptr,#v30ICount]
-	rsb r0,r9,v30cyc,lsr#CYC_SHIFT
 	ldmfd sp!,{pc}
-;@----------------------------------------------------------------------------
-V30CheckIRQs:
-;@----------------------------------------------------------------------------
-//	ldr r0,[v30ptr,#v30IrqPin]
-	movs addy,r0,asr#16
-//	bmi handleReset
-//	bne V30NMI
-	ands addy,r0,r0,lsr#8
-//	ldrne pc,[v30ptr,#v30IMFunction]
-;@----------------------------------------------------------------------------
-V30Go:						;@ Continue running
-;@----------------------------------------------------------------------------
-//	fetch 0
-
 
 ;@----------------------------------------------------------------------------
 	.section .text			;@ For everything else
