@@ -116,6 +116,24 @@
 	sub v30cyc,v30cyc,#(\count)*CYCLE
 	.endm
 
+	.macro getNextByte
+	ldrh v30pc,[v30ptr,#v30IP]
+	ldrh r0,[v30ptr,#v30SRegCS]
+	add	r0,v30pc,r0,asl#4
+	add v30pc,v30pc,#1
+	strh v30pc,[v30ptr,#v30IP]
+	bl cpu_readmem20
+	.endm
+
+	.macro getNextWord
+	ldrh v30pc,[v30ptr,#v30IP]
+	ldrh r0,[v30ptr,#v30SRegCS]
+	add	r0,v30pc,r0,asl#4
+	add v30pc,v30pc,#2
+	strh v30pc,[v30ptr,#v30IP]
+	bl cpu_readmem20w
+	.endm
+
 	.macro readMem8
 #ifdef V30_FAST
 	and r1,addy,#0xF0000
@@ -380,37 +398,37 @@
 	.endm
 ;@----------------------------------------------------------------------------
 	.macro jmpne flag
-	stmfd sp!,{r4,lr}
-	ldrh r1,[v30ptr,#v30IP]
+	stmfd sp!,{lr}
+	ldrh v30pc,[v30ptr,#v30IP]
 	ldrh r0,[v30ptr,#v30SRegCS]
-	add	r4,r1,#1
-	add	r0,r1,r0,lsl#4
+	add	r0,v30pc,r0,lsl#4
+	add	v30pc,v30pc,#1
 	bl cpu_readmem20
 	ldr r3,[v30ptr,#\flag]
 	cmp	r3,#0
 	movne r0,r0,lsl#24
-	addne r4,r4,r0,asr#24
+	addne v30pc,v30pc,r0,asr#24
 	subne v30cyc,v30cyc,#4*CYCLE
 	subeq v30cyc,v30cyc,#1*CYCLE
-	strh r4,[v30ptr,#v30IP]
-	ldmfd sp!,{r4,pc}
+	strh v30pc,[v30ptr,#v30IP]
+	ldmfd sp!,{pc}
 	.endm
 
 	.macro jmpeq flag
-	stmfd sp!,{r4,lr}
-	ldrh r1,[v30ptr,#v30IP]
+	stmfd sp!,{lr}
+	ldrh v30pc,[v30ptr,#v30IP]
 	ldrh r0,[v30ptr,#v30SRegCS]
-	add	r4,r1,#1
-	add	r0,r1,r0,lsl#4
+	add	r0,v30pc,r0,lsl#4
+	add	v30pc,v30pc,#1
 	bl cpu_readmem20
 	ldr r3,[v30ptr,#\flag]
 	cmp	r3,#0
 	moveq r0,r0,lsl#24
-	addeq r4,r4,r0,asr#24
+	addeq v30pc,v30pc,r0,asr#24
 	subeq v30cyc,v30cyc,#4*CYCLE
 	subne v30cyc,v30cyc,#1*CYCLE
-	strh r4,[v30ptr,#v30IP]
-	ldmfd sp!,{r4,pc}
+	strh v30pc,[v30ptr,#v30IP]
+	ldmfd sp!,{pc}
 	.endm
 ;@----------------------------------------------------------------------------
 	.macro or8 src dst
