@@ -1,3 +1,10 @@
+//
+//  ARMV30MZ.i
+//  ARMV30MZ
+//
+//  Created by Fredrik Ahlström on 2021-10-19.
+//  Copyright © 2021-2022 Fredrik Ahlström. All rights reserved.
+//
 
 				;@ r0,r1,r2=temp regs.
 	v30f		.req r3			;@
@@ -5,7 +12,7 @@
 	v30bc		.req r5			;@ Bits 0-15=0
 	v30de		.req r6			;@ Bits 0-15=0
 	v30hl		.req r7			;@ Bits 0-15=0
-	v30es		.req r8
+	v30sp		.req r8
 	v30pc		.req r9
 	v30cyc		.req r10		;@ Bits 0-7=
 	v30ptr		.req r11

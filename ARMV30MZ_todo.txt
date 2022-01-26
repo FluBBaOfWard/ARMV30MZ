@@ -3,8 +3,9 @@ ARMV30MZ To do
 
 	Use a register for PC.
 	Use a register for flags?
-	CallFar (9A) uses r4-r6.
-	Prepare (C8) uses r4-r8.
+	Prepare (C8) uses r4-r8, (r8 = SP).
+	Interrupt uses r4-r7, (r7 = SP).
+	Add check of IRQ efter EI and RETI.
 	Rename more opcodes.
 	Make 26, 2E, 36 & 3E share code?
 	ADC & SBC are wrong in C code?

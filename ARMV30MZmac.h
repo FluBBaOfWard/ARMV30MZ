@@ -1,3 +1,10 @@
+//
+//  ARMV30MZmac.h
+//  ARMV30MZ
+//
+//  Created by Fredrik Ahlström on 2021-10-19.
+//  Copyright © 2021-2022 Fredrik Ahlström. All rights reserved.
+//
 
 #include "ARMV30MZ.i"
 							;@ ARM flags
@@ -119,7 +126,7 @@
 	.macro getNextByte
 	ldrh v30pc,[v30ptr,#v30IP]
 	ldrh r0,[v30ptr,#v30SRegCS]
-	add	r0,v30pc,r0,asl#4
+	add r0,v30pc,r0,asl#4
 	add v30pc,v30pc,#1
 	strh v30pc,[v30ptr,#v30IP]
 	bl cpu_readmem20
@@ -128,7 +135,7 @@
 	.macro getNextWord
 	ldrh v30pc,[v30ptr,#v30IP]
 	ldrh r0,[v30ptr,#v30SRegCS]
-	add	r0,v30pc,r0,asl#4
+	add r0,v30pc,r0,asl#4
 	add v30pc,v30pc,#2
 	strh v30pc,[v30ptr,#v30IP]
 	bl cpu_readmem20w
@@ -401,11 +408,11 @@
 	stmfd sp!,{lr}
 	ldrh v30pc,[v30ptr,#v30IP]
 	ldrh r0,[v30ptr,#v30SRegCS]
-	add	r0,v30pc,r0,lsl#4
-	add	v30pc,v30pc,#1
+	add r0,v30pc,r0,lsl#4
+	add v30pc,v30pc,#1
 	bl cpu_readmem20
 	ldr r3,[v30ptr,#\flag]
-	cmp	r3,#0
+	cmp r3,#0
 	movne r0,r0,lsl#24
 	addne v30pc,v30pc,r0,asr#24
 	subne v30cyc,v30cyc,#4*CYCLE
@@ -418,11 +425,11 @@
 	stmfd sp!,{lr}
 	ldrh v30pc,[v30ptr,#v30IP]
 	ldrh r0,[v30ptr,#v30SRegCS]
-	add	r0,v30pc,r0,lsl#4
-	add	v30pc,v30pc,#1
+	add r0,v30pc,r0,lsl#4
+	add v30pc,v30pc,#1
 	bl cpu_readmem20
 	ldr r3,[v30ptr,#\flag]
-	cmp	r3,#0
+	cmp r3,#0
 	moveq r0,r0,lsl#24
 	addeq v30pc,v30pc,r0,asr#24
 	subeq v30cyc,v30cyc,#4*CYCLE
