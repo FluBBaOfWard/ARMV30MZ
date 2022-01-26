@@ -53,10 +53,10 @@ v30RegIYL:			.byte 0
 v30RegIYH:			.byte 0
 
 v30SRegs:
-v30SRegES:			.short 0
-v30SRegCS:			.short 0
-v30SRegSS:			.short 0
-v30SRegDS:			.short 0
+v30SRegES:			.long 0
+v30SRegCS:			.long 0
+v30SRegSS:			.long 0
+v30SRegDS:			.long 0
 
 v30ICount:			.long 0
 v30SignVal:			.long 0
@@ -66,12 +66,9 @@ v30ZeroVal:			.long 0
 v30CarryVal:		.long 0
 v30ParityVal:		.long 0
 v30EA:				.long 0
-v30PendingIrq:		.long 0
-v30NmiState:		.long 0
-v30IrqState:		.long 0
 v30IrqVectorFunc:	.long 0
 v30PrefixBase:		.long 0
-v30IP:				.short 0
+v30IP:				.long 0
 v30EO:				.short 0
 v30TF:				.byte 0
 v30DF:				.byte 0
@@ -80,7 +77,7 @@ v30SegPrefix:		.byte 0
 v30IrqPin:			.byte 0
 v30IF:				.byte 0
 v30Halt:			.byte 0
-					.space 1
+					.space 3
 ;@--------------------------------
 
 v30NoInterrupt:		.long 0

@@ -35,27 +35,9 @@
 	.global V30GetStateSize
 	.global V30RedirectOpcode
 
-	.global i_insb
-	.global i_insw
-	.global i_outsb
-	.global i_outsw
-	.global i_movsb
-	.global i_movsw
-	.global i_cmpsb
-	.global i_cmpsw
-	.global i_stosb
-	.global i_stosw
-	.global i_lodsb
-	.global i_lodsw
-	.global i_scasb
-	.global i_scasw
-
 	.global I
 	.global no_interrupt
-	.global nec_instruction
-	.global nec_interrupt
 	.global Mod_RM
-	.global GetEA
 
 	.global V30OpTable
 	.global PZSTable
@@ -2753,7 +2735,7 @@ _8C:	;@ MOV WSREG
 	stmfd sp!,{r4,lr}
 	getNextByte
 	and r2,r0,#0x38				;@ Mask with 0x18?
-	add r1,v30ptr,r2,lsr#2
+	add r1,v30ptr,r2,lsr#1
 	ldrh r4,[r1,#v30SRegs]
 
 	eatCycles 1
@@ -2801,7 +2783,7 @@ _8E:	;@ MOV SREGW
 	ldrh r0,[r1,#v30Regs]
 0:
 	tst r4,#0x20
-	addeq r1,v30ptr,r4,lsr#2
+	addeq r1,v30ptr,r4,lsr#1
 	strheq r0,[r1,#v30SRegs]
 	mov r1,#1
 	str r1,[v30ptr,#v30NoInterrupt]
@@ -4430,7 +4412,7 @@ _F2:	;@ REPNE
 	cmp r1,#0x26
 	bne noF2Prefix
 	and r1,r0,#0x18
-	add r1,v30ptr,r1,lsr#2
+	add r1,v30ptr,r1,lsr#1
 	mov r0,#1
 	ldrh r2,[r1,#v30SRegs]
 	strb r0,[v30ptr,#v30SegPrefix]
@@ -4577,7 +4559,7 @@ _F3:	;@ REPE
 	cmp r1,#0x26
 	bne noF3Prefix
 	and r1,r0,#0x18
-	add r1,v30ptr,r1,lsr#2
+	add r1,v30ptr,r1,lsr#1
 	mov r0,#1
 	ldrh r2,[r1,#v30SRegs]
 	strb r0,[v30ptr,#v30SegPrefix]
