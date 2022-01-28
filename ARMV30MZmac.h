@@ -127,14 +127,14 @@
 	ldr r0,[v30ptr,#v30SRegCS]
 	add r0,r0,v30pc,lsr#4
 	add v30pc,v30pc,#0x10000
-	bl cpuGetOpcode
+	bl cpuReadMem20
 	.endm
 
 	.macro getNextWord
 	ldr r0,[v30ptr,#v30SRegCS]
 	add r0,r0,v30pc,lsr#4
 	add v30pc,v30pc,#0x20000
-	bl cpuGetOpcodeWord
+	bl cpuReadMem20W
 	.endm
 
 	.macro readMem8
@@ -405,7 +405,7 @@
 	ldr r0,[v30ptr,#v30SRegCS]
 	add r0,r0,v30pc,lsr#4
 	add v30pc,v30pc,#0x10000
-	bl cpuGetOpcode
+	bl cpuReadMem20
 	ldr r3,[v30ptr,#\flag]
 	cmp r3,#0
 	movne r0,r0,lsl#24
@@ -420,7 +420,7 @@
 	ldr r0,[v30ptr,#v30SRegCS]
 	add r0,r0,v30pc,lsr#4
 	add v30pc,v30pc,#0x10000
-	bl cpuGetOpcode
+	bl cpuReadMem20
 	ldr r3,[v30ptr,#\flag]
 	cmp r3,#0
 	moveq r0,r0,lsl#24

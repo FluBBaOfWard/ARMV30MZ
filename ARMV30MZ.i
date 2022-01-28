@@ -69,7 +69,7 @@ v30EA:				.long 0
 v30IrqVectorFunc:	.long 0
 v30PrefixBase:		.long 0
 v30IP:				.long 0
-v30EO:				.short 0
+v30EO:				.long 0
 v30TF:				.byte 0
 v30DF:				.byte 0
 v30MF:				.byte 0
@@ -77,7 +77,7 @@ v30SegPrefix:		.byte 0
 v30IrqPin:			.byte 0
 v30IF:				.byte 0
 v30Halt:			.byte 0
-					.space 3
+					.space 1
 ;@--------------------------------
 
 v30NoInterrupt:		.long 0
