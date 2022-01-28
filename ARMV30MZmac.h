@@ -124,20 +124,16 @@
 	.endm
 
 	.macro getNextByte
-	ldr v30pc,[v30ptr,#v30IP]
 	ldr r0,[v30ptr,#v30SRegCS]
 	add r0,r0,v30pc,lsr#4
 	add v30pc,v30pc,#0x10000
-	str v30pc,[v30ptr,#v30IP]
 	bl cpuGetOpcode
 	.endm
 
 	.macro getNextWord
-	ldr v30pc,[v30ptr,#v30IP]
 	ldr r0,[v30ptr,#v30SRegCS]
 	add r0,r0,v30pc,lsr#4
 	add v30pc,v30pc,#0x20000
-	str v30pc,[v30ptr,#v30IP]
 	bl cpuGetOpcodeWord
 	.endm
 
@@ -406,7 +402,6 @@
 ;@----------------------------------------------------------------------------
 	.macro jmpne flag
 	stmfd sp!,{lr}
-	ldr v30pc,[v30ptr,#v30IP]
 	ldr r0,[v30ptr,#v30SRegCS]
 	add r0,r0,v30pc,lsr#4
 	add v30pc,v30pc,#0x10000
@@ -417,13 +412,11 @@
 	addne v30pc,v30pc,r0,asr#8
 	subne v30cyc,v30cyc,#4*CYCLE
 	subeq v30cyc,v30cyc,#1*CYCLE
-	str v30pc,[v30ptr,#v30IP]
 	ldmfd sp!,{pc}
 	.endm
 
 	.macro jmpeq flag
 	stmfd sp!,{lr}
-	ldr v30pc,[v30ptr,#v30IP]
 	ldr r0,[v30ptr,#v30SRegCS]
 	add r0,r0,v30pc,lsr#4
 	add v30pc,v30pc,#0x10000
@@ -434,7 +427,6 @@
 	addeq v30pc,v30pc,r0,asr#8
 	subeq v30cyc,v30cyc,#4*CYCLE
 	subne v30cyc,v30cyc,#1*CYCLE
-	str v30pc,[v30ptr,#v30IP]
 	ldmfd sp!,{pc}
 	.endm
 ;@----------------------------------------------------------------------------

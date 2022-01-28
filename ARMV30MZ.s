@@ -2139,7 +2139,6 @@ i_bnh:
 _76:	;@ Branch if Not Higher
 ;@----------------------------------------------------------------------------
 	stmfd sp!,{lr}
-	ldr v30pc,[v30ptr,#v30IP]
 	ldr r0,[v30ptr,#v30SRegCS]
 	add	r0,r0,v30pc,lsr#4
 	add	v30pc,v30pc,#0x10000
@@ -2153,14 +2152,12 @@ _76:	;@ Branch if Not Higher
 	addeq v30pc,v30pc,r0,asr#8
 	subeq v30cyc,v30cyc,#4*CYCLE
 	subne v30cyc,v30cyc,#1*CYCLE
-	str v30pc,[v30ptr,#v30IP]
 	ldmfd sp!,{pc}
 ;@----------------------------------------------------------------------------
 i_bh:
 _77:	;@ Branch if Higher
 ;@----------------------------------------------------------------------------
 	stmfd sp!,{lr}
-	ldr v30pc,[v30ptr,#v30IP]
 	ldr r0,[v30ptr,#v30SRegCS]
 	add	r0,r0,v30pc,lsr#4
 	add	v30pc,v30pc,#0x10000
@@ -2174,14 +2171,12 @@ _77:	;@ Branch if Higher
 	addne v30pc,v30pc,r0,asr#8
 	subne v30cyc,v30cyc,#4*CYCLE
 	subeq v30cyc,v30cyc,#1*CYCLE
-	str v30pc,[v30ptr,#v30IP]
 	ldmfd sp!,{pc}
 ;@----------------------------------------------------------------------------
 i_bn:
 _78:	;@ Branch if Negative
 ;@----------------------------------------------------------------------------
 	stmfd sp!,{lr}
-	ldr v30pc,[v30ptr,#v30IP]
 	ldr r0,[v30ptr,#v30SRegCS]
 	add r0,r0,v30pc,lsr#4
 	add v30pc,v30pc,#0x10000
@@ -2192,14 +2187,12 @@ _78:	;@ Branch if Negative
 	addmi v30pc,v30pc,r0,asr#8
 	submi v30cyc,v30cyc,#4*CYCLE
 	subpl v30cyc,v30cyc,#1*CYCLE
-	str v30pc,[v30ptr,#v30IP]
 	ldmfd sp!,{pc}
 ;@----------------------------------------------------------------------------
 i_bp:
 _79:	;@ Branch if Positive
 ;@----------------------------------------------------------------------------
 	stmfd sp!,{lr}
-	ldr v30pc,[v30ptr,#v30IP]
 	ldr r0,[v30ptr,#v30SRegCS]
 	add r0,r0,v30pc,lsr#4
 	add v30pc,v30pc,#0x10000
@@ -2210,14 +2203,12 @@ _79:	;@ Branch if Positive
 	addpl v30pc,v30pc,r0,asr#8
 	subpl v30cyc,v30cyc,#4*CYCLE
 	submi v30cyc,v30cyc,#1*CYCLE
-	str v30pc,[v30ptr,#v30IP]
 	ldmfd sp!,{pc}
 ;@----------------------------------------------------------------------------
 i_bpe:
 _7A:	;@ Branch if Parity Even
 ;@----------------------------------------------------------------------------
 	stmfd sp!,{lr}
-	ldr v30pc,[v30ptr,#v30IP]
 	ldr r0,[v30ptr,#v30SRegCS]
 	add	r0,r0,v30pc,lsr#4
 	add	v30pc,v30pc,#0x10000
@@ -2230,14 +2221,12 @@ _7A:	;@ Branch if Parity Even
 	addne v30pc,v30pc,r0,asr#8
 	subne v30cyc,v30cyc,#4*CYCLE
 	subeq v30cyc,v30cyc,#1*CYCLE
-	str v30pc,[v30ptr,#v30IP]
 	ldmfd sp!,{pc}
 ;@----------------------------------------------------------------------------
 i_bpo:
 _7B:	;@ Branch if Parity Odd
 ;@----------------------------------------------------------------------------
 	stmfd sp!,{lr}
-	ldr v30pc,[v30ptr,#v30IP]
 	ldr r0,[v30ptr,#v30SRegCS]
 	add	r0,r0,v30pc,lsr#4
 	add	v30pc,v30pc,#0x10000
@@ -2250,14 +2239,12 @@ _7B:	;@ Branch if Parity Odd
 	addeq v30pc,v30pc,r0,asr#8
 	subeq v30cyc,v30cyc,#4*CYCLE
 	subne v30cyc,v30cyc,#1*CYCLE
-	str v30pc,[v30ptr,#v30IP]
 	ldmfd sp!,{pc}
 ;@----------------------------------------------------------------------------
 i_blt:
 _7C:	;@ Branch if Less Than
 ;@----------------------------------------------------------------------------
 	stmfd sp!,{lr}
-	ldr v30pc,[v30ptr,#v30IP]
 	ldr r0,[v30ptr,#v30SRegCS]
 	add	r0,r0,v30pc,lsr#4
 	add	v30pc,v30pc,#0x10000
@@ -2274,14 +2261,12 @@ _7C:	;@ Branch if Less Than
 	addne v30pc,v30pc,r0,asr#8
 	subne v30cyc,v30cyc,#4*CYCLE
 	subeq v30cyc,v30cyc,#1*CYCLE
-	str v30pc,[v30ptr,#v30IP]
 	ldmfd sp!,{pc}
 ;@----------------------------------------------------------------------------
 i_bge:
 _7D:	;@ Branch if Greater than or Equal
 ;@----------------------------------------------------------------------------
 	stmfd sp!,{lr}
-	ldr v30pc,[v30ptr,#v30IP]
 	ldr r0,[v30ptr,#v30SRegCS]
 	add	r0,r0,v30pc,lsr#4
 	add	v30pc,v30pc,#0x10000
@@ -2298,14 +2283,12 @@ _7D:	;@ Branch if Greater than or Equal
 	addeq v30pc,v30pc,r0,asr#8
 	subeq v30cyc,v30cyc,#4*CYCLE
 	subne v30cyc,v30cyc,#1*CYCLE
-	str v30pc,[v30ptr,#v30IP]
 	ldmfd sp!,{pc}
 ;@----------------------------------------------------------------------------
 i_ble:
 _7E:	;@ Branch if Less than or Equal
 ;@----------------------------------------------------------------------------
 	stmfd sp!,{lr}
-	ldr v30pc,[v30ptr,#v30IP]
 	ldr r0,[v30ptr,#v30SRegCS]
 	add	r0,r0,v30pc,lsr#4
 	add	v30pc,v30pc,#0x10000
@@ -2327,14 +2310,12 @@ _7E:	;@ Branch if Less than or Equal
 	addne v30pc,v30pc,r0,asr#8
 	subne v30cyc,v30cyc,#4*CYCLE
 	subeq v30cyc,v30cyc,#1*CYCLE
-	str v30pc,[v30ptr,#v30IP]
 	ldmfd sp!,{pc}
 ;@----------------------------------------------------------------------------
 i_bgt:
 _7F:	;@ Branch if Greater Than
 ;@----------------------------------------------------------------------------
 	stmfd sp!,{lr}
-	ldr v30pc,[v30ptr,#v30IP]
 	ldr r0,[v30ptr,#v30SRegCS]
 	add	r0,r0,v30pc,lsr#4
 	add	v30pc,v30pc,#0x10000
@@ -2356,7 +2337,6 @@ _7F:	;@ Branch if Greater Than
 	addeq v30pc,v30pc,r0,asr#8
 	subeq v30cyc,v30cyc,#4*CYCLE
 	subne v30cyc,v30cyc,#1*CYCLE
-	str v30pc,[v30ptr,#v30IP]
 	ldmfd sp!,{pc}
 ;@----------------------------------------------------------------------------
 i_80pre:
@@ -2921,7 +2901,6 @@ _9A:	;@ CALL FAR
 ;@----------------------------------------------------------------------------
 	stmfd sp!,{r4-r6,lr}
 	ldr r5,[v30ptr,#v30SRegCS]
-	ldr v30pc,[v30ptr,#v30IP]
 	add r0,r5,v30pc,lsr#4
 	add v30pc,v30pc,#0x20000
 	bl cpuGetOpcodeWord
@@ -2937,7 +2916,6 @@ _9A:	;@ CALL FAR
 	bl cpu_writemem20w
 	add r1,v30pc,#0x20000
 	mov v30pc,r4,lsl#16
-	str v30pc,[v30ptr,#v30IP]
 	mov r1,r1,lsr#16
 	sub r6,r6,#2
 	add r0,r6,r5,lsl#4
@@ -2950,10 +2928,8 @@ _9A:	;@ CALL FAR
 i_poll:
 _9B:	;@ POLL, poll the "poll" pin?
 ;@----------------------------------------------------------------------------
-	ldr v30pc,[v30ptr,#v30IP]
 	eatCycles 1
 	sub v30pc,v30pc,#0x10000
-	str v30pc,[v30ptr,#v30IP]
 	bx lr
 ;@----------------------------------------------------------------------------
 i_pushf:
@@ -3689,7 +3665,6 @@ i_ret_d16:
 _C2:	;@ RET D16
 ;@----------------------------------------------------------------------------
 	stmfd sp!,{lr}
-	ldr v30pc,[v30ptr,#v30IP]
 	ldr r0,[v30ptr,#v30SRegCS]
 	add r0,r0,v30pc,lsr#4
 	bl cpuGetOpcodeWord
@@ -3701,7 +3676,6 @@ _C2:	;@ RET D16
 	strh r2,[v30ptr,#v30RegSP]
 	bl cpu_readmem20w
 	mov v30pc,r0,lsl#16
-	str v30pc,[v30ptr,#v30IP]
 	eatCycles 6
 	ldmfd sp!,{pc}
 ;@----------------------------------------------------------------------------
@@ -3716,7 +3690,6 @@ _C3:	;@ RET
 	strh r2,[v30ptr,#v30RegSP]
 	bl cpu_readmem20w
 	mov v30pc,r0,lsl#16
-	str v30pc,[v30ptr,#v30IP]
 	eatCycles 6
 	ldmfd sp!,{pc}
 ;@----------------------------------------------------------------------------
@@ -3835,7 +3808,6 @@ _C8:	;@ PREPARE
 ;@----------------------------------------------------------------------------
 	stmfd sp!,{r4-r8,lr}
 	eatCycles 8
-	ldr v30pc,[v30ptr,#v30IP]
 	ldr r5,[v30ptr,#v30SRegCS]
 	add r0,r5,v30pc,lsr#4
 	add v30pc,v30pc,#0x20000
@@ -3843,7 +3815,6 @@ _C8:	;@ PREPARE
 	stmfd sp!,{r0}				;@ temp
 	add r0,r5,v30pc,lsr#4
 	add v30pc,v30pc,#0x10000
-	str v30pc,[v30ptr,#v30IP]
 	bl cpu_readmem20
 	and r5,r0,#0x1F
 
@@ -3903,7 +3874,6 @@ i_retf_d16:
 _CA:	;@ RETF D16
 ;@----------------------------------------------------------------------------
 	stmfd sp!,{r4-r6,lr}
-	ldr v30pc,[v30ptr,#v30IP]
 	ldr r0,[v30ptr,#v30SRegCS]
 	add r0,r0,v30pc,lsr#4
 	bl cpuGetOpcodeWord
@@ -3914,7 +3884,6 @@ _CA:	;@ RETF D16
 	add r0,r1,r5,lsl#4
 	bl cpu_readmem20w
 	mov v30pc,r0,lsl#16
-	str v30pc,[v30ptr,#v30IP]
 	add r1,r4,r6
 	add r0,r4,r5,lsl#4
 	add r1,r1,#2
@@ -3934,7 +3903,6 @@ _CB:	;@ RETF
 	add r0,r1,r5,lsl#4
 	bl cpu_readmem20w
 	mov v30pc,r0,lsl#16
-	str v30pc,[v30ptr,#v30IP]
 	add r0,r4,r5,lsl#4
 	add r4,r4,#2
 	bl cpu_readmem20w
@@ -3980,7 +3948,6 @@ _CF:	;@ IRET
 	add r0,r1,r5,lsl#4
 	bl cpu_readmem20w
 	mov v30pc,r0,lsl#16
-	str v30pc,[v30ptr,#v30IP]
 	add r0,r4,r5,lsl#4
 	add r4,r4,#2
 	bl cpu_readmem20w
@@ -4151,7 +4118,6 @@ i_loopne:
 _E0:	;@ LOOPNE
 ;@----------------------------------------------------------------------------
 	stmfd sp!,{lr}
-	ldr v30pc,[v30ptr,#v30IP]
 	ldr r0,[v30ptr,#v30SRegCS]
 	add r0,r0,v30pc,lsr#4
 	add v30pc,v30pc,#0x10000
@@ -4165,14 +4131,12 @@ _E0:	;@ LOOPNE
 	subne v30cyc,v30cyc,#3*CYCLE
 	eatCycles 3
 	strh r2,[v30ptr,#v30RegCW]
-	str v30pc,[v30ptr,#v30IP]
 	ldmfd sp!,{pc}
 ;@----------------------------------------------------------------------------
 i_loope:
 _E1:	;@ LOOPE
 ;@----------------------------------------------------------------------------
 	stmfd sp!,{lr}
-	ldr v30pc,[v30ptr,#v30IP]
 	ldr r0,[v30ptr,#v30SRegCS]
 	add r0,r0,v30pc,lsr#4
 	add v30pc,v30pc,#0x10000
@@ -4187,14 +4151,12 @@ _E1:	;@ LOOPE
 	subeq v30cyc,v30cyc,#3*CYCLE
 	eatCycles 3
 	strh r2,[v30ptr,#v30RegCW]
-	str v30pc,[v30ptr,#v30IP]
 	ldmfd sp!,{pc}
 ;@----------------------------------------------------------------------------
 i_loop:
 _E2:	;@ LOOP
 ;@----------------------------------------------------------------------------
 	stmfd sp!,{lr}
-	ldr v30pc,[v30ptr,#v30IP]
 	ldr r0,[v30ptr,#v30SRegCS]
 	add r0,r0,v30pc,lsr#4
 	add v30pc,v30pc,#0x10000
@@ -4206,14 +4168,12 @@ _E2:	;@ LOOP
 	subne v30cyc,v30cyc,#3*CYCLE
 	eatCycles 2
 	strh r2,[v30ptr,#v30RegCW]
-	str v30pc,[v30ptr,#v30IP]
 	ldmfd sp!,{pc}
 ;@----------------------------------------------------------------------------
 i_jcxz:
 _E3:	;@ JCXZ
 ;@----------------------------------------------------------------------------
 	stmfd sp!,{lr}
-	ldr v30pc,[v30ptr,#v30IP]
 	ldr r0,[v30ptr,#v30SRegCS]
 	add r0,r0,v30pc,lsr#4
 	add v30pc,v30pc,#0x10000
@@ -4224,7 +4184,6 @@ _E3:	;@ JCXZ
 	addeq v30pc,v30pc,r0,asr#8
 	subeq v30cyc,v30cyc,#3*CYCLE
 	eatCycles 1
-	str v30pc,[v30ptr,#v30IP]
 	ldmfd sp!,{pc}
 
 ;@----------------------------------------------------------------------------
@@ -4281,13 +4240,11 @@ i_call_d16:
 _E8:	;@ CALL D16
 ;@----------------------------------------------------------------------------
 	stmfd sp!,{lr}
-	ldr v30pc,[v30ptr,#v30IP]
 	ldr r0,[v30ptr,#v30SRegCS]
 	add r0,r0,v30pc,lsr#4
 	bl cpuGetOpcodeWord
 	add r1,v30pc,#0x20000
 	add v30pc,r1,r0,lsl#16
-	str v30pc,[v30ptr,#v30IP]
 	ldrh r2,[v30ptr,#v30RegSP]
 	ldrh r0,[v30ptr,#v30SRegSS+2]
 	sub r2,r2,#2
@@ -4302,13 +4259,11 @@ i_jmp_d16:
 _E9:	;@ JMP D16
 ;@----------------------------------------------------------------------------
 	stmfd sp!,{lr}
-	ldr v30pc,[v30ptr,#v30IP]
 	ldr r0,[v30ptr,#v30SRegCS]
 	add r0,r0,v30pc,lsr#4
 	add v30pc,v30pc,#0x20000
 	bl cpuGetOpcodeWord
 	add v30pc,v30pc,r0,lsl#16
-	str v30pc,[v30ptr,#v30IP]
 	eatCycles 4
 	ldmfd sp!,{pc}
 ;@----------------------------------------------------------------------------
@@ -4316,13 +4271,11 @@ i_jmp_far:
 _EA:	;@ JMP FAR
 ;@----------------------------------------------------------------------------
 	stmfd sp!,{r4,lr}
-	ldr v30pc,[v30ptr,#v30IP]
 	ldr r4,[v30ptr,#v30SRegCS]
 	add r0,r4,v30pc,lsr#4
 	bl cpuGetOpcodeWord
 	add r1,v30pc,#0x20000
 	mov v30pc,r0,lsl#16
-	str v30pc,[v30ptr,#v30IP]
 	add r0,r4,r1,lsr#4
 	bl cpuGetOpcodeWord
 	strh r0,[v30ptr,#v30SRegCS+2]
@@ -4333,7 +4286,6 @@ i_br_d8:
 _EB:	;@ Branch short
 ;@----------------------------------------------------------------------------
 	stmfd sp!,{lr}
-	ldr v30pc,[v30ptr,#v30IP]
 	ldr r0,[v30ptr,#v30SRegCS]
 	add r0,r0,v30pc,lsr#4
 	add v30pc,v30pc,#0x10000
@@ -4343,7 +4295,6 @@ _EB:	;@ Branch short
 	eatCycles 4
 	cmp r0,#0xFC
 	andhi v30cyc,v30cyc,#CYC_MASK
-	str v30pc,[v30ptr,#v30IP]
 	ldmfd sp!,{pc}
 ;@----------------------------------------------------------------------------
 i_inaldx:
@@ -4405,7 +4356,6 @@ i_repne:
 _F2:	;@ REPNE
 ;@----------------------------------------------------------------------------
 	stmfd sp!,{r4-r6,lr}
-	ldr v30pc,[v30ptr,#v30IP]
 	ldr r5,[v30ptr,#v30SRegCS]
 	add	r0,r5,v30pc,lsr#4
 	add v30pc,v30pc,#0x10000
@@ -4425,7 +4375,6 @@ _F2:	;@ REPNE
 	add v30pc,v30pc,#0x10000
 	bl cpuGetOpcode
 noF2Prefix:
-	str v30pc,[v30ptr,#v30IP]
 	ldrh r4,[v30ptr,#v30RegCW]
 	sub r3,r0,#0x6C
 	cmp r3,#0x43
@@ -4552,7 +4501,6 @@ i_repe:
 _F3:	;@ REPE
 ;@----------------------------------------------------------------------------
 	stmfd sp!,{r4-r6,lr}
-	ldr v30pc,[v30ptr,#v30IP]
 	ldr r5,[v30ptr,#v30SRegCS]
 	add	r0,r5,v30pc,lsr#4
 	add v30pc,v30pc,#0x10000
@@ -4572,7 +4520,6 @@ _F3:	;@ REPE
 	add v30pc,v30pc,#0x10000
 	bl cpuGetOpcode
 noF3Prefix:
-	str v30pc,[v30ptr,#v30IP]
 	ldrh r4,[v30ptr,#v30RegCW]
 	sub r3,r0,#0x6C
 	cmp r3,#0x43
@@ -5250,10 +5197,8 @@ writeBackFF:
 	b cpu_writemem20w
 callFF:
 	eatCycles 5
-	ldr v30pc,[v30ptr,#v30IP]
 	mov r1,v30pc,lsr#16
 	mov v30pc,r0,lsl#16
-	str v30pc,[v30ptr,#v30IP]
 	ldrh r2,[v30ptr,#v30RegSP]
 	ldrh r0,[v30ptr,#v30SRegSS+2]
 	sub r2,r2,#2
@@ -5277,10 +5222,8 @@ callFarFF:
 	add r0,r5,r6,lsl#4
 	bl cpu_writemem20w
 
-	ldr v30pc,[v30ptr,#v30IP]
 	mov r1,v30pc,lsr#16
 	mov v30pc,r4,lsl#16
-	str v30pc,[v30ptr,#v30IP]
 	sub r5,r5,#2
 	add r0,r5,r6,lsl#4
 	strh r5,[v30ptr,#v30RegSP]
@@ -5289,12 +5232,10 @@ callFarFF:
 braFF:
 	eatCycles 4
 	mov v30pc,r0,lsl#16
-	str v30pc,[v30ptr,#v30IP]
 	ldmfd sp!,{r4-r6,pc}
 braFarFF:
 	eatCycles 9
 	mov v30pc,r0,lsl#16
-	str v30pc,[v30ptr,#v30IP]
 	mov r0,r5,ror#16
 	add r0,r0,#0x20000
 	mov r0,r0,ror#4
@@ -5777,12 +5718,10 @@ nec_interrupt:				;@ r0 = vector number
 	sub r7,r7,#2
 	add r0,r7,r6,lsl#4
 	strh r7,[v30ptr,#v30RegSP]
-	ldr v30pc,[v30ptr,#v30IP]
 	mov r1,v30pc,lsr#16
 	bl cpu_writemem20w
 
 	mov v30pc,r5,lsl#16
-	str v30pc,[v30ptr,#v30IP]
 	strh r4,[v30ptr,#v30SRegCS+2]
 	eatCycles 22
 	ldmfd sp!,{r4-r7,pc}
@@ -5812,11 +5751,9 @@ V30Go:						;@ Continue running
 xLoop:
 	cmp v30cyc,#0
 	ble xOut
-	ldr v30pc,[v30ptr,#v30IP]
 	ldr r0,[v30ptr,#v30SRegCS]
 	add r0,r0,v30pc,lsr#4
 	add v30pc,v30pc,#0x10000
-	str v30pc,[v30ptr,#v30IP]
 	bl cpuGetOpcode
 //	bl cpu_readmem20
 	adr lr,xLoop
