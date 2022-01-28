@@ -1,6 +1,6 @@
 #ifndef __NEC_H__
 #define __NEC_H__
-
+/*
 BYTE cpu_readport(WORD);
 void cpu_writeport(WORD,BYTE);
 BYTE cpu_readmem20(DWORD);
@@ -10,6 +10,7 @@ void cpu_writemem20w(DWORD,WORD);
 #define cpu_readop cpu_readmem20
 #define cpu_readop_arg cpu_readmem20
 #define cpu_readop_arg_w cpu_readmem20w
+ */
 typedef enum { ES, CS, SS, DS } SREGS;
 typedef enum { AW, CW, DW, BW, SP, BP, IX, IY } WREGS;
 typedef enum { AL,AH,CL,CH,DL,DH,BL,BH,SPL,SPH,BPL,BPH,IXL,IXH,IYL,IYH } BREGS;

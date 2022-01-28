@@ -75,7 +75,7 @@ _00:	;@ ADD BR8
 	mov lr,pc
 	ldr pc,[r1,r0,lsl#2]
 	adr lr,0b
-	b cpu_readmem20
+	b cpuReadByte
 ;@----------------------------------------------------------------------------
 i_add_wr16:
 _01:	;@ ADD WR16
@@ -108,7 +108,7 @@ _01:	;@ ADD WR16
 	mov lr,pc
 	ldr pc,[r1,r0,lsl#2]
 	adr lr,0b
-	b cpu_readmem20w
+	b cpuReadWord
 ;@----------------------------------------------------------------------------
 i_add_r8b:
 _02:	;@ ADD R8b
@@ -137,7 +137,7 @@ _02:	;@ ADD R8b
 	mov lr,pc
 	ldr pc,[r1,r0,lsl#2]
 	adr lr,0b
-	b cpu_readmem20
+	b cpuReadByte
 ;@----------------------------------------------------------------------------
 i_add_r16w:
 _03:	;@ ADD R16W
@@ -165,7 +165,7 @@ _03:	;@ ADD R16W
 	mov lr,pc
 	ldr pc,[r1,r0,lsl#2]
 	adr lr,0b
-	b cpu_readmem20w
+	b cpuReadWord
 ;@----------------------------------------------------------------------------
 i_add_ald8:
 _04:	;@ ADD ALD8
@@ -214,7 +214,7 @@ _07:	;@ POP ES
 	add r2,r1,#2
 	add r0,r1,r0,lsl#4
 	strh r2,[v30ptr,#v30RegSP]
-	bl cpu_readmem20w
+	bl cpuReadWord
 	strh r0,[v30ptr,#v30SRegES+2]
 	eatCycles 3
 	ldmfd sp!,{pc}
@@ -251,7 +251,7 @@ _08:	;@ OR BR8
 	mov lr,pc
 	ldr pc,[r1,r0,lsl#2]
 	adr lr,0b
-	b cpu_readmem20
+	b cpuReadByte
 ;@----------------------------------------------------------------------------
 i_or_wr16:
 _09:	;@ OR WR16
@@ -284,7 +284,7 @@ _09:	;@ OR WR16
 	mov lr,pc
 	ldr pc,[r1,r0,lsl#2]
 	adr lr,0b
-	b cpu_readmem20w
+	b cpuReadWord
 ;@----------------------------------------------------------------------------
 i_or_r8b:
 _0A:	;@ OR R8b
@@ -313,7 +313,7 @@ _0A:	;@ OR R8b
 	mov lr,pc
 	ldr pc,[r1,r0,lsl#2]
 	adr lr,0b
-	b cpu_readmem20
+	b cpuReadByte
 ;@----------------------------------------------------------------------------
 i_or_r16w:
 _0B:	;@ OR R16W
@@ -341,7 +341,7 @@ _0B:	;@ OR R16W
 	mov lr,pc
 	ldr pc,[r1,r0,lsl#2]
 	adr lr,0b
-	b cpu_readmem20w
+	b cpuReadWord
 ;@----------------------------------------------------------------------------
 i_or_ald8:
 _0C:	;@ OR ALD8
@@ -390,7 +390,7 @@ _0F:	;@ POP CS
 	add r2,r1,#2
 	add r0,r1,r0,lsl#4
 	strh r2,[v30ptr,#v30RegSP]
-	bl cpu_readmem20w
+	bl cpuReadWord
 	strh r0,[v30ptr,#v30SRegCS+2]
 	eatCycles 3
 	ldmfd sp!,{pc}
@@ -427,7 +427,7 @@ _10:	;@ ADC BR8
 	mov lr,pc
 	ldr pc,[r1,r0,lsl#2]
 	adr lr,0b
-	b cpu_readmem20
+	b cpuReadByte
 ;@----------------------------------------------------------------------------
 i_adc_wr16:
 _11:	;@ ADC WR16
@@ -460,7 +460,7 @@ _11:	;@ ADC WR16
 	mov lr,pc
 	ldr pc,[r1,r0,lsl#2]
 	adr lr,0b
-	b cpu_readmem20w
+	b cpuReadWord
 ;@----------------------------------------------------------------------------
 i_adc_r8b:
 _12:	;@ ADC R8b
@@ -489,7 +489,7 @@ _12:	;@ ADC R8b
 	mov lr,pc
 	ldr pc,[r1,r0,lsl#2]
 	adr lr,0b
-	b cpu_readmem20
+	b cpuReadByte
 ;@----------------------------------------------------------------------------
 i_adc_r16w:
 _13:	;@ ADC R16W
@@ -517,7 +517,7 @@ _13:	;@ ADC R16W
 	mov lr,pc
 	ldr pc,[r1,r0,lsl#2]
 	adr lr,0b
-	b cpu_readmem20w
+	b cpuReadWord
 ;@----------------------------------------------------------------------------
 i_adc_ald8:
 _14:	;@ ADC ALD8
@@ -565,7 +565,7 @@ _17:	;@ POP SS
 	add r2,r1,#2
 	add r0,r1,r0,lsl#4
 	strh r2,[v30ptr,#v30RegSP]
-	bl cpu_readmem20w
+	bl cpuReadWord
 	strh r0,[v30ptr,#v30SRegSS+2]
 	eatCycles 3
 	mov r0,#1
@@ -604,7 +604,7 @@ _18:	;@ SBB BR8
 	mov lr,pc
 	ldr pc,[r1,r0,lsl#2]
 	adr lr,0b
-	b cpu_readmem20
+	b cpuReadByte
 ;@----------------------------------------------------------------------------
 i_sbb_wr16:
 _19:	;@ SBB WR16
@@ -637,7 +637,7 @@ _19:	;@ SBB WR16
 	mov lr,pc
 	ldr pc,[r1,r0,lsl#2]
 	adr lr,0b
-	b cpu_readmem20w
+	b cpuReadWord
 ;@----------------------------------------------------------------------------
 i_sbb_r8b:
 _1A:	;@ SBB R8b
@@ -666,7 +666,7 @@ _1A:	;@ SBB R8b
 	mov lr,pc
 	ldr pc,[r1,r0,lsl#2]
 	adr lr,0b
-	b cpu_readmem20
+	b cpuReadByte
 ;@----------------------------------------------------------------------------
 i_sbb_r16w:
 _1B:	;@ SBB R16W
@@ -694,7 +694,7 @@ _1B:	;@ SBB R16W
 	mov lr,pc
 	ldr pc,[r1,r0,lsl#2]
 	adr lr,0b
-	b cpu_readmem20w
+	b cpuReadWord
 ;@----------------------------------------------------------------------------
 i_sbb_ald8:
 _1C:	;@ SBB ALD8
@@ -743,7 +743,7 @@ _1F:	;@ POP DS
 	add r2,r1,#2
 	add r0,r1,r0,lsl#4
 	strh r2,[v30ptr,#v30RegSP]
-	bl cpu_readmem20w
+	bl cpuReadWord
 	strh r0,[v30ptr,#v30SRegDS+2]
 	eatCycles 3
 	ldmfd sp!,{pc}
@@ -780,7 +780,7 @@ _20:	;@ AND BR8
 	mov lr,pc
 	ldr pc,[r1,r0,lsl#2]
 	adr lr,0b
-	b cpu_readmem20
+	b cpuReadByte
 ;@----------------------------------------------------------------------------
 i_and_wr16:
 _21:	;@ AND WR16
@@ -813,7 +813,7 @@ _21:	;@ AND WR16
 	mov lr,pc
 	ldr pc,[r1,r0,lsl#2]
 	adr lr,0b
-	b cpu_readmem20w
+	b cpuReadWord
 ;@----------------------------------------------------------------------------
 i_and_r8b:
 _22:	;@ AND R8b
@@ -842,7 +842,7 @@ _22:	;@ AND R8b
 	mov lr,pc
 	ldr pc,[r1,r0,lsl#2]
 	adr lr,0b
-	b cpu_readmem20
+	b cpuReadByte
 ;@----------------------------------------------------------------------------
 i_and_r16w:
 _23:	;@ AND R16W
@@ -870,7 +870,7 @@ _23:	;@ AND R16W
 	mov lr,pc
 	ldr pc,[r1,r0,lsl#2]
 	adr lr,0b
-	b cpu_readmem20w
+	b cpuReadWord
 ;@----------------------------------------------------------------------------
 i_and_ald8:
 _24:	;@ AND ALD8
@@ -975,7 +975,7 @@ _28:	;@ SUB BR8
 	mov lr,pc
 	ldr pc,[r1,r0,lsl#2]
 	adr lr,0b
-	b cpu_readmem20
+	b cpuReadByte
 ;@----------------------------------------------------------------------------
 i_sub_wr16:
 _29:	;@ SUB WR16
@@ -1008,7 +1008,7 @@ _29:	;@ SUB WR16
 	mov lr,pc
 	ldr pc,[r1,r0,lsl#2]
 	adr lr,0b
-	b cpu_readmem20w
+	b cpuReadWord
 ;@----------------------------------------------------------------------------
 i_sub_r8b:
 _2A:	;@ SUB R8b
@@ -1037,7 +1037,7 @@ _2A:	;@ SUB R8b
 	mov lr,pc
 	ldr pc,[r1,r0,lsl#2]
 	adr lr,0b
-	b cpu_readmem20
+	b cpuReadByte
 ;@----------------------------------------------------------------------------
 i_sub_r16w:
 _2B:	;@ SUB R16W
@@ -1065,7 +1065,7 @@ _2B:	;@ SUB R16W
 	mov lr,pc
 	ldr pc,[r1,r0,lsl#2]
 	adr lr,0b
-	b cpu_readmem20w
+	b cpuReadWord
 ;@----------------------------------------------------------------------------
 i_sub_ald8:
 _2C:	;@ SUB ALD8
@@ -1170,7 +1170,7 @@ _30:	;@ XOR BR8
 	mov lr,pc
 	ldr pc,[r1,r0,lsl#2]
 	adr lr,0b
-	b cpu_readmem20
+	b cpuReadByte
 ;@----------------------------------------------------------------------------
 i_xor_wr16:
 _31:	;@ XOR WR16
@@ -1203,7 +1203,7 @@ _31:	;@ XOR WR16
 	mov lr,pc
 	ldr pc,[r1,r0,lsl#2]
 	adr lr,0b
-	b cpu_readmem20w
+	b cpuReadWord
 ;@----------------------------------------------------------------------------
 i_xor_r8b:
 _32:	;@ XOR R8b
@@ -1232,7 +1232,7 @@ _32:	;@ XOR R8b
 	mov lr,pc
 	ldr pc,[r1,r0,lsl#2]
 	adr lr,0b
-	b cpu_readmem20
+	b cpuReadByte
 ;@----------------------------------------------------------------------------
 i_xor_r16w:
 _33:	;@ XOR R16W
@@ -1260,7 +1260,7 @@ _33:	;@ XOR R16W
 	mov lr,pc
 	ldr pc,[r1,r0,lsl#2]
 	adr lr,0b
-	b cpu_readmem20w
+	b cpuReadWord
 ;@----------------------------------------------------------------------------
 i_xor_ald8:
 _34:	;@ XOR ALD8
@@ -1354,7 +1354,7 @@ _38:	;@ CMP BR8
 	mov lr,pc
 	ldr pc,[r1,r0,lsl#2]
 	adr lr,0b
-	b cpu_readmem20
+	b cpuReadByte
 ;@----------------------------------------------------------------------------
 i_cmp_wr16:
 _39:	;@ CMP WR16
@@ -1381,7 +1381,7 @@ _39:	;@ CMP WR16
 	mov lr,pc
 	ldr pc,[r1,r0,lsl#2]
 	adr lr,0b
-	b cpu_readmem20w
+	b cpuReadWord
 ;@----------------------------------------------------------------------------
 i_cmp_r8b:
 _3A:	;@ CMP R8b
@@ -1409,7 +1409,7 @@ _3A:	;@ CMP R8b
 	mov lr,pc
 	ldr pc,[r1,r0,lsl#2]
 	adr lr,0b
-	b cpu_readmem20
+	b cpuReadByte
 ;@----------------------------------------------------------------------------
 i_cmp_r16w:
 _3B:	;@ CMP R16W
@@ -1436,7 +1436,7 @@ _3B:	;@ CMP R16W
 	mov lr,pc
 	ldr pc,[r1,r0,lsl#2]
 	adr lr,0b
-	b cpu_readmem20w
+	b cpuReadWord
 ;@----------------------------------------------------------------------------
 i_cmp_ald8:
 _3C:	;@ CMP ALD8
@@ -1688,7 +1688,7 @@ _58:	;@ POP AX
 	add r2,r1,#2
 	add r0,r1,r0,lsl#4
 	strh r2,[v30ptr,#v30RegSP]
-	bl cpu_readmem20w
+	bl cpuReadWord
 	strh r0,[v30ptr,#v30RegAW]
 	eatCycles 1
 	ldmfd sp!,{pc}
@@ -1702,7 +1702,7 @@ _59:	;@ POP CX
 	add r2,r1,#2
 	add r0,r1,r0,lsl#4
 	strh r2,[v30ptr,#v30RegSP]
-	bl cpu_readmem20w
+	bl cpuReadWord
 	strh r0,[v30ptr,#v30RegCW]
 	eatCycles 1
 	ldmfd sp!,{pc}
@@ -1716,7 +1716,7 @@ _5A:	;@ POP DX
 	add r2,r1,#2
 	add r0,r1,r0,lsl#4
 	strh r2,[v30ptr,#v30RegSP]
-	bl cpu_readmem20w
+	bl cpuReadWord
 	strh r0,[v30ptr,#v30RegDW]
 	eatCycles 1
 	ldmfd sp!,{pc}
@@ -1730,7 +1730,7 @@ _5B:	;@ POP BX
 	add r2,r1,#2
 	add r0,r1,r0,lsl#4
 	strh r2,[v30ptr,#v30RegSP]
-	bl cpu_readmem20w
+	bl cpuReadWord
 	strh r0,[v30ptr,#v30RegBW]
 	eatCycles 1
 	ldmfd sp!,{pc}
@@ -1742,7 +1742,7 @@ _5C:	;@ POP SP
 	ldrh r1,[v30ptr,#v30RegSP]
 	ldrh r0,[v30ptr,#v30SRegSS+2]
 	add r0,r1,r0,lsl#4
-	bl cpu_readmem20w
+	bl cpuReadWord
 	add r0,r0,#2
 	strh r0,[v30ptr,#v30RegSP]
 	eatCycles 1
@@ -1757,7 +1757,7 @@ _5D:	;@ POP BP
 	add r2,r1,#2
 	add r0,r1,r0,lsl#4
 	strh r2,[v30ptr,#v30RegSP]
-	bl cpu_readmem20w
+	bl cpuReadWord
 	strh r0,[v30ptr,#v30RegBP]
 	eatCycles 1
 	ldmfd sp!,{pc}
@@ -1771,7 +1771,7 @@ _5E:	;@ POP SI
 	add r2,r1,#2
 	add r0,r1,r0,lsl#4
 	strh r2,[v30ptr,#v30RegSP]
-	bl cpu_readmem20w
+	bl cpuReadWord
 	strh r0,[v30ptr,#v30RegIX]
 	eatCycles 1
 	ldmfd sp!,{pc}
@@ -1785,7 +1785,7 @@ _5F:	;@ POP DI
 	add r2,r1,#2
 	add r0,r1,r0,lsl#4
 	strh r2,[v30ptr,#v30RegSP]
-	bl cpu_readmem20w
+	bl cpuReadWord
 	strh r0,[v30ptr,#v30RegIY]
 	eatCycles 1
 	ldmfd sp!,{pc}
@@ -1841,31 +1841,31 @@ _61:	;@ POPA
 	ldrh r5,[v30ptr,#v30SRegSS+2]
 	add r4,r1,#2
 	add r0,r1,r5,lsl#4
-	bl cpu_readmem20w
+	bl cpuReadWord
 	strh r0,[v30ptr,#v30RegIY]
 	add r0,r4,r5,lsl#4
 	add r4,r4,#2
-	bl cpu_readmem20w
+	bl cpuReadWord
 	strh r0,[v30ptr,#v30RegIX]
 	add r0,r4,r5,lsl#4
 	add r4,r4,#4				;@ Skip one
-	bl cpu_readmem20w
+	bl cpuReadWord
 	strh r0,[v30ptr,#v30RegBP]
 	add r0,r4,r5,lsl#4
 	add r4,r4,#2
-	bl cpu_readmem20w
+	bl cpuReadWord
 	strh r0,[v30ptr,#v30RegBW]
 	add r0,r4,r5,lsl#4
 	add r4,r4,#2
-	bl cpu_readmem20w
+	bl cpuReadWord
 	strh r0,[v30ptr,#v30RegDW]
 	add r0,r4,r5,lsl#4
 	add r4,r4,#2
-	bl cpu_readmem20w
+	bl cpuReadWord
 	strh r0,[v30ptr,#v30RegCW]
 	add r0,r4,r5,lsl#4
 	add r4,r4,#2
-	bl cpu_readmem20w
+	bl cpuReadWord
 	strh r0,[v30ptr,#v30RegAW]
 	strh r4,[v30ptr,#v30RegSP]
 	eatCycles 8
@@ -1884,12 +1884,12 @@ _62:	;@ CHKIND
 	mov lr,pc
 	ldr pc,[r1,r0,lsl#2]
 	mov r6,r0,ror#16
-	bl cpu_readmem20w
+	bl cpuReadWord
 0:
 	mov r5,r0
 	add r6,r6,#0x20000
 	mov r0,r6,ror#16
-	bl cpu_readmem20w
+	bl cpuReadWord
 	ldrh r1,[r4,#v30Regs]
 
 	eatCycles 13
@@ -1955,7 +1955,7 @@ _69:	;@ IMUL D16
 	mov lr,pc
 	ldr pc,[r1,r0,lsl#2]
 	adr lr,0b
-	b cpu_readmem20w
+	b cpuReadWord
 ;@----------------------------------------------------------------------------
 i_push_d8:
 _6A:	;@ PUSH D8
@@ -2007,7 +2007,7 @@ _6B:	;@ IMUL D8
 	mov lr,pc
 	ldr pc,[r1,r0,lsl#2]
 	adr lr,0b
-	b cpu_readmem20w
+	b cpuReadWord
 ;@----------------------------------------------------------------------------
 i_insb:
 _6C:	;@ INSB
@@ -2066,7 +2066,7 @@ _6E:	;@ OUTSB
 	subne r2,r1,#1
 	add r0,r1,r0,lsl#4
 	strh r2,[v30ptr,#v30RegIX]
-	bl cpu_readmem20
+	bl cpuReadByte
 	mov r1,r0
 	ldrh r0,[v30ptr,#v30RegDW]
 	eatCycles 7
@@ -2088,7 +2088,7 @@ _6F:	;@ OUTSW
 	subne r2,r1,#2
 	add r0,r1,r0,lsl#4
 	strh r2,[v30ptr,#v30RegIX]
-	bl cpu_readmem20w
+	bl cpuReadWord
 	and r1,r0,#0xFF
 	mov r4,r0
 	ldrh r0,[v30ptr,#v30RegDW]
@@ -2403,7 +2403,7 @@ cmp80:
 	mov lr,pc
 	ldr pc,[r1,r0,lsl#2]
 	adr lr,0b
-	b cpu_readmem20
+	b cpuReadByte
 ;@----------------------------------------------------------------------------
 i_81pre:
 _81:	;@ PRE 81
@@ -2465,7 +2465,7 @@ cmp81:
 	mov lr,pc
 	ldr pc,[r1,r0,lsl#2]
 	adr lr,0b
-	b cpu_readmem20w
+	b cpuReadWord
 ;@----------------------------------------------------------------------------
 i_83pre:
 _83:	;@ PRE 83
@@ -2491,7 +2491,7 @@ _83:	;@ PRE 83
 	mov lr,pc
 	ldr pc,[r1,r0,lsl#2]
 	adr lr,0b
-	b cpu_readmem20w
+	b cpuReadWord
 ;@----------------------------------------------------------------------------
 i_test_br8:
 _84:	;@ TEST BR8
@@ -2519,7 +2519,7 @@ _84:	;@ TEST BR8
 	mov lr,pc
 	ldr pc,[r1,r0,lsl#2]
 	adr lr,0b
-	b cpu_readmem20
+	b cpuReadByte
 ;@----------------------------------------------------------------------------
 i_test_wr16:
 _85:	;@ TEST WR16
@@ -2546,7 +2546,7 @@ _85:	;@ TEST WR16
 	mov lr,pc
 	ldr pc,[r1,r0,lsl#2]
 	adr lr,0b
-	b cpu_readmem20w
+	b cpuReadWord
 ;@----------------------------------------------------------------------------
 i_xchg_br8:
 _86:	;@ XCHG BR8
@@ -2579,7 +2579,7 @@ _86:	;@ XCHG BR8
 	mov lr,pc
 	ldr pc,[r1,r0,lsl#2]
 	adr lr,0b
-	b cpu_readmem20
+	b cpuReadByte
 ;@----------------------------------------------------------------------------
 i_xchg_wr16:
 _87:	;@ XCHG WR16
@@ -2611,7 +2611,7 @@ _87:	;@ XCHG WR16
 	mov lr,pc
 	ldr pc,[r1,r0,lsl#2]
 	adr lr,0b
-	b cpu_readmem20w
+	b cpuReadWord
 ;@----------------------------------------------------------------------------
 i_mov_br8:
 _88:	;@ MOV BR8
@@ -2684,7 +2684,7 @@ _8A:	;@ MOV R8B
 	mov lr,pc
 	ldr pc,[r1,r0,lsl#2]
 	adr lr,0b
-	b cpu_readmem20
+	b cpuReadByte
 ;@----------------------------------------------------------------------------
 i_mov_r16w:
 _8B:	;@ MOV R16W
@@ -2707,7 +2707,7 @@ _8B:	;@ MOV R16W
 	mov lr,pc
 	ldr pc,[r1,r0,lsl#2]
 	adr lr,0b
-	b cpu_readmem20w
+	b cpuReadWord
 ;@----------------------------------------------------------------------------
 i_mov_wsreg:
 _8C:	;@ MOV WSREG
@@ -2774,7 +2774,7 @@ _8E:	;@ MOV SREGW
 	mov lr,pc
 	ldr pc,[r1,r0,lsl#2]
 	adr lr,0b
-	b cpu_readmem20w
+	b cpuReadWord
 ;@----------------------------------------------------------------------------
 i_popw:
 _8F:	;@ POPW
@@ -2785,7 +2785,7 @@ _8F:	;@ POPW
 	add r2,r1,#2
 	add r0,r1,r0,lsl#4
 	strh r2,[v30ptr,#v30RegSP]
-	bl cpu_readmem20w
+	bl cpuReadWord
 	mov r4,r0
 	getNextByte
 	cmp r0,#0xC0
@@ -2987,7 +2987,7 @@ _9D:	;@ POP F
 	add r2,r1,#2
 	add r0,r1,r0,lsl#4
 	strh r2,[v30ptr,#v30RegSP]
-	bl cpu_readmem20w
+	bl cpuReadWord
 	mov r1,#0
 	mov r2,#1
 	mov r3,#-1
@@ -3088,7 +3088,7 @@ _A0:	;@ MOV ALDISP
 	ldrheq r1,[v30ptr,#v30SRegDS+2]
 	ldrne r1,[v30ptr,#v30PrefixBase]
 	add r0,r0,r1,lsl#4
-	bl cpu_readmem20
+	bl cpuReadByte
 	strb r0,[v30ptr,#v30RegAL]
 	eatCycles 1
 	ldmfd sp!,{pc}
@@ -3103,7 +3103,7 @@ _A1:	;@ MOV AXDISP
 	ldrheq r1,[v30ptr,#v30SRegDS+2]
 	ldrne r1,[v30ptr,#v30PrefixBase]
 	add r0,r0,r1,lsl#4
-	bl cpu_readmem20w
+	bl cpuReadWord
 	strh r0,[v30ptr,#v30RegAW]
 	eatCycles 1
 	ldmfd sp!,{pc}
@@ -3153,7 +3153,7 @@ _A4:	;@ MOVSB
 	subne r2,r1,#1
 	add r0,r1,r0,lsl#4
 	strh r2,[v30ptr,#v30RegIX]
-	bl cpu_readmem20
+	bl cpuReadByte
 	mov r1,r0
 	ldrh r3,[v30ptr,#v30RegIY]
 	ldrh r0,[v30ptr,#v30SRegES+2]
@@ -3181,7 +3181,7 @@ _A5:	;@ MOVSW
 	subne r2,r1,#2
 	add r0,r1,r0,lsl#4
 	strh r2,[v30ptr,#v30RegIX]
-	bl cpu_readmem20w
+	bl cpuReadWord
 	mov r1,r0
 	ldrh r3,[v30ptr,#v30RegIY]
 	ldrh r0,[v30ptr,#v30SRegES+2]
@@ -3209,7 +3209,7 @@ _A6:	;@ CMPSB
 	subne r2,r1,#1
 	add r0,r1,r0,lsl#4
 	strh r2,[v30ptr,#v30RegIX]
-	bl cpu_readmem20
+	bl cpuReadByte
 
 	ldrh r1,[v30ptr,#v30RegIY]
 	ldrh r3,[v30ptr,#v30SRegES+2]
@@ -3219,7 +3219,7 @@ _A6:	;@ CMPSB
 	mov r4,r0
 	add r0,r1,r3,lsl#4
 	strh r2,[v30ptr,#v30RegIY]
-	bl cpu_readmem20
+	bl cpuReadByte
 	mov r1,r4
 
 	sub8 r0,r1
@@ -3242,7 +3242,7 @@ _A7:	;@ CMPSW
 	subne r2,r1,#1
 	add r0,r1,r0,lsl#4
 	strh r2,[v30ptr,#v30RegIX]
-	bl cpu_readmem20w
+	bl cpuReadWord
 
 	ldrh r1,[v30ptr,#v30RegIY]
 	ldrh r3,[v30ptr,#v30SRegES+2]
@@ -3252,7 +3252,7 @@ _A7:	;@ CMPSW
 	mov r4,r0
 	add r0,r1,r3,lsl#4
 	strh r2,[v30ptr,#v30RegIY]
-	bl cpu_readmem20w
+	bl cpuReadWord
 	mov r1,r4
 
 	sub16 r0,r1
@@ -3329,7 +3329,7 @@ _AC:	;@ LODSB
 	subne r2,r1,#1
 	add r0,r1,r0,lsl#4
 	strh r2,[v30ptr,#v30RegIX]
-	bl cpu_readmem20
+	bl cpuReadByte
 	strb r0,[v30ptr,#v30RegAL]
 	eatCycles 3
 	ldmfd sp!,{pc}
@@ -3349,7 +3349,7 @@ _AD:	;@ LODSW
 	subne r2,r1,#2
 	add r0,r1,r0,lsl#4
 	strh r2,[v30ptr,#v30RegIX]
-	bl cpu_readmem20w
+	bl cpuReadWord
 	strh r0,[v30ptr,#v30RegAW]
 	eatCycles 3
 	ldmfd sp!,{pc}
@@ -3366,7 +3366,7 @@ _AE:	;@ SCASB
 	subne r2,r1,#1
 	add r0,r1,r0,lsl#4
 	strh r2,[v30ptr,#v30RegIY]
-	bl cpu_readmem20
+	bl cpuReadByte
 	ldrb r1,[v30ptr,#v30RegAL]
 
 	sub8 r0,r1
@@ -3386,7 +3386,7 @@ _AF:	;@ SCASW
 	subne r2,r1,#2
 	add r0,r1,r0,lsl#4
 	strh r2,[v30ptr,#v30RegIY]
-	bl cpu_readmem20w
+	bl cpuReadWord
 	ldrh r1,[v30ptr,#v30RegAW]
 
 	sub16 r0,r1
@@ -3599,7 +3599,7 @@ shraC0:
 	mov lr,pc
 	ldr pc,[r1,r0,lsl#2]
 	adr lr,0b
-	b cpu_readmem20
+	b cpuReadByte
 ;@----------------------------------------------------------------------------
 i_rotshft_wd8:
 _C1:	;@ ROTSHFT WD8
@@ -3659,7 +3659,7 @@ shraC1:
 	mov lr,pc
 	ldr pc,[r1,r0,lsl#2]
 	adr lr,0b
-	b cpu_readmem20w
+	b cpuReadWord
 ;@----------------------------------------------------------------------------
 i_ret_d16:
 _C2:	;@ RET D16
@@ -3674,7 +3674,7 @@ _C2:	;@ RET D16
 	add r2,r2,r0
 	add r0,r1,r3,lsl#4
 	strh r2,[v30ptr,#v30RegSP]
-	bl cpu_readmem20w
+	bl cpuReadWord
 	mov v30pc,r0,lsl#16
 	eatCycles 6
 	ldmfd sp!,{pc}
@@ -3688,7 +3688,7 @@ _C3:	;@ RET
 	add r2,r1,#2
 	add r0,r1,r0,lsl#4
 	strh r2,[v30ptr,#v30RegSP]
-	bl cpu_readmem20w
+	bl cpuReadWord
 	mov v30pc,r0,lsl#16
 	eatCycles 6
 	ldmfd sp!,{pc}
@@ -3705,13 +3705,13 @@ _C4:	;@ LES DW
 	mov lr,pc
 	ldr pc,[r1,r0,lsl#2]
 	mov r5,r0,ror#16
-	bl cpu_readmem20w
+	bl cpuReadWord
 0:
 	add r1,v30ptr,r4,lsr#2
 	strh r0,[r1,#v30Regs]
 	add r5,r5,#0x20000
 	mov r0,r5,ror#16
-	bl cpu_readmem20w
+	bl cpuReadWord
 	strh r0,[v30ptr,#v30SRegES+2]
 
 	eatCycles 6
@@ -3735,13 +3735,13 @@ _C5:	;@ LDS DW
 	mov lr,pc
 	ldr pc,[r1,r0,lsl#2]
 	mov r5,r0,ror#16
-	bl cpu_readmem20w
+	bl cpuReadWord
 0:
 	add r1,v30ptr,r4,lsr#2
 	strh r0,[r1,#v30Regs]
 	add r5,r5,#0x20000
 	mov r0,r5,ror#16
-	bl cpu_readmem20w
+	bl cpuReadWord
 	strh r0,[v30ptr,#v30SRegDS+2]
 
 	eatCycles 6
@@ -3815,7 +3815,7 @@ _C8:	;@ PREPARE
 	stmfd sp!,{r0}				;@ temp
 	add r0,r5,v30pc,lsr#4
 	add v30pc,v30pc,#0x10000
-	bl cpu_readmem20
+	bl cpuReadByte
 	and r5,r0,#0x1F
 
 	ldrh r8,[v30ptr,#v30RegSP]
@@ -3836,7 +3836,7 @@ _C8:	;@ PREPARE
 0:
 	sub r4,r4,#2
 	add r0,r4,r7,lsl#4
-	bl cpu_readmem20w
+	bl cpuReadWord
 	mov r1,r0
 	sub r8,r8,#2
 	add r0,r8,r6,lsl#4
@@ -3865,7 +3865,7 @@ _C9:	;@ DISPOSE
 	add r2,r1,#2
 	add r0,r1,r0,lsl#4
 	strh r2,[v30ptr,#v30RegSP]
-	bl cpu_readmem20w
+	bl cpuReadWord
 	strh r0,[v30ptr,#v30RegBP]
 	eatCycles 2
 	ldmfd sp!,{pc}
@@ -3882,13 +3882,13 @@ _CA:	;@ RETF D16
 	ldrh r5,[v30ptr,#v30SRegSS+2]
 	add r4,r1,#2
 	add r0,r1,r5,lsl#4
-	bl cpu_readmem20w
+	bl cpuReadWord
 	mov v30pc,r0,lsl#16
 	add r1,r4,r6
 	add r0,r4,r5,lsl#4
 	add r1,r1,#2
 	strh r1,[v30ptr,#v30RegSP]
-	bl cpu_readmem20w
+	bl cpuReadWord
 	strh r0,[v30ptr,#v30SRegCS+2]
 	eatCycles 6
 	ldmfd sp!,{r4-r6,pc}
@@ -3901,11 +3901,11 @@ _CB:	;@ RETF
 	ldrh r5,[v30ptr,#v30SRegSS+2]
 	add r4,r1,#2
 	add r0,r1,r5,lsl#4
-	bl cpu_readmem20w
+	bl cpuReadWord
 	mov v30pc,r0,lsl#16
 	add r0,r4,r5,lsl#4
 	add r4,r4,#2
-	bl cpu_readmem20w
+	bl cpuReadWord
 	strh r0,[v30ptr,#v30SRegCS+2]
 	strh r4,[v30ptr,#v30RegSP]
 	eatCycles 8
@@ -3946,11 +3946,11 @@ _CF:	;@ IRET
 	ldrh r5,[v30ptr,#v30SRegSS+2]
 	add r4,r1,#2
 	add r0,r1,r5,lsl#4
-	bl cpu_readmem20w
+	bl cpuReadWord
 	mov v30pc,r0,lsl#16
 	add r0,r4,r5,lsl#4
 	add r4,r4,#2
-	bl cpu_readmem20w
+	bl cpuReadWord
 	strh r0,[v30ptr,#v30SRegCS+2]
 	strh r4,[v30ptr,#v30RegSP]
 	eatCycles 10					;@ -3?
@@ -3981,7 +3981,7 @@ _D0:	;@ ROTSHFT B
 	mov lr,pc
 	ldr pc,[r1,r0,lsl#2]
 	adr lr,0b
-	b cpu_readmem20
+	b cpuReadByte
 ;@----------------------------------------------------------------------------
 i_rotshft_w:
 _D1:	;@ ROTSHFT W
@@ -4005,7 +4005,7 @@ _D1:	;@ ROTSHFT W
 	mov lr,pc
 	ldr pc,[r1,r0,lsl#2]
 	adr lr,0b
-	b cpu_readmem20w
+	b cpuReadWord
 ;@----------------------------------------------------------------------------
 i_rotshft_bcl:
 _D2:	;@ ROTSHFT BCL
@@ -4030,7 +4030,7 @@ _D2:	;@ ROTSHFT BCL
 	mov lr,pc
 	ldr pc,[r1,r0,lsl#2]
 	adr lr,0b
-	b cpu_readmem20
+	b cpuReadByte
 ;@----------------------------------------------------------------------------
 i_rotshft_wcl:
 _D3:	;@ ROTSHFT WCL
@@ -4054,7 +4054,7 @@ _D3:	;@ ROTSHFT WCL
 	mov lr,pc
 	ldr pc,[r1,r0,lsl#2]
 	adr lr,0b
-	b cpu_readmem20w
+	b cpuReadWord
 ;@----------------------------------------------------------------------------
 i_aam:
 _D4:	;@ AAM
@@ -4109,7 +4109,7 @@ _D7:	;@ TRANS
 	add r1,r1,r2,lsl#16
 	mov r1,r1,lsr#16
 	add r0,r1,r0,lsl#4
-	bl cpu_readmem20
+	bl cpuReadByte
 	strb r0,[v30ptr,#v30RegAL]
 	eatCycles 5
 	ldmfd sp!,{pc}
@@ -4909,7 +4909,7 @@ divbF6:
 	ldr pc,[r1,r0,lsl#2]
 	mov r5,r0
 	adr lr,0b
-	b cpu_readmem20
+	b cpuReadByte
 ;@----------------------------------------------------------------------------
 i_f7pre:
 _F7:	;@ PRE F7
@@ -5042,7 +5042,7 @@ divwF7:
 	ldr pc,[r1,r0,lsl#2]
 	mov r5,r0
 	adr lr,0b
-	b cpu_readmem20w
+	b cpuReadWord
 ;@----------------------------------------------------------------------------
 i_clc:
 _F8:	;@ CLC
@@ -5146,7 +5146,7 @@ invalidFE:
 	ldr pc,[r1,r0,lsl#2]
 	mov r5,r0
 	adr lr,0b
-	b cpu_readmem20
+	b cpuReadByte
 ;@----------------------------------------------------------------------------
 i_ffpre:
 _FF:	;@ PRE FF
@@ -5212,7 +5212,7 @@ callFarFF:
 	mov r0,r5,ror#16
 	add r0,r0,#0x20000
 	mov r0,r0,ror#16
-	bl cpu_readmem20w
+	bl cpuReadWord
 
 	ldrh r1,[v30ptr,#v30SRegCS+2]
 	strh r0,[v30ptr,#v30SRegCS+2]
@@ -5259,7 +5259,7 @@ pushFF:
 	ldr pc,[r1,r0,lsl#2]
 	mov r5,r0
 	adr lr,0b
-	b cpu_readmem20w
+	b cpuReadWord
 
 
 ;@----------------------------------------------------------------------------
@@ -5755,7 +5755,6 @@ xLoop:
 	add r0,r0,v30pc,lsr#4
 	add v30pc,v30pc,#0x10000
 	bl cpuGetOpcode
-//	bl cpu_readmem20
 	adr lr,xLoop
 	ldr pc,[v30ptr,r0,lsl#2]
 xOut:
