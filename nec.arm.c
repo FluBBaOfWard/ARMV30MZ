@@ -78,10 +78,10 @@ typedef struct
 typedef struct {
 	struct {
 		BREGS b[256];
-	} reg;
+	} RM;
 	struct {
 		BREGS b[256];
-	} RM;
+	} reg;
 } Mod_Struct;
 
 extern nec_Regs I;
@@ -116,12 +116,12 @@ void nec_reset(void *param)
 	I.ZeroVal = I.ParityVal = 1;
 	SetMD(1);						// Set the mode-flag = native mode
 
-	for (i = 0; i < 0x100; i++) {
-		Mod_RM.reg.b[i] = reg_name[(i & 0x38) >> 3];
-	}
-	for (i = 0xc0; i < 0x100; i++) {
-		Mod_RM.RM.b[i] = reg_name[i & 7];
-	}
+//	for (i = 0; i < 0x100; i++) {
+//		Mod_RM.reg.b[i] = reg_name[(i & 0x38) >> 3];
+//	}
+//	for (i = 0xc0; i < 0x100; i++) {
+//		Mod_RM.RM.b[i] = reg_name[i & 7];
+//	}
 }
 /*
 void nec_interrupt(UINT8 int_num)

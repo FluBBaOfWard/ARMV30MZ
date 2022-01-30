@@ -23,6 +23,7 @@
 	.align 2
 
 
+	.global V30Init
 	.global V30Reset
 	.global V30SetIRQPin
 	.global V30SetNMIPin
@@ -52,10 +53,9 @@ _00:	;@ ADD BR8
 	add r5,v30ptr,r0
 	cmp r4,#0xC0
 	bmi 1f
-	ldrb r2,[r5,#v30ModRmRm]
-	add r6,v30ptr,r2
-	ldrb r0,[r6,#v30Regs]
+	ldrb r6,[r5,#v30ModRmRm]
 	eatCycles 1
+	ldrb r0,[v30ptr,-r6]
 0:
 	ldrb r2,[r5,#v30ModRmReg]
 	add r2,v30ptr,r2
@@ -64,7 +64,7 @@ _00:	;@ ADD BR8
 	add8 r1,r0
 
 	cmp r4,#0xC0
-	strbpl r1,[r6,#v30Regs]
+	strbpl r1,[v30ptr,-r6]
 	ldmfd sp!,{r4-r6,lr}
 	bxpl lr
 	ldr r0,[v30ptr,#v30EA]
@@ -121,9 +121,8 @@ _02:	;@ ADD R8b
 	cmp r0,#0xC0
 	bmi 1f
 	ldrb r2,[r1,#v30ModRmRm]
-	add r1,v30ptr,r2
-	ldrb r0,[r1,#v30Regs]
 	eatCycles 1
+	ldrb r0,[v30ptr,-r2]
 0:
 	ldrb r1,[r4,#v30Regs]
 
@@ -228,10 +227,9 @@ _08:	;@ OR BR8
 	add r5,v30ptr,r0
 	cmp r4,#0xC0
 	bmi 1f
-	ldrb r2,[r5,#v30ModRmRm]
-	add r6,v30ptr,r2
-	ldrb r0,[r6,#v30Regs]
+	ldrb r6,[r5,#v30ModRmRm]
 	eatCycles 1
+	ldrb r0,[v30ptr,-r6]
 0:
 	ldrb r2,[r5,#v30ModRmReg]
 	add r2,v30ptr,r2
@@ -240,7 +238,7 @@ _08:	;@ OR BR8
 	or8 r1,r0
 
 	cmp r4,#0xC0
-	strbpl r1,[r6,#v30Regs]
+	strbpl r1,[v30ptr,-r6]
 	ldmfd sp!,{r4-r6,lr}
 	bxpl lr
 	ldr r0,[v30ptr,#v30EA]
@@ -297,9 +295,8 @@ _0A:	;@ OR R8b
 	cmp r0,#0xC0
 	bmi 1f
 	ldrb r2,[r1,#v30ModRmRm]
-	add r1,v30ptr,r2
-	ldrb r0,[r1,#v30Regs]
 	eatCycles 1
+	ldrb r0,[v30ptr,-r2]
 0:
 	ldrb r1,[r4,#v30Regs]
 
@@ -404,10 +401,9 @@ _10:	;@ ADC BR8
 	add r5,v30ptr,r0
 	cmp r4,#0xC0
 	bmi 1f
-	ldrb r2,[r5,#v30ModRmRm]
-	add r6,v30ptr,r2
-	ldrb r0,[r6,#v30Regs]
+	ldrb r6,[r5,#v30ModRmRm]
 	eatCycles 1
+	ldrb r0,[v30ptr,-r6]
 0:
 	ldrb r2,[r5,#v30ModRmReg]
 	add r2,v30ptr,r2
@@ -416,7 +412,7 @@ _10:	;@ ADC BR8
 	adc8 r1,r0
 
 	cmp r4,#0xC0
-	strbpl r1,[r6,#v30Regs]
+	strbpl r1,[v30ptr,-r6]
 	ldmfd sp!,{r4-r6,lr}
 	bxpl lr
 	ldr r0,[v30ptr,#v30EA]
@@ -473,9 +469,8 @@ _12:	;@ ADC R8b
 	cmp r0,#0xC0
 	bmi 1f
 	ldrb r2,[r1,#v30ModRmRm]
-	add r1,v30ptr,r2
-	ldrb r0,[r1,#v30Regs]
 	eatCycles 1
+	ldrb r0,[v30ptr,-r2]
 0:
 	ldrb r1,[r4,#v30Regs]
 
@@ -581,10 +576,9 @@ _18:	;@ SBB BR8
 	add r5,v30ptr,r0
 	cmp r4,#0xC0
 	bmi 1f
-	ldrb r2,[r5,#v30ModRmRm]
-	add r6,v30ptr,r2
-	ldrb r0,[r6,#v30Regs]
+	ldrb r6,[r5,#v30ModRmRm]
 	eatCycles 1
+	ldrb r0,[v30ptr,-r6]
 0:
 	ldrb r2,[r5,#v30ModRmReg]
 	add r2,v30ptr,r2
@@ -593,7 +587,7 @@ _18:	;@ SBB BR8
 	subc8 r1,r0
 
 	cmp r4,#0xC0
-	strbpl r1,[r6,#v30Regs]
+	strbpl r1,[v30ptr,-r6]
 	ldmfd sp!,{r4-r6,lr}
 	bxpl lr
 	ldr r0,[v30ptr,#v30EA]
@@ -650,9 +644,8 @@ _1A:	;@ SBB R8b
 	cmp r0,#0xC0
 	bmi 1f
 	ldrb r2,[r1,#v30ModRmRm]
-	add r1,v30ptr,r2
-	ldrb r0,[r1,#v30Regs]
 	eatCycles 1
+	ldrb r0,[v30ptr,-r2]
 0:
 	ldrb r1,[r4,#v30Regs]
 
@@ -757,10 +750,9 @@ _20:	;@ AND BR8
 	add r5,v30ptr,r0
 	cmp r4,#0xC0
 	bmi 1f
-	ldrb r2,[r5,#v30ModRmRm]
-	add r6,v30ptr,r2
-	ldrb r0,[r6,#v30Regs]
+	ldrb r6,[r5,#v30ModRmRm]
 	eatCycles 1
+	ldrb r0,[v30ptr,-r6]
 0:
 	ldrb r2,[r5,#v30ModRmReg]
 	add r2,v30ptr,r2
@@ -769,7 +761,7 @@ _20:	;@ AND BR8
 	and8 r1,r0
 
 	cmp r4,#0xC0
-	strbpl r1,[r6,#v30Regs]
+	strbpl r1,[v30ptr,-r6]
 	ldmfd sp!,{r4-r6,lr}
 	bxpl lr
 	ldr r0,[v30ptr,#v30EA]
@@ -826,9 +818,8 @@ _22:	;@ AND R8b
 	cmp r0,#0xC0
 	bmi 1f
 	ldrb r2,[r1,#v30ModRmRm]
-	add r1,v30ptr,r2
-	ldrb r0,[r1,#v30Regs]
 	eatCycles 1
+	ldrb r0,[v30ptr,-r2]
 0:
 	ldrb r1,[r4,#v30Regs]
 
@@ -952,10 +943,9 @@ _28:	;@ SUB BR8
 	add r5,v30ptr,r0
 	cmp r4,#0xC0
 	bmi 1f
-	ldrb r2,[r5,#v30ModRmRm]
-	add r6,v30ptr,r2
-	ldrb r0,[r6,#v30Regs]
+	ldrb r6,[r5,#v30ModRmRm]
 	eatCycles 1
+	ldrb r0,[v30ptr,-r6]
 0:
 	ldrb r2,[r5,#v30ModRmReg]
 	add r2,v30ptr,r2
@@ -964,7 +954,7 @@ _28:	;@ SUB BR8
 	sub8 r1,r0
 
 	cmp r4,#0xC0
-	strbpl r1,[r6,#v30Regs]
+	strbpl r1,[v30ptr,-r6]
 	ldmfd sp!,{r4-r6,lr}
 	bxpl lr
 	ldr r0,[v30ptr,#v30EA]
@@ -1021,9 +1011,8 @@ _2A:	;@ SUB R8b
 	cmp r0,#0xC0
 	bmi 1f
 	ldrb r2,[r1,#v30ModRmRm]
-	add r1,v30ptr,r2
-	ldrb r0,[r1,#v30Regs]
 	eatCycles 1
+	ldrb r0,[v30ptr,-r2]
 0:
 	ldrb r1,[r4,#v30Regs]
 
@@ -1147,10 +1136,9 @@ _30:	;@ XOR BR8
 	add r5,v30ptr,r0
 	cmp r4,#0xC0
 	bmi 1f
-	ldrb r2,[r5,#v30ModRmRm]
-	add r6,v30ptr,r2
-	ldrb r0,[r6,#v30Regs]
+	ldrb r6,[r5,#v30ModRmRm]
 	eatCycles 1
+	ldrb r0,[v30ptr,-r6]
 0:
 	ldrb r2,[r5,#v30ModRmReg]
 	add r2,v30ptr,r2
@@ -1159,7 +1147,7 @@ _30:	;@ XOR BR8
 	xor8 r1,r0
 
 	cmp r4,#0xC0
-	strbpl r1,[r6,#v30Regs]
+	strbpl r1,[v30ptr,-r6]
 	ldmfd sp!,{r4-r6,lr}
 	bxpl lr
 	ldr r0,[v30ptr,#v30EA]
@@ -1216,9 +1204,8 @@ _32:	;@ XOR R8b
 	cmp r0,#0xC0
 	bmi 1f
 	ldrb r2,[r1,#v30ModRmRm]
-	add r1,v30ptr,r2
-	ldrb r0,[r1,#v30Regs]
 	eatCycles 1
+	ldrb r0,[v30ptr,-r2]
 0:
 	ldrb r1,[r4,#v30Regs]
 
@@ -1337,9 +1324,8 @@ _38:	;@ CMP BR8
 	cmp r0,#0xC0
 	bmi 1f
 	ldrb r2,[r4,#v30ModRmRm]
-	add r1,v30ptr,r2
-	ldrb r0,[r1,#v30Regs]
 	eatCycles 1
+	ldrb r0,[v30ptr,-r2]
 0:
 	ldrb r2,[r4,#v30ModRmReg]
 	add r2,v30ptr,r2
@@ -1394,9 +1380,8 @@ _3A:	;@ CMP R8b
 	cmp r0,#0xC0
 	bmi 1f
 	ldrb r2,[r1,#v30ModRmRm]
-	add r1,v30ptr,r2
-	ldrb r0,[r1,#v30Regs]
 	eatCycles 1
+	ldrb r0,[v30ptr,-r2]
 0:
 	ldrb r1,[r4,#v30Regs]
 
@@ -2352,10 +2337,9 @@ _82:	;@ PRE 82
 	cmp r4,#0xC0
 	bmi 1f
 	add r1,v30ptr,r0
-	ldrb r2,[r1,#v30ModRmRm]
-	add r5,v30ptr,r2
-	ldrb r0,[r5,#v30Regs]
+	ldrb r5,[r1,#v30ModRmRm]
 	eatCycles 1
+	ldrb r0,[v30ptr,-r5]
 0:
 	mov r6,r0
 	getNextByte
@@ -2391,7 +2375,7 @@ cmp80:
 	ldmfd sp!,{r4-r6,pc}
 2:
 	cmp r4,#0xC0
-	strbpl r0,[r5,#v30Regs]
+	strbpl r0,[v30ptr,-r5]
 	ldmfd sp!,{r4-r6,lr}
 	bxpl lr
 	mov r1,r0
@@ -2502,9 +2486,8 @@ _84:	;@ TEST BR8
 	cmp r0,#0xC0
 	bmi 1f
 	ldrb r2,[r4,#v30ModRmRm]
-	add r1,v30ptr,r2
-	ldrb r0,[r1,#v30Regs]
 	eatCycles 1
+	ldrb r0,[v30ptr,-r2]
 0:
 	ldrb r2,[r4,#v30ModRmReg]
 	add r2,v30ptr,r2
@@ -2561,11 +2544,10 @@ _86:	;@ XCHG BR8
 
 	eatCycles 1
 	ldrb r2,[r1,#v30ModRmRm]
-	add r2,v30ptr,r2
-	ldrb r0,[r2,#v30Regs]
 	ldrb r1,[r4,#v30Regs]
+	ldrb r0,[v30ptr,-r2]
+	strb r1,[v30ptr,-r2]
 	strb r0,[r4,#v30Regs]
-	strb r1,[r2,#v30Regs]
 	ldmfd sp!,{r4,pc}
 1:
 	eatCycles 3
@@ -2625,8 +2607,7 @@ _88:	;@ MOV BR8
 	bmi 1f
 
 	ldrb r2,[r3,#v30ModRmRm]
-	add r2,v30ptr,r2
-	strb r4,[r2,#v30Regs]
+	strb r4,[v30ptr,-r2]
 	ldmfd sp!,{r4,pc}
 1:
 	add r2,v30ptr,#v30EATable
@@ -2670,8 +2651,7 @@ _8A:	;@ MOV R8B
 	cmp r0,#0xC0
 	bmi 1f
 	ldrb r2,[r4,#v30ModRmRm]
-	add r1,v30ptr,r2
-	ldrb r0,[r1,#v30Regs]
+	ldrb r0,[v30ptr,-r2]
 0:
 	ldrb r2,[r4,#v30ModRmReg]
 	add r2,v30ptr,r2
@@ -3547,9 +3527,8 @@ _C0:	;@ ROTSHFT BD8
 	cmp r4,#0xC0
 	bmi 1f
 	add r1,v30ptr,r0
-	ldrb r2,[r1,#v30ModRmRm]
-	add r5,v30ptr,r2
-	ldrb r0,[r5,#v30Regs]
+	ldrb r5,[r1,#v30ModRmRm]
+	ldrb r0,[v30ptr,-r5]
 	eatCycles 3
 0:
 	mov r6,r0
@@ -3586,7 +3565,7 @@ shraC0:
 	shra8 r0,r1
 2:
 	cmp r4,#0xC0
-	strbpl r1,[r5,#v30Regs]
+	strbpl r1,[v30ptr,-r5]
 	ldmfdpl sp!,{r4-r6,pc}
 	ldr r0,[v30ptr,#v30EA]
 	ldmfd sp!,{r4-r6,lr}
@@ -3760,10 +3739,9 @@ _C6:	;@ MOV BD8
 	cmp r0,#0xC0
 	bmi 1f
 	add r1,v30ptr,r0
-	ldrb r2,[r1,#v30ModRmRm]
-	add r4,v30ptr,r2
+	ldrb r4,[r1,#v30ModRmRm]
 	getNextByte
-	strb r0,[r4,#v30Regs]
+	strb r0,[v30ptr,-r4]
 	ldmfd sp!,{r4,pc}
 1:
 	add r1,v30ptr,#v30EATable
@@ -3965,11 +3943,10 @@ _D0:	;@ ROTSHFT B
 	cmp r4,#0xC0
 	bmi 1f
 
-	eatCycles 1
 	add r1,v30ptr,r0
-	ldrb r2,[r1,#v30ModRmRm]
-	add r5,v30ptr,r2
-	ldrb r0,[r5,#v30Regs]
+	ldrb r5,[r1,#v30ModRmRm]
+	eatCycles 1
+	ldrb r0,[v30ptr,-r5]
 0:
 	mov r6,r0
 	mov r0,#1
@@ -4016,11 +3993,10 @@ _D2:	;@ ROTSHFT BCL
 	cmp r4,#0xC0
 	bmi 1f
 
-	eatCycles 3
 	add r1,v30ptr,r0
-	ldrb r2,[r1,#v30ModRmRm]
-	add r5,v30ptr,r2
-	ldrb r0,[r5,#v30Regs]
+	ldrb r5,[r1,#v30ModRmRm]
+	eatCycles 3
+	ldrb r0,[v30ptr,-r5]
 0:
 	mov r6,r0
 	ldrb r0,[v30ptr,#v30RegCL]
@@ -4794,9 +4770,8 @@ _F6:	;@ PRE F6
 	cmp r4,#0xC0
 	bmi 1f
 	add r1,v30ptr,r0
-	ldrb r2,[r1,#v30ModRmRm]
-	add r5,v30ptr,r2
-	ldrb r0,[r5,#v30Regs]
+	ldrb r5,[r1,#v30ModRmRm]
+	ldrb r0,[v30ptr,-r5]
 0:
 	and r2,r4,#0x38
 	ldr pc,[pc,r2,lsr#1]
@@ -4812,7 +4787,7 @@ notF6:
 	eatCycles 1
 	mvn r1,r0
 	cmp r4,#0xC0
-	strbpl r1,[r5,#v30Regs]
+	strbpl r1,[v30ptr,-r5]
 	mov r0,r5
 	ldmfd sp!,{r4-r5,lr}
 	bxpl lr
@@ -4830,7 +4805,7 @@ negF6:
 	str r1,[v30ptr,#v30ZeroVal]
 	str r1,[v30ptr,#v30ParityVal]
 	cmp r4,#0xC0
-	strbpl r1,[r5,#v30Regs]
+	strbpl r1,[v30ptr,-r5]
 	mov r0,r5
 	ldmfd sp!,{r4-r5,lr}
 	bxpl lr
@@ -5102,9 +5077,8 @@ _FE:	;@ PRE FE
 	cmp r4,#0xC0
 	bmi 1f
 	add r1,v30ptr,r0
-	ldrb r2,[r1,#v30ModRmRm]
-	add r5,v30ptr,r2
-	ldrb r0,[r5,#v30Regs]
+	ldrb r5,[r1,#v30ModRmRm]
+	ldrb r0,[v30ptr,-r5]
 	eatCycles 1
 0:
 	mov r2,#0			;@ Overflow
@@ -5132,7 +5106,7 @@ endFE:
 	str r1,[v30ptr,#v30ZeroVal]
 	str r1,[v30ptr,#v30ParityVal]
 	cmp r4,#0xC0
-	strbpl r1,[r5,#v30Regs]
+	strbpl r1,[v30ptr,-r5]
 	mov r0,r5
 	ldmfd sp!,{r4,r5,lr}
 	bxpl lr
@@ -5760,10 +5734,45 @@ V30IrqVectorDummy:
 	bx lr
 
 ;@----------------------------------------------------------------------------
-V30Reset:					;@ r11=v30ptr
-;@ Called by cpuReset, (r0-r3,r12 are free to use)
+V30Init:					;@ r0=v30ptr
+;@ Called by cpuReset
+;@----------------------------------------------------------------------------
+	stmfd sp!,{v30ptr,lr}
+	mov v30ptr,r0
+	add r0,v30ptr,#v30ModRmRm
+	adr r1,regConvert
+	mov r2,#0xC0
+regConvLoop:
+	and r3,r2,#7
+	ldr r3,[r1,r3,lsl#2]
+	rsb r3,r3,#0
+	strb r3,[r0,r2]
+	add r2,r2,#1
+	cmp r2,#0x100
+	bne regConvLoop
+
+	add r0,v30ptr,#v30ModRmReg
+	mov r12,#v30Regs
+	mov r2,#0
+regConv2Loop:
+	and r3,r2,#0x38
+	ldr r3,[r1,r3,lsr#1]
+	sub r3,r3,r12
+	strb r3,[r0,r2]
+	add r2,r2,#1
+	cmp r2,#0x100
+	bne regConv2Loop
+
+	ldmfd sp!,{v30ptr,lr}
+	bx lr
+regConvert:
+	.long v30RegAL,v30RegCL,v30RegDL,v30RegBL,v30RegAH,v30RegCH,v30RegDH,v30RegBH
+;@----------------------------------------------------------------------------
+V30Reset:					;@ r0=v30ptr
+;@ Called by cpuReset
 ;@----------------------------------------------------------------------------
 	stmfd sp!,{r4-r11,lr}
+	mov v30ptr,r0
 
 	adr r1,registerValues		;@ Startup values for different versions of the cpu.
 
