@@ -50,16 +50,15 @@ _00:	;@ ADD BR8
 	stmfd sp!,{r4-r6,lr}
 	getNextByte
 	mov r4,r0
-	add r5,v30ptr,r0
+	add r1,v30ptr,r0
+	ldrb r5,[r1,#v30ModRmReg]
 	cmp r4,#0xC0
 	bmi 1f
-	ldrb r6,[r5,#v30ModRmRm]
+	ldrb r6,[r1,#v30ModRmRm]
 	eatCycles 1
 	ldrb r0,[v30ptr,-r6]
 0:
-	ldrb r2,[r5,#v30ModRmReg]
-	add r2,v30ptr,r2
-	ldrb r1,[r2,#v30Regs]
+	ldrb r1,[v30ptr,-r5]
 
 	add8 r1,r0
 
@@ -116,19 +115,18 @@ _02:	;@ ADD R8b
 	stmfd sp!,{r4,lr}
 	getNextByte
 	add r1,v30ptr,r0
-	ldrb r2,[r1,#v30ModRmReg]
-	add r4,v30ptr,r2
+	ldrb r4,[r1,#v30ModRmReg]
 	cmp r0,#0xC0
 	bmi 1f
 	ldrb r2,[r1,#v30ModRmRm]
 	eatCycles 1
 	ldrb r0,[v30ptr,-r2]
 0:
-	ldrb r1,[r4,#v30Regs]
+	ldrb r1,[v30ptr,-r4]
 
 	add8 r0,r1
 
-	strb r0,[r4,#v30Regs]
+	strb r0,[v30ptr,-r4]
 	ldmfd sp!,{r4,pc}
 1:
 	eatCycles 2
@@ -224,16 +222,15 @@ _08:	;@ OR BR8
 	stmfd sp!,{r4-r6,lr}
 	getNextByte
 	mov r4,r0
-	add r5,v30ptr,r0
+	add r1,v30ptr,r0
+	ldrb r5,[r1,#v30ModRmReg]
 	cmp r4,#0xC0
 	bmi 1f
-	ldrb r6,[r5,#v30ModRmRm]
+	ldrb r6,[r1,#v30ModRmRm]
 	eatCycles 1
 	ldrb r0,[v30ptr,-r6]
 0:
-	ldrb r2,[r5,#v30ModRmReg]
-	add r2,v30ptr,r2
-	ldrb r1,[r2,#v30Regs]
+	ldrb r1,[v30ptr,-r5]
 
 	or8 r1,r0
 
@@ -290,19 +287,18 @@ _0A:	;@ OR R8b
 	stmfd sp!,{r4,lr}
 	getNextByte
 	add r1,v30ptr,r0
-	ldrb r2,[r1,#v30ModRmReg]
-	add r4,v30ptr,r2
+	ldrb r4,[r1,#v30ModRmReg]
 	cmp r0,#0xC0
 	bmi 1f
 	ldrb r2,[r1,#v30ModRmRm]
 	eatCycles 1
 	ldrb r0,[v30ptr,-r2]
 0:
-	ldrb r1,[r4,#v30Regs]
+	ldrb r1,[v30ptr,-r4]
 
 	or8 r0,r1
 
-	strb r0,[r4,#v30Regs]
+	strb r0,[v30ptr,-r4]
 	ldmfd sp!,{r4,pc}
 1:
 	eatCycles 2
@@ -398,16 +394,15 @@ _10:	;@ ADC BR8
 	stmfd sp!,{r4-r6,lr}
 	getNextByte
 	mov r4,r0
-	add r5,v30ptr,r0
+	add r1,v30ptr,r0
+	ldrb r5,[r1,#v30ModRmReg]
 	cmp r4,#0xC0
 	bmi 1f
-	ldrb r6,[r5,#v30ModRmRm]
+	ldrb r6,[r1,#v30ModRmRm]
 	eatCycles 1
 	ldrb r0,[v30ptr,-r6]
 0:
-	ldrb r2,[r5,#v30ModRmReg]
-	add r2,v30ptr,r2
-	ldrb r1,[r2,#v30Regs]
+	ldrb r1,[v30ptr,-r5]
 
 	adc8 r1,r0
 
@@ -464,19 +459,18 @@ _12:	;@ ADC R8b
 	stmfd sp!,{r4,lr}
 	getNextByte
 	add r1,v30ptr,r0
-	ldrb r2,[r1,#v30ModRmReg]
-	add r4,v30ptr,r2
+	ldrb r4,[r1,#v30ModRmReg]
 	cmp r0,#0xC0
 	bmi 1f
 	ldrb r2,[r1,#v30ModRmRm]
 	eatCycles 1
 	ldrb r0,[v30ptr,-r2]
 0:
-	ldrb r1,[r4,#v30Regs]
+	ldrb r1,[v30ptr,-r4]
 
 	adc8 r0,r1
 
-	strb r0,[r4,#v30Regs]
+	strb r0,[v30ptr,-r4]
 	ldmfd sp!,{r4,pc}
 1:
 	eatCycles 2
@@ -573,16 +567,15 @@ _18:	;@ SBB BR8
 	stmfd sp!,{r4-r6,lr}
 	getNextByte
 	mov r4,r0
-	add r5,v30ptr,r0
+	add r1,v30ptr,r0
+	ldrb r5,[r1,#v30ModRmReg]
 	cmp r4,#0xC0
 	bmi 1f
-	ldrb r6,[r5,#v30ModRmRm]
+	ldrb r6,[r1,#v30ModRmRm]
 	eatCycles 1
 	ldrb r0,[v30ptr,-r6]
 0:
-	ldrb r2,[r5,#v30ModRmReg]
-	add r2,v30ptr,r2
-	ldrb r1,[r2,#v30Regs]
+	ldrb r1,[v30ptr,-r5]
 
 	subc8 r1,r0
 
@@ -639,19 +632,18 @@ _1A:	;@ SBB R8b
 	stmfd sp!,{r4,lr}
 	getNextByte
 	add r1,v30ptr,r0
-	ldrb r2,[r1,#v30ModRmReg]
-	add r4,v30ptr,r2
+	ldrb r4,[r1,#v30ModRmReg]
 	cmp r0,#0xC0
 	bmi 1f
 	ldrb r2,[r1,#v30ModRmRm]
 	eatCycles 1
 	ldrb r0,[v30ptr,-r2]
 0:
-	ldrb r1,[r4,#v30Regs]
+	ldrb r1,[v30ptr,-r4]
 
 	subc8 r0,r1
 
-	strb r0,[r4,#v30Regs]
+	strb r0,[v30ptr,-r4]
 	ldmfd sp!,{r4,pc}
 1:
 	eatCycles 2
@@ -747,16 +739,15 @@ _20:	;@ AND BR8
 	stmfd sp!,{r4-r6,lr}
 	getNextByte
 	mov r4,r0
-	add r5,v30ptr,r0
+	add r1,v30ptr,r0
+	ldrb r5,[r1,#v30ModRmReg]
 	cmp r4,#0xC0
 	bmi 1f
-	ldrb r6,[r5,#v30ModRmRm]
+	ldrb r6,[r1,#v30ModRmRm]
 	eatCycles 1
 	ldrb r0,[v30ptr,-r6]
 0:
-	ldrb r2,[r5,#v30ModRmReg]
-	add r2,v30ptr,r2
-	ldrb r1,[r2,#v30Regs]
+	ldrb r1,[v30ptr,-r5]
 
 	and8 r1,r0
 
@@ -813,19 +804,18 @@ _22:	;@ AND R8b
 	stmfd sp!,{r4,lr}
 	getNextByte
 	add r1,v30ptr,r0
-	ldrb r2,[r1,#v30ModRmReg]
-	add r4,v30ptr,r2
+	ldrb r4,[r1,#v30ModRmReg]
 	cmp r0,#0xC0
 	bmi 1f
 	ldrb r2,[r1,#v30ModRmRm]
 	eatCycles 1
 	ldrb r0,[v30ptr,-r2]
 0:
-	ldrb r1,[r4,#v30Regs]
+	ldrb r1,[v30ptr,-r4]
 
 	and8 r0,r1
 
-	strb r0,[r4,#v30Regs]
+	strb r0,[v30ptr,-r4]
 	ldmfd sp!,{r4,pc}
 1:
 	eatCycles 2
@@ -940,16 +930,15 @@ _28:	;@ SUB BR8
 	stmfd sp!,{r4-r6,lr}
 	getNextByte
 	mov r4,r0
-	add r5,v30ptr,r0
+	add r1,v30ptr,r0
+	ldrb r5,[r1,#v30ModRmReg]
 	cmp r4,#0xC0
 	bmi 1f
-	ldrb r6,[r5,#v30ModRmRm]
+	ldrb r6,[r1,#v30ModRmRm]
 	eatCycles 1
 	ldrb r0,[v30ptr,-r6]
 0:
-	ldrb r2,[r5,#v30ModRmReg]
-	add r2,v30ptr,r2
-	ldrb r1,[r2,#v30Regs]
+	ldrb r1,[v30ptr,-r5]
 
 	sub8 r1,r0
 
@@ -1006,19 +995,18 @@ _2A:	;@ SUB R8b
 	stmfd sp!,{r4,lr}
 	getNextByte
 	add r1,v30ptr,r0
-	ldrb r2,[r1,#v30ModRmReg]
-	add r4,v30ptr,r2
+	ldrb r4,[r1,#v30ModRmReg]
 	cmp r0,#0xC0
 	bmi 1f
 	ldrb r2,[r1,#v30ModRmRm]
 	eatCycles 1
 	ldrb r0,[v30ptr,-r2]
 0:
-	ldrb r1,[r4,#v30Regs]
+	ldrb r1,[v30ptr,-r4]
 
 	sub8 r0,r1
 
-	strb r0,[r4,#v30Regs]
+	strb r0,[v30ptr,-r4]
 	ldmfd sp!,{r4,pc}
 1:
 	eatCycles 2
@@ -1133,16 +1121,15 @@ _30:	;@ XOR BR8
 	stmfd sp!,{r4-r6,lr}
 	getNextByte
 	mov r4,r0
-	add r5,v30ptr,r0
+	add r1,v30ptr,r0
+	ldrb r5,[r1,#v30ModRmReg]
 	cmp r4,#0xC0
 	bmi 1f
-	ldrb r6,[r5,#v30ModRmRm]
+	ldrb r6,[r1,#v30ModRmRm]
 	eatCycles 1
 	ldrb r0,[v30ptr,-r6]
 0:
-	ldrb r2,[r5,#v30ModRmReg]
-	add r2,v30ptr,r2
-	ldrb r1,[r2,#v30Regs]
+	ldrb r1,[v30ptr,-r5]
 
 	xor8 r1,r0
 
@@ -1199,19 +1186,18 @@ _32:	;@ XOR R8b
 	stmfd sp!,{r4,lr}
 	getNextByte
 	add r1,v30ptr,r0
-	ldrb r2,[r1,#v30ModRmReg]
-	add r4,v30ptr,r2
+	ldrb r4,[r1,#v30ModRmReg]
 	cmp r0,#0xC0
 	bmi 1f
 	ldrb r2,[r1,#v30ModRmRm]
 	eatCycles 1
 	ldrb r0,[v30ptr,-r2]
 0:
-	ldrb r1,[r4,#v30Regs]
+	ldrb r1,[v30ptr,-r4]
 
 	xor8 r0,r1
 
-	strb r0,[r4,#v30Regs]
+	strb r0,[v30ptr,-r4]
 	ldmfd sp!,{r4,pc}
 1:
 	eatCycles 2
@@ -1320,16 +1306,15 @@ _38:	;@ CMP BR8
 ;@----------------------------------------------------------------------------
 	stmfd sp!,{r4,lr}
 	getNextByte
-	add r4,v30ptr,r0
+	add r1,v30ptr,r0
+	ldrb r4,[r1,#v30ModRmReg]
 	cmp r0,#0xC0
 	bmi 1f
-	ldrb r2,[r4,#v30ModRmRm]
+	ldrb r2,[r1,#v30ModRmRm]
 	eatCycles 1
 	ldrb r0,[v30ptr,-r2]
 0:
-	ldrb r2,[r4,#v30ModRmReg]
-	add r2,v30ptr,r2
-	ldrb r1,[r2,#v30Regs]
+	ldrb r1,[v30ptr,-r4]
 
 	sub8 r1,r0
 
@@ -1375,15 +1360,14 @@ _3A:	;@ CMP R8b
 	stmfd sp!,{r4,lr}
 	getNextByte
 	add r1,v30ptr,r0
-	ldrb r2,[r1,#v30ModRmReg]
-	add r4,v30ptr,r2
+	ldrb r4,[r1,#v30ModRmReg]
 	cmp r0,#0xC0
 	bmi 1f
 	ldrb r2,[r1,#v30ModRmRm]
 	eatCycles 1
 	ldrb r0,[v30ptr,-r2]
 0:
-	ldrb r1,[r4,#v30Regs]
+	ldrb r1,[v30ptr,-r4]
 
 	sub8 r0,r1
 
@@ -2482,16 +2466,15 @@ _84:	;@ TEST BR8
 ;@----------------------------------------------------------------------------
 	stmfd sp!,{r4,lr}
 	getNextByte
-	add r4,v30ptr,r0
+	add r1,v30ptr,r0
+	ldrb r4,[r1,#v30ModRmReg]
 	cmp r0,#0xC0
 	bmi 1f
-	ldrb r2,[r4,#v30ModRmRm]
+	ldrb r2,[r1,#v30ModRmRm]
 	eatCycles 1
 	ldrb r0,[v30ptr,-r2]
 0:
-	ldrb r2,[r4,#v30ModRmReg]
-	add r2,v30ptr,r2
-	ldrb r1,[r2,#v30Regs]
+	ldrb r1,[v30ptr,-r4]
 
 	and8 r1,r0
 
@@ -2537,17 +2520,16 @@ _86:	;@ XCHG BR8
 	stmfd sp!,{r4,lr}
 	getNextByte
 	add r1,v30ptr,r0
-	ldrb r2,[r1,#v30ModRmReg]
-	add r4,v30ptr,r2
+	ldrb r4,[r1,#v30ModRmReg]
 	cmp r0,#0xC0
 	bmi 1f
 
 	eatCycles 1
 	ldrb r2,[r1,#v30ModRmRm]
-	ldrb r1,[r4,#v30Regs]
+	ldrb r1,[v30ptr,-r4]
 	ldrb r0,[v30ptr,-r2]
 	strb r1,[v30ptr,-r2]
-	strb r0,[r4,#v30Regs]
+	strb r0,[v30ptr,-r4]
 	ldmfd sp!,{r4,pc}
 1:
 	eatCycles 3
@@ -2555,8 +2537,8 @@ _86:	;@ XCHG BR8
 	mov lr,pc
 	ldr pc,[r1,r0,lsl#2]
 	bl cpuReadMem20
-	ldrb r1,[r4,#v30Regs]
-	strb r0,[r4,#v30Regs]
+	ldrb r1,[v30ptr,-r4]
+	strb r0,[v30ptr,-r4]
 	ldmfd sp!,{r4,lr}
 	ldr r0,[v30ptr,#v30EA]
 	b cpuWriteMem20
@@ -2597,22 +2579,20 @@ _88:	;@ MOV BR8
 ;@----------------------------------------------------------------------------
 	stmfd sp!,{r4,lr}
 	getNextByte
-	add r3,v30ptr,r0
-	ldrb r2,[r3,#v30ModRmReg]
-	add r2,v30ptr,r2
-	ldrb r4,[r2,#v30Regs]
-
+	add r1,v30ptr,r0
+	ldrb r2,[r1,#v30ModRmReg]
 	eatCycles 1
+	ldrb r4,[v30ptr,-r2]
 	cmp r0,#0xC0
 	bmi 1f
 
-	ldrb r2,[r3,#v30ModRmRm]
+	ldrb r2,[r1,#v30ModRmRm]
 	strb r4,[v30ptr,-r2]
 	ldmfd sp!,{r4,pc}
 1:
-	add r2,v30ptr,#v30EATable
+	add r1,v30ptr,#v30EATable
 	mov lr,pc
-	ldr pc,[r2,r0,lsl#2]
+	ldr pc,[r1,r0,lsl#2]
 	mov r1,r4
 	ldmfd sp!,{r4,lr}
 	b cpuWriteMem20
@@ -2646,16 +2626,15 @@ _8A:	;@ MOV R8B
 ;@----------------------------------------------------------------------------
 	stmfd sp!,{r4,lr}
 	getNextByte
-	add r4,v30ptr,r0
+	add r1,v30ptr,r0
+	ldrb r4,[r1,#v30ModRmReg]
 	eatCycles 1
 	cmp r0,#0xC0
 	bmi 1f
-	ldrb r2,[r4,#v30ModRmRm]
+	ldrb r2,[r1,#v30ModRmRm]
 	ldrb r0,[v30ptr,-r2]
 0:
-	ldrb r2,[r4,#v30ModRmReg]
-	add r2,v30ptr,r2
-	strb r0,[r2,#v30Regs]
+	strb r0,[v30ptr,-r4]
 	ldmfd sp!,{r4,pc}
 1:
 	add r1,v30ptr,#v30EATable
@@ -5752,12 +5731,11 @@ regConvLoop:
 	bne regConvLoop
 
 	add r0,v30ptr,#v30ModRmReg
-	mov r12,#v30Regs
 	mov r2,#0
 regConv2Loop:
 	and r3,r2,#0x38
 	ldr r3,[r1,r3,lsr#1]
-	sub r3,r3,r12
+	rsb r3,r3,#0
 	strb r3,[r0,r2]
 	add r2,r2,#1
 	cmp r2,#0x100

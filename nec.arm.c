@@ -98,7 +98,7 @@ extern Mod_Struct Mod_RM;
 void nec_reset(void *param)
 {
 	unsigned int i, j, c;
-	BREGS reg_name[8] = { AL, CL, DL, BL, AH, CH, DH, BH };
+//	BREGS reg_name[8] = { AL, CL, DL, BL, AH, CH, DH, BH };
 
 	memset( &I, 0, sizeof(I) );
 
