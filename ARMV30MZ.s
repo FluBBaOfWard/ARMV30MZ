@@ -86,12 +86,12 @@ _01:	;@ ADD WR16
 	cmp r4,#0xC0
 	bmi 1f
 	and r2,r4,#7
-	add r5,v30ptr,r2,lsl#1
+	add r5,v30ptr,r2,lsl#2
 	ldrh r0,[r5,#v30Regs]
 	eatCycles 1
 0:
 	and r2,r4,#0x38
-	add r2,v30ptr,r2,lsr#2
+	add r2,v30ptr,r2,lsr#1
 	ldrh r1,[r2,#v30Regs]
 
 	add16 r1,r0
@@ -145,13 +145,13 @@ _03:	;@ ADD R16W
 	stmfd sp!,{r4,lr}
 	getNextByte
 	and r1,r0,#0x38
-	add r4,v30ptr,r1,lsr#2
+	add r4,v30ptr,r1,lsr#1
 	cmp r0,#0xC0
 	bmi 1f
-	and r2,r0,#7
-	add r1,v30ptr,r2,lsl#1
-	ldrh r0,[r1,#v30Regs]
 	eatCycles 1
+	and r2,r0,#7
+	add r1,v30ptr,r2,lsl#2
+	ldrh r0,[r1,#v30Regs]
 0:
 	ldrh r1,[r4,#v30Regs]
 
@@ -261,13 +261,13 @@ _09:	;@ OR WR16
 	mov r4,r0
 	cmp r4,#0xC0
 	bmi 1f
-	and r2,r4,#7
-	add r5,v30ptr,r2,lsl#1
-	ldrh r0,[r5,#v30Regs]
 	eatCycles 1
+	and r2,r4,#7
+	add r5,v30ptr,r2,lsl#2
+	ldrh r0,[r5,#v30Regs]
 0:
 	and r2,r4,#0x38
-	add r2,v30ptr,r2,lsr#2
+	add r2,v30ptr,r2,lsr#1
 	ldrh r1,[r2,#v30Regs]
 
 	or16 r1,r0
@@ -321,11 +321,11 @@ _0B:	;@ OR R16W
 	stmfd sp!,{r4,lr}
 	getNextByte
 	and r1,r0,#0x38
-	add r4,v30ptr,r1,lsr#2
+	add r4,v30ptr,r1,lsr#1
 	cmp r0,#0xC0
 	bmi 1f
 	and r2,r0,#7
-	add r1,v30ptr,r2,lsl#1
+	add r1,v30ptr,r2,lsl#2
 	ldrh r0,[r1,#v30Regs]
 	eatCycles 1
 0:
@@ -438,12 +438,12 @@ _11:	;@ ADC WR16
 	cmp r4,#0xC0
 	bmi 1f
 	and r2,r4,#7
-	add r5,v30ptr,r2,lsl#1
+	add r5,v30ptr,r2,lsl#2
 	ldrh r0,[r5,#v30Regs]
 	eatCycles 1
 0:
 	and r2,r4,#0x38
-	add r2,v30ptr,r2,lsr#2
+	add r2,v30ptr,r2,lsr#1
 	ldrh r1,[r2,#v30Regs]
 
 	adc16 r1,r0
@@ -497,11 +497,11 @@ _13:	;@ ADC R16W
 	stmfd sp!,{r4,lr}
 	getNextByte
 	and r1,r0,#0x38
-	add r4,v30ptr,r1,lsr#2
+	add r4,v30ptr,r1,lsr#1
 	cmp r0,#0xC0
 	bmi 1f
 	and r2,r0,#7
-	add r1,v30ptr,r2,lsl#1
+	add r1,v30ptr,r2,lsl#2
 	ldrh r0,[r1,#v30Regs]
 	eatCycles 1
 0:
@@ -615,12 +615,12 @@ _19:	;@ SBB WR16
 	cmp r4,#0xC0
 	bmi 1f
 	and r2,r4,#7
-	add r5,v30ptr,r2,lsl#1
+	add r5,v30ptr,r2,lsl#2
 	ldrh r0,[r5,#v30Regs]
 	eatCycles 1
 0:
 	and r2,r4,#0x38
-	add r2,v30ptr,r2,lsr#2
+	add r2,v30ptr,r2,lsr#1
 	ldrh r1,[r2,#v30Regs]
 
 	subc16 r1,r0
@@ -674,11 +674,11 @@ _1B:	;@ SBB R16W
 	stmfd sp!,{r4,lr}
 	getNextByte
 	and r1,r0,#0x38
-	add r4,v30ptr,r1,lsr#2
+	add r4,v30ptr,r1,lsr#1
 	cmp r0,#0xC0
 	bmi 1f
 	and r2,r0,#7
-	add r1,v30ptr,r2,lsl#1
+	add r1,v30ptr,r2,lsl#2
 	ldrh r0,[r1,#v30Regs]
 	eatCycles 1
 0:
@@ -791,12 +791,12 @@ _21:	;@ AND WR16
 	cmp r4,#0xC0
 	bmi 1f
 	and r2,r4,#7
-	add r5,v30ptr,r2,lsl#1
+	add r5,v30ptr,r2,lsl#2
 	ldrh r0,[r5,#v30Regs]
 	eatCycles 1
 0:
 	and r2,r4,#0x38
-	add r2,v30ptr,r2,lsr#2
+	add r2,v30ptr,r2,lsr#1
 	ldrh r1,[r2,#v30Regs]
 
 	and16 r1,r0
@@ -850,11 +850,11 @@ _23:	;@ AND R16W
 	stmfd sp!,{r4,lr}
 	getNextByte
 	and r1,r0,#0x38
-	add r4,v30ptr,r1,lsr#2
+	add r4,v30ptr,r1,lsr#1
 	cmp r0,#0xC0
 	bmi 1f
 	and r2,r0,#7
-	add r1,v30ptr,r2,lsl#1
+	add r1,v30ptr,r2,lsl#2
 	ldrh r0,[r1,#v30Regs]
 	eatCycles 1
 0:
@@ -986,12 +986,12 @@ _29:	;@ SUB WR16
 	cmp r4,#0xC0
 	bmi 1f
 	and r2,r4,#7
-	add r5,v30ptr,r2,lsl#1
+	add r5,v30ptr,r2,lsl#2
 	ldrh r0,[r5,#v30Regs]
 	eatCycles 1
 0:
 	and r2,r4,#0x38
-	add r2,v30ptr,r2,lsr#2
+	add r2,v30ptr,r2,lsr#1
 	ldrh r1,[r2,#v30Regs]
 
 	sub16 r1,r0
@@ -1045,11 +1045,11 @@ _2B:	;@ SUB R16W
 	stmfd sp!,{r4,lr}
 	getNextByte
 	and r1,r0,#0x38
-	add r4,v30ptr,r1,lsr#2
+	add r4,v30ptr,r1,lsr#1
 	cmp r0,#0xC0
 	bmi 1f
 	and r2,r0,#7
-	add r1,v30ptr,r2,lsl#1
+	add r1,v30ptr,r2,lsl#2
 	ldrh r0,[r1,#v30Regs]
 	eatCycles 1
 0:
@@ -1181,12 +1181,12 @@ _31:	;@ XOR WR16
 	cmp r4,#0xC0
 	bmi 1f
 	and r2,r4,#7
-	add r5,v30ptr,r2,lsl#1
+	add r5,v30ptr,r2,lsl#2
 	ldrh r0,[r5,#v30Regs]
 	eatCycles 1
 0:
 	and r2,r4,#0x38
-	add r2,v30ptr,r2,lsr#2
+	add r2,v30ptr,r2,lsr#1
 	ldrh r1,[r2,#v30Regs]
 
 	xor16 r1,r0
@@ -1240,11 +1240,11 @@ _33:	;@ XOR R16W
 	stmfd sp!,{r4,lr}
 	getNextByte
 	and r1,r0,#0x38
-	add r4,v30ptr,r1,lsr#2
+	add r4,v30ptr,r1,lsr#1
 	cmp r0,#0xC0
 	bmi 1f
 	and r2,r0,#7
-	add r1,v30ptr,r2,lsl#1
+	add r1,v30ptr,r2,lsl#2
 	ldrh r0,[r1,#v30Regs]
 	eatCycles 1
 0:
@@ -1365,11 +1365,11 @@ _39:	;@ CMP WR16
 	cmp r0,#0xC0
 	bmi 1f
 	and r2,r0,#7
-	add r2,v30ptr,r2,lsl#1
+	add r2,v30ptr,r2,lsl#2
 	ldrh r0,[r2,#v30Regs]
 	eatCycles 1
 0:
-	add r2,v30ptr,r4,lsr#2
+	add r2,v30ptr,r4,lsr#1
 	ldrh r1,[r2,#v30Regs]
 
 	sub16 r1,r0
@@ -1417,11 +1417,11 @@ _3B:	;@ CMP R16W
 	stmfd sp!,{r4,lr}
 	getNextByte
 	and r1,r0,#0x38
-	add r4,v30ptr,r1,lsr#2
+	add r4,v30ptr,r1,lsr#1
 	cmp r0,#0xC0
 	bmi 1f
 	and r2,r0,#7
-	add r1,v30ptr,r2,lsl#1
+	add r1,v30ptr,r2,lsl#2
 	ldrh r0,[r1,#v30Regs]
 	eatCycles 1
 0:
@@ -1874,21 +1874,21 @@ _61:	;@ POPA
 i_chkind:
 _62:	;@ CHKIND
 ;@----------------------------------------------------------------------------
-	stmfd sp!,{r4-r6,lr}
+	stmfd sp!,{r4-r5,lr}
 	getNextByte
 	and r1,r0,#0x38
-	add r4,v30ptr,r1,lsr#2
+	add r4,v30ptr,r1,lsr#1
 	cmp r0,#0xC0
 	bpl 1f
 	add r1,v30ptr,#v30EATable
 	mov lr,pc
 	ldr pc,[r1,r0,lsl#2]
-	mov r6,r0,ror#28
+	mov r5,r0,ror#28
 	bl cpuReadMem20W
 0:
+	add r1,r5,#0x20000
 	mov r5,r0
-	add r6,r6,#0x20000
-	mov r0,r6,ror#4
+	mov r0,r1,ror#4
 	bl cpuReadMem20W
 	ldrh r1,[r4,#v30Regs]
 
@@ -1896,14 +1896,14 @@ _62:	;@ CHKIND
 	cmp r1,r5
 	cmppl r0,r1
 	submi v30cyc,v30cyc,#7*CYCLE
-	ldmfd sp!,{r4-r6,lr}
+	ldmfd sp!,{r4-r5,lr}
 	bxpl lr
 	mov r0,#5
 	b nec_interrupt
 1:
 	mov r11,r11					;@ Not correct?
 	and r2,r0,#7
-	add r1,v30ptr,r2,lsl#1
+	add r1,v30ptr,r2,lsl#2
 	ldrh r0,[r1,#v30Regs]
 	b 0b
 
@@ -1929,11 +1929,11 @@ _69:	;@ IMUL D16
 	stmfd sp!,{r4,r5,lr}
 	getNextByte
 	and r1,r0,#0x38
-	add r4,v30ptr,r1,lsr#2
+	add r4,v30ptr,r1,lsr#1
 	cmp r0,#0xC0
 	bmi 1f
 	and r2,r0,#7
-	add r1,v30ptr,r2,lsl#1
+	add r1,v30ptr,r2,lsl#2
 	ldrh r0,[r1,#v30Regs]
 	eatCycles 3
 0:
@@ -1979,11 +1979,11 @@ _6B:	;@ IMUL D8
 	stmfd sp!,{r4,r5,lr}
 	getNextByte
 	and r1,r0,#0x38
-	add r4,v30ptr,r1,lsr#2
+	add r4,v30ptr,r1,lsr#1
 	cmp r0,#0xC0
 	bmi 1f
 	and r2,r0,#7
-	add r1,v30ptr,r2,lsl#1
+	add r1,v30ptr,r2,lsl#2
 	ldrh r0,[r1,#v30Regs]
 	eatCycles 3
 0:
@@ -2414,7 +2414,7 @@ _81:	;@ PRE 81
 	cmp r4,#0xC0
 	bmi 1f
 	and r2,r4,#7
-	add r5,v30ptr,r2,lsl#1
+	add r5,v30ptr,r2,lsl#2
 	ldrh r0,[r5,#v30Regs]
 	eatCycles 1
 0:
@@ -2476,7 +2476,7 @@ _83:	;@ PRE 83
 	cmp r4,#0xC0
 	bmi 1f
 	and r2,r4,#7
-	add r5,v30ptr,r2,lsl#1
+	add r5,v30ptr,r2,lsl#2
 	ldrh r0,[r5,#v30Regs]
 	eatCycles 1
 0:
@@ -2530,11 +2530,11 @@ _85:	;@ TEST WR16
 	cmp r0,#0xC0
 	bmi 1f
 	and r2,r0,#7
-	add r2,v30ptr,r2,lsl#1
+	add r2,v30ptr,r2,lsl#2
 	ldrh r0,[r2,#v30Regs]
 	eatCycles 1
 0:
-	add r2,v30ptr,r4,lsr#2
+	add r2,v30ptr,r4,lsr#1
 	ldrh r1,[r2,#v30Regs]
 
 	and16 r1,r0
@@ -2551,67 +2551,64 @@ _85:	;@ TEST WR16
 i_xchg_br8:
 _86:	;@ XCHG BR8
 ;@----------------------------------------------------------------------------
-	stmfd sp!,{r4-r6,lr}
+	stmfd sp!,{r4,lr}
 	getNextByte
-	mov r4,r0
-	add r5,v30ptr,r0
-	cmp r4,#0xC0
+	add r1,v30ptr,r0
+	ldrb r2,[r1,#v30ModRmReg]
+	add r4,v30ptr,r2
+	cmp r0,#0xC0
 	bmi 1f
-	ldrb r2,[r5,#v30ModRmRm]
-	add r6,v30ptr,r2
-	ldrb r0,[r6,#v30Regs]
-	eatCycles 1
-0:
-	ldrb r2,[r5,#v30ModRmReg]
-	add r2,v30ptr,r2
-	ldrb r1,[r2,#v30Regs]
-	strb r0,[r2,#v30Regs]
 
-	cmp r4,#0xC0
-	strbpl r1,[r6,#v30Regs]
-	ldmfd sp!,{r4-r6,lr}
-	bxpl lr
-	ldr r0,[v30ptr,#v30EA]
-	b cpuWriteMem20
+	eatCycles 1
+	ldrb r2,[r1,#v30ModRmRm]
+	add r2,v30ptr,r2
+	ldrb r0,[r2,#v30Regs]
+	ldrb r1,[r4,#v30Regs]
+	strb r0,[r4,#v30Regs]
+	strb r1,[r2,#v30Regs]
+	ldmfd sp!,{r4,pc}
 1:
 	eatCycles 3
 	add r1,v30ptr,#v30EATable
 	mov lr,pc
 	ldr pc,[r1,r0,lsl#2]
-	adr lr,0b
-	b cpuReadMem20
+	bl cpuReadMem20
+	ldrb r1,[r4,#v30Regs]
+	strb r0,[r4,#v30Regs]
+	ldmfd sp!,{r4,lr}
+	ldr r0,[v30ptr,#v30EA]
+	b cpuWriteMem20
+
 ;@----------------------------------------------------------------------------
 i_xchg_wr16:
 _87:	;@ XCHG WR16
 ;@----------------------------------------------------------------------------
-	stmfd sp!,{r4,r5,lr}
+	stmfd sp!,{r4,lr}
 	getNextByte
-	mov r4,r0
-	cmp r4,#0xC0
+	and r4,r0,#0x38
+	add r4,v30ptr,r4,lsr#1
+	cmp r0,#0xC0
 	bmi 1f
-	and r2,r4,#7
-	add r5,v30ptr,r2,lsl#1
-	ldrh r0,[r5,#v30Regs]
-	eatCycles 3
-0:
-	and r2,r4,#0x38
-	add r2,v30ptr,r2,lsr#2
-	ldrh r1,[r2,#v30Regs]
-	strh r0,[r2,#v30Regs]
 
-	cmp r4,#0xC0
-	strhpl r1,[r5,#v30Regs]
-	ldmfd sp!,{r4,r5,lr}
-	bxpl lr
-	ldr r0,[v30ptr,#v30EA]
-	b cpuWriteMem20W
+	eatCycles 3
+	and r2,r0,#7
+	add r2,v30ptr,r2,lsl#2
+	ldrh r0,[r2,#v30Regs]
+	ldrh r1,[r4,#v30Regs]
+	strh r0,[r4,#v30Regs]
+	strh r1,[r2,#v30Regs]
+	ldmfd sp!,{r4,pc}
 1:
 	eatCycles 5
 	add r1,v30ptr,#v30EATable
 	mov lr,pc
 	ldr pc,[r1,r0,lsl#2]
-	adr lr,0b
-	b cpuReadMem20W
+	bl cpuReadMem20W
+	ldrh r1,[r4,#v30Regs]
+	strh r0,[r4,#v30Regs]
+	ldmfd sp!,{r4,lr}
+	ldr r0,[v30ptr,#v30EA]
+	b cpuWriteMem20W
 ;@----------------------------------------------------------------------------
 i_mov_br8:
 _88:	;@ MOV BR8
@@ -2626,6 +2623,7 @@ _88:	;@ MOV BR8
 	eatCycles 1
 	cmp r0,#0xC0
 	bmi 1f
+
 	ldrb r2,[r3,#v30ModRmRm]
 	add r2,v30ptr,r2
 	strb r4,[r2,#v30Regs]
@@ -2644,14 +2642,14 @@ _89:	;@ MOV WR16
 	stmfd sp!,{r4,lr}
 	getNextByte
 	and r1,r0,#0x38
-	add r2,v30ptr,r1,lsr#2
+	add r2,v30ptr,r1,lsr#1
 	ldrh r4,[r2,#v30Regs]
 
 	eatCycles 1
 	cmp r0,#0xC0
 	bmi 0f
 	and r0,r0,#7
-	add r2,v30ptr,r0,lsl#1
+	add r2,v30ptr,r0,lsl#2
 	strh r4,[r2,#v30Regs]
 	ldmfd sp!,{r4,pc}
 0:
@@ -2695,10 +2693,10 @@ _8B:	;@ MOV R16W
 	cmp r0,#0xC0
 	bmi 1f
 	and r2,r0,#7
-	add r1,v30ptr,r2,lsl#1
+	add r1,v30ptr,r2,lsl#2
 	ldrh r0,[r1,#v30Regs]
 0:
-	add r1,v30ptr,r4,lsr#2
+	add r1,v30ptr,r4,lsr#1
 	strh r0,[r1,#v30Regs]
 	eatCycles 1
 	ldmfd sp!,{r4,pc}
@@ -2722,7 +2720,7 @@ _8C:	;@ MOV WSREG
 	cmp r0,#0xC0
 	bmi 1f
 	and r2,r0,#7
-	add r1,v30ptr,r2,lsl#1
+	add r1,v30ptr,r2,lsl#2
 	strh r4,[r1,#v30Regs]
 	ldmfd sp!,{r4,pc}
 1:
@@ -2743,7 +2741,7 @@ _8D:	;@ LEA
 	mov lr,pc
 	ldr pc,[r1,r0,lsl#2]
 	ldrh r1,[v30ptr,#v30EO+2]
-	add r0,v30ptr,r4,lsr#2
+	add r0,v30ptr,r4,lsr#1
 	strh r1,[r0,#v30Regs]
 
 	eatCycles 1
@@ -2759,7 +2757,7 @@ _8E:	;@ MOV SREGW
 	bmi 1f
 	eatCycles 2
 	and r2,r0,#7
-	add r1,v30ptr,r2,lsl#1
+	add r1,v30ptr,r2,lsl#2
 	ldrh r0,[r1,#v30Regs]
 0:
 	tst r4,#0x20
@@ -2792,7 +2790,7 @@ _8F:	;@ POPW
 	bmi 0f
 	eatCycles 1
 	and r0,r0,#7
-	add r2,v30ptr,r0,lsl#1
+	add r2,v30ptr,r0,lsl#2
 	strh r4,[r2,#v30Regs]
 	ldmfd sp!,{r4,pc}
 0:
@@ -3610,7 +3608,7 @@ _C1:	;@ ROTSHFT WD8
 	cmp r4,#0xC0
 	bmi 1f
 	and r2,r0,#7
-	add r5,v30ptr,r2,lsl#1
+	add r5,v30ptr,r2,lsl#2
 	ldrh r0,[r5,#v30Regs]
 	eatCycles 3
 0:
@@ -3707,7 +3705,7 @@ _C4:	;@ LES DW
 	mov r5,r0,ror#28
 	bl cpuReadMem20W
 0:
-	add r1,v30ptr,r4,lsr#2
+	add r1,v30ptr,r4,lsr#1
 	strh r0,[r1,#v30Regs]
 	add r5,r5,#0x20000
 	mov r0,r5,ror#4
@@ -3719,7 +3717,7 @@ _C4:	;@ LES DW
 1:
 	mov r11,r11					;@ Not correct?
 	and r2,r0,#7
-	add r1,v30ptr,r2,lsl#1
+	add r1,v30ptr,r2,lsl#2
 	ldrh r0,[r1,#v30Regs]
 	b 0b
 ;@----------------------------------------------------------------------------
@@ -3737,7 +3735,7 @@ _C5:	;@ LDS DW
 	mov r5,r0,ror#28
 	bl cpuReadMem20W
 0:
-	add r1,v30ptr,r4,lsr#2
+	add r1,v30ptr,r4,lsr#1
 	strh r0,[r1,#v30Regs]
 	add r5,r5,#0x20000
 	mov r0,r5,ror#4
@@ -3749,7 +3747,7 @@ _C5:	;@ LDS DW
 1:
 	mov r11,r11					;@ Not correct?
 	and r2,r0,#7
-	add r1,v30ptr,r2,lsl#1
+	add r1,v30ptr,r2,lsl#2
 	ldrh r0,[r1,#v30Regs]
 	b 0b
 ;@----------------------------------------------------------------------------
@@ -3788,7 +3786,7 @@ _C7:	;@ MOV WD16
 	cmp r0,#0xC0
 	bmi 1f
 	and r1,r0,#7
-	add r4,v30ptr,r1,lsl#1
+	add r4,v30ptr,r1,lsl#2
 	getNextWord
 	strh r0,[r4,#v30Regs]
 	ldmfd sp!,{r4,pc}
@@ -3966,11 +3964,12 @@ _D0:	;@ ROTSHFT B
 	mov r4,r0
 	cmp r4,#0xC0
 	bmi 1f
+
+	eatCycles 1
 	add r1,v30ptr,r0
 	ldrb r2,[r1,#v30ModRmRm]
 	add r5,v30ptr,r2
 	ldrb r0,[r5,#v30Regs]
-	eatCycles 1
 0:
 	mov r6,r0
 	mov r0,#1
@@ -3991,10 +3990,11 @@ _D1:	;@ ROTSHFT W
 	mov r4,r0
 	cmp r4,#0xC0
 	bmi 1f
-	and r2,r0,#7
-	add r5,v30ptr,r2,lsl#1
-	ldrh r0,[r5,#v30Regs]
+
 	eatCycles 1
+	and r2,r0,#7
+	add r5,v30ptr,r2,lsl#2
+	ldrh r0,[r5,#v30Regs]
 0:
 	mov r6,r0
 	mov r0,#1
@@ -4015,11 +4015,12 @@ _D2:	;@ ROTSHFT BCL
 	mov r4,r0
 	cmp r4,#0xC0
 	bmi 1f
+
+	eatCycles 3
 	add r1,v30ptr,r0
 	ldrb r2,[r1,#v30ModRmRm]
 	add r5,v30ptr,r2
 	ldrb r0,[r5,#v30Regs]
-	eatCycles 3
 0:
 	mov r6,r0
 	ldrb r0,[v30ptr,#v30RegCL]
@@ -4040,10 +4041,11 @@ _D3:	;@ ROTSHFT WCL
 	mov r4,r0
 	cmp r4,#0xC0
 	bmi 1f
-	and r2,r0,#7
-	add r5,v30ptr,r2,lsl#1
-	ldrh r0,[r5,#v30Regs]
+
 	eatCycles 3
+	and r2,r0,#7
+	add r5,v30ptr,r2,lsl#2
+	ldrh r0,[r5,#v30Regs]
 0:
 	mov r6,r0
 	ldrb r0,[v30ptr,#v30RegCL]
@@ -4919,7 +4921,7 @@ _F7:	;@ PRE F7
 	cmp r4,#0xC0
 	bmi 1f
 	and r2,r4,#7
-	add r5,v30ptr,r2,lsl#1
+	add r5,v30ptr,r2,lsl#2
 	ldrh r0,[r5,#v30Regs]
 0:
 	and r2,r4,#0x38
@@ -5156,7 +5158,7 @@ _FF:	;@ PRE FF
 	cmp r4,#0xC0
 	bmi 1f
 	and r2,r4,#7
-	add r5,v30ptr,r2,lsl#1
+	add r5,v30ptr,r2,lsl#2
 	ldrh r0,[r5,#v30Regs]
 	eatCycles 1
 0:
@@ -5862,7 +5864,7 @@ defaultV30:
 	.space 16*4		;@ v30ReadTbl $00000-FFFFF
 	.space 16*4		;@ v30WriteTbl $00000-FFFFF
 v30StateStart:
-I:				.space 22*4
+I:				.space 26*4
 no_interrupt:	.long 0
 
 v30StateEnd:

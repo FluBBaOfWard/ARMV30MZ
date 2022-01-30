@@ -12,8 +12,34 @@ void cpu_writemem20w(DWORD,WORD);
 #define cpu_readop_arg_w cpu_readmem20w
  */
 typedef enum { ES, CS, SS, DS } SREGS;
-typedef enum { AW, CW, DW, BW, SP, BP, IX, IY } WREGS;
-typedef enum { AL,AH,CL,CH,DL,DH,BL,BH,SPL,SPH,BPL,BPH,IXL,IXH,IYL,IYH } BREGS;
+typedef enum {
+	AW = 0,
+	CW = 2,
+	DW = 4,
+	BW = 6,
+	SP = 8,
+	BP = 10,
+	IX = 12,
+	IY = 14
+} WREGS;
+typedef enum {
+	AL = 0,
+	AH = 1,
+	CL = 4,
+	CH = 5,
+	DL = 8,
+	DH = 9,
+	BL = 12,
+	BH = 13,
+	SPL = 16,
+	SPH = 17,
+	BPL = 20,
+	BPH = 21,
+	IXL = 24,
+	IXH = 25,
+	IYL = 28,
+	IYH = 29
+} BREGS;
 
 #define NEC_NMI_INT_VECTOR 2
 

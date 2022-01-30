@@ -46,8 +46,8 @@
 
 typedef union
 {					// Eight general registers
-	UINT16 w[8];	// Viewed as 16 bits registers
-	UINT8  b[16];	// or as 8 bit registers
+	UINT16 w[16];	// Viewed as 16 bits registers
+	UINT8  b[32];	// or as 8 bit registers
 } necbasicregs;
 
 typedef struct
@@ -120,7 +120,7 @@ void nec_reset(void *param)
 		Mod_RM.reg.b[i] = reg_name[(i & 0x38) >> 3];
 	}
 	for (i = 0xc0; i < 0x100; i++) {
-		Mod_RM.RM.b[i] = (BREGS)reg_name[i & 7];
+		Mod_RM.RM.b[i] = reg_name[i & 7];
 	}
 }
 /*
