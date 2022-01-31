@@ -361,16 +361,15 @@
 	.endm
 ;@----------------------------------------------------------------------------
 	.macro decWord reg
-	ldrh r0,[v30ptr,#\reg]
+	ldr r0,[v30ptr,#\reg -2]
 	mov r2,#0
 	mov r3,#0
-	mov r1,r0,lsl#16
-	subs r1,r1,#0x10000
+	subs r1,r0,#0x10000
 	movvs r2,#1
-	tst r0,#0xF
+	tst r0,#0xF0000
 	moveq r3,#1
+	str r1,[v30ptr,#\reg]
 	mov r1,r1,asr#16
-	strh r1,[v30ptr,#\reg]
 	str r2,[v30ptr,#v30OverVal]
 	str r3,[v30ptr,#v30AuxVal]
 	str r1,[v30ptr,#v30SignVal]
@@ -381,16 +380,15 @@
 	.endm
 ;@----------------------------------------------------------------------------
 	.macro incWord reg
-	ldrh r0,[v30ptr,#\reg]
+	ldr r0,[v30ptr,#\reg -2]
 	mov r2,#0
 	mov r3,#0
-	mov r1,r0,lsl#16
-	adds r1,r1,#0x10000
+	adds r1,r0,#0x10000
 	movvs r2,#1
 	tst r1,#0xF0000
 	moveq r3,#1
+	str r1,[v30ptr,#\reg]
 	mov r1,r1,asr#16
-	strh r1,[v30ptr,#\reg]
 	str r2,[v30ptr,#v30OverVal]
 	str r3,[v30ptr,#v30AuxVal]
 	str r1,[v30ptr,#v30SignVal]

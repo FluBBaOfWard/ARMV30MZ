@@ -1,13 +1,12 @@
 ARMV30MZ To do
 --------------
 
-	Change ModRM offsets to point directly to register from v30ptr.
+	Make all regs use the top 16bit.
 	Make ModRM use 32bit instead of bytes to optimize EA access.
-	SP can get borked when pushing/poping, should be masked?
-		Make it use the top 16bit.
 	Use a register for flags?
 	Prepare (C8) uses r4-r8, (r8 = SP).
 	Interrupt uses r4-r7, (r7 = SP).
+	Hard to use a dedicated register for v30Regs since they can be accessed by index.
 	Add check of IRQ efter EI and RETI.
 	Rename more opcodes.
 	Make 26, 2E, 36 & 3E share code?

@@ -102,9 +102,9 @@ void nec_reset(void *param)
 
 	memset( &I, 0, sizeof(I) );
 
-	no_interrupt = 0;
+//	no_interrupt = 0;
 	I.sregs[CS] = 0xFFFF0000;
-	I.regs.w[SP] = 0xFFFE;
+	I.regs.w[SP+1] = 0xFFFE;
 
 	for (i = 0;i < 0x100; i++) {
 		for (j = i, c = 0; j > 0; j >>= 1) {
