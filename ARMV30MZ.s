@@ -538,9 +538,9 @@ i_push_ss:
 _16:	;@ PUSH SS
 ;@----------------------------------------------------------------------------
 	ldr r2,[v30ptr,#v30RegSP]
-	ldr r0,[v30ptr,#v30SRegSS]
+	ldr r1,[v30ptr,#v30SRegSS]
 	sub r2,r2,#0x20000
-	add r0,r0,r2,lsr#4
+	add r0,r1,r2,lsr#4
 	str r2,[v30ptr,#v30RegSP]
 	eatCycles 2
 	b cpuWriteMem20W
