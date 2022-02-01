@@ -903,7 +903,6 @@ _27:	;@ DAA
 ;@----------------------------------------------------------------------------
 	ldrb r0,[v30ptr,#v30RegAL]
 	ldr r1,[v30ptr,#v30AuxVal]
-	ldr r2,[v30ptr,#v30CarryVal]
 	mov r3,r0,ror#4
 	cmp r3,#0xA0000000
 	movcs r1,#0x10
@@ -911,10 +910,9 @@ _27:	;@ DAA
 	addne r0,r0,#0x06
 	str r1,[v30ptr,#v30AuxVal]
 	cmp r0,#0xA0
-	movpl r2,#1
-	cmp r2,#0
+	orrpl v30f,v30f,#PSR_C
+	tst v30f,#PSR_C
 	addne r0,r0,#0x60
-	str r2,[v30ptr,#v30CarryVal]
 	strb r0,[v30ptr,#v30RegAL]
 	mov r0,r0,lsl#24
 	mov r0,r0,asr#24
@@ -1094,7 +1092,6 @@ _2F:	;@ DAS
 ;@----------------------------------------------------------------------------
 	ldrb r0,[v30ptr,#v30RegAL]
 	ldr r1,[v30ptr,#v30AuxVal]
-	ldr r2,[v30ptr,#v30CarryVal]
 	mov r3,r0,ror#4
 	cmp r3,#0xA0000000
 	movcs r1,#0x10
@@ -1102,10 +1099,9 @@ _2F:	;@ DAS
 	subne r0,r0,#0x06
 	str r1,[v30ptr,#v30AuxVal]
 	cmp r0,#0xA0
-	movpl r2,#1
-	cmp r2,#0
+	orrpl v30f,v30f,#PSR_C
+	tst v30f,#PSR_C
 	subne r0,r0,#0x60
-	str r2,[v30ptr,#v30CarryVal]
 	strb r0,[v30ptr,#v30RegAL]
 	mov r0,r0,lsl#24
 	mov r0,r0,asr#24
@@ -1287,6 +1283,8 @@ _37:	;@ AAA
 	ldr r1,[v30ptr,#v30AuxVal]
 	mov r0,r0,lsl#28
 	cmp r0,#0xA0000000
+	biccc v30f,v30f,#PSR_C			;@ Clear Carry.
+	orrcs v30f,v30f,#PSR_C+PRS_A	;@ Set Carry & Aux.
 	movcs r1,#0x10
 	cmp r1,#0
 	ldrbne r2,[v30ptr,#v30RegAH]
@@ -1295,8 +1293,6 @@ _37:	;@ AAA
 	strbne r2,[v30ptr,#v30RegAH]
 	mov r0,r0,lsr#28
 	str r1,[v30ptr,#v30AuxVal]
-	mov r1,r1,lsr#4
-	str r1,[v30ptr,#v30CarryVal]
 	strb r0,[v30ptr,#v30RegAL]
 	eatCycles 9
 	bx lr
@@ -1457,6 +1453,8 @@ _3F:	;@ AAS
 	ldr r1,[v30ptr,#v30AuxVal]
 	mov r0,r0,lsl#28
 	cmp r0,#0xA0000000
+	biccc v30f,v30f,#PSR_C			;@ Clear Carry.
+	orrcs v30f,v30f,#PSR_C+PRS_A	;@ Set Carry & Aux.
 	movcs r1,#0x10
 	cmp r1,#0
 	ldrbne r2,[v30ptr,#v30RegAH]
@@ -1465,8 +1463,6 @@ _3F:	;@ AAS
 	strbne r2,[v30ptr,#v30RegAH]
 	mov r0,r0,lsr#28
 	str r1,[v30ptr,#v30AuxVal]
-	mov r1,r1,lsr#4
-	str r1,[v30ptr,#v30CarryVal]
 	strb r0,[v30ptr,#v30RegAL]
 	eatCycles 9
 	bx lr
@@ -1909,11 +1905,12 @@ _69:	;@ IMUL D16
 	mov r5,r0
 	getNextWord
 
+	bic v30f,v30f,#PSR_C+PSR_V		;@ Clear Carry & Overflow.
 	mul r0,r5,r0
 	movs r1,r0,asr#15
 	mvnsne r1,r1
+	orrne v30f,v30f,#PSR_C+PSR_V	;@ Set Carry & Overflow.
 	movne r1,#1
-	str r1,[v30ptr,#v30CarryVal]
 	str r1,[v30ptr,#v30OverVal]
 
 	strh r0,[r4,#v30Regs]
@@ -1961,11 +1958,12 @@ _6B:	;@ IMUL D8
 	mov r0,r0,lsl#24
 	mov r0,r0,asr#24
 
+	bic v30f,v30f,#PSR_C+PSR_V		;@ Clear Carry & Overflow.
 	mul r0,r5,r0
 	movs r1,r0,asr#15
 	mvnsne r1,r1
+	orrne v30f,v30f,#PSR_C+PSR_V	;@ Set Carry & Overflow.
 	movne r1,#1
-	str r1,[v30ptr,#v30CarryVal]
 	str r1,[v30ptr,#v30OverVal]
 
 	strh r0,[r4,#v30Regs]
@@ -2084,13 +2082,33 @@ i_bc:
 i_bl:
 _72:	;@ Branch if Carry / Branch if Lower
 ;@----------------------------------------------------------------------------
-	jmpne v30CarryVal
+	stmfd sp!,{lr}
+	ldr r0,[v30ptr,#v30SRegCS]
+	add r0,r0,v30pc,lsr#4
+	add v30pc,v30pc,#0x10000
+	bl cpuReadMem20
+	tst v30f,#PSR_C
+	movne r0,r0,lsl#24
+	addne v30pc,v30pc,r0,asr#8
+	subne v30cyc,v30cyc,#4*CYCLE
+	subeq v30cyc,v30cyc,#1*CYCLE
+	ldmfd sp!,{pc}
 ;@----------------------------------------------------------------------------
 i_bnc:
 i_bnl:
 _73:	;@ Branch if Not Carry / Branch if Not Lower
 ;@----------------------------------------------------------------------------
-	jmpeq v30CarryVal
+	stmfd sp!,{lr}
+	ldr r0,[v30ptr,#v30SRegCS]
+	add r0,r0,v30pc,lsr#4
+	add v30pc,v30pc,#0x10000
+	bl cpuReadMem20
+	tst v30f,#PSR_C
+	moveq r0,r0,lsl#24
+	addeq v30pc,v30pc,r0,asr#8
+	subeq v30cyc,v30cyc,#4*CYCLE
+	subne v30cyc,v30cyc,#1*CYCLE
+	ldmfd sp!,{pc}
 ;@----------------------------------------------------------------------------
 i_be:
 i_bz:
@@ -2112,9 +2130,8 @@ _76:	;@ Branch if Not Higher
 	add	r0,r0,v30pc,lsr#4
 	add	v30pc,v30pc,#0x10000
 	bl cpuReadMem20
-	ldr r3,[v30ptr,#v30CarryVal]
 	ldr r2,[v30ptr,#v30ZeroVal]
-	cmp	r3,#0
+	tst v30f,#PSR_C
 	movne r2,#0
 	cmp r2,#0
 	moveq r0,r0,lsl#24
@@ -2131,9 +2148,8 @@ _77:	;@ Branch if Higher
 	add	r0,r0,v30pc,lsr#4
 	add	v30pc,v30pc,#0x10000
 	bl cpuReadMem20
-	ldr r3,[v30ptr,#v30CarryVal]
 	ldr r2,[v30ptr,#v30ZeroVal]
-	cmp	r3,#0
+	tst v30f,#PSR_C
 	movne r2,#0
 	cmp r2,#0
 	movne r0,r0,lsl#24
@@ -2896,32 +2912,31 @@ _9C:	;@ PUSH F
 	stmfd sp!,{lr}
 
 	ldr r1,=0x7002
-	ldr r0,[v30ptr,#v30CarryVal]
 	ldrb r2,[v30ptr,#v30ParityVal]
 	add r3,v30ptr,#v30PZST
-	cmp r0,#0
+	tst v30f,#PSR_C
 	orrne r1,r1,#CF
 	ldrb r2,[r3,r2]
 	ldr r0,[v30ptr,#v30AuxVal]
-	ldr r2,[v30ptr,#v30ZeroVal]
+	ldr r3,[v30ptr,#v30ZeroVal]
 	cmp r2,#0
 	orrne r1,r1,#PF
-	ldr r3,[v30ptr,#v30SignVal]
+	ldr r2,[v30ptr,#v30SignVal]
 	cmp r0,#0
 	orrne r1,r1,#AF
 	ldrb r0,[v30ptr,#v30TF]
-	cmp r2,#0
-	orreq r1,r1,#ZF
-	ldrb r2,[v30ptr,#v30IF]
 	cmp r3,#0
+	orreq r1,r1,#ZF
+	ldrb r3,[v30ptr,#v30IF]
+	cmp r2,#0
 	orrmi r1,r1,#SF
-	ldrb r3,[v30ptr,#v30DF]
+	ldrb r2,[v30ptr,#v30DF]
 	cmp r0,#0
 	orrne r1,r1,#TF
 	ldr r0,[v30ptr,#v30OverVal]
-	cmp r2,#0
-	orrne r1,r1,#IF
 	cmp r3,#0
+	orrne r1,r1,#IF
+	cmp r2,#0
 	orrne r1,r1,#DF
 	cmp r0,#0
 	orrne r1,r1,#OF
@@ -2946,12 +2961,12 @@ _9D:	;@ POP F
 	add r0,r0,r1,lsr#4
 	str r2,[v30ptr,#v30RegSP]
 	bl cpuReadMem20W
+	bic v30f,v30f,#PSR_ALL	;@ Clear S, Z, C, V, P & H.
 	mov r1,#0
 	mov r2,#1
 	mov r3,#-1
 	tst r0,#CF
-	streq r1,[v30ptr,#v30CarryVal]
-	strne r2,[v30ptr,#v30CarryVal]
+	orrne v30f,v30f,#PSR_C
 	tst r0,#PF
 	strne r1,[v30ptr,#v30ParityVal]
 	streq r2,[v30ptr,#v30ParityVal]
@@ -2986,12 +3001,12 @@ _9E:	;@ SAHF
 	stmfd sp!,{lr}
 	ldrb r0,[v30ptr,#v30RegAH]
 
+	bic v30f,v30f,#PSR_S+PSR_Z+PSR_C+PSR_P+PSR_A	;@ Clear S, Z, C, P & H.
 	mov r1,#0
 	mov r2,#1
 	mov r3,#-1
 	tst r0,#CF
-	streq r1,[v30ptr,#v30CarryVal]
-	strne r2,[v30ptr,#v30CarryVal]
+	orrne v30f,v30f,#PSR_C
 	tst r0,#PF
 	strne r1,[v30ptr,#v30ParityVal]
 	streq r2,[v30ptr,#v30ParityVal]
@@ -3014,22 +3029,21 @@ _9F:	;@ LAHF
 	stmfd sp!,{lr}
 
 	mov r1,#0x02
-	ldr r0,[v30ptr,#v30CarryVal]
 	ldrb r2,[v30ptr,#v30ParityVal]
 	add r3,v30ptr,#v30PZST
-	cmp r0,#0
+	tst v30f,#PSR_C
 	orrne r1,r1,#CF
 	ldrb r2,[r3,r2]
 	ldr r0,[v30ptr,#v30AuxVal]
-	ldr r2,[v30ptr,#v30ZeroVal]
+	ldr r3,[v30ptr,#v30ZeroVal]
 	cmp r2,#0
 	orrne r1,r1,#PF
-	ldr r3,[v30ptr,#v30SignVal]
+	ldr r2,[v30ptr,#v30SignVal]
 	cmp r0,#0
 	orrne r1,r1,#AF
-	cmp r2,#0
-	orreq r1,r1,#ZF
 	cmp r3,#0
+	orreq r1,r1,#ZF
+	cmp r2,#0
 	orrmi r1,r1,#SF
 
 	strb r1,[v30ptr,#v30RegAH]
@@ -4312,7 +4326,7 @@ _F0:	;@ LOCK
 i_repne:
 _F2:	;@ REPNE
 ;@----------------------------------------------------------------------------
-	stmfd sp!,{r4-r6,lr}
+	stmfd sp!,{r4,r5,lr}
 	ldr r5,[v30ptr,#v30SRegCS]
 	add	r0,r5,v30pc,lsr#4
 	add v30pc,v30pc,#0x10000
@@ -4457,7 +4471,7 @@ f2af:
 i_repe:
 _F3:	;@ REPE
 ;@----------------------------------------------------------------------------
-	stmfd sp!,{r4-r6,lr}
+	stmfd sp!,{r4,r5,lr}
 	ldr r5,[v30ptr,#v30SRegCS]
 	add	r0,r5,v30pc,lsr#4
 	add v30pc,v30pc,#0x10000
@@ -4718,7 +4732,7 @@ f3End:
 f3DefEnd:
 	mov r0,#0
 	strb r0,[v30ptr,#v30SegPrefix]
-	ldmfd sp!,{r4-r6,pc}
+	ldmfd sp!,{r4,r5,pc}
 ;@----------------------------------------------------------------------------
 i_hlt:
 _F4:	;@ HLT
@@ -4733,11 +4747,7 @@ _F4:	;@ HLT
 i_cmc:
 _F5:	;@ CMC
 ;@----------------------------------------------------------------------------
-	ldr r0,[v30ptr,#v30CarryVal]
-	cmp r0,#0
-	moveq r0,#1
-	movne r0,#0
-	str r0,[v30ptr,#v30CarryVal]
+	eor v30f,v30f,#PSR_C
 	eatCycles 4
 	bx lr
 ;@----------------------------------------------------------------------------
@@ -4775,11 +4785,10 @@ notF6:
 	b cpuWriteMem20
 negF6:
 	eatCycles 1
-	movs r1,r0
-	movne r1,#1
-	str r1,[v30ptr,#v30CarryVal]
+	bic v30f,v30f,#PSR_S+PSR_Z+PSR_C+PSR_P	;@ Clear S, Z, C, & P.
 	mov r0,r0,lsl#24
-	rsb r1,r0,#0
+	rsbs r1,r0,#0
+	orrne v30f,v30f,#PSR_C
 	mov r1,r1,asr#24
 	str r1,[v30ptr,#v30SignVal]
 	str r1,[v30ptr,#v30ZeroVal]
@@ -4793,16 +4802,18 @@ negF6:
 	b cpuWriteMem20
 muluF6:
 	eatCycles 3
+	bic v30f,v30f,#PSR_C+PSR_V			;@ Clear Carry & Overflow.
 	ldrb r1,[v30ptr,#v30RegAL]
 	mul r2,r0,r1
 	strh r2,[v30ptr,#v30RegAW]
 	movs r2,r2,lsr#8
+	orrne v30f,v30f,#PSR_C+PSR_V
 	movne r2,#1
-	str r2,[v30ptr,#v30CarryVal]
 	str r2,[v30ptr,#v30OverVal]
 	ldmfd sp!,{r4-r5,pc}
 mulF6:
 	eatCycles 3
+	bic v30f,v30f,#PSR_C+PSR_V			;@ Clear Carry & Overflow.
 	ldrsb r1,[v30ptr,#v30RegAL]
 	mov r0,r0,lsl#24
 	mov r0,r0,asr#24
@@ -4810,8 +4821,8 @@ mulF6:
 	strh r2,[v30ptr,#v30RegAW]
 	movs r1,r2,asr#7
 	mvnsne r1,r1
+	orrne v30f,v30f,#PSR_C+PSR_V
 	movne r1,#1
-	str r1,[v30ptr,#v30CarryVal]
 	str r1,[v30ptr,#v30OverVal]
 	ldmfd sp!,{r4-r5,pc}
 divubF6:
@@ -4901,11 +4912,10 @@ notF7:
 	b cpuWriteMem20W
 negF7:
 	eatCycles 1
-	movs r1,r0
-	movne r1,#1
-	str r1,[v30ptr,#v30CarryVal]
+	bic v30f,v30f,#PSR_S+PSR_Z+PSR_C+PSR_P	;@ Clear S, Z, C, & P.
 	mov r0,r0,lsl#16
-	rsb r1,r0,#0
+	rsbs r1,r0,#0
+	orrne v30f,v30f,#PSR_C				;@ Set Carry.
 	mov r1,r1,asr#16
 	str r1,[v30ptr,#v30SignVal]
 	str r1,[v30ptr,#v30ZeroVal]
@@ -4919,17 +4929,19 @@ negF7:
 	b cpuWriteMem20W
 muluF7:
 	eatCycles 3
+	bic v30f,v30f,#PSR_C+PSR_V			;@ Clear Carry & Overflow.
 	ldrh r1,[v30ptr,#v30RegAW]
 	mul r2,r0,r1
 	strh r2,[v30ptr,#v30RegAW]
 	movs r2,r2,lsr#16
 	strh r2,[v30ptr,#v30RegDW]
+	orrne v30f,v30f,#PSR_C+PSR_V		;@ Set Carry & Overflow.
 	movne r2,#1
-	str r2,[v30ptr,#v30CarryVal]
 	str r2,[v30ptr,#v30OverVal]
 	ldmfd sp!,{r4-r5,pc}
 mulF7:
 	eatCycles 3
+	bic v30f,v30f,#PSR_C+PSR_V			;@ Clear Carry & Overflow.
 	ldrsh r1,[v30ptr,#v30RegAW]
 	mov r0,r0,lsl#16
 	mov r0,r0,asr#16
@@ -4939,8 +4951,8 @@ mulF7:
 	strh r1,[v30ptr,#v30RegDW]
 	movs r1,r2,asr#15
 	mvnsne r1,r1
+	orrne v30f,v30f,#PSR_C+PSR_V		;@ Set Carry & Overflow.
 	movne r1,#1
-	str r1,[v30ptr,#v30CarryVal]
 	str r1,[v30ptr,#v30OverVal]
 	ldmfd sp!,{r4-r5,pc}
 divuwF7:
@@ -5003,16 +5015,14 @@ divwF7:
 i_clc:
 _F8:	;@ CLC
 ;@----------------------------------------------------------------------------
-	mov r0,#0
-	str r0,[v30ptr,#v30CarryVal]
+	bic v30f,v30f,#PSR_C				;@ Clear Carry.
 	eatCycles 4
 	bx lr
 ;@----------------------------------------------------------------------------
 i_stc:
 _F9:	;@ STC
 ;@----------------------------------------------------------------------------
-	mov r0,#1
-	str r0,[v30ptr,#v30CarryVal]
+	orr v30f,v30f,#PSR_C				;@ Set Carry.
 	eatCycles 4
 	bx lr
 ;@----------------------------------------------------------------------------
@@ -5718,8 +5728,8 @@ V30Reset:					;@ r0=v30ptr
 	ldmia r1!,{r0,r3}
 //	str r0,[v30ptr,#v30IX]
 //	str r3,[v30ptr,#v30IY]
-	ldmia r1,{v30f-v30hl}
-	stmia r2,{v30f-v30hl}
+//	ldmia r1,{v30f-v30hl}
+//	stmia r2,{v30f-v30hl}
 
 ;@ Clear other registers
 	mov r0,#0

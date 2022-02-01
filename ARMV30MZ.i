@@ -7,16 +7,10 @@
 //
 
 				;@ r0,r1,r2=temp regs.
-	v30f		.req r3			;@
-	v30a		.req r4			;@ Bits 0-23=0
-	v30bc		.req r5			;@ Bits 0-15=0
-	v30de		.req r6			;@ Bits 0-15=0
-	v30hl		.req r7			;@ Bits 0-15=0
-	v30sp		.req r8
+	v30f		.req r8
 	v30pc		.req r9
 	v30cyc		.req r10		;@ Bits 0-7=
 	v30ptr		.req r11
-	v30xy		.req lr			;@ Pointer to IX or IY reg
 	addy		.req r12		;@ Keep this at r12 (scratch for APCS)
 
 	.struct -(74*4)			;@ Changes section so make sure it's set before real code.
@@ -68,16 +62,16 @@ v30SRegSS:			.long 0
 v30SRegDS:			.long 0
 
 v30ICount:			.long 0
+v30IP:				.long 0
+v30Flags:			.long 0
 v30SignVal:			.long 0
 v30AuxVal:			.long 0
 v30OverVal:			.long 0
 v30ZeroVal:			.long 0
-v30CarryVal:		.long 0
 v30ParityVal:		.long 0
 v30EA:				.long 0
 v30IrqVectorFunc:	.long 0
 v30PrefixBase:		.long 0
-v30IP:				.long 0
 v30TF:				.byte 0
 v30DF:				.byte 0
 v30MF:				.byte 0
