@@ -56,14 +56,15 @@ typedef struct
 	UINT32 sregs[4];
 
 	INT32 ICount;
+	UINT32 ip;
+	UINT32 Flags;
 	INT32 SignVal;
-	UINT32 AuxVal, OverVal, ZeroVal, CarryVal, ParityVal; // 0 or non-0 valued flags
+	UINT32 AuxVal, ZeroVal, ParityVal; // 0 or non-0 valued flags
 	UINT32 EA;
 	UINT32 int_vector;
 	int (*irq_callback)(int irqline);
 	/** Base address of the latest prefix segment */
 	UINT32 prefix_base;
-	UINT32 ip;
 	UINT16 EO;
 	UINT8  TF, IF, DF, MF; 	/* 0 or 1 valued flags */	/* OB[19.07.99] added Mode Flag V30 */
 	UINT8 seg_prefix;

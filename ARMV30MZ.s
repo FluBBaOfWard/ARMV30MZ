@@ -1284,7 +1284,7 @@ _37:	;@ AAA
 	mov r0,r0,lsl#28
 	cmp r0,#0xA0000000
 	biccc v30f,v30f,#PSR_C			;@ Clear Carry.
-	orrcs v30f,v30f,#PSR_C+PRS_A	;@ Set Carry & Aux.
+	orrcs v30f,v30f,#PSR_C+PSR_A	;@ Set Carry & Aux.
 	movcs r1,#0x10
 	cmp r1,#0
 	ldrbne r2,[v30ptr,#v30RegAH]
@@ -1454,7 +1454,7 @@ _3F:	;@ AAS
 	mov r0,r0,lsl#28
 	cmp r0,#0xA0000000
 	biccc v30f,v30f,#PSR_C			;@ Clear Carry.
-	orrcs v30f,v30f,#PSR_C+PRS_A	;@ Set Carry & Aux.
+	orrcs v30f,v30f,#PSR_C+PSR_A	;@ Set Carry & Aux.
 	movcs r1,#0x10
 	cmp r1,#0
 	ldrbne r2,[v30ptr,#v30RegAH]
@@ -1910,8 +1910,6 @@ _69:	;@ IMUL D16
 	movs r1,r0,asr#15
 	mvnsne r1,r1
 	orrne v30f,v30f,#PSR_C+PSR_V	;@ Set Carry & Overflow.
-	movne r1,#1
-	str r1,[v30ptr,#v30OverVal]
 
 	strh r0,[r4,#v30Regs]
 	ldmfd sp!,{r4,r5,pc}
@@ -1963,8 +1961,6 @@ _6B:	;@ IMUL D8
 	movs r1,r0,asr#15
 	mvnsne r1,r1
 	orrne v30f,v30f,#PSR_C+PSR_V	;@ Set Carry & Overflow.
-	movne r1,#1
-	str r1,[v30ptr,#v30OverVal]
 
 	strh r0,[r4,#v30Regs]
 	ldmfd sp!,{r4,r5,pc}
@@ -2071,12 +2067,32 @@ _6F:	;@ OUTSW
 i_bv:
 _70:	;@ Branch if Overflow
 ;@----------------------------------------------------------------------------
-	jmpne v30OverVal
+	stmfd sp!,{lr}
+	ldr r0,[v30ptr,#v30SRegCS]
+	add r0,r0,v30pc,lsr#4
+	add v30pc,v30pc,#0x10000
+	bl cpuReadMem20
+	tst v30f,#PSR_V
+	movne r0,r0,lsl#24
+	addne v30pc,v30pc,r0,asr#8
+	subne v30cyc,v30cyc,#4*CYCLE
+	subeq v30cyc,v30cyc,#1*CYCLE
+	ldmfd sp!,{pc}
 ;@----------------------------------------------------------------------------
 i_bnv:
 _71:	;@ Branch if Not Overflow
 ;@----------------------------------------------------------------------------
-	jmpeq v30OverVal
+	stmfd sp!,{lr}
+	ldr r0,[v30ptr,#v30SRegCS]
+	add r0,r0,v30pc,lsr#4
+	add v30pc,v30pc,#0x10000
+	bl cpuReadMem20
+	tst v30f,#PSR_V
+	moveq r0,r0,lsl#24
+	addeq v30pc,v30pc,r0,asr#8
+	subeq v30cyc,v30cyc,#4*CYCLE
+	subne v30cyc,v30cyc,#1*CYCLE
+	ldmfd sp!,{pc}
 ;@----------------------------------------------------------------------------
 i_bc:
 i_bl:
@@ -2234,9 +2250,8 @@ _7C:	;@ Branch if Less Than
 	add	r0,r0,v30pc,lsr#4
 	add	v30pc,v30pc,#0x10000
 	bl cpuReadMem20
-	ldr r2,[v30ptr,#v30OverVal]
 	ldr r3,[v30ptr,#v30SignVal]
-	cmp	r2,#0
+	ands r2,v30f,#PSR_V
 	movne r2,#1
 	cmp r3,#0
 	movpl r3,#0
@@ -2256,9 +2271,8 @@ _7D:	;@ Branch if Greater than or Equal
 	add	r0,r0,v30pc,lsr#4
 	add	v30pc,v30pc,#0x10000
 	bl cpuReadMem20
-	ldr r2,[v30ptr,#v30OverVal]
 	ldr r3,[v30ptr,#v30SignVal]
-	cmp	r2,#0
+	ands r2,v30f,#PSR_V
 	movne r2,#1
 	cmp r3,#0
 	movpl r3,#0
@@ -2278,10 +2292,9 @@ _7E:	;@ Branch if Less than or Equal
 	add	r0,r0,v30pc,lsr#4
 	add	v30pc,v30pc,#0x10000
 	bl cpuReadMem20
-	ldr r2,[v30ptr,#v30OverVal]
 	ldr r3,[v30ptr,#v30SignVal]
 	ldr r1,[v30ptr,#v30ZeroVal]
-	cmp	r2,#0
+	ands r2,v30f,#PSR_V
 	movne r2,#1
 	cmp r3,#0
 	movpl r3,#0
@@ -2305,10 +2318,9 @@ _7F:	;@ Branch if Greater Than
 	add	r0,r0,v30pc,lsr#4
 	add	v30pc,v30pc,#0x10000
 	bl cpuReadMem20
-	ldr r2,[v30ptr,#v30OverVal]
 	ldr r3,[v30ptr,#v30SignVal]
 	ldr r1,[v30ptr,#v30ZeroVal]
-	cmp	r2,#0
+	ands r2,v30f,#PSR_V
 	movne r2,#1
 	cmp r3,#0
 	movpl r3,#0
@@ -2933,12 +2945,11 @@ _9C:	;@ PUSH F
 	ldrb r2,[v30ptr,#v30DF]
 	cmp r0,#0
 	orrne r1,r1,#TF
-	ldr r0,[v30ptr,#v30OverVal]
 	cmp r3,#0
 	orrne r1,r1,#IF
 	cmp r2,#0
 	orrne r1,r1,#DF
-	cmp r0,#0
+	tst v30f,#PSR_V
 	orrne r1,r1,#OF
 
 	ldr r2,[v30ptr,#v30RegSP]
@@ -2989,8 +3000,7 @@ _9D:	;@ POP F
 	strbeq r1,[v30ptr,#v30DF]
 	strbne r2,[v30ptr,#v30DF]
 	tst r0,#OF
-	streq r1,[v30ptr,#v30OverVal]
-	strne r2,[v30ptr,#v30OverVal]
+	orrne v30f,v30f,#PSR_V
 
 	eatCycles 3
 	ldmfd sp!,{pc}
@@ -3900,8 +3910,7 @@ _CD:	;@ INT
 i_into:
 _CE:	;@ INTO
 ;@----------------------------------------------------------------------------
-	ldr r2,[v30ptr,#v30OverVal]
-	cmp r2,#0
+	tst v30f,#PSR_V
 	subeq v30cyc,v30cyc,#6*CYCLE
 	bxeq lr
 	eatCycles 13
@@ -4808,8 +4817,6 @@ muluF6:
 	strh r2,[v30ptr,#v30RegAW]
 	movs r2,r2,lsr#8
 	orrne v30f,v30f,#PSR_C+PSR_V
-	movne r2,#1
-	str r2,[v30ptr,#v30OverVal]
 	ldmfd sp!,{r4-r5,pc}
 mulF6:
 	eatCycles 3
@@ -4822,8 +4829,6 @@ mulF6:
 	movs r1,r2,asr#7
 	mvnsne r1,r1
 	orrne v30f,v30f,#PSR_C+PSR_V
-	movne r1,#1
-	str r1,[v30ptr,#v30OverVal]
 	ldmfd sp!,{r4-r5,pc}
 divubF6:
 	eatCycles 15
@@ -4936,8 +4941,6 @@ muluF7:
 	movs r2,r2,lsr#16
 	strh r2,[v30ptr,#v30RegDW]
 	orrne v30f,v30f,#PSR_C+PSR_V		;@ Set Carry & Overflow.
-	movne r2,#1
-	str r2,[v30ptr,#v30OverVal]
 	ldmfd sp!,{r4-r5,pc}
 mulF7:
 	eatCycles 3
@@ -4952,8 +4955,6 @@ mulF7:
 	movs r1,r2,asr#15
 	mvnsne r1,r1
 	orrne v30f,v30f,#PSR_C+PSR_V		;@ Set Carry & Overflow.
-	movne r1,#1
-	str r1,[v30ptr,#v30OverVal]
 	ldmfd sp!,{r4-r5,pc}
 divuwF7:
 	eatCycles 23
@@ -5071,26 +5072,26 @@ _FE:	;@ PRE FE
 	ldrb r0,[v30ptr,-r5]
 	eatCycles 1
 0:
-	mov r2,#0			;@ Overflow
 	mov r1,r0,lsl#24
 	ands r3,r4,#0x38
 	beq incFE
 	cmp r3,#0x08
 	bne invalidFE
 decFE:
+	bic v30f,v30f,#PSR_S+PSR_Z+PSR_V+PSR_P+PSR_A	;@ Clear S, Z, V, P & A.
 	subs r1,r1,#0x1000000
-	movvs r2,#1
+	orrvs v30f,v30f,#PSR_V							;@ Set Overflow.
 	tst r0,#0xF
 	b endFE
 incFE:
+	bic v30f,v30f,#PSR_S+PSR_Z+PSR_V+PSR_P+PSR_A	;@ Clear S, Z, V, P & A.
 	adds r1,r1,#0x1000000
-	movvs r2,#1
+	orrvs v30f,v30f,#PSR_V							;@ Set Overflow.
 	tst r1,#0xF000000
 endFE:
 	mov r3,#0
 	moveq r3,#1
 	mov r1,r1,asr#24
-	str r2,[v30ptr,#v30OverVal]
 	str r3,[v30ptr,#v30AuxVal]
 	str r1,[v30ptr,#v30SignVal]
 	str r1,[v30ptr,#v30ZeroVal]
@@ -5131,23 +5132,22 @@ _FF:	;@ PRE FF
 	nop
 	.long incFF, decFF, callFF, callFarFF, braFF, braFarFF, pushFF, pushFF
 incFF:
-	mov r2,#0
+	bic v30f,v30f,#PSR_S+PSR_Z+PSR_V+PSR_P+PSR_A	;@ Clear S, Z, V, P & A.
 	mov r1,r0,lsl#16
 	adds r1,r1,#0x10000
-	movvs r2,#1
+	orrvs v30f,v30f,#PSR_V							;@ Set Overflow.
 	tst r1,#0xF0000
 	b writeBackFF
 decFF:
-	mov r2,#0
+	bic v30f,v30f,#PSR_S+PSR_Z+PSR_V+PSR_P+PSR_A	;@ Clear S, Z, V, P & A.
 	mov r1,r0,lsl#16
 	subs r1,r1,#0x10000
-	movvs r2,#1
+	orrvs v30f,v30f,#PSR_V							;@ Set Overflow.
 	tst r0,#0xF
 writeBackFF:
 	mov r3,#0
 	moveq r3,#1
 	mov r1,r1,asr#16
-	str r2,[v30ptr,#v30OverVal]
 	str r3,[v30ptr,#v30AuxVal]
 	str r1,[v30ptr,#v30SignVal]
 	str r1,[v30ptr,#v30ZeroVal]
@@ -5815,7 +5815,7 @@ defaultV30:
 	.space 16*4		;@ v30ReadTbl $00000-FFFFF
 	.space 16*4		;@ v30WriteTbl $00000-FFFFF
 v30StateStart:
-I:				.space 25*4
+I:				.space 24*4
 no_interrupt:	.long 0
 
 v30StateEnd:
