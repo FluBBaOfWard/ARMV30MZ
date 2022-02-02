@@ -64,7 +64,7 @@ v30SRegDS:			.long 0
 v30ICount:			.long 0
 v30IP:				.long 0
 v30Flags:			.long 0
-v30ZeroVal:			.long 0
+v30ZeroVal_:			.long 0
 v30ParityVal:		.long 0
 v30EA:				.long 0
 v30IrqVectorFunc:	.long 0
