@@ -912,11 +912,10 @@ _27:	;@ DAA
 	tst v30f,#PSR_C
 	addne r0,r0,#0x60
 	strb r0,[v30ptr,#v30RegAL]
-	movs r0,r0,lsl#24
+	movs r1,r0,lsl#24
 	orrmi v30f,v30f,#PSR_S
 	orreq v30f,v30f,#PSR_Z
-	mov r0,r0,asr#24
-	str r0,[v30ptr,#v30ParityVal]
+	strb r0,[v30ptr,#v30ParityVal]
 	eatCycles 10
 	bx lr
 ;@----------------------------------------------------------------------------
@@ -1099,11 +1098,10 @@ _2F:	;@ DAS
 	tst v30f,#PSR_C
 	subne r0,r0,#0x60
 	strb r0,[v30ptr,#v30RegAL]
-	movs r0,r0,lsl#24
+	movs r1,r0,lsl#24
 	orrmi v30f,v30f,#PSR_S
 	orreq v30f,v30f,#PSR_Z
-	mov r0,r0,asr#24
-	str r0,[v30ptr,#v30ParityVal]
+	strb r0,[v30ptr,#v30ParityVal]
 	eatCycles 10
 	bx lr
 ;@----------------------------------------------------------------------------
@@ -2967,8 +2965,8 @@ _9D:	;@ POP F
 	tst r0,#CF
 	orrne v30f,v30f,#PSR_C
 	tst r0,#PF
-	strne r1,[v30ptr,#v30ParityVal]
-	streq r2,[v30ptr,#v30ParityVal]
+	strbne r1,[v30ptr,#v30ParityVal]
+	strbeq r2,[v30ptr,#v30ParityVal]
 	tst r0,#AF
 	orrne v30f,v30f,#PSR_A
 	tst r0,#ZF
@@ -3002,8 +3000,8 @@ _9E:	;@ SAHF
 	tst r0,#CF
 	orrne v30f,v30f,#PSR_C
 	tst r0,#PF
-	strne r1,[v30ptr,#v30ParityVal]
-	streq r2,[v30ptr,#v30ParityVal]
+	strbne r1,[v30ptr,#v30ParityVal]
+	strbeq r2,[v30ptr,#v30ParityVal]
 	tst r0,#AF
 	orrne v30f,v30f,#PSR_A
 	tst r0,#ZF
@@ -4033,7 +4031,7 @@ _D4:	;@ AAM/CVTBD			;@ Convert Binary to Decimal
 	cmp r3,#0
 	orrmi v30f,v30f,#PSR_S
 	orreq v30f,v30f,#PSR_Z
-	str r3,[v30ptr,#v30ParityVal]
+	strb r3,[v30ptr,#v30ParityVal]
 	ldmfd sp!,{pc}
 	.pool
 ;@----------------------------------------------------------------------------
@@ -4052,7 +4050,7 @@ _D5:	;@ AAD/CVTDB			;@ Convert Decimal to Binary
 	mov r0,r0,lsr#24
 	eatCycles 6
 	strh r0,[v30ptr,#v30RegAW]
-	str r2,[v30ptr,#v30ParityVal]
+	strb r2,[v30ptr,#v30ParityVal]
 	ldmfd sp!,{pc}
 ;@----------------------------------------------------------------------------
 i_trans:
@@ -4761,8 +4759,8 @@ negF6:
 	orrmi v30f,v30f,#PSR_S
 	orrne v30f,v30f,#PSR_C
 	orreq v30f,v30f,#PSR_Z
-	mov r1,r1,asr#24
-	str r1,[v30ptr,#v30ParityVal]
+	mov r1,r1,lsr#24
+	strb r1,[v30ptr,#v30ParityVal]
 	cmp r4,#0xC0
 	strbpl r1,[v30ptr,-r5]
 	mov r0,r5
@@ -4884,8 +4882,8 @@ negF7:
 	orrmi v30f,v30f,#PSR_S
 	orrne v30f,v30f,#PSR_C				;@ Set Carry.
 	orreq v30f,v30f,#PSR_Z
-	mov r1,r1,asr#16
-	str r1,[v30ptr,#v30ParityVal]
+	mov r1,r1,lsr#16
+	strb r1,[v30ptr,#v30ParityVal]
 	cmp r4,#0xC0
 	strhpl r1,[r5,#v30Regs]
 	mov r0,r5
@@ -5054,7 +5052,7 @@ endFE:
 	movs r1,r1,asr#24
 	orrmi v30f,v30f,#PSR_S
 	orreq v30f,v30f,#PSR_Z
-	str r1,[v30ptr,#v30ParityVal]
+	strb r1,[v30ptr,#v30ParityVal]
 	cmp r4,#0xC0
 	strbpl r1,[v30ptr,-r5]
 	mov r0,r5
@@ -5108,7 +5106,7 @@ writeBackFF:
 	movs r1,r1,asr#16
 	orrmi v30f,v30f,#PSR_S
 	orreq v30f,v30f,#PSR_Z
-	str r1,[v30ptr,#v30ParityVal]
+	strb r1,[v30ptr,#v30ParityVal]
 	eatCycles 1
 	cmp r4,#0xC0
 	strhpl r1,[r5,#v30Regs]
@@ -5772,7 +5770,7 @@ defaultV30:
 	.space 16*4		;@ v30ReadTbl $00000-FFFFF
 	.space 16*4		;@ v30WriteTbl $00000-FFFFF
 v30StateStart:
-I:				.space 22*4
+I:				.space 20*4
 no_interrupt:	.long 0
 
 v30StateEnd:

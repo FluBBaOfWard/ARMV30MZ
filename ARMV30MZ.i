@@ -13,7 +13,7 @@
 	v30ptr		.req r11
 	addy		.req r12		;@ Keep this at r12 (scratch for APCS)
 
-	.struct -(71*4)			;@ Changes section so make sure it's set before real code.
+	.struct -(69*4)			;@ Changes section so make sure it's set before real code.
 v30MemTbl:			.space 16*4
 v30ReadTbl:			.space 16*4
 v30WriteTbl:		.space 16*4
@@ -64,18 +64,17 @@ v30SRegDS:			.long 0
 v30ICount:			.long 0
 v30IP:				.long 0
 v30Flags:			.long 0
-v30ZeroVal_:			.long 0
-v30ParityVal:		.long 0
 v30EA:				.long 0
 v30IrqVectorFunc:	.long 0
 v30PrefixBase:		.long 0
 v30IrqPin:			.byte 0		;@ IrqPin & IF needs to be together in the same Word.
 v30IF:				.byte 0
 v30Halt:			.byte 0
+v30ParityVal:		.byte 0
 v30TF:				.byte 0
 v30DF:				.byte 0
 v30SegPrefix:		.byte 0
-					.space 2
+					.space 1
 ;@--------------------------------
 
 v30NoInterrupt:		.long 0

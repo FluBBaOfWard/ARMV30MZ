@@ -26,7 +26,6 @@
 
 ****************************************************************************/
 
-
 #include <nds.h>
 
 #define UINT8 unsigned char
@@ -39,10 +38,40 @@
 #define WORD unsigned short
 #define DWORD unsigned int
 
-#include "nec.h"
+//#include "nec.h"
 #include "necintrf.h"
-#include "../Memory.h"
-#include "../Gfx.h"
+//#include "../Memory.h"
+//#include "../Gfx.h"
+
+typedef enum { ES, CS, SS, DS } SREGS;
+typedef enum {
+	AW = 0,
+	CW = 2,
+	DW = 4,
+	BW = 6,
+	SP = 8,
+	BP = 10,
+	IX = 12,
+	IY = 14
+} WREGS;
+typedef enum {
+	AL = 0,
+	AH = 1,
+	CL = 4,
+	CH = 5,
+	DL = 8,
+	DH = 9,
+	BL = 12,
+	BH = 13,
+	SPL = 16,
+	SPH = 17,
+	BPL = 20,
+	BPH = 21,
+	IXL = 24,
+	IXH = 25,
+	IYL = 28,
+	IYH = 29
+} BREGS;
 
 typedef union
 {					// Eight general registers
@@ -73,7 +102,7 @@ typedef struct
 /***************************************************************************/
 /* cpu state															   */
 /***************************************************************************/
-
+/*
 typedef struct {
 	struct {
 		BREGS b[256];
@@ -82,9 +111,9 @@ typedef struct {
 		BREGS b[256];
 	} reg;
 } Mod_Struct;
-
+*/
 extern nec_Regs I;
-extern Mod_Struct Mod_RM;
+//extern Mod_Struct Mod_RM;
 
 /* The interrupt number of a pending external interrupt pending NMI is 2.	*/
 /* For INTR interrupts, the level is caught on the bus during an INTA cycle */
