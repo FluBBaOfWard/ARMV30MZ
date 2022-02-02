@@ -45,75 +45,6 @@
 	.equ CYC_MASK, CYCLE-1		;@ Mask
 ;@----------------------------------------------------------------------------
 
-	.macro encodePC				;@ Translate v30pc from V30 PC to rom offset
-#ifdef V30_FAST
-	and r0,v30pc,#MEM_BANK_MASK
-	add r2,v30ptr,#v30MemTbl
-	ldr r0,[r2,r0,lsr#MEM_BANK_SHIFT]
-	storeLastBank r0
-	add v30pc,v30pc,r0
-#else
-	bl translateZ80PCToOffset	;@ In=z80pc, out=z80pc
-#endif
-	.endm
-
-	.macro encodeFLG			;@ Pack Z80 flags into r0
-	and r0,v30f,#PSR_A|PSR_Y
-	and r1,v30f,#PSR_S|PSR_Z
-	orr r0,r0,r1,lsl#4
-	movs r1,v30f,lsl#31
-	orrmi r0,r0,#VF
-	and r1,v30f,#PSR_n
-	adc r0,r0,r1,lsr#6			;@ NF & CF
-	tst v30f,#PSR_X
-	orrne r0,r0,#XF
-	.endm
-
-	.macro decodeFLG			;@ Unpack Z80 flags from r0
-	and v30f,r0,#HF|YF
-	tst r0,#XF
-	orrne v30f,v30f,#PSR_X
-	tst r0,#CF
-	orrne v30f,v30f,#PSR_C
-	and r1,r0,#SF|ZF
-	movs r0,r0,lsl#30
-	adc v30f,v30f,r1,lsr#4		;@ Also sets V/P Flag.
-	orrmi v30f,v30f,#PSR_n
-	.endm
-
-
-	.macro getNextOpcode
-	ldrb r0,[v30pc],#1
-	.endm
-
-	.macro executeOpcode count
-	subs v30cyc,v30cyc,#(\count)*CYCLE
-	ldrpl pc,[v30ptr,r0,lsl#2]
-	b outOfCycles
-	.endm
-
-/*
-	.macro fetch count
-	subs v30cyc,v30cyc,#(\count)*CYCLE
-	b fetchDebug
-	.endm
-*/
-	.macro fetch count
-	getNextOpcode
-	executeOpcode \count
-	.endm
-/*	.macro fetch count
-	subs v30cyc,v30cyc,#(\count)*CYCLE
-	ldrplb r0,[v30pc],#1
-	ldrpl pc,[v30ptr,r0,lsl#2]
-	ldr pc,[v30ptr,#v30NextTimeout]
-	.endm
-*/
-	.macro fetchForce
-	getNextOpcode
-	ldr pc,[v30ptr,r0,lsl#2]
-	.endm
-
 	.macro eatCycles count
 	sub v30cyc,v30cyc,#(\count)*CYCLE
 	.endm
@@ -132,83 +63,6 @@
 	bl cpuReadMem20W
 	.endm
 
-	.macro readMem8
-#ifdef V30_FAST
-	and r1,addy,#0xF0000
-	add r2,v30ptr,#v30ReadTbl
-	mov lr,pc
-	ldr pc,[r2,r1,lsr#11]		;@ In: addy,r0=val(bits 8-31=?)
-0:
-#else
-	bl memRead8
-#endif
-	.endm
-
-	.macro readMem8BC
-	mov addy,v30bc,lsr#16
-	readMem8
-	.endm
-
-	.macro readMem8DE
-	mov addy,z80de,lsr#16
-	readMem8
-	.endm
-
-	.macro readMem8HL
-#ifdef Z80_FAST
-	mov addy,z80hl,lsr#16
-	readMem8
-#else
-	bl memRead8HL
-#endif
-	.endm
-
-	.macro readMem16 reg
-	readMem8
-	mov \reg,r0,lsl#16
-	add addy,addy,#1
-	readMem8
-	orr \reg,\reg,r0,lsl#24
-	.endm
-
-	.macro writeMem8
-#ifdef Z80_FAST
-	and r1,addy,#0xE000
-	add r2,z80optbl,#z80WriteTbl
-	mov lr,pc
-	ldr pc,[r2,r1,lsr#11]		;@ In: addy,r0=val(bits 8-31=?)
-0:
-#else
-	bl memWrite8
-#endif
-	.endm
-
-	.macro writeMem8e adr
-#ifdef Z80_FAST
-	and r1,addy,#0xE000
-	add r2,z80optbl,#z80WriteTbl
-	adr lr,\adr
-	ldr pc,[r2,r1,lsr#11]		;@ In: addy,r0=val(bits 8-31=?)
-#else
-	adr lr,\adr
-	b memWrite8
-#endif
-	.endm
-
-	.macro writeMem8BC
-	mov addy,z80bc,lsr#16
-	writeMem8
-	.endm
-
-	.macro writeMem8DE
-#ifdef Z80_FAST
-	mov addy,z80de,lsr#16
-	writeMem8
-#else
-	bl memWrite8DE
-#endif
-	.endm
-
 ;@----------------------------------------------------------------------------
 	.macro add8 src dst
 	bic v30f,v30f,#PSR_ALL	;@ Clear S, Z, C, V, P & A.
@@ -216,12 +70,12 @@
 	eor r2,\dst,\src,lsl#24
 	adds \src,\dst,\src,lsl#24
 	eor r2,r2,\src
+	orrmi v30f,v30f,#PSR_S
 	orrcs v30f,v30f,#PSR_C
 	orrvs v30f,v30f,#PSR_V
 	tst r2,#0x10000000
 	orrne v30f,v30f,#PSR_A
 	mov \src,\src,asr#24
-	str \src,[v30ptr,#v30SignVal]
 	str \src,[v30ptr,#v30ZeroVal]
 	str \src,[v30ptr,#v30ParityVal]
 	.endm
@@ -232,48 +86,48 @@
 	eor r2,\dst,\src,lsl#16
 	adds \src,\dst,\src,lsl#16
 	eor r2,r2,\src
+	orrmi v30f,v30f,#PSR_S
 	orrcs v30f,v30f,#PSR_C
 	orrvs v30f,v30f,#PSR_V
 	tst r2,#0x00100000
 	orrne v30f,v30f,#PSR_A
 	mov \src,\src,asr#16
-	str \src,[v30ptr,#v30SignVal]
 	str \src,[v30ptr,#v30ZeroVal]
 	str \src,[v30ptr,#v30ParityVal]
 	.endm
 ;@----------------------------------------------------------------------------
 	.macro adc8 src dst
-	tst v30f,#PSR_C
+	tst v30f,v30f,lsr#2		;@ Get Carry
 	bic v30f,v30f,#PSR_ALL	;@ Clear S, Z, C, V, P & A.
-	subne \src,\src,#0x100
+	subcs \src,\src,#0x100
 	mov \dst,\dst,lsl#24
 	eor r2,\dst,\src,lsl#24
 	adcs \src,\dst,\src,ror#8
 	eor r2,r2,\src
+	orrmi v30f,v30f,#PSR_S
 	orrcs v30f,v30f,#PSR_C
 	orrvs v30f,v30f,#PSR_V
 	tst r2,#0x10000000
 	orrne v30f,v30f,#PSR_A
 	mov \src,\src,asr#24
-	str \src,[v30ptr,#v30SignVal]
 	str \src,[v30ptr,#v30ZeroVal]
 	str \src,[v30ptr,#v30ParityVal]
 	.endm
 
 	.macro adc16 src dst
-	tst v30f,#PSR_C
+	tst v30f,v30f,lsr#2		;@ Get Carry
 	bic v30f,v30f,#PSR_ALL	;@ Clear S, Z, C, V, P & A.
-	subne \src,\src,#0x10000
+	subcs \src,\src,#0x10000
 	mov \dst,\dst,lsl#16
 	eor r2,\dst,\src,lsl#16
 	adcs \src,\dst,\src,ror#16
 	eor r2,r2,\src
+	orrmi v30f,v30f,#PSR_S
 	orrcs v30f,v30f,#PSR_C
 	orrvs v30f,v30f,#PSR_V
 	tst r2,#0x00100000
 	orrne v30f,v30f,#PSR_A
 	mov \src,\src,asr#16
-	str \src,[v30ptr,#v30SignVal]
 	str \src,[v30ptr,#v30ZeroVal]
 	str \src,[v30ptr,#v30ParityVal]
 	.endm
@@ -281,9 +135,9 @@
 	.macro and8 src dst
 	bic v30f,v30f,#PSR_ALL	;@ Clear S, Z, C, V, P & A.
 	mov \src,\src,lsl#24
-	and \src,\src,\dst,lsl#24
+	ands \src,\src,\dst,lsl#24
+	orrmi v30f,v30f,#PSR_S
 	mov \src,\src,asr#24
-	str \src,[v30ptr,#v30SignVal]
 	str \src,[v30ptr,#v30ZeroVal]
 	str \src,[v30ptr,#v30ParityVal]
 	.endm
@@ -291,9 +145,9 @@
 	.macro and16 src dst
 	bic v30f,v30f,#PSR_ALL	;@ Clear S, Z, C, V, P & A.
 	mov \src,\src,lsl#16
-	and \src,\src,\dst,lsl#16
+	ands \src,\src,\dst,lsl#16
+	orrmi v30f,v30f,#PSR_S
 	mov \src,\src,asr#16
-	str \src,[v30ptr,#v30SignVal]
 	str \src,[v30ptr,#v30ZeroVal]
 	str \src,[v30ptr,#v30ParityVal]
 	.endm
@@ -302,12 +156,12 @@
 	ldr r0,[v30ptr,#\reg -2]
 	bic v30f,v30f,#PSR_S+PSR_Z+PSR_V+PSR_P+PSR_A	;@ Clear S, Z, V, P & A.
 	subs r1,r0,#0x10000
+	orrmi v30f,v30f,#PSR_S
 	orrvs v30f,v30f,#PSR_V
 	tst r0,#0xF0000
 	orreq v30f,v30f,#PSR_A
-	str r1,[v30ptr,#\reg]
+	str r1,[v30ptr,#\reg -2]
 	mov r1,r1,asr#16
-	str r1,[v30ptr,#v30SignVal]
 	str r1,[v30ptr,#v30ZeroVal]
 	str r1,[v30ptr,#v30ParityVal]
 	eatCycles 1
@@ -318,12 +172,12 @@
 	ldr r0,[v30ptr,#\reg -2]
 	bic v30f,v30f,#PSR_S+PSR_Z+PSR_V+PSR_P+PSR_A	;@ Clear S, Z, V, P & A.
 	adds r1,r0,#0x10000
+	orrmi v30f,v30f,#PSR_S
 	orrvs v30f,v30f,#PSR_V
 	tst r1,#0xF0000
 	orreq v30f,v30f,#PSR_A
-	str r1,[v30ptr,#\reg]
+	str r1,[v30ptr,#\reg -2]
 	mov r1,r1,asr#16
-	str r1,[v30ptr,#v30SignVal]
 	str r1,[v30ptr,#v30ZeroVal]
 	str r1,[v30ptr,#v30ParityVal]
 	eatCycles 1
@@ -363,9 +217,9 @@
 	.macro or8 src dst
 	bic v30f,v30f,#PSR_ALL	;@ Clear S, Z, C, V, P & A.
 	mov \dst,\dst,lsl#24
-	orr \src,\dst,\src,lsl#24
+	orrs \src,\dst,\src,lsl#24
+	orrmi v30f,v30f,#PSR_S
 	mov \src,\src,asr#24
-	str \src,[v30ptr,#v30SignVal]
 	str \src,[v30ptr,#v30ZeroVal]
 	str \src,[v30ptr,#v30ParityVal]
 	.endm
@@ -373,9 +227,9 @@
 	.macro or16 src dst
 	bic v30f,v30f,#PSR_ALL	;@ Clear S, Z, C, V, P & A.
 	mov \dst,\dst,lsl#16
-	orr \src,\dst,\src,lsl#16
+	orrs \src,\dst,\src,lsl#16
+	orrmi v30f,v30f,#PSR_S
 	mov \src,\src,asr#16
-	str \src,[v30ptr,#v30SignVal]
 	str \src,[v30ptr,#v30ZeroVal]
 	str \src,[v30ptr,#v30ParityVal]
 	.endm
@@ -495,11 +349,11 @@
 	add \src,\src,#24
 	movs \dst,\dst,lsl \src
 	mov \src,\dst,asr#24
+	orrmi v30f,v30f,#PSR_S
 	orrcs v30f,v30f,#PSR_C+PSR_V
 	eorpl v30f,v30f,#PSR_V
 	tst \src,#0x10
 	orrne v30f,v30f,#PSR_A
-	str \src,[v30ptr,#v30SignVal]
 	str \src,[v30ptr,#v30ZeroVal]
 	str \src,[v30ptr,#v30ParityVal]
 	.endm
@@ -509,11 +363,11 @@
 	add \src,\src,#16
 	movs \dst,\dst,lsl \src
 	mov \src,\dst,asr#16
+	orrmi v30f,v30f,#PSR_S
 	orrcs v30f,v30f,#PSR_C+PSR_V
 	eorpl v30f,v30f,#PSR_V
 	tst \src,#0x10
 	orrne v30f,v30f,#PSR_A
-	str \src,[v30ptr,#v30SignVal]
 	str \src,[v30ptr,#v30ZeroVal]
 	str \src,[v30ptr,#v30ParityVal]
 	.endm
@@ -526,7 +380,6 @@
 	orrne v30f,v30f,#PSR_V
 	tst \src,#0x10
 	orrne v30f,v30f,#PSR_A
-	str \src,[v30ptr,#v30SignVal]
 	str \src,[v30ptr,#v30ZeroVal]
 	str \src,[v30ptr,#v30ParityVal]
 	.endm
@@ -539,7 +392,6 @@
 	orrne v30f,v30f,#PSR_V
 	tst \src,#0x10
 	orrne v30f,v30f,#PSR_A
-	str \src,[v30ptr,#v30SignVal]
 	str \src,[v30ptr,#v30ZeroVal]
 	str \src,[v30ptr,#v30ParityVal]
 	.endm
@@ -549,13 +401,13 @@
 	mov \dst,\dst,lsl#24
 	mov \dst,\dst,asr \src
 	movs \src,\dst,asr#24
+	orrmi v30f,v30f,#PSR_S
 	orrcs v30f,v30f,#PSR_C
 	eor r2,\src,\src,lsr#1
 	tst r2,#0x40
 	orrne v30f,v30f,#PSR_V
 	tst \src,#0x10
 	orrne v30f,v30f,#PSR_A
-	str \src,[v30ptr,#v30SignVal]
 	str \src,[v30ptr,#v30ZeroVal]
 	str \src,[v30ptr,#v30ParityVal]
 	.endm
@@ -565,13 +417,13 @@
 	mov \dst,\dst,lsl#16
 	mov \dst,\dst,asr \src
 	movs \src,\dst,asr#16
+	orrmi v30f,v30f,#PSR_S
 	orrcs v30f,v30f,#PSR_C
 	eor r2,\src,\src,lsr#1
 	tst \src,#0x4000
 	orrne v30f,v30f,#PSR_V
 	tst \src,#0x10
 	orrne v30f,v30f,#PSR_A
-	str \src,[v30ptr,#v30SignVal]
 	str \src,[v30ptr,#v30ZeroVal]
 	str \src,[v30ptr,#v30ParityVal]
 	.endm
@@ -583,12 +435,12 @@
 	eor r2,\dst,\src,lsl#24
 	subs \src,\dst,\src,lsl#24
 	eor r2,r2,\src
+	orrmi v30f,v30f,#PSR_S
 	orrcc v30f,v30f,#PSR_C
 	orrvs v30f,v30f,#PSR_V
 	tst r2,#0x10000000
 	orrne v30f,v30f,#PSR_A
 	mov \src,\src,asr#24
-	str \src,[v30ptr,#v30SignVal]
 	str \src,[v30ptr,#v30ZeroVal]
 	str \src,[v30ptr,#v30ParityVal]
 	.endm
@@ -599,12 +451,12 @@
 	eor r2,\dst,\src,lsl#16
 	subs \src,\dst,\src,lsl#16
 	eor r2,r2,\src
+	orrmi v30f,v30f,#PSR_S
 	orrcc v30f,v30f,#PSR_C
 	orrvs v30f,v30f,#PSR_V
 	tst r2,#0x00100000
 	orrne v30f,v30f,#PSR_A
 	mov \src,\src,asr#16
-	str \src,[v30ptr,#v30SignVal]
 	str \src,[v30ptr,#v30ZeroVal]
 	str \src,[v30ptr,#v30ParityVal]
 	.endm
@@ -617,12 +469,12 @@
 	eor r2,\dst,\src,lsl#24
 	subs \src,\dst,\src,ror#8
 	eor r2,r2,\src
+	orrmi v30f,v30f,#PSR_S
 	orrcc v30f,v30f,#PSR_C
 	orrvs v30f,v30f,#PSR_V
 	tst r2,#0x10000000
 	orrne v30f,v30f,#PSR_A
 	mov \src,\src,asr#24
-	str \src,[v30ptr,#v30SignVal]
 	str \src,[v30ptr,#v30ZeroVal]
 	str \src,[v30ptr,#v30ParityVal]
 	.endm
@@ -635,12 +487,12 @@
 	eor r2,\dst,\src,lsl#16
 	subs \src,\dst,\src,ror#16
 	eor r2,r2,\src
+	orrmi v30f,v30f,#PSR_S
 	orrcc v30f,v30f,#PSR_C
 	orrvs v30f,v30f,#PSR_V
 	tst r2,#0x00100000
 	orrne v30f,v30f,#PSR_A
 	mov \src,\src,asr#16
-	str \src,[v30ptr,#v30SignVal]
 	str \src,[v30ptr,#v30ZeroVal]
 	str \src,[v30ptr,#v30ParityVal]
 	.endm
@@ -649,9 +501,9 @@
 	.macro xor8 src dst
 	bic v30f,v30f,#PSR_ALL	;@ Clear S, Z, C, V, P & A.
 	mov \src,\src,lsl#24
-	eor \src,\src,\dst,lsl#24
+	eors \src,\src,\dst,lsl#24
 	mov \src,\src,asr#24
-	str \src,[v30ptr,#v30SignVal]
+	orrmi v30f,v30f,#PSR_S
 	str \src,[v30ptr,#v30ZeroVal]
 	str \src,[v30ptr,#v30ParityVal]
 	.endm
@@ -659,9 +511,9 @@
 	.macro xor16 src dst
 	bic v30f,v30f,#PSR_ALL	;@ Clear S, Z, C, V, P & A.
 	mov \src,\src,lsl#16
-	eor \src,\src,\dst,lsl#16
+	eors \src,\src,\dst,lsl#16
 	mov \src,\src,asr#16
-	str \src,[v30ptr,#v30SignVal]
+	orrmi v30f,v30f,#PSR_S
 	str \src,[v30ptr,#v30ZeroVal]
 	str \src,[v30ptr,#v30ParityVal]
 	.endm

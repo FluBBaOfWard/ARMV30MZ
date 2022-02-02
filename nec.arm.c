@@ -58,15 +58,13 @@ typedef struct
 	INT32 ICount;
 	UINT32 ip;
 	UINT32 Flags;
-	INT32 SignVal;
 	UINT32 ZeroVal, ParityVal; // 0 or non-0 valued flags
 	UINT32 EA;
 	UINT32 int_vector;
 	int (*irq_callback)(int irqline);
 	/** Base address of the latest prefix segment */
 	UINT32 prefix_base;
-	UINT16 EO;
-	UINT8  TF, IF, DF, MF; 	/* 0 or 1 valued flags */	/* OB[19.07.99] added Mode Flag V30 */
+	UINT8  TF, IF, DF;
 	UINT8 seg_prefix;
 
 } nec_Regs;
@@ -115,7 +113,6 @@ void nec_reset(void *param)
 	}
 
 	I.ZeroVal = I.ParityVal = 1;
-	SetMD(1);						// Set the mode-flag = native mode
 
 //	for (i = 0; i < 0x100; i++) {
 //		Mod_RM.reg.b[i] = reg_name[(i & 0x38) >> 3];
