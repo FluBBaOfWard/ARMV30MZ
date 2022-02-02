@@ -59,7 +59,7 @@ typedef struct
 	UINT32 ip;
 	UINT32 Flags;
 	INT32 SignVal;
-	UINT32 AuxVal, ZeroVal, ParityVal; // 0 or non-0 valued flags
+	UINT32 ZeroVal, ParityVal; // 0 or non-0 valued flags
 	UINT32 EA;
 	UINT32 int_vector;
 	int (*irq_callback)(int irqline);

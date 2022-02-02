@@ -13,7 +13,7 @@
 	v30ptr		.req r11
 	addy		.req r12		;@ Keep this at r12 (scratch for APCS)
 
-	.struct -(73*4)			;@ Changes section so make sure it's set before real code.
+	.struct -(72*4)			;@ Changes section so make sure it's set before real code.
 v30MemTbl:			.space 16*4
 v30ReadTbl:			.space 16*4
 v30WriteTbl:		.space 16*4
@@ -65,7 +65,6 @@ v30ICount:			.long 0
 v30IP:				.long 0
 v30Flags:			.long 0
 v30SignVal:			.long 0
-v30AuxVal:			.long 0
 v30ZeroVal:			.long 0
 v30ParityVal:		.long 0
 v30EA:				.long 0

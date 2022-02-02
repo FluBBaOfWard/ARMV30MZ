@@ -902,13 +902,11 @@ i_daa:
 _27:	;@ DAA
 ;@----------------------------------------------------------------------------
 	ldrb r0,[v30ptr,#v30RegAL]
-	ldr r1,[v30ptr,#v30AuxVal]
 	mov r3,r0,ror#4
 	cmp r3,#0xA0000000
-	movcs r1,#0x10
-	cmp r1,#0
+	orrcs v30f,v30f,#PSR_A
+	tst v30f,#PSR_A
 	addne r0,r0,#0x06
-	str r1,[v30ptr,#v30AuxVal]
 	cmp r0,#0xA0
 	orrpl v30f,v30f,#PSR_C
 	tst v30f,#PSR_C
@@ -1091,13 +1089,11 @@ i_das:
 _2F:	;@ DAS
 ;@----------------------------------------------------------------------------
 	ldrb r0,[v30ptr,#v30RegAL]
-	ldr r1,[v30ptr,#v30AuxVal]
 	mov r3,r0,ror#4
 	cmp r3,#0xA0000000
-	movcs r1,#0x10
-	cmp r1,#0
+	orrcs v30f,v30f,#PSR_A
+	tst v30f,#PSR_A
 	subne r0,r0,#0x06
-	str r1,[v30ptr,#v30AuxVal]
 	cmp r0,#0xA0
 	orrpl v30f,v30f,#PSR_C
 	tst v30f,#PSR_C
@@ -1280,19 +1276,16 @@ i_aaa:
 _37:	;@ AAA
 ;@----------------------------------------------------------------------------
 	ldrb r0,[v30ptr,#v30RegAL]
-	ldr r1,[v30ptr,#v30AuxVal]
 	mov r0,r0,lsl#28
 	cmp r0,#0xA0000000
 	biccc v30f,v30f,#PSR_C			;@ Clear Carry.
 	orrcs v30f,v30f,#PSR_C+PSR_A	;@ Set Carry & Aux.
-	movcs r1,#0x10
-	cmp r1,#0
+	tst v30f,#PSR_A
 	ldrbne r2,[v30ptr,#v30RegAH]
 	addne r0,r0,#0x60000000
 	addne r2,r2,#1
 	strbne r2,[v30ptr,#v30RegAH]
 	mov r0,r0,lsr#28
-	str r1,[v30ptr,#v30AuxVal]
 	strb r0,[v30ptr,#v30RegAL]
 	eatCycles 9
 	bx lr
@@ -1450,19 +1443,16 @@ i_aas:
 _3F:	;@ AAS
 ;@----------------------------------------------------------------------------
 	ldrb r0,[v30ptr,#v30RegAL]
-	ldr r1,[v30ptr,#v30AuxVal]
 	mov r0,r0,lsl#28
 	cmp r0,#0xA0000000
 	biccc v30f,v30f,#PSR_C			;@ Clear Carry.
 	orrcs v30f,v30f,#PSR_C+PSR_A	;@ Set Carry & Aux.
-	movcs r1,#0x10
-	cmp r1,#0
+	tst v30f,#PSR_A
 	ldrbne r2,[v30ptr,#v30RegAH]
 	subne r0,r0,#0x60000000
 	subne r2,r2,#1
 	strbne r2,[v30ptr,#v30RegAH]
 	mov r0,r0,lsr#28
-	str r1,[v30ptr,#v30AuxVal]
 	strb r0,[v30ptr,#v30RegAL]
 	eatCycles 9
 	bx lr
@@ -2929,12 +2919,11 @@ _9C:	;@ PUSH F
 	tst v30f,#PSR_C
 	orrne r1,r1,#CF
 	ldrb r2,[r3,r2]
-	ldr r0,[v30ptr,#v30AuxVal]
 	ldr r3,[v30ptr,#v30ZeroVal]
 	cmp r2,#0
 	orrne r1,r1,#PF
 	ldr r2,[v30ptr,#v30SignVal]
-	cmp r0,#0
+	tst v30f,#PSR_A
 	orrne r1,r1,#AF
 	ldrb r0,[v30ptr,#v30TF]
 	cmp r3,#0
@@ -2982,8 +2971,7 @@ _9D:	;@ POP F
 	strne r1,[v30ptr,#v30ParityVal]
 	streq r2,[v30ptr,#v30ParityVal]
 	tst r0,#AF
-	streq r1,[v30ptr,#v30AuxVal]
-	strne r2,[v30ptr,#v30AuxVal]
+	orrne v30f,v30f,#PSR_A
 	tst r0,#ZF
 	strne r1,[v30ptr,#v30ZeroVal]
 	streq r2,[v30ptr,#v30ZeroVal]
@@ -3021,8 +3009,7 @@ _9E:	;@ SAHF
 	strne r1,[v30ptr,#v30ParityVal]
 	streq r2,[v30ptr,#v30ParityVal]
 	tst r0,#AF
-	streq r1,[v30ptr,#v30AuxVal]
-	strne r2,[v30ptr,#v30AuxVal]
+	orrne v30f,v30f,#PSR_A
 	tst r0,#ZF
 	strne r1,[v30ptr,#v30ZeroVal]
 	streq r2,[v30ptr,#v30ZeroVal]
@@ -3044,12 +3031,11 @@ _9F:	;@ LAHF
 	tst v30f,#PSR_C
 	orrne r1,r1,#CF
 	ldrb r2,[r3,r2]
-	ldr r0,[v30ptr,#v30AuxVal]
 	ldr r3,[v30ptr,#v30ZeroVal]
 	cmp r2,#0
 	orrne r1,r1,#PF
 	ldr r2,[v30ptr,#v30SignVal]
-	cmp r0,#0
+	tst v30f,#PSR_A
 	orrne r1,r1,#AF
 	cmp r3,#0
 	orreq r1,r1,#ZF
@@ -5089,10 +5075,8 @@ incFE:
 	orrvs v30f,v30f,#PSR_V							;@ Set Overflow.
 	tst r1,#0xF000000
 endFE:
-	mov r3,#0
-	moveq r3,#1
+	orreq v30f,v30f,#PSR_A
 	mov r1,r1,asr#24
-	str r3,[v30ptr,#v30AuxVal]
 	str r1,[v30ptr,#v30SignVal]
 	str r1,[v30ptr,#v30ZeroVal]
 	str r1,[v30ptr,#v30ParityVal]
@@ -5145,10 +5129,8 @@ decFF:
 	orrvs v30f,v30f,#PSR_V							;@ Set Overflow.
 	tst r0,#0xF
 writeBackFF:
-	mov r3,#0
-	moveq r3,#1
+	orreq v30f,v30f,#PSR_A
 	mov r1,r1,asr#16
-	str r3,[v30ptr,#v30AuxVal]
 	str r1,[v30ptr,#v30SignVal]
 	str r1,[v30ptr,#v30ZeroVal]
 	str r1,[v30ptr,#v30ParityVal]
@@ -5815,7 +5797,7 @@ defaultV30:
 	.space 16*4		;@ v30ReadTbl $00000-FFFFF
 	.space 16*4		;@ v30WriteTbl $00000-FFFFF
 v30StateStart:
-I:				.space 24*4
+I:				.space 23*4
 no_interrupt:	.long 0
 
 v30StateEnd:
