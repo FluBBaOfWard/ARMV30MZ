@@ -186,12 +186,8 @@
 ;@----------------------------------------------------------------------------
 	.macro jmpne flag
 	stmfd sp!,{lr}
-	ldr r0,[v30ptr,#v30SRegCS]
-	add r0,r0,v30pc,lsr#4
-	add v30pc,v30pc,#0x10000
-	bl cpuReadMem20
-	ldr r3,[v30ptr,#\flag]
-	cmp r3,#0
+	getNextByte
+	tst v30f,#\flag
 	movne r0,r0,lsl#24
 	addne v30pc,v30pc,r0,asr#8
 	subne v30cyc,v30cyc,#4*CYCLE
@@ -201,12 +197,8 @@
 
 	.macro jmpeq flag
 	stmfd sp!,{lr}
-	ldr r0,[v30ptr,#v30SRegCS]
-	add r0,r0,v30pc,lsr#4
-	add v30pc,v30pc,#0x10000
-	bl cpuReadMem20
-	ldr r3,[v30ptr,#\flag]
-	cmp r3,#0
+	getNextByte
+	tst v30f,#\flag
 	moveq r0,r0,lsl#24
 	addeq v30pc,v30pc,r0,asr#8
 	subeq v30cyc,v30cyc,#4*CYCLE
@@ -234,6 +226,30 @@
 	strb \src,[v30ptr,#v30ParityVal]
 	.endm
 
+;@----------------------------------------------------------------------------
+	.macro popRegister reg
+	stmfd sp!,{lr}
+	ldr r1,[v30ptr,#v30RegSP]
+	ldr r0,[v30ptr,#v30SRegSS]
+	add r2,r1,#0x20000
+	add r0,r0,r1,lsr#4
+	str r2,[v30ptr,#v30RegSP]
+	bl cpuReadMem20W
+	strh r0,[v30ptr,#\reg]
+	eatCycles 1
+	ldmfd sp!,{pc}
+	.endm
+
+	.macro pushRegister reg
+	ldr r1,[v30ptr,#v30RegSP]
+	ldr r0,[v30ptr,#v30SRegSS]
+	sub r1,r1,#0x20000
+	add r0,r0,r1,lsr#4
+	str r1,[v30ptr,#v30RegSP]
+	ldrh r1,[v30ptr,#\reg]
+	eatCycles 1
+	b cpuWriteMem20W
+	.endm
 ;@----------------------------------------------------------------------------
 	.macro rol8 dst src
 	bic v30f,v30f,#PSR_C+PSR_V	;@ Clear C & V.

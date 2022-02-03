@@ -2,10 +2,11 @@ ARMV30MZ To do
 --------------
 
 	Use a register for flags.
-	Make all regs use the top 16bit.
 	Make ModRM use 32bit instead of bytes to optimize EA access.
+	DF should be +1 or -1 instead of 0/1.
 	Prepare (C8) uses r4-r8, (r8 = SP).
 	Interrupt uses r4-r7, (r7 = SP).
+	Make all regs use the top 16bit?
 	Hard to use a dedicated register for v30Regs since they can be accessed by index.
 	Add check of IRQ efter EI and RETI.
 	Rename more opcodes.

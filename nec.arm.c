@@ -125,23 +125,23 @@ extern nec_Regs I;
 
 void nec_reset(void *param)
 {
-	unsigned int i, j, c;
+//	unsigned int i, j, c;
 //	BREGS reg_name[8] = { AL, CL, DL, BL, AH, CH, DH, BH };
 
-	memset( &I, 0, sizeof(I) );
+//	memset( &I, 0, sizeof(I) );
 
 //	no_interrupt = 0;
-	I.sregs[CS] = 0xFFFF0000;
-	I.regs.w[SP+1] = 0xFFFE;
-
+//	I.sregs[CS] = 0xFFFF0000;
+//	I.regs.w[SP+1] = 0xFFFE;
+/*
 	for (i = 0;i < 0x100; i++) {
 		for (j = i, c = 0; j > 0; j >>= 1) {
 			c += (j & 1);
 		}
 		PZSTable[i] = !(c & 1);
 	}
-
-	I.ZeroVal = I.ParityVal = 1;
+*/
+//	I.ZeroVal = I.ParityVal = 1;
 
 //	for (i = 0; i < 0x100; i++) {
 //		Mod_RM.reg.b[i] = reg_name[(i & 0x38) >> 3];
