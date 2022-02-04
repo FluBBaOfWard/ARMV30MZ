@@ -15,7 +15,7 @@
 
 	.equ PSR_P, 0x00000020		;@ Parity
 	.equ PSR_A, 0x00000010		;@ Aux/Half carry
-	.equ PSR_ALL, 0x0000003F	;@ All flags
+	.equ PSR_ALL, 0x0000001F	;@ All flags
 
 .equ PSR_X, 0x00000000
 .equ PSR_Y, 0x00000000
@@ -65,75 +65,59 @@
 
 ;@----------------------------------------------------------------------------
 	.macro add8 src dst
-	bic v30f,v30f,#PSR_ALL	;@ Clear S, Z, C, V, P & A.
+	eor r2,\dst,\src
 	mov \dst,\dst,lsl#24
-	eor r2,\dst,\src,lsl#24
 	adds \src,\dst,\src,lsl#24
-	eor r2,r2,\src
-	orrmi v30f,v30f,#PSR_S
-	orreq v30f,v30f,#PSR_Z
-	orrcs v30f,v30f,#PSR_C
-	orrvs v30f,v30f,#PSR_V
-	tst r2,#0x10000000
-	orrne v30f,v30f,#PSR_A
+	eor r2,r2,\src,lsr#24
+	and r2,r2,#PSR_A
+	mrs v30f,cpsr				;@ S,Z,V&C
+	orr v30f,r2,v30f,lsr#28
 	mov \src,\src,lsr#24
 	strb \src,[v30ptr,#v30ParityVal]
 	.endm
 
 	.macro add16 src dst
-	bic v30f,v30f,#PSR_ALL	;@ Clear S, Z, C, V, P & A.
+	eor r2,\dst,\src
 	mov \dst,\dst,lsl#16
-	eor r2,\dst,\src,lsl#16
 	adds \src,\dst,\src,lsl#16
-	eor r2,r2,\src
-	orrmi v30f,v30f,#PSR_S
-	orreq v30f,v30f,#PSR_Z
-	orrcs v30f,v30f,#PSR_C
-	orrvs v30f,v30f,#PSR_V
-	tst r2,#0x00100000
-	orrne v30f,v30f,#PSR_A
+	eor r2,r2,\src,lsr#16
+	and r2,r2,#PSR_A
+	mrs v30f,cpsr				;@ S,Z,V&C
+	orr v30f,r2,v30f,lsr#28
 	mov \src,\src,lsr#16
 	strb \src,[v30ptr,#v30ParityVal]
 	.endm
 ;@----------------------------------------------------------------------------
 	.macro adc8 src dst
 	tst v30f,v30f,lsr#2		;@ Get Carry
-	bic v30f,v30f,#PSR_ALL	;@ Clear S, Z, C, V, P & A.
 	subcs \src,\src,#0x100
+	eor r2,\dst,\src
 	mov \dst,\dst,lsl#24
-	eor r2,\dst,\src,lsl#24
 	adcs \src,\dst,\src,ror#8
-	eor r2,r2,\src
-	orrmi v30f,v30f,#PSR_S
-	orreq v30f,v30f,#PSR_Z
-	orrcs v30f,v30f,#PSR_C
-	orrvs v30f,v30f,#PSR_V
-	tst r2,#0x10000000
-	orrne v30f,v30f,#PSR_A
+	eor r2,r2,\src,lsr#24
+	and r2,r2,#PSR_A
+	mrs v30f,cpsr				;@ S,Z,V&C
+	orr v30f,r2,v30f,lsr#28
 	mov \src,\src,lsr#24
 	strb \src,[v30ptr,#v30ParityVal]
 	.endm
 
 	.macro adc16 src dst
 	tst v30f,v30f,lsr#2		;@ Get Carry
-	bic v30f,v30f,#PSR_ALL	;@ Clear S, Z, C, V, P & A.
 	subcs \src,\src,#0x10000
+	eor r2,\dst,\src
 	mov \dst,\dst,lsl#16
-	eor r2,\dst,\src,lsl#16
 	adcs \src,\dst,\src,ror#16
-	eor r2,r2,\src
-	orrmi v30f,v30f,#PSR_S
-	orreq v30f,v30f,#PSR_Z
-	orrcs v30f,v30f,#PSR_C
-	orrvs v30f,v30f,#PSR_V
-	tst r2,#0x00100000
-	orrne v30f,v30f,#PSR_A
+	eor r2,r2,\src,lsr#16
+	and r2,r2,#PSR_A
+	mrs v30f,cpsr				;@ S,Z,V&C
+	orr v30f,r2,v30f,lsr#28
 	mov \src,\src,lsr#16
 	strb \src,[v30ptr,#v30ParityVal]
 	.endm
 ;@----------------------------------------------------------------------------
 	.macro and8 src dst
-	bic v30f,v30f,#PSR_ALL	;@ Clear S, Z, C, V, P & A.
+	bic v30f,v30f,#PSR_ALL	;@ Clear S, Z, C, V & A.
 	mov \src,\src,lsl#24
 	ands \src,\src,\dst,lsl#24
 	orrmi v30f,v30f,#PSR_S
@@ -143,7 +127,7 @@
 	.endm
 
 	.macro and16 src dst
-	bic v30f,v30f,#PSR_ALL	;@ Clear S, Z, C, V, P & A.
+	bic v30f,v30f,#PSR_ALL	;@ Clear S, Z, C, V & A.
 	mov \src,\src,lsl#16
 	ands \src,\src,\dst,lsl#16
 	orrmi v30f,v30f,#PSR_S
@@ -154,7 +138,7 @@
 ;@----------------------------------------------------------------------------
 	.macro decWord reg
 	ldr r0,[v30ptr,#\reg -2]
-	bic v30f,v30f,#PSR_S+PSR_Z+PSR_V+PSR_P+PSR_A	;@ Clear S, Z, V, P & A.
+	bic v30f,v30f,#PSR_S+PSR_Z+PSR_V+PSR_A	;@ Clear S, Z, V & A.
 	subs r1,r0,#0x10000
 	orrmi v30f,v30f,#PSR_S
 	orreq v30f,v30f,#PSR_Z
@@ -170,7 +154,7 @@
 ;@----------------------------------------------------------------------------
 	.macro incWord reg
 	ldr r0,[v30ptr,#\reg -2]
-	bic v30f,v30f,#PSR_S+PSR_Z+PSR_V+PSR_P+PSR_A	;@ Clear S, Z, V, P & A.
+	bic v30f,v30f,#PSR_S+PSR_Z+PSR_V+PSR_A	;@ Clear S, Z, V & A.
 	adds r1,r0,#0x10000
 	orrmi v30f,v30f,#PSR_S
 	orreq v30f,v30f,#PSR_Z
@@ -207,7 +191,7 @@
 	.endm
 ;@----------------------------------------------------------------------------
 	.macro or8 src dst
-	bic v30f,v30f,#PSR_ALL	;@ Clear S, Z, C, V, P & A.
+	bic v30f,v30f,#PSR_ALL	;@ Clear S, Z, C, V & A.
 	mov \dst,\dst,lsl#24
 	orrs \src,\dst,\src,lsl#24
 	orrmi v30f,v30f,#PSR_S
@@ -217,7 +201,7 @@
 	.endm
 
 	.macro or16 src dst
-	bic v30f,v30f,#PSR_ALL	;@ Clear S, Z, C, V, P & A.
+	bic v30f,v30f,#PSR_ALL	;@ Clear S, Z, C, V & A.
 	mov \dst,\dst,lsl#16
 	orrs \src,\dst,\src,lsl#16
 	orrmi v30f,v30f,#PSR_S
@@ -361,7 +345,7 @@
 	.endm
 ;@----------------------------------------------------------------------------
 	.macro shl8 dst src
-	bic v30f,v30f,#PSR_ALL	;@ Clear S, Z, C, V, P & A.
+	bic v30f,v30f,#PSR_ALL	;@ Clear S, Z, C, V & A.
 	add \src,\src,#24
 	movs \dst,\dst,lsl \src
 	mov \src,\dst,asr#24
@@ -375,7 +359,7 @@
 	.endm
 
 	.macro shl16 dst src
-	bic v30f,v30f,#PSR_ALL	;@ Clear S, Z, C, V, P & A.
+	bic v30f,v30f,#PSR_ALL	;@ Clear S, Z, C, V & A.
 	add \src,\src,#16
 	movs \dst,\dst,lsl \src
 	mov \src,\dst,asr#16
@@ -389,7 +373,7 @@
 	.endm
 ;@----------------------------------------------------------------------------
 	.macro shr8 dst src
-	bic v30f,v30f,#PSR_ALL	;@ Clear S, Z, C, V, P & A.
+	bic v30f,v30f,#PSR_ALL	;@ Clear S, Z, C, V & A.
 	movs \src,\dst,lsr \src
 	orreq v30f,v30f,#PSR_Z
 	orrcs v30f,v30f,#PSR_C
@@ -401,7 +385,7 @@
 	.endm
 
 	.macro shr16 dst src
-	bic v30f,v30f,#PSR_ALL	;@ Clear S, Z, C, V, P & A.
+	bic v30f,v30f,#PSR_ALL	;@ Clear S, Z, C, V & A.
 	movs \src,\dst,lsr \src
 	orreq v30f,v30f,#PSR_Z
 	orrcs v30f,v30f,#PSR_C
@@ -413,7 +397,7 @@
 	.endm
 ;@----------------------------------------------------------------------------
 	.macro shra8 dst src
-	bic v30f,v30f,#PSR_ALL	;@ Clear S, Z, C, V, P & A.
+	bic v30f,v30f,#PSR_ALL	;@ Clear S, Z, C, V & A.
 	mov \dst,\dst,lsl#24
 	mov \dst,\dst,asr \src
 	movs \src,\dst,asr#24
@@ -427,7 +411,7 @@
 	.endm
 
 	.macro shra16 dst src
-	bic v30f,v30f,#PSR_ALL	;@ Clear S, Z, C, V, P & A.
+	bic v30f,v30f,#PSR_ALL	;@ Clear S, Z, C, V & A.
 	mov \dst,\dst,lsl#16
 	mov \dst,\dst,asr \src
 	movs \src,\dst,asr#16
@@ -442,50 +426,42 @@
 
 ;@----------------------------------------------------------------------------
 	.macro sub8 src dst
-	bic v30f,v30f,#PSR_ALL	;@ Clear S, Z, C, V, P & A.
+	eor r2,\dst,\src
 	mov \dst,\dst,lsl#24
-	eor r2,\dst,\src,lsl#24
 	subs \src,\dst,\src,lsl#24
-	eor r2,r2,\src
-	orrmi v30f,v30f,#PSR_S
-	orreq v30f,v30f,#PSR_Z
-	orrcc v30f,v30f,#PSR_C
-	orrvs v30f,v30f,#PSR_V
-	tst r2,#0x10000000
-	orrne v30f,v30f,#PSR_A
+	eor r2,r2,\src,lsr#24
+	and r2,r2,#PSR_A
+	mrs v30f,cpsr				;@ S,Z,V&C
+	orr v30f,r2,v30f,lsr#28
+	eor v30f,v30f,#PSR_C		;@ Invert C
 	mov \src,\src,lsr#24
 	strb \src,[v30ptr,#v30ParityVal]
 	.endm
 
 	.macro sub16 src dst
-	bic v30f,v30f,#PSR_ALL	;@ Clear S, Z, C, V, P & A.
+	eor r2,\dst,\src
 	mov \dst,\dst,lsl#16
-	eor r2,\dst,\src,lsl#16
 	subs \src,\dst,\src,lsl#16
-	eor r2,r2,\src
-	orrmi v30f,v30f,#PSR_S
-	orreq v30f,v30f,#PSR_Z
-	orrcc v30f,v30f,#PSR_C
-	orrvs v30f,v30f,#PSR_V
-	tst r2,#0x00100000
-	orrne v30f,v30f,#PSR_A
+	eor r2,r2,\src,lsr#16
+	and r2,r2,#PSR_A
+	mrs v30f,cpsr				;@ S,Z,V&C
+	orr v30f,r2,v30f,lsr#28
+	eor v30f,v30f,#PSR_C		;@ Invert C
 	mov \src,\src,lsr#16
 	strb \src,[v30ptr,#v30ParityVal]
 	.endm
 ;@----------------------------------------------------------------------------
 	.macro subc8 src dst
 	tst v30f,#PSR_C
-	bic v30f,v30f,#PSR_ALL	;@ Clear S, Z, C, V, P & A.
 	orrne \src,\src,#0x80000000
+	eor r2,\dst,\src
 	mov \dst,\dst,lsl#24
-	eor r2,\dst,\src,lsl#24
 	subs \src,\dst,\src,ror#8
-	eor r2,r2,\src
+	eor r2,r2,\src,lsr#24
+	and v30f,r2,#PSR_A
 	orrmi v30f,v30f,#PSR_S
 	orrcc v30f,v30f,#PSR_C
 	orrvs v30f,v30f,#PSR_V
-	tst r2,#0x10000000
-	orrne v30f,v30f,#PSR_A
 	movs \src,\src,lsr#24
 	orreq v30f,v30f,#PSR_Z
 	strb \src,[v30ptr,#v30ParityVal]
@@ -493,17 +469,15 @@
 
 	.macro subc16 src dst
 	tst v30f,#PSR_C
-	bic v30f,v30f,#PSR_ALL	;@ Clear S, Z, C, V, P & A.
 	orrne \src,\src,#0x80000000
+	eor r2,\dst,\src
 	mov \dst,\dst,lsl#16
-	eor r2,\dst,\src,lsl#16
 	subs \src,\dst,\src,ror#16
-	eor r2,r2,\src
+	eor r2,r2,\src,lsr#16
+	and v30f,r2,#PSR_A
 	orrmi v30f,v30f,#PSR_S
 	orrcc v30f,v30f,#PSR_C
 	orrvs v30f,v30f,#PSR_V
-	tst r2,#0x00100000
-	orrne v30f,v30f,#PSR_A
 	movs \src,\src,lsr#16
 	orreq v30f,v30f,#PSR_Z
 	strb \src,[v30ptr,#v30ParityVal]
@@ -511,7 +485,7 @@
 
 ;@----------------------------------------------------------------------------
 	.macro xor8 src dst
-	bic v30f,v30f,#PSR_ALL	;@ Clear S, Z, C, V, P & A.
+	bic v30f,v30f,#PSR_ALL	;@ Clear S, Z, C, V & A.
 	mov \src,\src,lsl#24
 	eors \src,\src,\dst,lsl#24
 	mov \src,\src,lsr#24
@@ -521,7 +495,7 @@
 	.endm
 
 	.macro xor16 src dst
-	bic v30f,v30f,#PSR_ALL	;@ Clear S, Z, C, V, P & A.
+	bic v30f,v30f,#PSR_ALL	;@ Clear S, Z, C, V & A.
 	mov \src,\src,lsl#16
 	eors \src,\src,\dst,lsl#16
 	mov \src,\src,lsr#16

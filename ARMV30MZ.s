@@ -5418,8 +5418,6 @@ regConv2Loop:
 	cmp r2,#0x100
 	bne regConv2Loop
 
-	mov r0,v30ptr
-	bl V30Reset
 	ldmfd sp!,{v30ptr,lr}
 	bx lr
 regConvert:
@@ -5432,7 +5430,7 @@ V30Reset:					;@ r0=v30ptr
 	mov v30ptr,r0
 
 	add r0,v30ptr,#v30I			;@ Clear CPU
-	mov r1,#20/4
+	mov r1,#20
 	bl memclr_
 
 	ldr r0,=0xFFFF0000
