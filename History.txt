@@ -2,7 +2,7 @@ ARMV30MZ revision history
 -=-=-=-=-=-=-=-=-=-=-=-=-
 
 
-V0.4.5 - 2022-02-04 (FluBBa)
+V0.4.5 - 2022-02-05 (FluBBa)
 	Fixed Halt and interrupt handling.
 	Optimized cycle counting.
 	Optimized memory access.
