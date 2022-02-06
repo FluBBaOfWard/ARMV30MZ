@@ -17,9 +17,6 @@
 	.equ PSR_A, 0x00000010		;@ Aux/Half carry
 	.equ PSR_ALL, 0x0000001F	;@ All flags
 
-.equ PSR_X, 0x00000000
-.equ PSR_Y, 0x00000000
-
 
 							;@ V30 flags
 	.equ MF, 0x8000				;@ Mode, native/emulated, invalid in V30MZ.

@@ -1,7 +1,6 @@
 ARMV30MZ To do
 --------------
 
-	Remove ReadTbl & WriteTbl.
 	DF should be +1 or -1 instead of 0/1.
 	See if shift is needed in the macros for add/sub word etc.
 	Make ModRM use 32bit instead of bytes to optimize EA access.
