@@ -36,9 +36,7 @@
 	.global V30GetStateSize
 	.global V30RedirectOpcode
 
-	.global I
-	.global no_interrupt
-	.global Mod_RM
+	.global defaultV30
 
 	.global V30OpTable
 	.global PZSTable
@@ -93,6 +91,7 @@ _01:	;@ ADD WR16
 	add r2,v30ptr,r2,lsr#1
 	ldrh r1,[r2,#v30Regs]
 
+	mov r0,r0,lsl#16
 	add16 r1,r0
 
 	cmp r4,#0xC0
@@ -126,7 +125,7 @@ _02:	;@ ADD R8b
 
 	add8 r0,r1
 
-	strb r0,[v30ptr,-r4]
+	strb r1,[v30ptr,-r4]
 	ldmfd sp!,{r4,pc}
 1:
 	eatCycles 2
@@ -150,11 +149,11 @@ _03:	;@ ADD R16W
 	add r1,v30ptr,r2,lsl#2
 	ldrh r0,[r1,#v30Regs]
 0:
-	ldrh r1,[r4,#v30Regs]
+	ldr r1,[r4,#v30Regs2]
 
 	add16 r0,r1
 
-	strh r0,[r4,#v30Regs]
+	strh r1,[r4,#v30Regs]
 	ldmfd sp!,{r4,pc}
 1:
 	eatCycles 2
@@ -173,7 +172,7 @@ _04:	;@ ADD ALD8
 
 	add8 r0,r1
 
-	strb r0,[v30ptr,#v30RegAL]
+	strb r1,[v30ptr,#v30RegAL]
 	eatCycles 1
 	ldmfd sp!,{pc}
 ;@----------------------------------------------------------------------------
@@ -182,11 +181,11 @@ _05:	;@ ADD AXD16
 ;@----------------------------------------------------------------------------
 	stmfd sp!,{lr}
 	getNextWord
-	ldrh r1,[v30ptr,#v30RegAW]
+	ldr r1,[v30ptr,#v30RegAW-2]
 
 	add16 r0,r1
 
-	strh r0,[v30ptr,#v30RegAW]
+	strh r1,[v30ptr,#v30RegAW]
 	eatCycles 1
 	ldmfd sp!,{pc}
 ;@----------------------------------------------------------------------------
@@ -258,9 +257,9 @@ _09:	;@ OR WR16
 0:
 	and r2,r4,#0x38
 	add r2,v30ptr,r2,lsr#1
-	ldrh r1,[r2,#v30Regs]
+	ldr r1,[r2,#v30Regs2]
 
-	or16 r1,r0
+	or16 r0,r1
 
 	cmp r4,#0xC0
 	strhpl r1,[r5,#v30Regs]
@@ -293,7 +292,7 @@ _0A:	;@ OR R8b
 
 	or8 r0,r1
 
-	strb r0,[v30ptr,-r4]
+	strb r1,[v30ptr,-r4]
 	ldmfd sp!,{r4,pc}
 1:
 	eatCycles 2
@@ -317,11 +316,11 @@ _0B:	;@ OR R16W
 	ldrh r0,[r1,#v30Regs]
 	eatCycles 1
 0:
-	ldrh r1,[r4,#v30Regs]
+	ldr r1,[r4,#v30Regs2]
 
 	or16 r0,r1
 
-	strh r0,[r4,#v30Regs]
+	strh r1,[r4,#v30Regs]
 	ldmfd sp!,{r4,pc}
 1:
 	eatCycles 2
@@ -340,7 +339,7 @@ _0C:	;@ OR ALD8
 
 	or8 r0,r1
 
-	strb r0,[v30ptr,#v30RegAL]
+	strb r1,[v30ptr,#v30RegAL]
 	eatCycles 1
 	ldmfd sp!,{pc}
 ;@----------------------------------------------------------------------------
@@ -349,11 +348,11 @@ _0D:	;@ OR AXD16
 ;@----------------------------------------------------------------------------
 	stmfd sp!,{lr}
 	getNextWord
-	ldrh r1,[v30ptr,#v30RegAW]
+	ldr r1,[v30ptr,#v30RegAW-2]
 
 	or16 r0,r1
 
-	strh r0,[v30ptr,#v30RegAW]
+	strh r1,[v30ptr,#v30RegAW]
 	eatCycles 1
 	ldmfd sp!,{pc}
 ;@----------------------------------------------------------------------------
@@ -427,6 +426,7 @@ _11:	;@ ADC WR16
 	add r2,v30ptr,r2,lsr#1
 	ldrh r1,[r2,#v30Regs]
 
+	mov r0,r0,lsl#16
 	adc16 r1,r0
 
 	cmp r4,#0xC0
@@ -460,7 +460,7 @@ _12:	;@ ADC R8b
 
 	adc8 r0,r1
 
-	strb r0,[v30ptr,-r4]
+	strb r1,[v30ptr,-r4]
 	ldmfd sp!,{r4,pc}
 1:
 	eatCycles 2
@@ -484,11 +484,11 @@ _13:	;@ ADC R16W
 	ldrh r0,[r1,#v30Regs]
 	eatCycles 1
 0:
-	ldrh r1,[r4,#v30Regs]
+	ldr r1,[r4,#v30Regs2]
 
 	adc16 r0,r1
 
-	strh r0,[r4,#v30Regs]
+	strh r1,[r4,#v30Regs]
 	ldmfd sp!,{r4,pc}
 1:
 	eatCycles 2
@@ -507,7 +507,7 @@ _14:	;@ ADC ALD8
 
 	adc8 r0,r1
 
-	strb r0,[v30ptr,#v30RegAL]
+	strb r1,[v30ptr,#v30RegAL]
 	eatCycles 1
 	ldmfd sp!,{pc}
 ;@----------------------------------------------------------------------------
@@ -516,11 +516,11 @@ _15:	;@ ADC AXD16
 ;@----------------------------------------------------------------------------
 	stmfd sp!,{lr}
 	getNextWord
-	ldrh r1,[v30ptr,#v30RegAW]
+	ldr r1,[v30ptr,#v30RegAW-2]
 
 	adc16 r0,r1
 
-	strh r0,[v30ptr,#v30RegAW]
+	strh r1,[v30ptr,#v30RegAW]
 	eatCycles 1
 	ldmfd sp!,{pc}
 ;@----------------------------------------------------------------------------
@@ -543,7 +543,7 @@ _17:	;@ POP SS
 	strh r0,[v30ptr,#v30SRegSS+2]
 	eatCycles 3
 	mov r0,#1
-	str r0,[v30ptr,#v30NoInterrupt]			;@ What is this?
+	strb r0,[v30ptr,#v30NoInterrupt]			;@ What is this?
 	ldmfd sp!,{pc}
 ;@----------------------------------------------------------------------------
 i_sbb_br8:
@@ -595,6 +595,7 @@ _19:	;@ SBB WR16
 	add r2,v30ptr,r2,lsr#1
 	ldrh r1,[r2,#v30Regs]
 
+	mov r0,r0,lsl#16
 	subc16 r1,r0
 
 	cmp r4,#0xC0
@@ -628,7 +629,7 @@ _1A:	;@ SBB R8b
 
 	subc8 r0,r1
 
-	strb r0,[v30ptr,-r4]
+	strb r1,[v30ptr,-r4]
 	ldmfd sp!,{r4,pc}
 1:
 	eatCycles 2
@@ -652,11 +653,11 @@ _1B:	;@ SBB R16W
 	ldrh r0,[r1,#v30Regs]
 	eatCycles 1
 0:
-	ldrh r1,[r4,#v30Regs]
+	ldr r1,[r4,#v30Regs2]
 
 	subc16 r0,r1
 
-	strh r0,[r4,#v30Regs]
+	strh r1,[r4,#v30Regs]
 	ldmfd sp!,{r4,pc}
 1:
 	eatCycles 2
@@ -675,7 +676,7 @@ _1C:	;@ SBB ALD8
 
 	subc8 r0,r1
 
-	strb r0,[v30ptr,#v30RegAL]
+	strb r1,[v30ptr,#v30RegAL]
 	eatCycles 1
 	ldmfd sp!,{pc}
 ;@----------------------------------------------------------------------------
@@ -684,11 +685,11 @@ _1D:	;@ SBB AXD16
 ;@----------------------------------------------------------------------------
 	stmfd sp!,{lr}
 	getNextWord
-	ldrh r1,[v30ptr,#v30RegAW]
+	ldr r1,[v30ptr,#v30RegAW-2]
 
 	subc16 r0,r1
 
-	strh r0,[v30ptr,#v30RegAW]
+	strh r1,[v30ptr,#v30RegAW]
 	eatCycles 1
 	ldmfd sp!,{pc}
 ;@----------------------------------------------------------------------------
@@ -760,9 +761,9 @@ _21:	;@ AND WR16
 0:
 	and r2,r4,#0x38
 	add r2,v30ptr,r2,lsr#1
-	ldrh r1,[r2,#v30Regs]
+	ldr r1,[r2,#v30Regs2]
 
-	and16 r1,r0
+	and16 r0,r1
 
 	cmp r4,#0xC0
 	strhpl r1,[r5,#v30Regs]
@@ -795,7 +796,7 @@ _22:	;@ AND R8b
 
 	and8 r0,r1
 
-	strb r0,[v30ptr,-r4]
+	strb r1,[v30ptr,-r4]
 	ldmfd sp!,{r4,pc}
 1:
 	eatCycles 2
@@ -819,11 +820,11 @@ _23:	;@ AND R16W
 	ldrh r0,[r1,#v30Regs]
 	eatCycles 1
 0:
-	ldrh r1,[r4,#v30Regs]
+	ldr r1,[r4,#v30Regs2]
 
 	and16 r0,r1
 
-	strh r0,[r4,#v30Regs]
+	strh r1,[r4,#v30Regs]
 	ldmfd sp!,{r4,pc}
 1:
 	eatCycles 2
@@ -842,7 +843,7 @@ _24:	;@ AND ALD8
 
 	and8 r0,r1
 
-	strb r0,[v30ptr,#v30RegAL]
+	strb r1,[v30ptr,#v30RegAL]
 	eatCycles 1
 	ldmfd sp!,{pc}
 ;@----------------------------------------------------------------------------
@@ -851,11 +852,11 @@ _25:	;@ AND AXD16
 ;@----------------------------------------------------------------------------
 	stmfd sp!,{lr}
 	getNextWord
-	ldrh r1,[v30ptr,#v30RegAW]
+	ldr r1,[v30ptr,#v30RegAW-2]
 
 	and16 r0,r1
 
-	strh r0,[v30ptr,#v30RegAW]
+	strh r1,[v30ptr,#v30RegAW]
 	eatCycles 1
 	ldmfd sp!,{pc}
 ;@----------------------------------------------------------------------------
@@ -948,6 +949,7 @@ _29:	;@ SUB WR16
 	add r2,v30ptr,r2,lsr#1
 	ldrh r1,[r2,#v30Regs]
 
+	mov r0,r0,lsl#16
 	sub16 r1,r0
 
 	cmp r4,#0xC0
@@ -981,7 +983,7 @@ _2A:	;@ SUB R8b
 
 	sub8 r0,r1
 
-	strb r0,[v30ptr,-r4]
+	strb r1,[v30ptr,-r4]
 	ldmfd sp!,{r4,pc}
 1:
 	eatCycles 2
@@ -1005,11 +1007,11 @@ _2B:	;@ SUB R16W
 	ldrh r0,[r1,#v30Regs]
 	eatCycles 1
 0:
-	ldrh r1,[r4,#v30Regs]
+	ldr r1,[r4,#v30Regs2]
 
 	sub16 r0,r1
 
-	strh r0,[r4,#v30Regs]
+	strh r1,[r4,#v30Regs]
 	ldmfd sp!,{r4,pc}
 1:
 	eatCycles 2
@@ -1028,7 +1030,7 @@ _2C:	;@ SUB ALD8
 
 	sub8 r0,r1
 
-	strb r0,[v30ptr,#v30RegAL]
+	strb r1,[v30ptr,#v30RegAL]
 	eatCycles 1
 	ldmfd sp!,{pc}
 ;@----------------------------------------------------------------------------
@@ -1037,11 +1039,11 @@ _2D:	;@ SUB AXD16
 ;@----------------------------------------------------------------------------
 	stmfd sp!,{lr}
 	getNextWord
-	ldrh r1,[v30ptr,#v30RegAW]
+	ldr r1,[v30ptr,#v30RegAW-2]
 
 	sub16 r0,r1
 
-	strh r0,[v30ptr,#v30RegAW]
+	strh r1,[v30ptr,#v30RegAW]
 	eatCycles 1
 	ldmfd sp!,{pc}
 ;@----------------------------------------------------------------------------
@@ -1132,9 +1134,9 @@ _31:	;@ XOR WR16
 0:
 	and r2,r4,#0x38
 	add r2,v30ptr,r2,lsr#1
-	ldrh r1,[r2,#v30Regs]
+	ldr r1,[r2,#v30Regs2]
 
-	xor16 r1,r0
+	xor16 r0,r1
 
 	cmp r4,#0xC0
 	strhpl r1,[r5,#v30Regs]
@@ -1167,7 +1169,7 @@ _32:	;@ XOR R8b
 
 	xor8 r0,r1
 
-	strb r0,[v30ptr,-r4]
+	strb r1,[v30ptr,-r4]
 	ldmfd sp!,{r4,pc}
 1:
 	eatCycles 2
@@ -1191,11 +1193,11 @@ _33:	;@ XOR R16W
 	ldrh r0,[r1,#v30Regs]
 	eatCycles 1
 0:
-	ldrh r1,[r4,#v30Regs]
+	ldr r1,[r4,#v30Regs2]
 
 	xor16 r0,r1
 
-	strh r0,[r4,#v30Regs]
+	strh r1,[r4,#v30Regs]
 	ldmfd sp!,{r4,pc}
 1:
 	eatCycles 2
@@ -1214,7 +1216,7 @@ _34:	;@ XOR ALD8
 
 	xor8 r0,r1
 
-	strb r0,[v30ptr,#v30RegAL]
+	strb r1,[v30ptr,#v30RegAL]
 	eatCycles 1
 	ldmfd sp!,{pc}
 ;@----------------------------------------------------------------------------
@@ -1223,11 +1225,11 @@ _35:	;@ XOR AXD16
 ;@----------------------------------------------------------------------------
 	stmfd sp!,{lr}
 	getNextWord
-	ldrh r1,[v30ptr,#v30RegAW]
+	ldr r1,[v30ptr,#v30RegAW-2]
 
 	xor16 r0,r1
 
-	strh r0,[v30ptr,#v30RegAW]
+	strh r1,[v30ptr,#v30RegAW]
 	eatCycles 1
 	ldmfd sp!,{pc}
 ;@----------------------------------------------------------------------------
@@ -1310,6 +1312,7 @@ _39:	;@ CMP WR16
 	add r2,v30ptr,r4,lsr#1
 	ldrh r1,[r2,#v30Regs]
 
+	mov r0,r0,lsl#16
 	sub16 r1,r0
 
 	ldmfd sp!,{r4,pc}
@@ -1361,7 +1364,7 @@ _3B:	;@ CMP R16W
 	ldrh r0,[r1,#v30Regs]
 	eatCycles 1
 0:
-	ldrh r1,[r4,#v30Regs]
+	ldr r1,[r4,#v30Regs2]
 
 	sub16 r0,r1
 
@@ -1391,7 +1394,7 @@ _3D:	;@ CMP AXD16
 ;@----------------------------------------------------------------------------
 	stmfd sp!,{lr}
 	getNextWord
-	ldrh r1,[v30ptr,#v30RegAW]
+	ldr r1,[v30ptr,#v30RegAW-2]
 
 	sub16 r0,r1
 
@@ -2118,10 +2121,9 @@ cmp80:
 	ldmfd sp!,{r4-r6,pc}
 2:
 	cmp r4,#0xC0
-	strbpl r0,[v30ptr,-r5]
+	strbpl r1,[v30ptr,-r5]
 	ldmfdpl sp!,{r4-r6,pc}
 	ldmfd sp!,{r4-r6,lr}
-	mov r1,r0
 	ldr r0,[v30ptr,#v30EA]
 	b cpuWriteMem20
 1:
@@ -2145,45 +2147,43 @@ _81:	;@ PRE 81
 	ldrh r0,[r5,#v30Regs]
 	eatCycles 1
 0:
-	mov r6,r0
+	mov r6,r0,lsl#16
 	getNextWord
 pre81Continue:
-	mov r1,r6
 
 	and r2,r4,#0x38
 	ldr pc,[pc,r2,lsr#1]
 	b 2f
 	.long add81, or81, adc81, subc81, and81, sub81, xor81, cmp81
 add81:
-	add16 r0,r1
+	add16 r0,r6
 	b 2f
 or81:
-	or16 r0,r1
+	or16 r0,r6
 	b 2f
 adc81:
-	adc16 r0,r1
+	adc16 r0,r6
 	b 2f
 subc81:
-	subc16 r0,r1
+	subc16 r0,r6
 	b 2f
 and81:
-	and16 r0,r1
+	and16 r0,r6
 	b 2f
 sub81:
-	sub16 r0,r1
+	sub16 r0,r6
 	b 2f
 xor81:
-	xor16 r0,r1
+	xor16 r0,r6
 	b 2f
 cmp81:
-	sub16 r0,r1
+	sub16 r0,r6
 	ldmfd sp!,{r4-r6,pc}
 2:
 	cmp r4,#0xC0
-	strhpl r0,[r5,#v30Regs]
+	strhpl r1,[r5,#v30Regs]
 	ldmfdpl sp!,{r4-r6,pc}
 	ldmfd sp!,{r4-r6,lr}
-	mov r1,r0
 	ldr r0,[v30ptr,#v30EA]
 	b cpuWriteMem20W
 1:
@@ -2207,7 +2207,7 @@ _83:	;@ PRE 83
 	ldrh r0,[r5,#v30Regs]
 	eatCycles 1
 0:
-	mov r6,r0
+	mov r6,r0,lsl#16
 	getNextByte
 	tst r0,#0x80
 	orrne r0,r0,#0xFF00
@@ -2260,9 +2260,9 @@ _85:	;@ TEST WR16
 	eatCycles 1
 0:
 	add r2,v30ptr,r4,lsr#1
-	ldrh r1,[r2,#v30Regs]
+	ldr r1,[r2,#v30Regs2]
 
-	and16 r1,r0
+	and16 r0,r1
 
 	ldmfd sp!,{r4,pc}
 1:
@@ -2481,7 +2481,7 @@ _8E:	;@ MOV SREGW
 	addeq r1,v30ptr,r4,lsr#1
 	strheq r0,[r1,#v30SRegs+2]
 	mov r1,#1
-	str r1,[v30ptr,#v30NoInterrupt]
+	strb r1,[v30ptr,#v30NoInterrupt]
 	ldmfd sp!,{r4,pc}
 1:
 	eatCycles 3
@@ -2889,9 +2889,8 @@ _A6:	;@ CMPSB
 	add r0,r3,r1,lsr#4
 	str r2,[v30ptr,#v30RegIY]
 	bl cpuReadMem20
-	mov r1,r4
 
-	sub8 r0,r1
+	sub8 r0,r4
 
 	eatCycles 6
 	ldmfd sp!,{r4,pc}
@@ -2914,13 +2913,12 @@ _A7:	;@ CMPSW
 	ldr r1,[v30ptr,#v30RegIY]
 	ldr r3,[v30ptr,#v30SRegES]
 	add r2,r1,r4,lsl#17
-	mov r4,r0
+	mov r4,r0,lsl#16
 	add r0,r3,r1,lsr#4
 	str r2,[v30ptr,#v30RegIY]
 	bl cpuReadMem20W
-	mov r1,r4
 
-	sub16 r0,r1
+	sub16 r0,r4
 
 	eatCycles 6
 	ldmfd sp!,{r4,pc}
@@ -2942,7 +2940,7 @@ _A9:	;@ TEST AXD16
 ;@----------------------------------------------------------------------------
 	stmfd sp!,{lr}
 	getNextWord
-	ldrh r1,[v30ptr,#v30RegAW]
+	ldr r1,[v30ptr,#v30RegAW-2]
 
 	and16 r0,r1
 
@@ -3040,7 +3038,7 @@ _AF:	;@ SCASW
 	add r2,r1,r3,lsl#17
 	str r2,[v30ptr,#v30RegIY]
 	bl cpuReadMem20W
-	ldrh r1,[v30ptr,#v30RegAW]
+	ldr r1,[v30ptr,#v30RegAW-2]
 
 	sub16 r0,r1
 
@@ -3998,7 +3996,7 @@ i_lock:
 _F0:	;@ LOCK
 ;@----------------------------------------------------------------------------
 	mov r0,#1
-	str r0,[v30ptr,#v30NoInterrupt]
+	strb r0,[v30ptr,#v30NoInterrupt]
 	eatCycles 1
 	bx lr
 ;@----------------------------------------------------------------------------
@@ -4555,7 +4553,7 @@ _F7:	;@ PRE F7
 	.long testF7, testF7, notF7, negF7, muluF7, mulF7, divuwF7, divwF7
 testF7:
 	eatCycles 1
-	mov r4,r0
+	mov r4,r0,lsl#16
 	getNextWord
 	and16 r0,r4
 	ldmfd sp!,{r4-r5,pc}
@@ -5454,7 +5452,6 @@ defaultV30:
 	.space 16*4		;@ v30MemTbl $00000-FFFFF
 v30StateStart:
 I:				.space 20*4
-no_interrupt:	.long 0
 
 v30StateEnd:
 
