@@ -2103,35 +2103,34 @@ _82:	;@ PRE 82
 0:
 	mov r6,r0
 	getNextByte
-	mov r1,r6
 
 	and r2,r4,#0x38
 	ldr pc,[pc,r2,lsr#1]
 	b 2f
 	.long add80, or80, adc80, subc80, and80, sub80, xor80, cmp80
 add80:
-	add8 r0,r1
+	add8 r0,r6
 	b 2f
 or80:
-	or8 r0,r1
+	or8 r0,r6
 	b 2f
 adc80:
-	adc8 r0,r1
+	adc8 r0,r6
 	b 2f
 subc80:
-	subc8 r0,r1
+	subc8 r0,r6
 	b 2f
 and80:
-	and8 r0,r1
+	and8 r0,r6
 	b 2f
 sub80:
-	sub8 r0,r1
+	sub8 r0,r6
 	b 2f
 xor80:
-	xor8 r0,r1
+	xor8 r0,r6
 	b 2f
 cmp80:
-	sub8 r0,r1
+	sub8 r0,r6
 	ldmfd sp!,{r4-r6,pc}
 2:
 	cmp r4,#0xC0
@@ -4028,9 +4027,9 @@ _F0:	;@ LOCK
 i_repne:
 _F2:	;@ REPNE
 ;@----------------------------------------------------------------------------
-	stmfd sp!,{r4,r5,lr}
-	ldr r5,[v30ptr,#v30SRegCS]
-	add	r0,r5,v30pc,lsr#4
+	stmfd sp!,{r4,lr}
+	ldr r4,[v30ptr,#v30SRegCS]
+	add r0,r4,v30pc,lsr#4
 	add v30pc,v30pc,#0x10000
 	bl cpuReadMem20
 	and r1,r0,#0xE7
@@ -4044,7 +4043,7 @@ _F2:	;@ REPNE
 	strh r2,[v30ptr,#v30PrefixBase+2]
 
 	eatCycles 2
-	add	r0,r5,v30pc,lsr#4
+	add r0,r4,v30pc,lsr#4
 	add v30pc,v30pc,#0x10000
 	bl cpuReadMem20
 noF2Prefix:
@@ -4173,9 +4172,9 @@ f2af:
 i_repe:
 _F3:	;@ REPE
 ;@----------------------------------------------------------------------------
-	stmfd sp!,{r4,r5,lr}
-	ldr r5,[v30ptr,#v30SRegCS]
-	add	r0,r5,v30pc,lsr#4
+	stmfd sp!,{r4,lr}
+	ldr r4,[v30ptr,#v30SRegCS]
+	add r0,r4,v30pc,lsr#4
 	add v30pc,v30pc,#0x10000
 	bl cpuReadMem20
 	and r1,r0,#0xE7
@@ -4189,7 +4188,7 @@ _F3:	;@ REPE
 	strh r2,[v30ptr,#v30PrefixBase+2]
 
 	eatCycles 2
-	add	r0,r5,v30pc,lsr#4
+	add r0,r4,v30pc,lsr#4
 	add v30pc,v30pc,#0x10000
 	bl cpuReadMem20
 noF3Prefix:
@@ -4418,7 +4417,7 @@ f3End:
 f3DefEnd:
 	mov r0,#0
 	strb r0,[v30ptr,#v30SegPrefix]
-	ldmfd sp!,{r4,r5,pc}
+	ldmfd sp!,{r4,pc}
 ;@----------------------------------------------------------------------------
 i_hlt:
 _F4:	;@ HLT
@@ -4548,9 +4547,9 @@ divbF6:
 	strb r1,[v30ptr,#v30RegAH]
 	movs r1,r0,asr#7
 	mvnsne r1,r1
-	movne r0,#0
-	bne nec_interrupt			;@ r0 = 0
-	bx lr
+	bxeq lr
+	mov r0,#0
+	b nec_interrupt				;@ r0 = 0
 1:
 	eatCycles 1
 	add r1,v30ptr,#v30EATable
@@ -4653,9 +4652,9 @@ divuwF7:
 	strh r0,[v30ptr,#v30RegAW]
 	strh r1,[v30ptr,#v30RegDW]
 	movs r0,r0,lsr#16
-	movne r0,#0
-	bne nec_interrupt			;@ r0 = 0
-	bx lr
+	bxeq lr
+	mov r0,#0
+	b nec_interrupt				;@ r0 = 0
 divwF7:
 	eatCycles 24
 	ldmfd sp!,{r4-r5,lr}
@@ -5238,9 +5237,7 @@ doV30IRQ:
 	stmfd sp!,{lr}
 	mov lr,pc
 	ldr pc,[v30ptr,#v30IrqVectorFunc]
-	bl nec_interrupt
 	ldmfd sp!,{lr}
-	b contExe
 ;@----------------------------------------------------------------------------
 V30SetIRQ:
 nec_interrupt:				;@ r0 = vector number
@@ -5280,6 +5277,7 @@ V30RestoreAndRunXCycles:	;@ r0 = number of cycles to run
 ;@----------------------------------------------------------------------------
 	ldr v30cyc,[v30ptr,#v30ICount]
 	ldr v30pc,[v30ptr,#v30IP]
+	ldr v30f,[v30ptr,#v30Flags]
 ;@----------------------------------------------------------------------------
 V30RunXCycles:				;@ r0 = number of cycles to run
 ;@----------------------------------------------------------------------------
@@ -5287,17 +5285,16 @@ V30RunXCycles:				;@ r0 = number of cycles to run
 ;@----------------------------------------------------------------------------
 V30CheckIRQs:
 ;@----------------------------------------------------------------------------
+	stmfd sp!,{lr}
 	ldrh r0,[v30ptr,#v30IrqPin]		;@ Irq pin and IF
 	ands r1,r0,r0,lsr#8
-	bne doV30IRQ
-contExe:
+	blne doV30IRQ
 	ldrb r1,[v30ptr,#v30Halt]
 	cmp r1,#0
 	andne v30cyc,v30cyc,#CYC_MASK
 ;@----------------------------------------------------------------------------
 V30Go:						;@ Continue running
 ;@----------------------------------------------------------------------------
-	stmfd sp!,{lr}
 xLoop:
 	cmp v30cyc,#0
 	ble xOut

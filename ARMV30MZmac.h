@@ -235,7 +235,7 @@
 	orr \dst,\dst,\dst,lsl#16
 	movs \dst,\dst,lsl \src
 	orrcs v30f,v30f,#PSR_C+PSR_V
-	eorpl v30f,v30f,#PSR_V
+	eormi v30f,v30f,#PSR_V
 	mov r1,\dst,lsr#24
 	.endm
 
@@ -246,7 +246,7 @@
 	orr \dst,\dst,\dst,lsl#16
 	movs \dst,\dst,lsl \src
 	orrcs v30f,v30f,#PSR_C+PSR_V
-	eorpl v30f,v30f,#PSR_V
+	eormi v30f,v30f,#PSR_V
 	mov r1,\dst,lsr#16
 	.endm
 ;@----------------------------------------------------------------------------
@@ -261,7 +261,7 @@
 	bhi 9b
 	movs \dst,\dst,lsl#24
 	orrcs v30f,v30f,#PSR_C+PSR_V
-	eorpl v30f,v30f,#PSR_V
+	eormi v30f,v30f,#PSR_V
 	mov r1,\dst,lsr#24
 	.endm
 
@@ -276,7 +276,7 @@
 	bhi 10b
 	movs \dst,\dst,lsl#16
 	orrcs v30f,v30f,#PSR_C+PSR_V
-	eorpl v30f,v30f,#PSR_V
+	eormi v30f,v30f,#PSR_V
 	mov r1,\dst,lsr#16
 	.endm
 ;@----------------------------------------------------------------------------
@@ -284,22 +284,20 @@
 	bic v30f,v30f,#PSR_C+PSR_V	;@ Clear C & V.
 	orr \dst,\dst,\dst,lsl#8
 	orr \dst,\dst,\dst,lsl#16
-	mov r2,#0
 	movs \dst,\dst,ror \src
 	orrcs v30f,v30f,#PSR_C+PSR_V
 	tst \dst,#0x40000000
-	eorne v30f,v30f,#PSR_V
+	eoreq v30f,v30f,#PSR_V
 	mov r1,\dst,lsr#24
 	.endm
 
 	.macro ror16 dst src
 	bic v30f,v30f,#PSR_C+PSR_V	;@ Clear C & V.
 	orr \dst,\dst,\dst,lsl#16
-	mov r2,#0
 	movs \dst,\dst,ror \src
 	orrcs v30f,v30f,#PSR_C+PSR_V
 	tst \dst,#0x40000000
-	eorne v30f,v30f,#PSR_V
+	eoreq v30f,v30f,#PSR_V
 	mov r1,\dst,lsr#16
 	.endm
 ;@----------------------------------------------------------------------------
@@ -315,9 +313,8 @@
 	bhi 11b
 	movs r1,\dst,lsr#24
 	orrcs v30f,v30f,#PSR_C
-	eor r2,r1,r1,lsr#1
-	tst r2,#0x40
-	orrne v30f,v30f,#PSR_V
+	eors r2,\dst,\dst,lsl#1
+	orrmi v30f,v30f,#PSR_V
 	.endm
 
 	.macro rorc16 dst src
@@ -332,9 +329,8 @@
 	bhi 12b
 	movs r1,\dst,lsr#16
 	orrcs v30f,v30f,#PSR_C
-	eor r2,r1,r1,lsr#1
-	tst r2,#0x4000
-	orrne v30f,v30f,#PSR_V
+	eors r2,\dst,\dst,lsl#1
+	orrmi v30f,v30f,#PSR_V
 	.endm
 ;@----------------------------------------------------------------------------
 	.macro shl8 dst src
@@ -345,7 +341,7 @@
 	orrmi v30f,v30f,#PSR_S
 	orreq v30f,v30f,#PSR_Z
 	orrcs v30f,v30f,#PSR_C+PSR_V
-	eorpl v30f,v30f,#PSR_V
+	eormi v30f,v30f,#PSR_V
 	strb r1,[v30ptr,#v30ParityVal]
 	.endm
 
@@ -357,7 +353,7 @@
 	orrmi v30f,v30f,#PSR_S
 	orreq v30f,v30f,#PSR_Z
 	orrcs v30f,v30f,#PSR_C+PSR_V
-	eorpl v30f,v30f,#PSR_V
+	eormi v30f,v30f,#PSR_V
 	strb r1,[v30ptr,#v30ParityVal]
 	.endm
 ;@----------------------------------------------------------------------------
