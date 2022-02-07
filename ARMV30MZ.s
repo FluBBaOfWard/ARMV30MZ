@@ -4051,7 +4051,7 @@ _F2:	;@ REPNE
 	add v30pc,v30pc,#0x10000
 	bl cpuReadMem20
 noF2Prefix:
-	ldrh r4,[v30ptr,#v30RegCW]
+	ldrh r7,[v30ptr,#v30RegCW]
 	sub r3,r0,#0x6C
 	cmp r3,#0x43
 	ldrls pc,[pc,r3,lsl#2]
@@ -4127,14 +4127,11 @@ noF2Prefix:
 
 f2a6:
 	eatCycles 5
-	cmp r4,#1
+	cmp r7,#1
 	bmi f3End
-0:
-	stmfd sp!,{r4}
-	bl i_cmpsb
-	ldmfd sp!,{r4}
+0:	bl i_cmpsb
 	eatCycles 3
-	subs r4,r4,#1
+	subs r7,r7,#1
 	andne r0,v30f,#PSR_Z
 	cmpne r0,#PSR_Z
 	bne 0b
@@ -4142,14 +4139,11 @@ f2a6:
 
 f2a7:
 	eatCycles 5
-	cmp r4,#1
+	cmp r7,#1
 	bmi f3End
-0:
-	stmfd sp!,{r4}
-	bl i_cmpsw
-	ldmfd sp!,{r4}
+0:	bl i_cmpsw
 	eatCycles 3
-	subs r4,r4,#1
+	subs r7,r7,#1
 	andne r0,v30f,#PSR_Z
 	cmpne r0,#PSR_Z
 	bne 0b
@@ -4157,11 +4151,11 @@ f2a7:
 
 f2ae:
 	eatCycles 5
-	cmp r4,#1
+	cmp r7,#1
 	bmi f3End
 0:	bl i_scasb
 	eatCycles 5
-	subs r4,r4,#1
+	subs r7,r7,#1
 	andne r0,v30f,#PSR_Z
 	cmpne r0,#PSR_Z
 	bne 0b
@@ -4169,11 +4163,11 @@ f2ae:
 
 f2af:
 	eatCycles 5
-	cmp r4,#1
+	cmp r7,#1
 	bmi f3End
 0:	bl i_scasw
 	eatCycles 5
-	subs r4,r4,#1
+	subs r7,r7,#1
 	andne r0,v30f,#PSR_Z
 	cmpne r0,#PSR_Z
 	bne 0b
@@ -4202,7 +4196,7 @@ _F3:	;@ REPE
 	add v30pc,v30pc,#0x10000
 	bl cpuReadMem20
 noF3Prefix:
-	ldrh r4,[v30ptr,#v30RegCW]
+	ldrh r7,[v30ptr,#v30RegCW]
 	sub r3,r0,#0x6C
 	cmp r3,#0x43
 	ldrls pc,[pc,r3,lsl#2]
@@ -4278,160 +4272,142 @@ noF3Prefix:
 
 f36c:
 	eatCycles 5
-	cmp r4,#1
+	cmp r7,#1
 	bmi f3End
 0:	bl i_insb
-	subs r4,r4,#1
+	subs r7,r7,#1
 	bne 0b
 	b f3End
 
 f36d:
 	eatCycles 5
-	cmp r4,#1
+	cmp r7,#1
 	bmi f3End
-0:
-	stmfd sp!,{r4}
-	bl i_insw
-	ldmfd sp!,{r4}
-	subs r4,r4,#1
+0:	bl i_insw
+	subs r7,r7,#1
 	bne 0b
 	b f3End
 
 f36e:
 	eatCycles 5
-	cmp r4,#1
+	cmp r7,#1
 	bmi f3End
 0:	bl i_outsb
 	eatCycles -1
-	subs r4,r4,#1
+	subs r7,r7,#1
 	bne 0b
 	b f3End
 
 f36f:
 	eatCycles 5
-	cmp r4,#1
+	cmp r7,#1
 	bmi f3End
-0:
-	stmfd sp!,{r4}
-	bl i_outsw
-	ldmfd sp!,{r4}
+0:	bl i_outsw
 	eatCycles -1
-	subs r4,r4,#1
+	subs r7,r7,#1
 	bne 0b
 	b f3End
 
 f3a4:
 	eatCycles 5
-	cmp r4,#1
+	cmp r7,#1
 	bmi f3End
-0:
-	stmfd sp!,{r4}
-	bl i_movsb
-	ldmfd sp!,{r4}
+0:	bl i_movsb
 	eatCycles 2
-	subs r4,r4,#1
+	subs r7,r7,#1
 	bne 0b
 	b f3End
 
 f3a5:
 	eatCycles 5
-	cmp r4,#1
+	cmp r7,#1
 	bmi f3End
-0:
-	stmfd sp!,{r4}
-	bl i_movsw
-	ldmfd sp!,{r4}
+0:	bl i_movsw
 	eatCycles 2
-	subs r4,r4,#1
+	subs r7,r7,#1
 	bne 0b
 	b f3End
 
 f3a6:
 	eatCycles 5
-	cmp r4,#1
+	cmp r7,#1
 	bmi f3End
-0:
-	stmfd sp!,{r4}
-	bl i_cmpsb
-	ldmfd sp!,{r4}
+0:	bl i_cmpsb
 	eatCycles 4
-	subs r4,r4,#1
+	subs r7,r7,#1
 	tstne v30f,#PSR_Z
 	bne 0b
 	b f3End
 
 f3a7:
 	eatCycles 5
-	cmp r4,#1
+	cmp r7,#1
 	bmi f3End
-0:
-	stmfd sp!,{r4}
-	bl i_cmpsw
-	ldmfd sp!,{r4}
+0:	bl i_cmpsw
 	eatCycles 4
-	subs r4,r4,#1
+	subs r7,r7,#1
 	tstne v30f,#PSR_Z
 	bne 0b
 	b f3End
 
 f3aa:
 	eatCycles 5
-	cmp r4,#1
+	cmp r7,#1
 	bmi f3End
 0:	bl i_stosb
 	eatCycles 3
-	subs r4,r4,#1
+	subs r7,r7,#1
 	bne 0b
 	b f3End
 
 f3ab:
 	eatCycles 5
-	cmp r4,#1
+	cmp r7,#1
 	bmi f3End
 0:	bl i_stosw
 	eatCycles 3
-	subs r4,r4,#1
+	subs r7,r7,#1
 	bne 0b
 	b f3End
 
 f3ac:
 	eatCycles 5
-	cmp r4,#1
+	cmp r7,#1
 	bmi f3End
 0:	bl i_lodsb
 	eatCycles 3
-	subs r4,r4,#1
+	subs r7,r7,#1
 	bne 0b
 	b f3End
 
 f3ad:
 	eatCycles 5
-	cmp r4,#1
+	cmp r7,#1
 	bmi f3End
 0:	bl i_lodsw
 	eatCycles 3
-	subs r4,r4,#1
+	subs r7,r7,#1
 	bne 0b
 	b f3End
 
 f3ae:
 	eatCycles 5
-	cmp r4,#1
+	cmp r7,#1
 	bmi f3End
 0:	bl i_scasb
 	eatCycles 4
-	subs r4,r4,#1
+	subs r7,r7,#1
 	tstne v30f,#PSR_Z
 	bne 0b
 	b f3End
 
 f3af:
 	eatCycles 5
-	cmp r4,#1
+	cmp r7,#1
 	bmi f3End
 0:	bl i_scasw
 	eatCycles 4
-	subs r4,r4,#1
+	subs r7,r7,#1
 	tstne v30f,#PSR_Z
 	bne 0b
 	b f3End
@@ -4441,7 +4417,7 @@ f3Default:
 	ldr pc,[v30ptr,r0,lsl#2]
 
 f3End:
-	strh r4,[v30ptr,#v30RegCW]
+	strh r7,[v30ptr,#v30RegCW]
 f3DefEnd:
 	mov r0,#0
 	strb r0,[v30ptr,#v30SegPrefix]
