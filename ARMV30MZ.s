@@ -5367,7 +5367,7 @@ V30Reset:					;@ r0=v30ptr
 	mov v30ptr,r0
 
 	add r0,v30ptr,#v30I			;@ Clear CPU
-	mov r1,#(v30Opz-v30I)/4
+	mov r1,#(v30IEnd-v30I)/4
 	bl memclr_
 
 	ldr r0,=0xFFFF0000
@@ -5451,11 +5451,10 @@ V30RedirectOpcode:			;@ In r0=opcode, r1=address.
 #endif
 ;@----------------------------------------------------------------------------
 defaultV30:
-	.space 16*4		;@ v30MemTbl $00000-FFFFF
 v30StateStart:
-I:				.space 19*4
-
+I:	.space 19*4
 v30StateEnd:
+	.space 16*4		;@ v30MemTbl $00000-FFFFF
 
 nec_instruction:
 V30OpTable:

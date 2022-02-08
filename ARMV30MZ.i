@@ -13,8 +13,7 @@
 	v30ptr		.req r11
 	addy		.req r12		;@ Keep this at r12 (scratch for APCS)
 
-	.struct -(35*4)			;@ Changes section so make sure it's set before real code.
-v30MemTbl:			.space 16*4
+	.struct -(35*4)			;@ Changes section so make sure it is set before real code.
 
 ;@--------------------------------
 v30I:
@@ -72,7 +71,10 @@ v30TF:				.byte 0
 v30DF:				.byte 0		;@ Direction flag, this is either 1 or -1.
 v30SegPrefix:		.byte 0
 v30NoInterrupt:		.byte 0
+v30IEnd:
 ;@--------------------------------
+
+v30MemTbl:			.space 16*4
 
 v30Opz:				.space 256*4
 v30PZST:			.space 256
