@@ -542,6 +542,7 @@ _16:	;@ PUSH SS
 	sub r2,r2,#0x20000
 	add r0,r1,r2,lsr#4
 	str r2,[v30ptr,#v30RegSP]
+	mov r1,r1,lsr#16
 	eatCycles 2
 	b cpuWriteMem20W
 ;@----------------------------------------------------------------------------
