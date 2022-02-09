@@ -75,6 +75,7 @@ v30IEnd:
 ;@--------------------------------
 
 v30MemTbl:			.space 16*4
+v30MemTblInv:
 
 v30Opz:				.space 256*4
 v30PZST:			.space 256
