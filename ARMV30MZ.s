@@ -40,6 +40,24 @@
 
 	.global V30OpTable
 	.global PZSTable
+
+	.global i_bv
+	.global i_bnv
+	.global i_bc
+	.global i_bnc
+	.global i_be
+	.global i_bne
+	.global i_bnh
+	.global i_bh
+	.global i_bn
+	.global i_bp
+	.global i_bpe
+	.global i_bpo
+	.global i_blt
+	.global i_bge
+	.global i_ble
+	.global i_bgt
+
 //
 // All opcodes are free to also use r4-r7 wihtout pushing to stack.
 // If an opcode calls another opcode, the caller is responsible for

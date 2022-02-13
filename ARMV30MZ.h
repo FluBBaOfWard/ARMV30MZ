@@ -16,8 +16,6 @@ extern "C" {
 #define NEC_NMI_INT_VECTOR 2
 
 typedef struct {
-	u32 v30MemTbl[16];
-
 	u32 v30Regs[8];
 	u32 v30SRegs[4];
 	u32 v30ICount;
@@ -35,8 +33,11 @@ typedef struct {
 	u8 v30DF;
 	u8 v30NoInterrupt;
 
+	u32 v30MemTbl[16];
+
 	u32 v30Opz[256];
 	u8 v30PZST[256];
+	void *EATable[192];
 	u8 v30ModRmRm[256];
 	u8 v30ModRmReg[256];
 } ARMV30Core;
