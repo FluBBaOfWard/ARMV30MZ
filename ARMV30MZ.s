@@ -1745,21 +1745,22 @@ _62:	;@ CHKIND
 	add r1,v30ptr,#v30EATable
 	mov lr,pc
 	ldr pc,[r1,r0,lsl#2]
-	mov r5,r0,ror#28
+	sub r5,r0,r1,lsr#4
+	add r1,r1,#0x20000
+	add r5,r5,r1,lsr#4
 	bl cpuReadMem20W
 0:
-	add r1,r5,#0x20000
-	mov r5,r0
-	mov r0,r1,ror#4
+	mov r6,r0
+	mov r0,r5
 	bl cpuReadMem20W
 	ldrh r1,[r4,#v30Regs]
 
 	eatCycles 13
-	cmp r1,r5
+	cmp r1,r6
 	cmppl r0,r1
-	submi v30cyc,v30cyc,#7*CYCLE
 	ldmfdpl sp!,{pc}
 	ldmfd sp!,{lr}
+	sub v30cyc,v30cyc,#7*CYCLE
 	mov r0,#5
 	b nec_interrupt
 1:
@@ -3397,13 +3398,13 @@ _C4:	;@ LES DW
 	add r1,v30ptr,#v30EATable
 	mov lr,pc
 	ldr pc,[r1,r0,lsl#2]
-	mov r5,r0,ror#28
+	sub r5,r0,r1,lsr#4
+	add r6,r1,#0x20000
 	bl cpuReadMem20W
 0:
 	add r1,v30ptr,r4,lsr#1
 	strh r0,[r1,#v30Regs]
-	add r5,r5,#0x20000
-	mov r0,r5,ror#4
+	add r0,r5,r6,lsr#4
 	bl cpuReadMem20W
 	strh r0,[v30ptr,#v30SRegES+2]
 
@@ -3427,13 +3428,13 @@ _C5:	;@ LDS DW
 	add r1,v30ptr,#v30EATable
 	mov lr,pc
 	ldr pc,[r1,r0,lsl#2]
-	mov r5,r0,ror#28
+	sub r5,r0,r1,lsr#4
+	add r6,r1,#0x20000
 	bl cpuReadMem20W
 0:
 	add r1,v30ptr,r4,lsr#1
 	strh r0,[r1,#v30Regs]
-	add r5,r5,#0x20000
-	mov r0,r5,ror#4
+	add r0,r5,r6,lsr#4
 	bl cpuReadMem20W
 	strh r0,[v30ptr,#v30SRegDS+2]
 
@@ -4869,9 +4870,9 @@ callFF:
 callFarFF:
 	eatCycles 11
 	mov r4,r0
-	mov r0,r5,ror#28
-	add r0,r0,#0x20000
-	mov r0,r0,ror#4
+	sub r5,r5,r6,lsr#4
+	add r6,r6,#0x20000
+	add r0,r5,r6,lsr#4
 	bl cpuReadMem20W
 
 	ldrh r1,[v30ptr,#v30SRegCS+2]
@@ -4896,9 +4897,9 @@ braFF:
 braFarFF:
 	eatCycles 9
 	mov v30pc,r0,lsl#16
-	mov r0,r5,ror#28
-	add r0,r0,#0x20000
-	mov r0,r0,ror#4
+	sub r5,r5,r6,lsr#4
+	add r6,r6,#0x20000
+	add r0,r5,r6,lsr#4
 	bl cpuReadMem20W
 	strh r0,[v30ptr,#v30SRegCS+2]
 	ldmfd sp!,{pc}
@@ -4918,6 +4919,7 @@ pushFF:
 	mov lr,pc
 	ldr pc,[r1,r0,lsl#2]
 	mov r5,r0
+	mov r6,r1
 	adr lr,0b
 	b cpuReadMem20W
 
@@ -5244,7 +5246,27 @@ EA_207:	;@
 	add r1,r1,r0,lsl#16
 	add r0,r2,r1,lsr#4
 	ldmfd sp!,{pc}
-
+/*
+;@----------------------------------------------------------------------------
+V30SetNMIPin:			;@ r0=pin state
+;@----------------------------------------------------------------------------
+	cmp r0,#0
+	movne r0,#2					;@ NMI vector
+	ldrb r1,[v30ptr,#v30NmiPin]
+	strb r0,[v30ptr,#v30NmiPin]
+	bics r0,r0,r1
+	strbne r0,[v30ptr,#v30NmiPending]
+	bx lr
+;@----------------------------------------------------------------------------
+doV30NMI:
+;@----------------------------------------------------------------------------
+	mov r11,r11
+	mov r0,#0
+	strb r0,[v30ptr,#v30NmiPending]
+	mov r0,#2
+	bl nec_interrupt
+	b V30Go
+ */
 ;@----------------------------------------------------------------------------
 V30SetIRQPin:			;@ r0=pin state
 ;@----------------------------------------------------------------------------
@@ -5267,7 +5289,7 @@ nec_interrupt:				;@ r0 = vector number
 	.type   nec_interrupt STT_FUNC
 ;@----------------------------------------------------------------------------
 	stmfd sp!,{lr}
-	mov r4,r0,lsl#2+12
+	mov r4,r0,lsl#12+2
 	bl i_pushf
 	mov r0,#0
 	strb r0,[v30ptr,#v30IF]
@@ -5277,22 +5299,21 @@ nec_interrupt:				;@ r0 = vector number
 	mov r5,r0
 	add r0,r4,#0x2000
 	bl cpuReadMem20W
-	mov r4,r0
 
-	ldr r7,[v30ptr,#v30RegSP]
-	ldr r6,[v30ptr,#v30SRegSS]
-	sub r7,r7,#0x20000
-	add r0,r6,r7,lsr#4
+	ldr r6,[v30ptr,#v30RegSP]
+	ldr r4,[v30ptr,#v30SRegSS]
+	sub r6,r6,#0x20000
 	ldrh r1,[v30ptr,#v30SRegCS+2]
+	strh r0,[v30ptr,#v30SRegCS+2]
+	add r0,r4,r6,lsr#4
 	bl cpuWriteMem20W
-	sub r7,r7,#0x20000
-	add r0,r6,r7,lsr#4
-	str r7,[v30ptr,#v30RegSP]
+	sub r6,r6,#0x20000
+	add r0,r4,r6,lsr#4
+	str r6,[v30ptr,#v30RegSP]
 	mov r1,v30pc,lsr#16
 	bl cpuWriteMem20W
 
 	mov v30pc,r5,lsl#16
-	strh r4,[v30ptr,#v30SRegCS+2]
 	eatCycles 22
 	ldmfd sp!,{pc}
 ;@----------------------------------------------------------------------------
@@ -5309,7 +5330,9 @@ V30RunXCycles:				;@ r0 = number of cycles to run
 V30CheckIRQs:
 ;@----------------------------------------------------------------------------
 	stmfd sp!,{lr}
-	ldrh r0,[v30ptr,#v30IrqPin]		;@ Irq pin and IF
+	ldrh r0,[v30ptr,#v30IrqPin]		;@ NMI, Irq pin and IF
+//	movs r1,r0,lsr#24
+//	bne doV30NMI
 	ands r1,r0,r0,lsr#8
 	blne doV30IRQ
 	ldrb r1,[v30ptr,#v30Halt]
@@ -5471,7 +5494,7 @@ V30RedirectOpcode:			;@ In r0=opcode, r1=address.
 ;@----------------------------------------------------------------------------
 defaultV30:
 v30StateStart:
-I:	.space 19*4
+I:	.space 20*4
 v30StateEnd:
 	.space 16*4		;@ v30MemTbl $00000-FFFFF
 
