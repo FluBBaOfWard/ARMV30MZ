@@ -2532,12 +2532,12 @@ _8E:	;@ MOV SREGW
 	tst r4,#0x20
 	addeq r1,v30ptr,r4,lsr#1
 	strheq r0,[r1,#v30SRegs+2]
+	mov r1,#1
+	strb r1,[v30ptr,#v30NoInterrupt]
 #ifdef V30MZ_FAST_PC
 	cmp r4,#0x08			;@ CS?
 	bleq V30EncodePC
 #endif
-	mov r1,#1
-	strb r1,[v30ptr,#v30NoInterrupt]
 	ldmfd sp!,{pc}
 1:
 	eatCycles 3
@@ -2667,16 +2667,11 @@ i_call_far:
 _9A:	;@ CALL FAR
 ;@----------------------------------------------------------------------------
 	stmfd sp!,{lr}
-	v30DecodeFastPC
-	ldr r5,[v30ptr,#v30SRegCS]
-	add r0,r5,v30pc,lsr#4
-	add v30pc,v30pc,#0x20000
-	bl cpuReadMem20W
+	getNextWord
 	mov r4,r0
-	add r0,r5,v30pc,lsr#4
-	bl cpuReadMem20W
+	getNextWord
+	ldrh r1,[v30ptr,#v30SRegCS+2]
 	strh r0,[v30ptr,#v30SRegCS+2]
-	mov r1,r5,lsr#16
 	ldr r6,[v30ptr,#v30RegSP]
 	ldr r5,[v30ptr,#v30SRegSS]
 	sub r6,r6,#0x20000
@@ -2684,11 +2679,11 @@ _9A:	;@ CALL FAR
 	bl cpuWriteMem20W
 	sub r6,r6,#0x20000
 	str r6,[v30ptr,#v30RegSP]
-	add r7,v30pc,#0x20000
+	v30DecodeFastPCToReg r7
 	mov v30pc,r4,lsl#16
 	v30EncodeFastPC
 	add r0,r5,r6,lsr#4
-	mov r1,r7,lsr#16
+	mov r1,r7
 	eatCycles 7
 	ldmfd sp!,{lr}
 	b cpuWriteMem20W
@@ -3521,15 +3516,9 @@ _C8:	;@ PREPARE
 ;@----------------------------------------------------------------------------
 	stmfd sp!,{r8,lr}
 	eatCycles 8
-	v30DecodeFastPC
-	ldr r5,[v30ptr,#v30SRegCS]
-	add r0,r5,v30pc,lsr#4
-	add v30pc,v30pc,#0x20000
-	bl cpuReadMem20W
+	getNextWord
 	stmfd sp!,{r0}				;@ temp
-	add r0,r5,v30pc,lsr#4
-	add v30pc,v30pc,#0x10000
-	bl cpuReadMem20
+	getNextByte
 	and r5,r0,#0x1F
 
 	ldr r8,[v30ptr,#v30RegSP]
@@ -3565,7 +3554,6 @@ _C8:	;@ PREPARE
 	bl cpuWriteMem20W
 	eatCycles 6
 2:
-	v30EncodeFastPC
 	ldmfd sp!,{r0}
 	sub r8,r8,r0,lsl#16
 	str r8,[v30ptr,#v30RegSP]
@@ -3590,17 +3578,16 @@ _CA:	;@ RETF D16
 ;@----------------------------------------------------------------------------
 	stmfd sp!,{lr}
 	getNextWord
-	mov r6,r0
+	add r6,r0,#2
 	ldr r1,[v30ptr,#v30RegSP]
 	ldr r5,[v30ptr,#v30SRegSS]
 	add r4,r1,#0x20000
 	add r0,r5,r1,lsr#4
 	bl cpuReadMem20W
 	mov v30pc,r0,lsl#16
-	add r1,r4,r6,lsl#16
 	add r0,r5,r4,lsr#4
-	add r1,r1,#0x20000
-	str r1,[v30ptr,#v30RegSP]
+	add r4,r4,r6,lsl#16
+	str r4,[v30ptr,#v30RegSP]
 	bl cpuReadMem20W
 	strh r0,[v30ptr,#v30SRegCS+2]
 	v30EncodeFastPC
@@ -3951,20 +3938,17 @@ i_call_d16:
 _E8:	;@ CALL D16
 ;@----------------------------------------------------------------------------
 	stmfd sp!,{lr}
-	v30DecodeFastPC
-	ldr r0,[v30ptr,#v30SRegCS]
-	add r0,r0,v30pc,lsr#4
-	add v30pc,v30pc,#0x20000
-	bl cpuReadMem20W
-	mov r4,v30pc
-	add v30pc,v30pc,r0,lsl#16
+	getNextWord
+	v30DecodeFastPCToReg r4
+	mov r1,r4,lsl#16
+	add v30pc,r1,r0,lsl#16
 	v30EncodeFastPC
+	mov r1,r4
 	ldr r2,[v30ptr,#v30RegSP]
 	ldr r0,[v30ptr,#v30SRegSS]
 	sub r2,r2,#0x20000
 	add r0,r0,r2,lsr#4
 	str r2,[v30ptr,#v30RegSP]
-	mov r1,r4,lsr#16
 	eatCycles 5
 	ldmfd sp!,{lr}
 	b cpuWriteMem20W
@@ -3973,12 +3957,10 @@ i_jmp_d16:
 _E9:	;@ JMP D16
 ;@----------------------------------------------------------------------------
 	stmfd sp!,{lr}
-	v30DecodeFastPC
-	ldr r0,[v30ptr,#v30SRegCS]
-	add r0,r0,v30pc,lsr#4
-	add v30pc,v30pc,#0x20000
-	bl cpuReadMem20W
-	add v30pc,v30pc,r0,lsl#16
+	getNextWord
+	v30DecodeFastPCToReg r1
+	mov r1,r1,lsl#16
+	add v30pc,r1,r0,lsl#16
 	v30EncodeFastPC
 	eatCycles 4
 	ldmfd sp!,{pc}
@@ -3987,15 +3969,11 @@ i_jmp_far:
 _EA:	;@ JMP FAR
 ;@----------------------------------------------------------------------------
 	stmfd sp!,{lr}
-	v30DecodeFastPC
-	ldr r4,[v30ptr,#v30SRegCS]
-	add r0,r4,v30pc,lsr#4
-	bl cpuReadMem20W
-	add r1,v30pc,#0x20000
-	mov v30pc,r0,lsl#16
-	add r0,r4,r1,lsr#4
-	bl cpuReadMem20W
+	getNextWord
+	mov r4,r0
+	getNextWord
 	strh r0,[v30ptr,#v30SRegCS+2]
+	mov v30pc,r4,lsl#16
 	v30EncodeFastPC
 	eatCycles 7
 	ldmfd sp!,{pc}
@@ -4869,11 +4847,9 @@ writeBackFF:
 callFF:
 	eatCycles 5
 #ifdef V30MZ_FAST_PC
-	mov r4,r0
-	bl V30DecodePC
-	mov r5,v30pc,lsr#16
-	mov v30pc,r4,lsl#16
-	bl V30EncodePC
+	v30DecodeFastPCToReg r5
+	mov v30pc,r0,lsl#16
+	V30EncodeFastPC
 	mov r1,r5
 #else
 	mov r1,v30pc,lsr#16
@@ -4903,10 +4879,9 @@ callFarFF:
 	bl cpuWriteMem20W
 
 #ifdef V30MZ_FAST_PC
-	bl V30DecodePC
-	mov r7,v30pc,lsr#16
+	v30DecodeFastPCToReg r7
 	mov v30pc,r4,lsl#16
-	bl V30EncodePC
+	V30EncodeFastPC
 	mov r1,r7
 #else
 	mov r1,v30pc,lsr#16
@@ -5362,11 +5337,10 @@ nec_interrupt:				;@ r0 = vector number
 	strh r0,[v30ptr,#v30SRegCS+2]
 	add r0,r4,r6,lsr#4
 	bl cpuWriteMem20W
-	v30DecodeFastPC
+	v30DecodeFastPCToReg r1
 	sub r6,r6,#0x20000
 	add r0,r4,r6,lsr#4
 	str r6,[v30ptr,#v30RegSP]
-	mov r1,v30pc,lsr#16
 	bl cpuWriteMem20W
 
 	mov v30pc,r5,lsl#16
