@@ -2659,6 +2659,7 @@ _9A:	;@ CALL FAR
 	bl cpuReadMem20W
 	mov r4,r0
 	add r0,r5,v30pc,lsr#4
+	add v30pc,v30pc,#0x20000
 	bl cpuReadMem20W
 	strh r0,[v30ptr,#v30SRegCS+2]
 	mov r1,r5,lsr#16
@@ -2667,9 +2668,8 @@ _9A:	;@ CALL FAR
 	sub r6,r6,#0x20000
 	add r0,r5,r6,lsr#4
 	bl cpuWriteMem20W
-	add r1,v30pc,#0x20000
+	mov r1,v30pc,lsr#16
 	mov v30pc,r4,lsl#16
-	mov r1,r1,lsr#16
 	sub r6,r6,#0x20000
 	add r0,r5,r6,lsr#4
 	str r6,[v30ptr,#v30RegSP]
@@ -3359,9 +3359,7 @@ i_ret_d16:
 _C2:	;@ RET D16
 ;@----------------------------------------------------------------------------
 	stmfd sp!,{lr}
-	ldr r0,[v30ptr,#v30SRegCS]
-	add r0,r0,v30pc,lsr#4
-	bl cpuReadMem20W
+	getNextWord
 	ldr r1,[v30ptr,#v30RegSP]
 	ldr r3,[v30ptr,#v30SRegSS]
 	add r2,r1,#0x20000
@@ -3567,9 +3565,7 @@ i_retf_d16:
 _CA:	;@ RETF D16
 ;@----------------------------------------------------------------------------
 	stmfd sp!,{lr}
-	ldr r0,[v30ptr,#v30SRegCS]
-	add r0,r0,v30pc,lsr#4
-	bl cpuReadMem20W
+	getNextWord
 	mov r6,r0
 	ldr r1,[v30ptr,#v30RegSP]
 	ldr r5,[v30ptr,#v30SRegSS]
@@ -3816,10 +3812,7 @@ i_loopne:
 _E0:	;@ LOOPNE
 ;@----------------------------------------------------------------------------
 	stmfd sp!,{lr}
-	ldr r0,[v30ptr,#v30SRegCS]
-	add r0,r0,v30pc,lsr#4
-	add v30pc,v30pc,#0x10000
-	bl cpuReadMem20
+	getNextByte
 	ldrh r2,[v30ptr,#v30RegCW]
 	subs r2,r2,#1
 	andne r3,v30f,#PSR_Z
@@ -3827,53 +3820,44 @@ _E0:	;@ LOOPNE
 	movne r0,r0,lsl#24
 	addne v30pc,v30pc,r0,asr#8
 	subne v30cyc,v30cyc,#3*CYCLE
-	eatCycles 3
 	strh r2,[v30ptr,#v30RegCW]
+	eatCycles 3
 	ldmfd sp!,{pc}
 ;@----------------------------------------------------------------------------
 i_loope:
 _E1:	;@ LOOPE
 ;@----------------------------------------------------------------------------
 	stmfd sp!,{lr}
-	ldr r0,[v30ptr,#v30SRegCS]
-	add r0,r0,v30pc,lsr#4
-	add v30pc,v30pc,#0x10000
-	bl cpuReadMem20
+	getNextByte
 	ldrh r2,[v30ptr,#v30RegCW]
 	subs r2,r2,#1
 	tstne v30f,#PSR_Z
 	movne r0,r0,lsl#24
 	addne v30pc,v30pc,r0,asr#8
 	subne v30cyc,v30cyc,#3*CYCLE
-	eatCycles 3
 	strh r2,[v30ptr,#v30RegCW]
+	eatCycles 3
 	ldmfd sp!,{pc}
 ;@----------------------------------------------------------------------------
 i_loop:
 _E2:	;@ LOOP
 ;@----------------------------------------------------------------------------
 	stmfd sp!,{lr}
-	ldr r0,[v30ptr,#v30SRegCS]
-	add r0,r0,v30pc,lsr#4
-	add v30pc,v30pc,#0x10000
-	bl cpuReadMem20
+	getNextByte
 	ldrh r2,[v30ptr,#v30RegCW]
 	subs r2,r2,#1
 	movne r0,r0,lsl#24
 	addne v30pc,v30pc,r0,asr#8
 	subne v30cyc,v30cyc,#3*CYCLE
-	eatCycles 2
 	strh r2,[v30ptr,#v30RegCW]
+	eatCycles 2
 	ldmfd sp!,{pc}
 ;@----------------------------------------------------------------------------
 i_jcxz:
 _E3:	;@ JCXZ
 ;@----------------------------------------------------------------------------
 	stmfd sp!,{lr}
-	ldr r0,[v30ptr,#v30SRegCS]
-	add r0,r0,v30pc,lsr#4
-	add v30pc,v30pc,#0x10000
-	bl cpuReadMem20
+	getNextByte
 	ldrh r2,[v30ptr,#v30RegCW]
 	cmp r2,#0
 	moveq r0,r0,lsl#24
@@ -3936,17 +3920,14 @@ i_call_d16:
 _E8:	;@ CALL D16
 ;@----------------------------------------------------------------------------
 	stmfd sp!,{lr}
-	ldr r0,[v30ptr,#v30SRegCS]
-	add r0,r0,v30pc,lsr#4
-	bl cpuReadMem20W
-	add r1,v30pc,#0x20000
-	add v30pc,r1,r0,lsl#16
+	getNextWord
+	mov r1,v30pc,lsr#16
+	add v30pc,v30pc,r0,lsl#16
 	ldr r2,[v30ptr,#v30RegSP]
 	ldr r0,[v30ptr,#v30SRegSS]
 	sub r2,r2,#0x20000
 	add r0,r0,r2,lsr#4
 	str r2,[v30ptr,#v30RegSP]
-	mov r1,r1,lsr#16
 	eatCycles 5
 	ldmfd sp!,{lr}
 	b cpuWriteMem20W
@@ -3955,10 +3936,7 @@ i_jmp_d16:
 _E9:	;@ JMP D16
 ;@----------------------------------------------------------------------------
 	stmfd sp!,{lr}
-	ldr r0,[v30ptr,#v30SRegCS]
-	add r0,r0,v30pc,lsr#4
-	add v30pc,v30pc,#0x20000
-	bl cpuReadMem20W
+	getNextWord
 	add v30pc,v30pc,r0,lsl#16
 	eatCycles 4
 	ldmfd sp!,{pc}
@@ -3982,10 +3960,7 @@ i_br_d8:
 _EB:	;@ Branch short
 ;@----------------------------------------------------------------------------
 	stmfd sp!,{lr}
-	ldr r0,[v30ptr,#v30SRegCS]
-	add r0,r0,v30pc,lsr#4
-	add v30pc,v30pc,#0x10000
-	bl cpuReadMem20
+	getNextByte
 	mov r1,r0,lsl#24
 	add v30pc,v30pc,r1,asr#8
 	eatCycles 4
@@ -5344,10 +5319,7 @@ V30Go:						;@ Continue running
 xLoop:
 	cmp v30cyc,#0
 	ble xOut
-	ldr r0,[v30ptr,#v30SRegCS]
-	add r0,r0,v30pc,lsr#4
-	add v30pc,v30pc,#0x10000
-	bl cpuReadMem20
+	getNextByte
 	adr lr,xLoop
 	ldr pc,[v30ptr,r0,lsl#2]
 xOut:
@@ -5494,7 +5466,7 @@ V30RedirectOpcode:			;@ In r0=opcode, r1=address.
 ;@----------------------------------------------------------------------------
 defaultV30:
 v30StateStart:
-I:	.space 20*4
+I:	.space 21*4
 v30StateEnd:
 	.space 16*4		;@ v30MemTbl $00000-FFFFF
 

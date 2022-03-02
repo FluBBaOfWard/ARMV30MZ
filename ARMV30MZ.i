@@ -12,7 +12,7 @@
 	v30cyc		.req r10		;@ Bits 0-7=
 	v30ptr		.req r11
 
-	.struct -(36*4)			;@ Changes section so make sure it is set before real code.
+	.struct -(37*4)			;@ Changes section so make sure it is set before real code.
 
 ;@--------------------------------
 v30I:
@@ -62,6 +62,7 @@ v30IP:				.long 0
 v30Flags:			.long 0
 v30IrqVectorFunc:	.long 0
 v30PrefixBase:		.long 0
+v30LastBank:		.long 0
 v30IrqPin:			.byte 0		;@ IrqPin & IF needs to be together in the same Word.
 v30IF:				.byte 0
 v30NmiPin:			.byte 0
