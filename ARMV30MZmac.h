@@ -53,8 +53,20 @@
 	ldr \reg,[v30ptr,#v30LastBank]
 	.endm
 
+	.macro getNextByteToReg reg
+	ldrb \reg,[v30pc],#1
+	.endm
+
 	.macro getNextByte
-	ldrb r0,[v30pc],#1
+	getNextByteToReg r0
+	.endm
+
+	.macro getNextSignedByteToReg reg
+	ldrsb \reg,[v30pc],#1
+	.endm
+
+	.macro getNextSignedByte
+	getNextSignedByteToReg r0
 	.endm
 
 	.macro getNextWord
@@ -189,10 +201,9 @@
 	.endm
 ;@----------------------------------------------------------------------------
 	.macro jmpne flag
-	getNextByte
+	getNextSignedByte
 	tst v30f,#\flag
-	movne r0,r0,lsl#24
-	addne v30pc,v30pc,r0,asr#PC_OFS_COUNT
+	addne v30pc,v30pc,r0
 	subne v30cyc,v30cyc,#3*CYCLE
 	sub v30cyc,v30cyc,#1*CYCLE
 	v30ReEncodeFastPC
@@ -200,10 +211,9 @@
 	.endm
 
 	.macro jmpeq flag
-	getNextByte
+	getNextSignedByte
 	tst v30f,#\flag
-	moveq r0,r0,lsl#24
-	addeq v30pc,v30pc,r0,asr#PC_OFS_COUNT
+	addeq v30pc,v30pc,r0
 	subeq v30cyc,v30cyc,#3*CYCLE
 	sub v30cyc,v30cyc,#1*CYCLE
 	v30ReEncodeFastPC
