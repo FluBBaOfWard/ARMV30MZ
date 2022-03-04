@@ -24,6 +24,7 @@ typedef struct {
 	u32 v30EA;
 	void *v30IrqVectorFunc;
 	u32 v30PrefixBase;
+	u32 v30LastBank;
 	u8 v30IrqPin;
 	u8 v30IF;
 	u8 v30Halt;

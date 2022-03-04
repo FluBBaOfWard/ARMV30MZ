@@ -41,11 +41,7 @@
 	.equ CYCLE, 1<<CYC_SHIFT	;@ One cycle
 	.equ CYC_MASK, CYCLE-1		;@ Mask
 
-#ifdef V30MZ_FAST_PC
 	.equ PC_OFS_COUNT, 24		;@ Used for Branch to offset PC
-#else
-	.equ PC_OFS_COUNT, 8		;@ Used for Branch to offset PC
-#endif
 
 ;@----------------------------------------------------------------------------
 
@@ -58,52 +54,37 @@
 	.endm
 
 	.macro getNextByte
-#ifdef V30MZ_FAST_PC
 	ldrb r0,[v30pc],#1
-#else
-	ldr r0,[v30ptr,#v30SRegCS]
-	add r0,r0,v30pc,lsr#4
-	add v30pc,v30pc,#0x10000
-	bl cpuReadMem20
-#endif
 	.endm
 
 	.macro getNextWord
-#ifdef V30MZ_FAST_PC
 	ldrb r0,[v30pc],#1
 	ldrb r1,[v30pc],#1
 	orr r0,r0,r1,lsl#8
-#else
-	ldr r0,[v30ptr,#v30SRegCS]
-	add r0,r0,v30pc,lsr#4
-	add v30pc,v30pc,#0x20000
-	bl cpuReadMem20W
-#endif
+	.endm
+
+	.macro fetch count
+	subs v30cyc,v30cyc,#(\count)*CYCLE
+	ldrbgt r0,[v30pc],#1
+	ldrgt pc,[v30ptr,r0,lsl#2]
+	b outOfCycles
 	.endm
 
 	.macro v30DecodeFastPC
-#ifdef V30MZ_FAST_PC
 	bl V30DecodePC
-#endif
 	.endm
 
 	.macro v30DecodeFastPCToReg reg
-#ifdef V30MZ_FAST_PC
 	loadLastBank \reg
 	sub \reg,v30pc,\reg
-#endif
 	.endm
 
 	.macro v30EncodeFastPC
-#ifdef V30MZ_FAST_PC
 	bl V30EncodePC
-#endif
 	.endm
 
 	.macro v30ReEncodeFastPC
-#ifdef V30MZ_FAST_PC
 //	bl V30ReEncodePC
-#endif
 	.endm
 
 ;@ Opcode macros always return result in r1
@@ -208,27 +189,25 @@
 	.endm
 ;@----------------------------------------------------------------------------
 	.macro jmpne flag
-	stmfd sp!,{lr}
 	getNextByte
 	tst v30f,#\flag
 	movne r0,r0,lsl#24
 	addne v30pc,v30pc,r0,asr#PC_OFS_COUNT
-	subne v30cyc,v30cyc,#4*CYCLE
-	subeq v30cyc,v30cyc,#1*CYCLE
+	subne v30cyc,v30cyc,#3*CYCLE
+	sub v30cyc,v30cyc,#1*CYCLE
 	v30ReEncodeFastPC
-	ldmfd sp!,{pc}
+	bx lr
 	.endm
 
 	.macro jmpeq flag
-	stmfd sp!,{lr}
 	getNextByte
 	tst v30f,#\flag
 	moveq r0,r0,lsl#24
 	addeq v30pc,v30pc,r0,asr#PC_OFS_COUNT
-	subeq v30cyc,v30cyc,#4*CYCLE
-	subne v30cyc,v30cyc,#1*CYCLE
+	subeq v30cyc,v30cyc,#3*CYCLE
+	sub v30cyc,v30cyc,#1*CYCLE
 	v30ReEncodeFastPC
-	ldmfd sp!,{pc}
+	bx lr
 	.endm
 ;@----------------------------------------------------------------------------
 	.macro or8 src dst
