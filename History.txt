@@ -2,8 +2,9 @@ ARMV30MZ revision history
 -=-=-=-=-=-=-=-=-=-=-=-=-
 
 
-V0.4.6 - 2022-03-04 (FluBBa)
+V0.4.6 - 2022-03-09 (FluBBa)
 	Optimized PC+segment handling.
+	Added check of IRQ after IRET & POPF.
 
 V0.4.5 - 2022-02-09 (FluBBa)
 	Fixed Halt and interrupt handling.

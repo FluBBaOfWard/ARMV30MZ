@@ -2666,7 +2666,8 @@ _9D:	;@ POP F
 	strb r1,[v30ptr,#v30DF]
 
 	eatCycles 3
-	ldmfd sp!,{pc}
+	ldmfd sp!,{lr}
+	b v30ChkIrqInternal
 ;@----------------------------------------------------------------------------
 i_sahf:
 _9E:	;@ SAHF
@@ -5162,6 +5163,7 @@ V30RunXCycles:				;@ r0 = number of cycles to run
 V30CheckIRQs:
 ;@----------------------------------------------------------------------------
 	stmfd sp!,{lr}
+v30ChkIrqInternal:					;@ This can be used on IRET/POPF
 	ldrh r0,[v30ptr,#v30IrqPin]		;@ NMI, Irq pin and IF
 //	movs r1,r0,lsr#24
 //	bne doV30NMI
