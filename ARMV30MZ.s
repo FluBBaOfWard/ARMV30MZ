@@ -5237,7 +5237,7 @@ V30Reset:					;@ r0=v30ptr
 	stmfd sp!,{r4-r11,lr}
 	mov v30ptr,r0
 
-	add r0,v30ptr,#v30I			;@ Clear CPU
+	add r0,v30ptr,#v30I			;@ Clear CPU state
 	mov r1,#(v30IEnd-v30I)/4
 	bl memclr_
 
@@ -5245,6 +5245,10 @@ V30Reset:					;@ r0=v30ptr
 	str r0,[v30ptr,#v30SRegCS]
 	ldr r0,=0xFFFE0000
 	str r0,[v30ptr,#v30RegSP]
+
+	mov v30pc,#0
+	v30EncodeFastPC
+	str v30pc,[v30ptr,#v30IP]
 
 	ldmfd sp!,{r4-r11,lr}
 	bx lr
@@ -5267,6 +5271,7 @@ V30SaveState:				;@ In r0=destination, r1=v30ptr. Out r0=size.
 	bl memcpy
 
 	;@ Convert copied PC to not offseted.
+	v30DecodeFastPC
 //	ldr r0,[r4,#v30Regs+6*4]			;@ Offsetted v30pc
 //	loadLastBank r2
 //	sub r0,r0,r2
