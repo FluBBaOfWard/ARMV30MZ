@@ -4358,7 +4358,7 @@ mulF6:
 divubF6:
 	eatCycles 15
 	movs r1,r0
-	beq nec_interrupt			;@ r0 = 0
+	beq divideError
 	ldrh r0,[v30ptr,#v30RegAW]
 
 #ifdef GBA
@@ -4373,13 +4373,12 @@ divubF6:
 	strb r1,[v30ptr,#v30RegAH]
 	movs r0,r0,lsr#8
 	bxeq lr
-	mov r0,#0
-	b nec_interrupt				;@ r0 = 0
+	b divideError
 divbF6:
 	eatCycles 17
 	movs r0,r0,lsl#24
 	mov r1,r0,asr#24
-	beq nec_interrupt			;@ r0 = 0
+	beq divideError
 	ldrsh r0,[v30ptr,#v30RegAW]
 
 #ifdef GBA
@@ -4395,8 +4394,7 @@ divbF6:
 	movs r1,r0,asr#7
 	mvnsne r1,r1
 	bxeq lr
-	mov r0,#0
-	b nec_interrupt				;@ r0 = 0
+	b divideError
 1:
 	stmfd sp!,{lr}
 	eatCycles 1
@@ -4480,7 +4478,7 @@ mulF7:
 divuwF7:
 	eatCycles 23
 	movs r1,r0
-	beq nec_interrupt			;@ r0 = 0
+	beq divideError
 	ldrh r0,[v30ptr,#v30RegAW]
 	ldrh r2,[v30ptr,#v30RegDW]
 	orr r0,r0,r2,lsl#16
@@ -4497,13 +4495,12 @@ divuwF7:
 	strh r1,[v30ptr,#v30RegDW]
 	movs r0,r0,lsr#16
 	bxeq lr
-	mov r0,#0
-	b nec_interrupt				;@ r0 = 0
+	b divideError
 divwF7:
 	eatCycles 24
 	movs r0,r0,lsl#16
 	mov r1,r0,asr#16
-	beq nec_interrupt			;@ r0 = 0
+	beq divideError
 	ldrh r0,[v30ptr,#v30RegAW]
 	ldrh r2,[v30ptr,#v30RegDW]
 	orr r0,r0,r2,lsl#16
@@ -4521,8 +4518,7 @@ divwF7:
 	movs r1,r0,asr#15
 	mvnsne r1,r1
 	bxeq lr
-	mov r0,#0
-	b nec_interrupt				;@ r0 = 0
+	b divideError
 1:
 	stmfd sp!,{lr}
 	eatCycles 1
@@ -4840,113 +4836,105 @@ EA_007:	;@
 ;@----------------------------------------------------------------------------
 EA_100:	;@
 ;@----------------------------------------------------------------------------
-	getNextByte
+	getNextSignedByte
 	ldrb r2,[v30ptr,#v30SegPrefix]
 	ldr r1,[v30ptr,#v30RegBW-2]
 	ldr r3,[v30ptr,#v30RegIX]
 	cmp r2,#0
 	ldrne r2,[v30ptr,#v30PrefixBase]
 	ldreq r2,[v30ptr,#v30SRegDS]
-	mov r0,r0,lsl#24
 	add r1,r1,r3
-	add r1,r1,r0,asr#8
+	add r1,r1,r0,lsl#16
 	add r0,r2,r1,lsr#4
 	bx lr
 ;@----------------------------------------------------------------------------
 EA_101:	;@
 ;@----------------------------------------------------------------------------
-	getNextByte
+	getNextSignedByte
 	ldrb r2,[v30ptr,#v30SegPrefix]
 	ldr r1,[v30ptr,#v30RegBW-2]
 	ldr r3,[v30ptr,#v30RegIY]
 	cmp r2,#0
 	ldrne r2,[v30ptr,#v30PrefixBase]
 	ldreq r2,[v30ptr,#v30SRegDS]
-	mov r0,r0,lsl#24
 	add r1,r1,r3
-	add r1,r1,r0,asr#8
+	add r1,r1,r0,lsl#16
 	add r0,r2,r1,lsr#4
 	bx lr
 ;@----------------------------------------------------------------------------
 EA_102:	;@
 ;@----------------------------------------------------------------------------
-	getNextByte
+	getNextSignedByte
 	ldrb r2,[v30ptr,#v30SegPrefix]
 	ldr r1,[v30ptr,#v30RegBP-2]
 	ldr r3,[v30ptr,#v30RegIX]
 	cmp r2,#0
 	ldrne r2,[v30ptr,#v30PrefixBase]
 	ldreq r2,[v30ptr,#v30SRegSS]
-	mov r0,r0,lsl#24
 	add r1,r1,r3
-	add r1,r1,r0,asr#8
+	add r1,r1,r0,lsl#16
 	add r0,r2,r1,lsr#4
 	bx lr
 ;@----------------------------------------------------------------------------
 EA_103:	;@
 ;@----------------------------------------------------------------------------
-	getNextByte
+	getNextSignedByte
 	ldrb r2,[v30ptr,#v30SegPrefix]
 	ldr r1,[v30ptr,#v30RegBP-2]
 	ldr r3,[v30ptr,#v30RegIY]
 	cmp r2,#0
 	ldrne r2,[v30ptr,#v30PrefixBase]
 	ldreq r2,[v30ptr,#v30SRegSS]
-	mov r0,r0,lsl#24
 	add r1,r1,r3
-	add r1,r1,r0,asr#8
+	add r1,r1,r0,lsl#16
 	add r0,r2,r1,lsr#4
 	bx lr
 ;@----------------------------------------------------------------------------
 EA_104:	;@
 ;@----------------------------------------------------------------------------
-	getNextByte
+	getNextSignedByte
 	ldrb r2,[v30ptr,#v30SegPrefix]
 	ldr r1,[v30ptr,#v30RegIX]
 	cmp r2,#0
 	ldrne r2,[v30ptr,#v30PrefixBase]
 	ldreq r2,[v30ptr,#v30SRegDS]
-	mov r0,r0,lsl#24
-	add r1,r1,r0,asr#8
+	add r1,r1,r0,lsl#16
 	add r0,r2,r1,lsr#4
 	bx lr
 ;@----------------------------------------------------------------------------
 EA_105:	;@
 ;@----------------------------------------------------------------------------
-	getNextByte
+	getNextSignedByte
 	ldrb r2,[v30ptr,#v30SegPrefix]
 	ldr r1,[v30ptr,#v30RegIY]
 	cmp r2,#0
 	ldrne r2,[v30ptr,#v30PrefixBase]
 	ldreq r2,[v30ptr,#v30SRegDS]
-	mov r0,r0,lsl#24
-	add r1,r1,r0,asr#8
+	add r1,r1,r0,lsl#16
 	add r0,r2,r1,lsr#4
 	bx lr
 ;@----------------------------------------------------------------------------
 EA_106:	;@
 ;@----------------------------------------------------------------------------
-	getNextByte
+	getNextSignedByte
 	ldrb r2,[v30ptr,#v30SegPrefix]
 	ldr r1,[v30ptr,#v30RegBP-2]
 	cmp r2,#0
 	ldrne r2,[v30ptr,#v30PrefixBase]
 	ldreq r2,[v30ptr,#v30SRegSS]
-	mov r0,r0,lsl#24
-	add r1,r1,r0,asr#8
+	add r1,r1,r0,lsl#16
 	add r0,r2,r1,lsr#4
 	bx lr
 ;@----------------------------------------------------------------------------
 EA_107:	;@
 ;@----------------------------------------------------------------------------
-	getNextByte
+	getNextSignedByte
 	ldrb r2,[v30ptr,#v30SegPrefix]
 	ldr r1,[v30ptr,#v30RegBW-2]
 	cmp r2,#0
 	ldrne r2,[v30ptr,#v30PrefixBase]
 	ldreq r2,[v30ptr,#v30SRegDS]
-	mov r0,r0,lsl#24
-	add r1,r1,r0,asr#8
+	add r1,r1,r0,lsl#16
 	add r0,r2,r1,lsr#4
 	bx lr
 ;@----------------------------------------------------------------------------
@@ -5191,10 +5179,29 @@ outOfCycles:
 ;@----------------------------------------------------------------------------
 
 ;@----------------------------------------------------------------------------
+divideError:
+;@----------------------------------------------------------------------------
+	stmfd sp!,{lr}
+	ldr r0,=debugDivideError
+	mov lr,pc
+	bx r0
+	ldmfd sp!,{lr}
+
+	mov r11,r11					;@ NoCash breakpoint
+	mov r0,#0					;@ 0 = division error
+	b nec_interrupt
+;@----------------------------------------------------------------------------
 i_invalid:
 ;@----------------------------------------------------------------------------
-	eatCycles 10
-	bx lr
+	stmfd sp!,{lr}
+	ldr r0,=debugIllegalInstruction
+	mov lr,pc
+	bx r0
+	ldmfd sp!,{lr}
+
+	mov r11,r11					;@ NoCash breakpoint
+	mov r0,#6					;@ 6 = illegal instruction
+	b nec_interrupt
 ;@----------------------------------------------------------------------------
 V30IrqVectorDummy:
 ;@----------------------------------------------------------------------------
@@ -5298,14 +5305,6 @@ V30LoadState:				;@ In r0=v30ptr, r1=source. Out r0=size.
 	ldr v30pc,[v30ptr,#v30Regs+6*4]		;@ Normal v30pc
 //	encodePC
 	str v30pc,[v30ptr,#v30Regs+6*4]		;@ Rewrite offseted v30pc
-
-//	ldr r1,=V30IRQMode0
-//	ldrb r0,[v30ptr,#v30IM]
-	cmp r0,#1
-//	ldreq r1,=V30IRQMode1
-	cmp r0,#2
-//	ldreq r1,=V30IRQMode2
-//	str r1,[v30ptr,#v30IMFunction]
 
 	ldmfd sp!,{v30pc,v30ptr,lr}
 ;@----------------------------------------------------------------------------
