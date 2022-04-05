@@ -57,12 +57,10 @@ v30SRegCS:			.long 0
 v30SRegSS:			.long 0
 v30SRegDS:			.long 0
 
-v30ICount:			.long 0
-v30IP:				.long 0
 v30Flags:			.long 0
-v30IrqVectorFunc:	.long 0
+v30IP:				.long 0
+v30ICount:			.long 0
 v30PrefixBase:		.long 0
-v30LastBank:		.long 0
 v30IrqPin:			.byte 0		;@ IrqPin & IF needs to be together in the same Word.
 v30IF:				.byte 0
 v30NmiPin:			.byte 0
@@ -76,6 +74,8 @@ v30NoInterrupt:		.byte 0
 					.space 2
 v30IEnd:
 ;@--------------------------------
+v30LastBank:		.long 0
+v30IrqVectorFunc:	.long 0
 
 v30MemTbl:			.space 16*4
 v30MemTblInv:

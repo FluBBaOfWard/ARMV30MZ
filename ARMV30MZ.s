@@ -1752,9 +1752,7 @@ _69:	;@ IMUL D16
 i_push_d8:
 _6A:	;@ PUSH D8
 ;@----------------------------------------------------------------------------
-	getNextByte
-	mov r1,r0,lsl#24
-	mov r1,r1,asr#24
+	getNextSignedByteToReg r1
 	ldr r2,[v30ptr,#v30RegSP]
 	ldr r0,[v30ptr,#v30SRegSS]
 	sub r2,r2,#0x20000
@@ -1777,12 +1775,11 @@ _6B:	;@ IMUL D8
 	ldrh r0,[r1,#v30Regs]
 	eatCycles 3
 0:
-	mov r5,r0
-	getNextSignedByte
+	getNextSignedByteToReg r1
 
 	bic v30f,v30f,#PSR_C+PSR_V		;@ Clear Carry & Overflow.
-	mul r0,r5,r0
-	movs r1,r0,asr#15
+	mul r1,r0,r1
+	movs r1,r1,asr#15
 	mvnsne r1,r1
 	orrne v30f,v30f,#PSR_C+PSR_V	;@ Set Carry & Overflow.
 
@@ -2473,7 +2470,7 @@ _8F:	;@ POPW
 	b cpuWriteMem20W
 ;@----------------------------------------------------------------------------
 i_nop:
-_90:	;@ NOP
+_90:	;@ NOP (XCHG AXAX)
 ;@----------------------------------------------------------------------------
 	eatCycles 1
 	bx lr
@@ -2594,6 +2591,7 @@ _9A:	;@ CALL FAR
 i_poll:
 _9B:	;@ POLL, poll the "poll" pin?
 ;@----------------------------------------------------------------------------
+	mov r11,r11					;@ NoCash breakpoint
 	eatCycles 1
 	sub v30pc,v30pc,#0x1
 	bx lr
@@ -3380,7 +3378,7 @@ _C8:	;@ PREPARE
 	getNextWord
 	stmfd sp!,{r0}				;@ temp
 	getNextByte
-	and r5,r0,#0x1F
+	and r5,r0,#0x1F				;@ V30MZ specific
 
 	ldr r8,[v30ptr,#v30RegSP]
 	ldr r6,[v30ptr,#v30SRegSS]
@@ -4685,7 +4683,8 @@ callFF:
 	b cpuWriteMem20W
 callFarFF:
 	eatCycles 11
-	mov r4,r0
+	v30DecodeFastPCToReg r4
+	mov v30pc,r0,lsl#16
 	sub r5,r5,r6,lsr#4
 	add r6,r6,#0x20000
 	add r0,r5,r6,lsr#4
@@ -4699,10 +4698,8 @@ callFarFF:
 	add r0,r6,r5,lsr#4
 	bl cpuWriteMem20W
 
-	v30DecodeFastPCToReg r7
-	mov v30pc,r4,lsl#16
 	V30EncodeFastPC
-	mov r1,r7
+	mov r1,r4
 	sub r5,r5,#0x20000
 	add r0,r6,r5,lsr#4
 	str r5,[v30ptr,#v30RegSP]
@@ -5041,10 +5038,11 @@ EA_207:	;@
 	add r1,r1,r0,lsl#16
 	add r0,r2,r1,lsr#4
 	bx lr
+
 ;@----------------------------------------------------------------------------
 V30DecodePC:
 ;@----------------------------------------------------------------------------
-	ldr r0,[v30ptr,#v30LastBank]
+	loadLastBank r0
 	sub v30pc,v30pc,r0
 	mov v30pc,v30pc,lsl#16
 	bx lr
@@ -5060,7 +5058,7 @@ V30EncodePC:
 	stmfd sp!,{lr}
 	ldr r0,[v30ptr,#v30SRegCS]
 	add r0,r0,v30pc,lsr#4
-	bl cpuReadMem20				;@ returns phyAdr in r1
+	bl cpuReadMem20				;@ Returns phyAdr in r1
 	sub r0,r1,v30pc,lsr#16
 	str r0,[v30ptr,#v30LastBank]
 	mov v30pc,r1
@@ -5151,7 +5149,7 @@ V30RunXCycles:				;@ r0 = number of cycles to run
 V30CheckIRQs:
 ;@----------------------------------------------------------------------------
 	stmfd sp!,{lr}
-v30ChkIrqInternal:					;@ This can be used on IRET/POPF
+v30ChkIrqInternal:					;@ This can be used on EI/IRET/POPF
 	ldrh r0,[v30ptr,#v30IrqPin]		;@ NMI, Irq pin and IF
 //	movs r1,r0,lsr#24
 //	bne doV30NMI
@@ -5205,7 +5203,7 @@ i_invalid:
 ;@----------------------------------------------------------------------------
 V30IrqVectorDummy:
 ;@----------------------------------------------------------------------------
-	mov r0,#0xFF
+	mov r0,#-1
 	bx lr
 
 ;@----------------------------------------------------------------------------
@@ -5264,32 +5262,25 @@ V30Reset:					;@ r0=v30ptr
 	ldmfd sp!,{r4-r11,lr}
 	bx lr
 ;@----------------------------------------------------------------------------
-registerValues:
-	;@(SMS) OUT0, F  , A		 , BC		 , DE		 , HL		 , SP		 , IX		 , IY		 , F'		 , A'		 , BC'		 , DE'		 , HL'
-	.long 0x00, 0xFF , 0xFF000000, 0xBDBF0000, 0xFFFF0000, 0xFFFF0000, 0xFFFF0000, 0xBDFF0000, 0xFFBD0000, 0x000000FF, 0xFF000000, 0xBFBD0000, 0xFFFF0000, 0xFFFF0000
-
-;@----------------------------------------------------------------------------
 V30SaveState:				;@ In r0=destination, r1=v30ptr. Out r0=size.
 	.type   V30SaveState STT_FUNC
 ;@----------------------------------------------------------------------------
-	stmfd sp!,{r4,v30ptr,lr}
+	stmfd sp!,{r4,v30pc,v30ptr,lr}
 
-	sub r4,r0,#v30Regs
+	sub r4,r0,#v30I
 	mov v30ptr,r1
 
-	add r1,v30ptr,#v30Regs
-	mov r2,#v30StateEnd-v30StateStart	;@ Right now?
+	add r1,v30ptr,#v30I
+	mov r2,#v30StateEnd-v30StateStart
 	bl memcpy
 
 	;@ Convert copied PC to not offseted.
+	ldr v30pc,[r4,#v30IP]				;@ Offseted v30pc
 	v30DecodeFastPC
-//	ldr r0,[r4,#v30Regs+6*4]			;@ Offsetted v30pc
-//	loadLastBank r2
-//	sub r0,r0,r2
-//	str r0,[r4,#v30Regs+6*4]			;@ Normal v30pc
+	str v30pc,[r4,#v30IP]				;@ Normal v30pc
 
-	ldmfd sp!,{r4,v30ptr,lr}
-	mov r0,#v30StateEnd-v30StateStart	;@ Right now?
+	ldmfd sp!,{r4,v30pc,v30ptr,lr}
+	mov r0,#v30StateEnd-v30StateStart
 	bx lr
 ;@----------------------------------------------------------------------------
 V30LoadState:				;@ In r0=v30ptr, r1=source. Out r0=size.
@@ -5298,20 +5289,25 @@ V30LoadState:				;@ In r0=v30ptr, r1=source. Out r0=size.
 	stmfd sp!,{v30pc,v30ptr,lr}
 
 	mov v30ptr,r0
-	add r0,v30ptr,#v30Regs
-	mov r2,#v30StateEnd-v30StateStart	;@ Right now?
+	add r0,v30ptr,#v30I
+	mov r2,#v30StateEnd-v30StateStart
 	bl memcpy
 
-	ldr v30pc,[v30ptr,#v30Regs+6*4]		;@ Normal v30pc
-//	encodePC
-	str v30pc,[v30ptr,#v30Regs+6*4]		;@ Rewrite offseted v30pc
+	bl reBankSwitch4_F_W
+	bl reBankSwitch1_W
+	bl reBankSwitch2_W
+	bl reBankSwitch3_W
+
+	ldr v30pc,[v30ptr,#v30IP]			;@ Normal v30pc
+	v30EncodeFastPC
+	str v30pc,[v30ptr,#v30IP]			;@ Rewrite offseted v30pc
 
 	ldmfd sp!,{v30pc,v30ptr,lr}
 ;@----------------------------------------------------------------------------
 V30GetStateSize:			;@ Out r0=state size.
 	.type   V30GetStateSize STT_FUNC
 ;@----------------------------------------------------------------------------
-	mov r0,#v30StateEnd-v30StateStart	;@ Right now?
+	mov r0,#v30StateEnd-v30StateStart
 	bx lr
 ;@----------------------------------------------------------------------------
 V30RedirectOpcode:			;@ In r0=opcode, r1=address.
@@ -5331,8 +5327,10 @@ V30RedirectOpcode:			;@ In r0=opcode, r1=address.
 ;@----------------------------------------------------------------------------
 defaultV30:
 v30StateStart:
-I:	.space 21*4
+I:	.space 19*4
 v30StateEnd:
+	.long 0			;@ v30LastBank
+	.long 0			;@ v30IrqVectorFunc
 	.space 16*4		;@ v30MemTbl $00000-FFFFF
 
 nec_instruction:
