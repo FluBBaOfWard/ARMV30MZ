@@ -1778,12 +1778,12 @@ _6B:	;@ IMUL D8
 	getNextSignedByteToReg r1
 
 	bic v30f,v30f,#PSR_C+PSR_V		;@ Clear Carry & Overflow.
-	mul r1,r0,r1
-	movs r1,r1,asr#15
+	mul r2,r0,r1
+	movs r1,r2,asr#15
 	mvnsne r1,r1
 	orrne v30f,v30f,#PSR_C+PSR_V	;@ Set Carry & Overflow.
 
-	strh r0,[r4,#v30Regs]
+	strh r2,[r4,#v30Regs]
 	ldmfd sp!,{pc}
 1:
 	eatCycles 4
