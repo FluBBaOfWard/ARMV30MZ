@@ -1073,7 +1073,7 @@ _2F:	;@ DAS
 	orrmi v30f,v30f,#PSR_S
 	orreq v30f,v30f,#PSR_Z
 	strb r0,[v30ptr,#v30ParityVal]
-	eatCycles 10
+	eatCycles 11
 	bx lr
 ;@----------------------------------------------------------------------------
 i_xor_br8:
@@ -1270,7 +1270,7 @@ _38:	;@ CMP BR8
 	sub8 r4,r0
 	ldmfd sp!,{pc}
 1:
-	eatCycles 3
+	eatCycles 2
 	add r1,v30ptr,#v30EATable
 	mov lr,pc
 	ldr pc,[r1,r0,lsl#2]
@@ -2189,7 +2189,7 @@ _84:	;@ TEST BR8
 	and8 r4,r0
 	ldmfd sp!,{pc}
 1:
-	eatCycles 3
+	eatCycles 2
 	add r1,v30ptr,#v30EATable
 	mov lr,pc
 	ldr pc,[r1,r0,lsl#2]
@@ -2235,11 +2235,11 @@ _86:	;@ XCHG BR8
 	ldrb r0,[v30ptr,-r2]
 	strb r1,[v30ptr,-r2]
 	strb r0,[v30ptr,-r4]
-	eatCycles 1
+	eatCycles 3
 	bx lr
 0:
 	stmfd sp!,{lr}
-	eatCycles 3
+	eatCycles 5
 	add r1,v30ptr,#v30EATable
 	mov lr,pc
 	ldr pc,[r1,r0,lsl#2]
@@ -3654,6 +3654,11 @@ _D5:	;@ AAD/CVTDB			;@ Convert Decimal to Binary
 	strh r0,[v30ptr,#v30RegAW]
 	strb r2,[v30ptr,#v30ParityVal]
 	bx lr
+;@----------------------------------------------------------------------------
+i_trans2:
+_D6:	;@ TRANS
+;@----------------------------------------------------------------------------
+	eatCycles 3
 ;@----------------------------------------------------------------------------
 i_trans:
 _D7:	;@ TRANS
@@ -5549,7 +5554,7 @@ V30OpTable:
 	.long i_rotshft_wcl
 	.long i_aam
 	.long i_aad
-	.long i_trans  	//xlat (undocumented mirror)
+	.long i_trans2 	//xlat (undocumented mirror)
 	.long i_trans  	//xlat
 	.long i_invalid	// fpo1
 	.long i_invalid	// fpo1
