@@ -4383,33 +4383,23 @@ divubF6:
 	mov v30f,#PSR_C+PSR_V
 	mov r2,#1
 	strb r2,[v30ptr,#v30ParityVal]	;@ Clear parity
-	movs r1,r0
-	beq divideError
+	movs r1,r0,lsl#16
 	ldrh r0,[v30ptr,#v30RegAW]
+	cmpne r0,r1,lsr#8
+	bpl divideError
 	cmp r0,#0
 	bxeq lr
-	cmp r0,r1,lsl#8
-	bhs divideError
 
-//#ifdef NDS
-//	swi 0x090000				;@ NDS BIOS Div, r0/r1.
-//#else
-	mov r0,r0,lsl#16
-	mov r3,#16
-	rsb r2,r1,#0
-	mov r1,#0
-1:	adds r0,r0,r0
-	adcs r1,r2,r1,lsl#1
-	subcc r1,r1,r2
-	orrcs r0,r0,#0x10000
-	subs r3,r3,#1
+	mov r2,#16
+	rsb r1,r1,#0
+1:	adds r0,r1,r0,lsl#1
+	subcc r0,r0,r1
+	orrcs r0,r0,#0x1
+	subs r2,r2,#1
 	bne 1b
-	mov r0,r0,lsr#16
-//#endif
+	orr r0,r0,r0,lsr#8			;@ Bit 8-15 should be 0
 
-//	str r0,[v30ptr,#v30RegAW-2]
-	strb r0,[v30ptr,#v30RegAL]
-	strb r1,[v30ptr,#v30RegAH]
+	strh r0,[v30ptr,#v30RegAW]
 	bx lr
 ;@----------------------------------------------------------------------------
 divbF6:
@@ -4458,12 +4448,14 @@ _F7:	;@ PRE F7
 	bl cpuReadMem20W
 	ldmfd sp!,{lr}
 	b 0b
+;@----------------------------------------------------------------------------
 testF7:
 	eatCycles 1
 	mov r4,r0,lsl#16
 	getNextWord
 	and16 r0,r4
 	bx lr
+;@----------------------------------------------------------------------------
 notF7:
 	eatCycles 1
 	mvn r1,r0
@@ -4473,6 +4465,7 @@ notF7:
 	mov r0,r5
 	eatCycles 1
 	b cpuWriteMem20W
+;@----------------------------------------------------------------------------
 negF7:
 	eatCycles 1
 	bic v30f,v30f,#PSR_S+PSR_Z+PSR_C	;@ Clear S, Z, & C.
@@ -4489,6 +4482,7 @@ negF7:
 	mov r0,r5
 	eatCycles 1
 	b cpuWriteMem20W
+;@----------------------------------------------------------------------------
 muluF7:
 	eatCycles 3
 	mov v30f,#PSR_Z						;@ Set Z and clear others.
@@ -4500,6 +4494,7 @@ muluF7:
 	strh r2,[v30ptr,#v30RegDW]
 	orrne v30f,v30f,#PSR_C+PSR_V		;@ Set Carry & Overflow.
 	bx lr
+;@----------------------------------------------------------------------------
 mulF7:
 	eatCycles 3
 	mov v30f,#PSR_Z						;@ Set Z and clear others.
@@ -4515,6 +4510,7 @@ mulF7:
 	mvnsne r1,r1
 	orrne v30f,v30f,#PSR_C+PSR_V		;@ Set Carry & Overflow.
 	bx lr
+;@----------------------------------------------------------------------------
 divuwF7:
 	eatCycles 23
 	mov v30f,#PSR_C+PSR_V
@@ -4546,6 +4542,7 @@ divuwF7:
 	strh r0,[v30ptr,#v30RegAW]
 	strh r1,[v30ptr,#v30RegDW]
 	bx lr
+;@----------------------------------------------------------------------------
 divwF7:
 	eatCycles 24
 	movs r0,r0,lsl#16
