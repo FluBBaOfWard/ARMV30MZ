@@ -4384,42 +4384,33 @@ divubF6:
 	mov r2,#1
 	strb r2,[v30ptr,#v30ParityVal]	;@ Clear parity
 	movs r1,r0
-	ldrh r0,[v30ptr,#v30RegAW]
 	beq divideError
+	ldrh r0,[v30ptr,#v30RegAW]
 	cmp r0,#0
 	bxeq lr
 	cmp r0,r1,lsl#8
 	bhs divideError
 
-#ifdef GBA
-	swi 0x060000				;@ GBA BIOS Div, r0/r1.
-//#elif NDS
+//#ifdef NDS
 //	swi 0x090000				;@ NDS BIOS Div, r0/r1.
-#else
-//	#error "Needs an implementation of division"
-	mov r3,#32
+//#else
+	mov r0,r0,lsl#16
+	mov r3,#16
 	rsb r2,r1,#0
 	mov r1,#0
 1:	adds r0,r0,r0
 	adcs r1,r2,r1,lsl#1
-//	cmpcc r1,r2
 	subcc r1,r1,r2
-	orrcs r0,r0,#0x1
+	orrcs r0,r0,#0x10000
 	subs r3,r3,#1
 	bne 1b
-#endif
+	mov r0,r0,lsr#16
+//#endif
 
-	
 //	str r0,[v30ptr,#v30RegAW-2]
 	strb r0,[v30ptr,#v30RegAL]
 	strb r1,[v30ptr,#v30RegAH]
-//	tst r1,#0xFF
-//	orreq v30f,v30f,#PSR_Z
 	bx lr
-divubF6Error:
-//	tst r0,#0xFF00
-//	orreq v30f,v30f,#PSR_Z
-//	b divideError
 ;@----------------------------------------------------------------------------
 divbF6:
 	eatCycles 17
@@ -4526,25 +4517,35 @@ mulF7:
 	bx lr
 divuwF7:
 	eatCycles 23
+	mov v30f,#PSR_C+PSR_V
+	mov r2,#1
+	strb r2,[v30ptr,#v30ParityVal]	;@ Clear parity
 	movs r1,r0
 	beq divideError
 	ldrh r0,[v30ptr,#v30RegAW]
 	ldrh r2,[v30ptr,#v30RegDW]
-	orr r0,r0,r2,lsl#16
+	orrs r0,r0,r2,lsl#16
+	bxeq lr
+	cmp r0,r1,lsl#16
+	bhs divideError
 
-#ifdef GBA
-	swi 0x060000				;@ GBA BIOS Div, r0/r1.
-#elif NDS
-	swi 0x090000				;@ NDS BIOS Div, r0/r1.
-#else
-	#error "Needs an implementation of division"
-#endif
+//#ifdef NDS
+//	swi 0x090000				;@ NDS BIOS Div, r0/r1.
+//#else
+	mov r3,#32
+	rsb r2,r1,#0
+	mov r1,#0
+1:	adds r0,r0,r0
+	adcs r1,r2,r1,lsl#1
+	subcc r1,r1,r2
+	orrcs r0,r0,#0x1
+	subs r3,r3,#1
+	bne 1b
+//#endif
 
 	strh r0,[v30ptr,#v30RegAW]
 	strh r1,[v30ptr,#v30RegDW]
-	movs r0,r0,lsr#16
-	bxeq lr
-	b divideError
+	bx lr
 divwF7:
 	eatCycles 24
 	movs r0,r0,lsl#16
@@ -5220,11 +5221,11 @@ outOfCycles:
 ;@----------------------------------------------------------------------------
 divideError:
 ;@----------------------------------------------------------------------------
-	stmfd sp!,{lr}
-	ldr r0,=debugDivideError
-	mov lr,pc
-	bx r0
-	ldmfd sp!,{lr}
+//	stmfd sp!,{lr}
+//	ldr r0,=debugDivideError
+//	mov lr,pc
+//	bx r0
+//	ldmfd sp!,{lr}
 
 	mov r11,r11					;@ NoCash breakpoint
 	mov r0,#0					;@ 0 = division error
