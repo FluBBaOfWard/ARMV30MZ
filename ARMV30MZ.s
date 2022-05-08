@@ -4404,25 +4404,34 @@ divubF6:
 ;@----------------------------------------------------------------------------
 divbF6:
 	eatCycles 17
-	movs r0,r0,lsl#24
-	mov r1,r0,asr#24
-	beq divideError
+	mov v30f,#PSR_C+PSR_V
+	mov r1,r0,lsl#24
+	movs r1,r1,asr#8
 	ldrsh r0,[v30ptr,#v30RegAW]
+	beq divideError
+	eor r3,r1,r0
+	rsbpl r1,r1,#0
+	cmp r0,#0
+	bxeq lr
+	rsbmi r0,r0,#0
+	cmn r0,r1,asr#9
+	bpl divideError
 
-#ifdef GBA
-	swi 0x060000				;@ GBA BIOS Div, r0/r1.
-#elif NDS
-	swi 0x090000				;@ NDS BIOS Div, r0/r1.
-#else
-	#error "Needs an implementation of division"
-#endif
+	mov r2,#16
+1:	adds r0,r1,r0,lsl#1
+	subcc r0,r0,r1
+	orrcs r0,r0,#0x1
+	subs r2,r2,#1
+	bne 1b
 
+	mov r1,r0,lsr#16
+	tst r3,#0x8000
+	rsbne r1,r1,#0
+	cmp r3,#0
+	rsbmi r0,r0,#0
 	strb r0,[v30ptr,#v30RegAL]
 	strb r1,[v30ptr,#v30RegAH]
-	movs r1,r0,asr#7
-	mvnsne r1,r1
-	bxeq lr
-	b divideError
+	bx lr
 ;@----------------------------------------------------------------------------
 i_f7pre:
 _F7:	;@ PRE F7
@@ -4680,6 +4689,16 @@ _FF:	;@ PRE FF
 	ldr pc,[pc,r2,lsr#1]
 	nop
 	.long incFF, decFF, callFF, callFarFF, braFF, braFarFF, pushFF, pushFF
+1:
+	eatCycles 1
+	add r1,v30ptr,#v30EATable
+	mov lr,pc
+	ldr pc,[r1,r4,lsl#2]
+	mov r5,r0
+	mov r6,r1
+	adr lr,0b
+	b cpuReadMem20W
+;@----------------------------------------------------------------------------
 incFF:
 	bic v30f,v30f,#PSR_S+PSR_Z+PSR_V+PSR_A		;@ Clear S, Z, V & A.
 	mov r1,r0,lsl#16
@@ -4687,6 +4706,7 @@ incFF:
 	orrvs v30f,v30f,#PSR_V						;@ Set Overflow.
 	tst r1,#0xF0000
 	b writeBackFF
+;@----------------------------------------------------------------------------
 decFF:
 	bic v30f,v30f,#PSR_S+PSR_Z+PSR_V+PSR_A		;@ Clear S, Z, V & A.
 	mov r1,r0,lsl#16
@@ -4707,6 +4727,7 @@ writeBackFF:
 	ldmfd sp!,{lr}
 	eatCycles 1
 	b cpuWriteMem20W
+;@----------------------------------------------------------------------------
 callFF:
 	eatCycles 5
 	v30DecodeFastPCToReg r5
@@ -4720,6 +4741,7 @@ callFF:
 	str r2,[v30ptr,#v30RegSP]
 	ldmfd sp!,{lr}
 	b cpuWriteMem20W
+;@----------------------------------------------------------------------------
 callFarFF:
 	eatCycles 11
 	v30DecodeFastPCToReg r4
@@ -4744,11 +4766,13 @@ callFarFF:
 	str r5,[v30ptr,#v30RegSP]
 	ldmfd sp!,{lr}
 	b cpuWriteMem20W
+;@----------------------------------------------------------------------------
 braFF:
 	eatCycles 4
 	mov v30pc,r0,lsl#16
 	v30EncodeFastPC
 	ldmfd sp!,{pc}
+;@----------------------------------------------------------------------------
 braFarFF:
 	eatCycles 9
 	mov v30pc,r0,lsl#16
@@ -4759,6 +4783,7 @@ braFarFF:
 	strh r0,[v30ptr,#v30SRegCS+2]
 	v30EncodeFastPC
 	ldmfd sp!,{pc}
+;@----------------------------------------------------------------------------
 pushFF:
 	eatCycles 1
 	mov r1,r0
@@ -4769,15 +4794,6 @@ pushFF:
 	str r2,[v30ptr,#v30RegSP]
 	ldmfd sp!,{lr}
 	b cpuWriteMem20W
-1:
-	eatCycles 1
-	add r1,v30ptr,#v30EATable
-	mov lr,pc
-	ldr pc,[r1,r4,lsl#2]
-	mov r5,r0
-	mov r6,r1
-	adr lr,0b
-	b cpuReadMem20W
 
 // All EA functions must leave EO in top 16bits of r1!
 ;@----------------------------------------------------------------------------
