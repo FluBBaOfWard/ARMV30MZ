@@ -4408,7 +4408,7 @@ divbF6:
 	mov r1,r0,lsl#24
 	movs r1,r1,asr#8
 	ldrsh r0,[v30ptr,#v30RegAW]
-	beq divideError
+	beq divbF6Error
 	eor r3,r1,r0
 	rsbpl r1,r1,#0
 	cmp r0,#0
@@ -4431,6 +4431,12 @@ divbF6:
 	rsbmi r0,r0,#0
 	strb r0,[v30ptr,#v30RegAL]
 	strb r1,[v30ptr,#v30RegAH]
+	bx lr
+divbF6Error:
+	cmp r0,#0xFFFF8000
+	bne divideError
+	mov r0,#0x0081
+	strh r0,[v30ptr,#v30RegAW]
 	bx lr
 ;@----------------------------------------------------------------------------
 i_f7pre:
