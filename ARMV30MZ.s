@@ -3622,23 +3622,38 @@ _D3:	;@ ROTSHFT WCL
 i_aam:
 _D4:	;@ AAM/CVTBD			;@ Convert Binary to Decimal
 ;@----------------------------------------------------------------------------
-	getNextByte						;@ Mem read not needed?
-	ldrb r2,[v30ptr,#v30RegAL]
-	ldr r3,=0xCCCCCCCD				;@ 0x8_0000_000A/10)
-	umull r0,r3,r2,r3				;@ AH = AL/10, AL%=10.
-	mov r3,r3,lsr#3					;@ Divide by 8
-	add r0,r3,r3,lsl#2
-	sub r2,r2,r0,lsl#1
-	strb r2,[v30ptr,#v30RegAL]
-	strb r3,[v30ptr,#v30RegAH]
-	ldrsh r3,[v30ptr,#v30RegAW]
+	getNextByte
+
+	movs r1,r0,lsl#8
+	ldrb r0,[v30ptr,#v30RegAL]
+	beq d4DivideError
+	cmp r0,#0
+	beq 2f
+
+	mov r2,#8
+	rsb r1,r1,#0
+1:	adds r0,r1,r0,lsl#1
+	subcc r0,r0,r1
+	orrcs r0,r0,#0x1
+	subs r2,r2,#1
+	bne 1b
+	mov r0,r0,ror#8
+	orr r0,r0,r0,lsr#16
+2:
+	strh r0,[v30ptr,#v30RegAW]
+
 	eatCycles 17
-	cmp r3,#0
-	orrmi v30f,v30f,#PSR_S
-	orreq v30f,v30f,#PSR_Z
-	strb r3,[v30ptr,#v30ParityVal]
+	strb r0,[v30ptr,#v30ParityVal]
+	movs v30f,r0,lsl#24			;@ Clear S, Z, C, V & A.
+	movmi v30f,#PSR_S
+	moveq v30f,#PSR_Z
 	bx lr
-	.pool
+d4DivideError:
+	mov v30f,#PSR_V+PSR_Z+PSR_C
+	strb v30f,[v30ptr,#v30ParityVal]	;@ Clear parity
+	tst r0,#0xC0
+	bicne v30f,v30f,#PSR_Z
+	b divideError
 ;@----------------------------------------------------------------------------
 i_aad:
 _D5:	;@ AAD/CVTDB			;@ Convert Decimal to Binary
@@ -3649,6 +3664,7 @@ _D5:	;@ AAD/CVTDB			;@ Convert Decimal to Binary
 	add r0,r0,r0,lsl#24+3
 	add r0,r0,r0,lsl#24+1
 	movs r2,r0,asr#24
+	mov v30f,#0
 	orrmi v30f,v30f,#PSR_S
 	orreq v30f,v30f,#PSR_Z
 	mov r0,r0,lsr#24
