@@ -3620,10 +3620,10 @@ _D3:	;@ ROTSHFT WCL
 	b d3Continue
 ;@----------------------------------------------------------------------------
 i_aam:
-_D4:	;@ AAM/CVTBD	;@ Adjust AX After Multiply / Convert Binary to Decimal
+_D4:	;@ AAM/CVTBD	;@ Adjust After Multiply / Convert Binary to Decimal
 ;@----------------------------------------------------------------------------
-	getNextByte
 	eatCycles 17
+	getNextByte
 
 	movs r1,r0,lsl#8
 	ldrb r0,[v30ptr,#v30RegAL]
@@ -3653,18 +3653,19 @@ d4DivideError:
 	b divideError
 ;@----------------------------------------------------------------------------
 i_aad:
-_D5:	;@ AAD/CVTDB			;@ Convert Decimal to Binary
+_D5:	;@ AAD/CVTDB	;@ Adjust After Division / Convert Decimal to Binary
 ;@----------------------------------------------------------------------------
-	getNextByte						;@ Mem read not needed?
-	ldrh r0,[v30ptr,#v30RegAW]
-	mov r0,r0,ror#8
-	add r0,r0,r0,lsl#24+3
-	add r0,r0,r0,lsl#24+1
-	mov r0,r0,lsr#24
+	getNextByte
+	ldrh r2,[v30ptr,#v30RegAW]
+	mov r1,r2,lsr#8
+	mul r0,r1,r0
+	add r0,r0,r2
 	movs v30f,r0,lsl#24			;@ Clear S, Z, C, V & A.
 	orrmi v30f,v30f,#PSR_S
 	orreq v30f,v30f,#PSR_Z
+	orrcs v30f,v30f,#PSR_C
 	eatCycles 6
+	and r0,r0,#0xFF
 	strh r0,[v30ptr,#v30RegAW]
 	strb r0,[v30ptr,#v30ParityVal]
 	bx lr
@@ -4399,8 +4400,6 @@ divubF6:
 	ldrh r0,[v30ptr,#v30RegAW]
 	cmpne r0,r1,lsr#8
 	bpl divideError
-	cmp r0,#0
-	bxeq lr
 
 	mov r2,#16
 	rsb r1,r1,#0
