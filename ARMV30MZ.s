@@ -3656,18 +3656,20 @@ i_aad:
 _D5:	;@ AAD/CVTDB	;@ Adjust After Division / Convert Decimal to Binary
 ;@----------------------------------------------------------------------------
 	getNextByte
-	ldrh r2,[v30ptr,#v30RegAW]
-	mov r1,r2,lsr#8
-	mul r0,r1,r0
-	add r0,r0,r2
-	movs v30f,r0,lsl#24			;@ Clear S, Z, C, V & A.
-	orrmi v30f,v30f,#PSR_S
-	orreq v30f,v30f,#PSR_Z
-	orrcs v30f,v30f,#PSR_C
-	eatCycles 6
-	and r0,r0,#0xFF
+	ldrh r1,[v30ptr,#v30RegAW]
+	mov r2,r1,lsr#8
+	mul r0,r2,r0
+	eor r2,r1,r0
+	mov r1,r1,lsl#24
+	adds r0,r1,r0,lsl#24
+	eor r2,r2,r0,lsr#24
+	and r2,r2,#PSR_A
+	mrs v30f,cpsr				;@ S, Z, V & C.
+	orr v30f,r2,v30f,lsr#28
+	mov r0,r0,lsr#24
 	strh r0,[v30ptr,#v30RegAW]
 	strb r0,[v30ptr,#v30ParityVal]
+	eatCycles 6
 	bx lr
 ;@----------------------------------------------------------------------------
 i_trans2:
