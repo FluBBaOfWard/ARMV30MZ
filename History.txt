@@ -2,11 +2,13 @@ ARMV30MZ revision history
 -=-=-=-=-=-=-=-=-=-=-=-=-
 
 
-V0.4.8 - 2022-05-10 (FluBBa)
+V0.4.8 - 2022-05-17 (FluBBa)
 	Fixed INMB/INMW opcodes.
 	Fixed flags for multiplication.
 	Fixed result for division.
 	Fixed AAM/CVTBD opcode.
+	Fixed AAD/CVTDD opcode.
+	Fixed DAA/ADJ4A opcode.
 
 V0.4.7 - 2022-04-07 (FluBBa)
 	Fixed load/save state.
