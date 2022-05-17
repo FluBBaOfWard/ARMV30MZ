@@ -1062,19 +1062,22 @@ i_das:
 _2F:	;@ DAS / ADJ4S
 ;@----------------------------------------------------------------------------
 	ldrb r0,[v30ptr,#v30RegAL]
+	and v30f,v30f,#PSR_A|PSR_C
 	mov r3,r0,ror#4
+	cmp r0,#0x9A
+	orrcs v30f,v30f,#PSR_C
+	tst v30f,#PSR_C
+	subne r0,r0,#0x60
 	cmp r3,#0xA0000000
 	orrcs v30f,v30f,#PSR_A
 	tst v30f,#PSR_A
 	subne r0,r0,#0x06
-	cmp r0,#0xA0
-	orrpl v30f,v30f,#PSR_C
-	tst v30f,#PSR_C
-	subne r0,r0,#0x60
 	strb r0,[v30ptr,#v30RegAL]
 	movs r1,r0,lsl#24
 	orrmi v30f,v30f,#PSR_S
 	orreq v30f,v30f,#PSR_Z
+	cmp r1,r3,ror#4
+	orrvs v30f,v30f,#PSR_V
 	strb r0,[v30ptr,#v30ParityVal]
 	eatCycles 11
 	bx lr
