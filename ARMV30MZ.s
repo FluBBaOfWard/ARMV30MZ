@@ -1246,10 +1246,10 @@ _37:	;@ AAA / ADJBA
 	ldrh r0,[v30ptr,#v30RegAW]
 	mov r1,r0,lsl#28
 	cmp r1,#0xA0000000
-	orrcs v30f,v30f,#PSR_A		;@ Set Aux.
+	orrcs v30f,v30f,#PSR_A			;@ Set Aux.
 	tst v30f,#PSR_A
 	moveq v30f,#PSR_S
-	movne v30f,#PSR_A+PSR_Z+PSR_C
+	movne v30f,#PSR_Z+PSR_A+PSR_C
 	strb r1,[v30ptr,#v30ParityVal]	;@ Parity allways set
 	orrne r0,r0,#0x00F0
 	addne r0,r0,#0x0016
@@ -1397,18 +1397,18 @@ _3E:	;@ DS prefix
 i_aas:
 _3F:	;@ AAS / ADJBS
 ;@----------------------------------------------------------------------------
-	ldrb r0,[v30ptr,#v30RegAL]
-	mov r0,r0,lsl#28
-	cmp r0,#0xA0000000
-	biccc v30f,v30f,#PSR_C			;@ Clear Carry.
-	orrcs v30f,v30f,#PSR_C+PSR_A	;@ Set Carry & Aux.
+	ldrh r0,[v30ptr,#v30RegAW]
+	mov r1,r0,lsl#28
+	cmp r1,#0xA0000000
+	orrcs v30f,v30f,#PSR_A			;@ Set Aux.
 	tst v30f,#PSR_A
-	ldrbne r2,[v30ptr,#v30RegAH]
-	subne r0,r0,#0x60000000
-	subne r2,r2,#1
-	strbne r2,[v30ptr,#v30RegAH]
-	mov r0,r0,lsr#28
-	strb r0,[v30ptr,#v30RegAL]
+	moveq v30f,#PSR_S
+	movne v30f,#PSR_Z+PSR_A+PSR_C
+	strb r1,[v30ptr,#v30ParityVal]	;@ Parity allways set
+	bic r0,r0,#0x00F0
+	subne r0,r0,#0x16
+	bic r0,r0,#0x00F0
+	strh r0,[v30ptr,#v30RegAW]
 	eatCycles 9
 	bx lr
 
