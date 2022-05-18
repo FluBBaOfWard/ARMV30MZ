@@ -879,21 +879,20 @@ _27:	;@ DAA / ADJ4A
 ;@----------------------------------------------------------------------------
 	ldrb r0,[v30ptr,#v30RegAL]
 	and v30f,v30f,#PSR_A|PSR_C
-	mov r3,r0,ror#4
-	cmp r3,#0xA0000000
+	mov r1,#0x66000000
+	cmn r1,r0,lsl#24
+	orrcs v30f,v30f,#PSR_C
+	cmn r1,r0,lsl#28
 	orrcs v30f,v30f,#PSR_A
-	tst v30f,#PSR_A
-	addne r0,r0,#0x06
-	cmp r0,#0xA0
-	orrpl v30f,v30f,#PSR_C
 	tst v30f,#PSR_C
-	addne r0,r0,#0x60
+	biceq r1,r1,#0x60000000
+	tst v30f,#PSR_A
+	biceq r1,r1,#0x06000000
+	adds r0,r1,r0,lsl#24
+	mrs r1,cpsr				;@ S, Z, V & C.
+	orr v30f,v30f,r1,lsr#28
+	mov r0,r0,lsr#24
 	strb r0,[v30ptr,#v30RegAL]
-	movs r1,r0,lsl#24
-	orrmi v30f,v30f,#PSR_S
-	orreq v30f,v30f,#PSR_Z
-	cmp r1,r3,ror#4
-	orrvs v30f,v30f,#PSR_V
 	strb r0,[v30ptr,#v30ParityVal]
 	eatCycles 10
 	bx lr
@@ -1063,12 +1062,12 @@ _2F:	;@ DAS / ADJ4S
 ;@----------------------------------------------------------------------------
 	ldrb r0,[v30ptr,#v30RegAL]
 	and v30f,v30f,#PSR_A|PSR_C
-	mov r3,r0,ror#4
+	mov r2,r0,ror#4
 	cmp r0,#0x9A
 	orrcs v30f,v30f,#PSR_C
 	tst v30f,#PSR_C
 	subne r0,r0,#0x60
-	cmp r3,#0xA0000000
+	cmp r2,#0xA0000000
 	orrcs v30f,v30f,#PSR_A
 	tst v30f,#PSR_A
 	subne r0,r0,#0x06
@@ -1076,7 +1075,7 @@ _2F:	;@ DAS / ADJ4S
 	movs r1,r0,lsl#24
 	orrmi v30f,v30f,#PSR_S
 	orreq v30f,v30f,#PSR_Z
-	cmp r1,r3,ror#4
+	cmp r1,r2,ror#4
 	orrvs v30f,v30f,#PSR_V
 	strb r0,[v30ptr,#v30ParityVal]
 	eatCycles 11
@@ -1244,18 +1243,18 @@ _36:	;@ SS prefix
 i_aaa:
 _37:	;@ AAA / ADJBA
 ;@----------------------------------------------------------------------------
-	ldrb r0,[v30ptr,#v30RegAL]
-	mov r0,r0,lsl#28
-	cmp r0,#0xA0000000
-	biccc v30f,v30f,#PSR_C			;@ Clear Carry.
-	orrcs v30f,v30f,#PSR_C+PSR_A	;@ Set Carry & Aux.
+	ldrh r0,[v30ptr,#v30RegAW]
+	mov r1,r0,lsl#28
+	cmp r1,#0xA0000000
+	orrcs v30f,v30f,#PSR_A		;@ Set Aux.
 	tst v30f,#PSR_A
-	ldrbne r2,[v30ptr,#v30RegAH]
-	addne r0,r0,#0x60000000
-	addne r2,r2,#1
-	strbne r2,[v30ptr,#v30RegAH]
-	mov r0,r0,lsr#28
-	strb r0,[v30ptr,#v30RegAL]
+	moveq v30f,#PSR_S
+	movne v30f,#PSR_A+PSR_Z+PSR_C
+	strb r1,[v30ptr,#v30ParityVal]	;@ Parity allways set
+	orrne r0,r0,#0x00F0
+	addne r0,r0,#0x0016
+	bic r0,r0,#0x00F0
+	strh r0,[v30ptr,#v30RegAW]
 	eatCycles 9
 	bx lr
 ;@----------------------------------------------------------------------------
