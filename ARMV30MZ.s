@@ -4396,7 +4396,7 @@ mulF6:
 ;@----------------------------------------------------------------------------
 divubF6:
 	eatCycles 15
-	mov v30f,#PSR_C+PSR_V
+	mov v30f,#0
 	mov r2,#1
 	strb r2,[v30ptr,#v30ParityVal]	;@ Clear parity
 	movs r1,r0,lsl#16
@@ -4414,6 +4414,9 @@ divubF6:
 	orr r0,r0,r0,lsr#8			;@ Bit 8-15 should be 0
 
 	strh r0,[v30ptr,#v30RegAW]
+	bic r0,#0xFE
+	cmp r0,#1
+	orreq v30f,v30f,#PSR_Z
 	bx lr
 ;@----------------------------------------------------------------------------
 divbF6:
