@@ -3630,10 +3630,9 @@ _D4:	;@ AAM/CVTBD	;@ Adjust After Multiply / Convert Binary to Decimal
 	ldrb r0,[v30ptr,#v30RegAL]
 	beq d4DivideError
 
-	rsb r1,r1,#0
 	mov r2,#8
-0:	adds r0,r1,r0,lsl#1
-	subcc r0,r0,r1
+0:	rsbs r0,r1,r0,lsl#1
+	addcc r0,r0,r1
 	orrcs r0,r0,#0x1
 	subs r2,r2,#1
 	bne 0b
@@ -4396,27 +4395,24 @@ mulF6:
 ;@----------------------------------------------------------------------------
 divubF6:
 	eatCycles 15
-	mov v30f,#0
-	mov r2,#1
-	strb r2,[v30ptr,#v30ParityVal]	;@ Clear parity
-	movs r1,r0,lsl#16
+	mov v30f,#PSR_Z
+	strb v30f,[v30ptr,#v30ParityVal]	;@ Clear parity
+	movs r1,r0,lsl#8
 	ldrh r0,[v30ptr,#v30RegAW]
-	cmpne r0,r1,lsr#8
+	cmpne r0,r1
 	bpl divideError
 
-	mov r2,#16
-	rsb r1,r1,#0
-1:	adds r0,r1,r0,lsl#1
-	subcc r0,r0,r1
+	mov r2,#8
+1:	rsbs r0,r1,r0,lsl#1
+	addcc r0,r0,r1
 	orrcs r0,r0,#0x1
 	subs r2,r2,#1
 	bne 1b
-	orr r0,r0,r0,lsr#8			;@ Bit 8-15 should be 0
 
 	strh r0,[v30ptr,#v30RegAW]
 	bic r0,#0xFE
 	cmp r0,#1
-	orreq v30f,v30f,#PSR_Z
+	bicne v30f,v30f,#PSR_Z
 	bx lr
 ;@----------------------------------------------------------------------------
 divbF6:
@@ -4425,25 +4421,25 @@ divbF6:
 	mov r2,#1
 	strb r2,[v30ptr,#v30ParityVal]	;@ Clear parity
 	mov r1,r0,lsl#24
-	movs r1,r1,asr#8
+	movs r1,r1,asr#16
 	ldrsh r0,[v30ptr,#v30RegAW]
 	beq divbF6Error
-	eor r3,r1,r0
+	eor r3,r0,r1,lsl#8
 	rsbpl r1,r1,#0
 	cmp r0,#0
 	beq 2f
 	rsbmi r0,r0,#0
-	cmn r0,r1,asr#9
+	cmn r0,r1,asr#1
 	bpl divideError
 
-	mov r2,#16
+	mov r2,#8
 1:	adds r0,r1,r0,lsl#1
 	subcc r0,r0,r1
 	orrcs r0,r0,#0x1
 	subs r2,r2,#1
 	bne 1b
 
-	mov r1,r0,lsr#16
+	mov r1,r0,lsr#8
 	tst r3,#0x8000
 	rsbne r1,r1,#0
 	cmp r3,#0
