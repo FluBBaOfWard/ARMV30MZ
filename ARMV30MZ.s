@@ -381,13 +381,9 @@ _0E:	;@ PUSH CS
 	b cpuWriteMem20W
 ;@----------------------------------------------------------------------------
 i_pop_cs:
-_0F:	;@ POP CS
+_0F:	;@ 2 byte instruction, not on V30MZ.
 ;@----------------------------------------------------------------------------
-	stmfd sp!,{lr}
-	popWord
-	strh r0,[v30ptr,#v30SRegCS+2]
-	eatCycles 3
-	ldmfd sp!,{pc}
+	b i_invalid
 ;@----------------------------------------------------------------------------
 i_adc_br8:
 _10:	;@ ADC BR8
@@ -3651,7 +3647,7 @@ _D4:	;@ AAM/CVTBD	;@ Adjust After Multiply / Convert Binary to Decimal
 	moveq v30f,#PSR_Z
 	bx lr
 d4DivideError:
-	mov v30f,#PSR_V+PSR_Z+PSR_C
+	mov v30f,#PSR_Z
 	strb v30f,[v30ptr,#v30ParityVal]	;@ Clear parity
 	tst r0,#0xC0
 	bicne v30f,v30f,#PSR_Z
@@ -4422,7 +4418,9 @@ divubF6:
 ;@----------------------------------------------------------------------------
 divbF6:
 	eatCycles 17
-	mov v30f,#PSR_C+PSR_V
+	mov v30f,#0
+	mov r2,#1
+	strb r2,[v30ptr,#v30ParityVal]	;@ Clear parity
 	mov r1,r0,lsl#24
 	movs r1,r1,asr#8
 	ldrsh r0,[v30ptr,#v30RegAW]
@@ -4430,7 +4428,7 @@ divbF6:
 	eor r3,r1,r0
 	rsbpl r1,r1,#0
 	cmp r0,#0
-	bxeq lr
+	beq 2f
 	rsbmi r0,r0,#0
 	cmn r0,r1,asr#9
 	bpl divideError
@@ -4447,15 +4445,19 @@ divbF6:
 	rsbne r1,r1,#0
 	cmp r3,#0
 	rsbmi r0,r0,#0
+2:
+	movs v30f,r0,lsl#24			;@ Clear S, Z, C, V & A.
+	movmi v30f,#PSR_S
+	moveq v30f,#PSR_Z
 	strb r0,[v30ptr,#v30RegAL]
 	strb r1,[v30ptr,#v30RegAH]
+	strb r0,[v30ptr,#v30ParityVal]	;@ Set parity
 	bx lr
 divbF6Error:
 	cmp r0,#0xFFFF8000
 	bne divideError
 	mov r0,#0x0081
-	strh r0,[v30ptr,#v30RegAW]
-	bx lr
+	b 2b
 ;@----------------------------------------------------------------------------
 i_f7pre:
 _F7:	;@ PRE F7
@@ -4558,9 +4560,6 @@ divuwF7:
 	cmp r0,r1,lsl#16
 	bhs divideError
 
-//#ifdef NDS
-//	swi 0x090000				;@ NDS BIOS Div, r0/r1.
-//#else
 	mov r3,#32
 	rsb r2,r1,#0
 	mov r1,#0
@@ -4570,7 +4569,6 @@ divuwF7:
 	orrcs r0,r0,#0x1
 	subs r3,r3,#1
 	bne 1b
-//#endif
 
 	strh r0,[v30ptr,#v30RegAW]
 	strh r1,[v30ptr,#v30RegDW]
