@@ -4397,15 +4397,15 @@ divubF6:
 	eatCycles 15
 	mov v30f,#PSR_Z
 	strb v30f,[v30ptr,#v30ParityVal]	;@ Clear parity
-	movs r1,r0,lsl#8
+	mov r1,r0,lsl#8
 	ldrh r0,[v30ptr,#v30RegAW]
-	cmpne r0,r1
-	bpl divideError
+	cmp r0,r1
+	bcs divideError
+	rsb r1,r1,#1
 
 	mov r2,#8
-1:	rsbs r0,r1,r0,lsl#1
-	addcc r0,r0,r1
-	orrcs r0,r0,#0x1
+1:	adds r0,r1,r0,lsl#1
+	subcc r0,r0,r1
 	subs r2,r2,#1
 	bne 1b
 
@@ -4427,15 +4427,14 @@ divbF6:
 	eor r3,r0,r1,lsl#8
 	rsbpl r1,r1,#0
 	cmp r0,#0
-	beq 2f
 	rsbmi r0,r0,#0
 	cmn r0,r1,asr#1
-	bpl divideError
+	bcs divideError
+	add r1,r1,#1
 
 	mov r2,#8
 1:	adds r0,r1,r0,lsl#1
 	subcc r0,r0,r1
-	orrcs r0,r0,#0x1
 	subs r2,r2,#1
 	bne 1b
 
@@ -4444,7 +4443,7 @@ divbF6:
 	rsbne r1,r1,#0
 	cmp r3,#0
 	rsbmi r0,r0,#0
-2:
+
 	movs v30f,r0,lsl#24			;@ Clear S, Z, C, V & A.
 	movmi v30f,#PSR_S
 	moveq v30f,#PSR_Z
