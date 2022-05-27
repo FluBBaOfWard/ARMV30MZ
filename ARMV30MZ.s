@@ -3646,7 +3646,7 @@ _D4:	;@ AAM/CVTBD	;@ Adjust After Multiply / Convert Binary to Decimal
 	moveq v30f,#PSR_Z
 	bx lr
 d4DivideError:
-	mov v30f,#PSR_Z
+	ldrb v30f,[v30ptr,#v30MulOverflow]	;@ C & V from last mul, Z always set.
 	strb v30f,[v30ptr,#v30ParityVal]	;@ Clear parity
 	tst r0,#0xC0
 	bicne v30f,v30f,#PSR_Z
@@ -4377,6 +4377,7 @@ muluF6:
 	strh r2,[v30ptr,#v30RegAW]
 	movs r2,r2,lsr#8
 	orrne v30f,v30f,#PSR_C+PSR_V
+	strb v30f,[v30ptr,#v30MulOverflow]
 	bx lr
 ;@----------------------------------------------------------------------------
 mulF6:
@@ -4391,11 +4392,12 @@ mulF6:
 	movs r1,r2,asr#7
 	mvnsne r1,r1
 	orrne v30f,v30f,#PSR_C+PSR_V
+	strb v30f,[v30ptr,#v30MulOverflow]
 	bx lr
 ;@----------------------------------------------------------------------------
 divubF6:
 	eatCycles 15
-	mov v30f,#PSR_Z
+	ldrb v30f,[v30ptr,#v30MulOverflow]	;@ C & V from last mul, Z always set.
 	strb v30f,[v30ptr,#v30ParityVal]	;@ Clear parity
 	mov r1,r0,lsl#8
 	ldrh r0,[v30ptr,#v30RegAW]
@@ -4404,10 +4406,10 @@ divubF6:
 	rsb r1,r1,#1
 
 	mov r2,#8
-1:	adds r0,r1,r0,lsl#1
+0:	adds r0,r1,r0,lsl#1
 	subcc r0,r0,r1
 	subs r2,r2,#1
-	bne 1b
+	bne 0b
 
 	strh r0,[v30ptr,#v30RegAW]
 	bic r0,#0xFE
@@ -4417,9 +4419,6 @@ divubF6:
 ;@----------------------------------------------------------------------------
 divbF6:
 	eatCycles 17
-	mov v30f,#0
-	mov r2,#1
-	strb r2,[v30ptr,#v30ParityVal]	;@ Clear parity
 	mov r1,r0,lsl#24
 	movs r1,r1,asr#16
 	ldrsh r0,[v30ptr,#v30RegAW]
@@ -4429,22 +4428,22 @@ divbF6:
 	cmp r0,#0
 	rsbmi r0,r0,#0
 	cmn r0,r1,asr#1
-	bcs divideError
+	bcs divbF6Error2
 	add r1,r1,#1
 
 	mov r2,#8
-1:	adds r0,r1,r0,lsl#1
+0:	adds r0,r1,r0,lsl#1
 	subcc r0,r0,r1
 	subs r2,r2,#1
-	bne 1b
+	bne 0b
 
 	mov r1,r0,lsr#8
 	tst r3,#0x8000
 	rsbne r1,r1,#0
 	cmp r3,#0
 	rsbmi r0,r0,#0
-
-	movs v30f,r0,lsl#24			;@ Clear S, Z, C, V & A.
+1:
+	movs v30f,r0,lsl#24				;@ Test S, Z.
 	movmi v30f,#PSR_S
 	moveq v30f,#PSR_Z
 	strb r0,[v30ptr,#v30RegAL]
@@ -4453,9 +4452,12 @@ divbF6:
 	bx lr
 divbF6Error:
 	cmp r0,#0xFFFF8000
-	bne divideError
-	mov r0,#0x0081
-	b 2b
+	moveq r0,#0x0081
+	beq 1b
+divbF6Error2:
+	ldrb v30f,[v30ptr,#v30MulOverflow]	;@ C & V from last mul, Z always set.
+	strb v30f,[v30ptr,#v30ParityVal]	;@ Clear parity
+	b divideError
 ;@----------------------------------------------------------------------------
 i_f7pre:
 _F7:	;@ PRE F7
@@ -4526,6 +4528,7 @@ muluF7:
 	movs r2,r2,lsr#16
 	strh r2,[v30ptr,#v30RegDW]
 	orrne v30f,v30f,#PSR_C+PSR_V		;@ Set Carry & Overflow.
+	strb v30f,[v30ptr,#v30MulOverflow]
 	bx lr
 ;@----------------------------------------------------------------------------
 mulF7:
@@ -4542,44 +4545,42 @@ mulF7:
 	movs r1,r2,asr#15
 	mvnsne r1,r1
 	orrne v30f,v30f,#PSR_C+PSR_V		;@ Set Carry & Overflow.
+	strb v30f,[v30ptr,#v30MulOverflow]
 	bx lr
 ;@----------------------------------------------------------------------------
 divuwF7:
 	eatCycles 23
-	mov v30f,#PSR_C+PSR_V
-	mov r2,#1
-	strb r2,[v30ptr,#v30ParityVal]	;@ Clear parity
-	movs r1,r0
-	beq divideError
+	ldrb v30f,[v30ptr,#v30MulOverflow]	;@ C & V from last mul, Z always set.
+	strb v30f,[v30ptr,#v30ParityVal]	;@ Clear parity
+	mov r1,r0,lsl#16
 	ldrh r0,[v30ptr,#v30RegAW]
 	ldrh r2,[v30ptr,#v30RegDW]
 	orrs r0,r0,r2,lsl#16
-	bxeq lr
-	cmp r0,r1,lsl#16
-	bhs divideError
+	cmp r0,r1
+	bcs divideError
 
-	mov r3,#32
-	rsb r2,r1,#0
-	mov r1,#0
-1:	adds r0,r0,r0
-	adcs r1,r2,r1,lsl#1
-	subcc r1,r1,r2
-	orrcs r0,r0,#0x1
-	subs r3,r3,#1
-	bne 1b
+	rsb r1,r1,#1
+	mov r2,#16
+0:	adds r0,r1,r0,lsl#1
+	subcc r0,r0,r1
+	subs r2,r2,#1
+	bne 0b
 
+	mov r1,r0,lsr#16
 	strh r0,[v30ptr,#v30RegAW]
 	strh r1,[v30ptr,#v30RegDW]
 	bx lr
 ;@----------------------------------------------------------------------------
 divwF7:
 	eatCycles 24
-	movs r0,r0,lsl#16
-	mov r1,r0,asr#16
-	beq divideError
+	ldrb v30f,[v30ptr,#v30MulOverflow]	;@ C & V from last mul, Z always set.
+	strb v30f,[v30ptr,#v30ParityVal]	;@ Clear parity
+	mov r0,r0,lsl#16
+	movs r1,r0,asr#16
 	ldrh r0,[v30ptr,#v30RegAW]
 	ldrh r2,[v30ptr,#v30RegDW]
 	orr r0,r0,r2,lsl#16
+	beq divideError
 
 #ifdef GBA
 	swi 0x060000				;@ GBA BIOS Div, r0/r1.
@@ -4589,12 +4590,12 @@ divwF7:
 	#error "Needs an implementation of division"
 #endif
 
+	movs r2,r0,asr#15
+	mvnsne r2,r2
+	bne divideError
 	strh r0,[v30ptr,#v30RegAW]
 	strh r1,[v30ptr,#v30RegDW]
-	movs r1,r0,asr#15
-	mvnsne r1,r1
-	bxeq lr
-	b divideError
+	bx lr
 ;@----------------------------------------------------------------------------
 i_clc:
 _F8:	;@ CLC
