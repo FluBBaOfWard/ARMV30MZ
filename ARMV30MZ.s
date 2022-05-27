@@ -3629,11 +3629,11 @@ _D4:	;@ AAM/CVTBD	;@ Adjust After Multiply / Convert Binary to Decimal
 	movs r1,r0,lsl#8
 	ldrb r0,[v30ptr,#v30RegAL]
 	beq d4DivideError
+	rsb r1,r1,#1
 
 	mov r2,#8
-0:	rsbs r0,r1,r0,lsl#1
-	addcc r0,r0,r1
-	orrcs r0,r0,#0x1
+0:	adds r0,r1,r0,lsl#1
+	subcc r0,r0,r1
 	subs r2,r2,#1
 	bne 0b
 	mov r0,r0,ror#8

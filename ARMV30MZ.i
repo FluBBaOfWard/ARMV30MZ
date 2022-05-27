@@ -71,7 +71,9 @@ v30TF:				.byte 0
 v30DF:				.byte 0		;@ Direction flag, this is either 1 or -1.
 v30SegPrefix:		.byte 0
 v30NoInterrupt:		.byte 0
-					.space 2
+v30MulOverflow:		.byte 0
+					.space 1
+
 v30IEnd:
 ;@--------------------------------
 v30LastBank:		.long 0
