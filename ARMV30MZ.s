@@ -3135,7 +3135,7 @@ d2Continue:
 	ands r1,r1,#0x1F
 
 	and r2,r4,#0x38
-	ldrne pc,[pc,r2,lsr#1]
+	ldr pc,[pc,r2,lsr#1]
 	b 3f
 	.long rolC0, rorC0, rolcC0, rorcC0, shlC0, shrC0, invC0, shraC0
 rolC0:

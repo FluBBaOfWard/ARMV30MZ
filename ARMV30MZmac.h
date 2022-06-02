@@ -376,14 +376,15 @@
 	.endm
 ;@----------------------------------------------------------------------------
 	.macro shl8 dst src
-	add \src,\src,#24
+	ands \src,\src,#0x1F
+	and v30f,v30f,#PSR_C+PSR_V
+	movne v30f,#0
+	movs \dst,\dst,lsl#24			;@ This clears Carry
 	movs \dst,\dst,lsl \src
 	mov r1,\dst,asr#24
-	and v30f,r1,#PSR_A
-	orrmi v30f,v30f,#PSR_S
-	orreq v30f,v30f,#PSR_Z
 	orrcs v30f,v30f,#PSR_C+PSR_V
-	eormi v30f,v30f,#PSR_V
+	eormi v30f,v30f,#PSR_S+PSR_V
+	orreq v30f,v30f,#PSR_Z
 	strb r1,[v30ptr,#v30ParityVal]
 	.endm
 
@@ -392,10 +393,9 @@
 	movs \dst,\dst,lsl \src
 	mov r1,\dst,asr#16
 	and v30f,r1,#PSR_A
-	orrmi v30f,v30f,#PSR_S
-	orreq v30f,v30f,#PSR_Z
 	orrcs v30f,v30f,#PSR_C+PSR_V
-	eormi v30f,v30f,#PSR_V
+	eormi v30f,v30f,#PSR_S+PSR_V
+	orreq v30f,v30f,#PSR_Z
 	strb r1,[v30ptr,#v30ParityVal]
 	.endm
 ;@----------------------------------------------------------------------------
