@@ -266,11 +266,10 @@
 	.endm
 ;@----------------------------------------------------------------------------
 	.macro rol8 dst src
-	ands \src,\src,#0x1F
-	bicne v30f,v30f,#PSR_C+PSR_V	;@ Clear C & V.
 	cmp \src,#0x08
-	andpl \src,\src,#0x7
-	orrpl \src,\src,#0x8
+	orrcs \src,\src,#0x08
+	ands \src,\src,#0x0F
+	bicne v30f,v30f,#PSR_C+PSR_V	;@ Clear C & V.
 	orr \dst,\dst,\dst,ror#8
 	orrs \dst,\dst,\dst,ror#16
 	movs \dst,\dst,lsl \src
@@ -283,7 +282,7 @@
 	ands \src,\src,#0x1F
 	bicne v30f,v30f,#PSR_C+PSR_V	;@ Clear C & V.
 	cmp \src,#0x10
-	andne \src,\src,#0xF
+	andne \src,\src,#0x0F
 	orrs \dst,\dst,\dst,lsl#16		;@ Clear Carry
 	movs \dst,\dst,lsl \src
 	orrcs v30f,v30f,#PSR_C+PSR_V
