@@ -3649,7 +3649,7 @@ _D4:	;@ AAM/CVTBD	;@ Adjust After Multiply / Convert Binary to Decimal
 	strh r0,[v30ptr,#v30RegAW]
 
 	strb r0,[v30ptr,#v30ParityVal]
-	movs v30f,r0,lsl#24			;@ Clear S, Z, C, V & A.
+	movs v30f,r0,lsl#24					;@ Clear S, Z, C, V & A.
 	movmi v30f,#PSR_S
 	moveq v30f,#PSR_Z
 	bx lr
@@ -4450,12 +4450,12 @@ divbF6:
 	cmp r3,#0
 	rsbmi r0,r0,#0
 1:
-	movs v30f,r0,lsl#24				;@ Test S, Z.
+	movs v30f,r0,lsl#24					;@ Test S, Z.
 	movmi v30f,#PSR_S
 	moveq v30f,#PSR_Z
 	strb r0,[v30ptr,#v30RegAL]
 	strb r1,[v30ptr,#v30RegAH]
-	strb r0,[v30ptr,#v30ParityVal]	;@ Set parity
+	strb r0,[v30ptr,#v30ParityVal]		;@ Set parity
 	bx lr
 divbF6Error:
 	cmp r0,#0x80000000
@@ -4840,6 +4840,45 @@ pushFF:
 	ldmfd sp!,{lr}
 	b cpuWriteMem20W
 
+;@----------------------------------------------------------------------------
+division16:
+;@----------------------------------------------------------------------------
+	adds r0,r1,r0,lsl#1
+	subcc r0,r0,r1
+	adcs r0,r1,r0,lsl#1
+	subcc r0,r0,r1
+	adcs r0,r1,r0,lsl#1
+	subcc r0,r0,r1
+	adcs r0,r1,r0,lsl#1
+	subcc r0,r0,r1
+	adcs r0,r1,r0,lsl#1
+	subcc r0,r0,r1
+	adcs r0,r1,r0,lsl#1
+	subcc r0,r0,r1
+	adcs r0,r1,r0,lsl#1
+	subcc r0,r0,r1
+	adcs r0,r1,r0,lsl#1
+	subcc r0,r0,r1
+division8:
+	adds r0,r1,r0,lsl#1
+	subcc r0,r0,r1
+	adds r0,r1,r0,lsl#1
+	subcc r0,r0,r1
+	adds r0,r1,r0,lsl#1
+	subcc r0,r0,r1
+	adds r0,r1,r0,lsl#1
+	subcc r0,r0,r1
+	adds r0,r1,r0,lsl#1
+	subcc r0,r0,r1
+	adds r0,r1,r0,lsl#1
+	subcc r0,r0,r1
+	adds r0,r1,r0,lsl#1
+	subcc r0,r0,r1
+	adds r0,r1,r0,lsl#1
+	subcc r0,r0,r1
+	bx lr
+
+;@----------------------------------------------------------------------------
 // All EA functions must leave EO in top 16bits of r1!
 ;@----------------------------------------------------------------------------
 EA_000:	;@

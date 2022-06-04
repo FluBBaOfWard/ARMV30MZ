@@ -267,11 +267,11 @@
 ;@----------------------------------------------------------------------------
 	.macro rol8 dst src
 	cmp \src,#0x08
-	orrcs \src,\src,#0x08
-	ands \src,\src,#0x0F
+	ands \src,\src,#0x07
+	orrcss \src,\src,#0x08
 	bicne v30f,v30f,#PSR_C+PSR_V	;@ Clear C & V.
 	orr \dst,\dst,\dst,ror#8
-	orrs \dst,\dst,\dst,ror#16
+	orrs \dst,\dst,\dst,ror#16		;@ Clear Carry
 	movs \dst,\dst,lsl \src
 	orrcs v30f,v30f,#PSR_C+PSR_V
 	eormi v30f,v30f,#PSR_V
@@ -321,9 +321,10 @@
 	.endm
 ;@----------------------------------------------------------------------------
 	.macro ror8 dst src
-	bic v30f,v30f,#PSR_C+PSR_V	;@ Clear C & V.
-	orr \dst,\dst,\dst,lsl#8
-	orr \dst,\dst,\dst,lsl#16
+	ands \src,\src,#0x1F
+	bicne v30f,v30f,#PSR_C+PSR_V	;@ Clear C & V.
+	orr \dst,\dst,\dst,ror#8
+	orrs \dst,\dst,\dst,ror#16		;@ Clear Carry
 	movs \dst,\dst,ror \src
 	orrcs v30f,v30f,#PSR_C+PSR_V
 	tst \dst,#0x40000000
@@ -377,9 +378,9 @@
 	ands \src,\src,#0x1F
 	and v30f,v30f,#PSR_C+PSR_V
 	movne v30f,#0
-	movs \dst,\dst,lsl#24			;@ This clears Carry
+	movs \dst,\dst,lsl#24			;@ Clear Carry
 	movs \dst,\dst,lsl \src
-	mov r1,\dst,asr#24
+	mov r1,\dst,lsr#24
 	orrcs v30f,v30f,#PSR_C+PSR_V
 	eormi v30f,v30f,#PSR_S+PSR_V
 	orreq v30f,v30f,#PSR_Z
@@ -387,10 +388,12 @@
 	.endm
 
 	.macro shl16 dst src
-	add \src,\src,#16
+	ands \src,\src,#0x1F
+	and v30f,v30f,#PSR_C+PSR_V
+	movne v30f,#0
+	movs \dst,\dst,lsl#16			;@ Clear Carry
 	movs \dst,\dst,lsl \src
 	mov r1,\dst,asr#16
-	and v30f,r1,#PSR_A
 	orrcs v30f,v30f,#PSR_C+PSR_V
 	eormi v30f,v30f,#PSR_S+PSR_V
 	orreq v30f,v30f,#PSR_Z
