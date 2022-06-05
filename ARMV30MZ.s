@@ -3199,7 +3199,7 @@ d3Continue:
 
 	and r2,r4,#0x38
 	ldrne pc,[pc,r2,lsr#1]
-	b invC1
+	b 3f
 	.long rolC1, rorC1, rolcC1, rorcC1, shlC1, shrC1, invC1, shraC1
 rolC1:
 	rol16 r0,r1
@@ -5337,6 +5337,7 @@ i_invalid:
 	ldmfd sp!,{lr}
 
 	mov r11,r11					;@ NoCash breakpoint
+	bx lr
 	mov r0,#6					;@ 6 = illegal instruction
 	b nec_interrupt
 ;@----------------------------------------------------------------------------

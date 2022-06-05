@@ -375,10 +375,9 @@
 	.endm
 ;@----------------------------------------------------------------------------
 	.macro shl8 dst src
-	ands \src,\src,#0x1F
-	and v30f,v30f,#PSR_C+PSR_V
-	movne v30f,#0
-	movs \dst,\dst,lsl#24			;@ Clear Carry
+	mov v30f,v30f,lsl#28
+	msr cpsr_flg,v30f
+	mov \dst,\dst,lsl#24
 	movs \dst,\dst,lsl \src
 	mov r1,\dst,lsr#24
 	orrcs v30f,v30f,#PSR_C+PSR_V
@@ -388,10 +387,9 @@
 	.endm
 
 	.macro shl16 dst src
-	ands \src,\src,#0x1F
-	and v30f,v30f,#PSR_C+PSR_V
-	movne v30f,#0
-	movs \dst,\dst,lsl#16			;@ Clear Carry
+	mov v30f,v30f,lsl#28
+	msr cpsr_flg,v30f
+	mov \dst,\dst,lsl#16
 	movs \dst,\dst,lsl \src
 	mov r1,\dst,asr#16
 	orrcs v30f,v30f,#PSR_C+PSR_V
