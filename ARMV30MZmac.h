@@ -375,7 +375,7 @@
 	.endm
 ;@----------------------------------------------------------------------------
 	.macro shl8 dst src
-	movs v30f,v30f,lsl#31				;@ Move PSR_C to Carry
+	movs v30f,v30f,lsl#31		;@ Move PSR_C to Carry
 	mov \dst,\dst,lsl#24
 	movs \dst,\dst,lsl \src
 	mov r1,\dst,lsr#24
@@ -386,7 +386,7 @@
 	.endm
 
 	.macro shl16 dst src
-	movs v30f,v30f,lsl#31				;@ Move PSR_C to Carry
+	movs v30f,v30f,lsl#31		;@ Move PSR_C to Carry
 	mov \dst,\dst,lsl#16
 	movs \dst,\dst,lsl \src
 	mov r1,\dst,asr#16
@@ -420,23 +420,27 @@
 ;@----------------------------------------------------------------------------
 	.macro shra8 dst src
 	mov \dst,\dst,lsl#24
-	mov \dst,\dst,asr \src
-	movs r1,\dst,asr#24
-	and v30f,r1,#PSR_A
-	orrmi v30f,v30f,#PSR_S
-	orreq v30f,v30f,#PSR_Z
+	mov \dst,\dst,asr#24
+	movs v30f,v30f,lsl#31		;@ Move PSR_C to Carry
+	movs r1,\dst,asr \src
 	orrcs v30f,v30f,#PSR_C
+	orreq v30f,v30f,#PSR_Z
+	orrmi v30f,v30f,#PSR_S+PSR_V
+	movs r0,r1,lsl#25			;@ Move bit 6 to bit 31.
+	eormi v30f,v30f,#PSR_V
 	strb r1,[v30ptr,#v30ParityVal]
 	.endm
 
 	.macro shra16 dst src
 	mov \dst,\dst,lsl#16
-	mov \dst,\dst,asr \src
-	movs r1,\dst,asr#16
-	and v30f,r1,#PSR_A
-	orrmi v30f,v30f,#PSR_S
-	orreq v30f,v30f,#PSR_Z
+	mov \dst,\dst,asr#16
+	movs v30f,v30f,lsl#31		;@ Move PSR_C to Carry
+	movs r1,\dst,asr \src
 	orrcs v30f,v30f,#PSR_C
+	orreq v30f,v30f,#PSR_Z
+	orrmi v30f,v30f,#PSR_S+PSR_V
+	movs r0,r1,lsl#17			;@ Move bit 14 to bit 31.
+	eormi v30f,v30f,#PSR_V
 	strb r1,[v30ptr,#v30ParityVal]
 	.endm
 

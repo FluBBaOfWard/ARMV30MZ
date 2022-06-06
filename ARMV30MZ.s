@@ -2365,7 +2365,7 @@ _8B:	;@ MOV R16W
 	eatCycles 1
 	cmp r0,#0xC0
 	bmi 0f
-
+Str_8B:
 	and r2,r0,#7
 	add r1,v30ptr,r2,lsl#2
 	ldrh r0,[r1,#v30Regs]
@@ -2407,16 +2407,18 @@ _8C:	;@ MOV WSREG
 i_lea:
 _8D:	;@ LEA
 ;@----------------------------------------------------------------------------
-	stmfd sp!,{lr}
 	getNextByte
 	and r4,r0,#0x38
+	add r4,v30ptr,r4,lsr#1
+	eatCycles 1
+	cmp r0,#0xC0
+	bpl Str_8B
+
+	stmfd sp!,{lr}
 	add r1,v30ptr,#v30EATable
 	mov lr,pc
 	ldr pc,[r1,r0,lsl#2]		;@ EATable return EO in r1
-	add r0,v30ptr,r4,lsr#1
-	str r1,[r0,#v30Regs2]
-
-	eatCycles 1
+	str r1,[r4,#v30Regs2]
 	ldmfd sp!,{pc}
 ;@----------------------------------------------------------------------------
 i_mov_sregw:
