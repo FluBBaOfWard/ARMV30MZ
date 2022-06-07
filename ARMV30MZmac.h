@@ -282,7 +282,7 @@
 	cmp \src,#0x10
 	andne \src,\src,#0x0F
 	tst v30f,v30f,lsr#2				;@ Move PSR_C to Carry
-	bicne v30f,v30f,#PSR_C+PSR_V	;@ Clear C & V.
+	bic v30f,v30f,#PSR_C+PSR_V		;@ Clear C & V.
 	orr \dst,\dst,\dst,lsl#16
 	movs \dst,\dst,lsl \src
 	orrcs v30f,v30f,#PSR_C+PSR_V
@@ -294,11 +294,14 @@
 	tst v30f,#PSR_C
 	bic v30f,v30f,#PSR_C+PSR_V	;@ Clear C & V.
 	orrne \dst,\dst,#0x100
+	cmp \src,#0
+	beq 10f
 9:
 	tst \dst,\dst,lsr#9
 	adc \dst,\dst,\dst
 	subs \src,\src,#1
 	bhi 9b
+10:
 	movs \dst,\dst,lsl#24
 	orrcs v30f,v30f,#PSR_C+PSR_V
 	eormi v30f,v30f,#PSR_V
@@ -309,11 +312,14 @@
 	tst v30f,#PSR_C
 	bic v30f,v30f,#PSR_C+PSR_V	;@ Clear C & V.
 	orrne \dst,\dst,#0x10000
-10:
+	cmp \src,#0
+	beq 12f
+11:
 	tst \dst,\dst,lsr#17
 	adc \dst,\dst,\dst
 	subs \src,\src,#1
-	bhi 10b
+	bhi 11b
+12:
 	movs \dst,\dst,lsl#16
 	orrcs v30f,v30f,#PSR_C+PSR_V
 	eormi v30f,v30f,#PSR_V
