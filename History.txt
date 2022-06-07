@@ -2,7 +2,7 @@ ARMV30MZ revision history
 -=-=-=-=-=-=-=-=-=-=-=-=-
 
 
-V0.5.0 - 2022-06-06 (FluBBa)
+V0.5.0 - 2022-06-07 (FluBBa)
 	Fixed INMB/INMW opcodes.
 	Fixed flags for multiplication.
 	Fixed division opcodes.
@@ -13,6 +13,7 @@ V0.5.0 - 2022-06-06 (FluBBa)
 	Fixed AAA/ADJBA opcode.
 	Fixed AAS/ADJBS opcode.
 	Fixed ROL opcode.
+	Fixed ROR opcode.
 	Fixed SHL opcode.
 	Fixed SHR opcode.
 	Fixed SAR/SHRA opcode.
