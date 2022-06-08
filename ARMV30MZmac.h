@@ -333,9 +333,8 @@
 	orr \dst,\dst,\dst,lsl#16
 	movs \dst,\dst,ror \src
 	orrcs v30f,v30f,#PSR_C
+	eors r1,\dst,\dst,lsl#1
 	orrmi v30f,v30f,#PSR_V
-	tst \dst,#0x40000000
-	eorne v30f,v30f,#PSR_V
 	mov r1,\dst,lsr#24
 	.endm
 
@@ -345,9 +344,8 @@
 	orr \dst,\dst,\dst,lsl#16
 	movs \dst,\dst,ror \src
 	orrcs v30f,v30f,#PSR_C
+	eors r1,\dst,\dst,lsl#1
 	orrmi v30f,v30f,#PSR_V
-	tst \dst,#0x40000000
-	eorne v30f,v30f,#PSR_V
 	mov r1,\dst,lsr#16
 	.endm
 ;@----------------------------------------------------------------------------
@@ -356,11 +354,14 @@
 	tst v30f,#PSR_C
 	bic v30f,v30f,#PSR_C+PSR_V	;@ Clear C & V.
 	orrne \dst,\dst,#0x00800000
-11:
+	cmp \src,#0
+	beq 14f
+13:
 	tst \dst,\dst,lsr#24
 	rrx \dst,\dst
 	subs \src,\src,#1
-	bhi 11b
+	bhi 13b
+14:
 	movs r1,\dst,lsr#24
 	orrcs v30f,v30f,#PSR_C
 	eors r2,\dst,\dst,lsl#1
@@ -368,15 +369,18 @@
 	.endm
 
 	.macro rorc16 dst src
-	mov \dst,\dst,lsl#16
 	tst v30f,#PSR_C
 	bic v30f,v30f,#PSR_C+PSR_V	;@ Clear C & V.
+	mov \dst,\dst,lsl#16
 	orrne \dst,\dst,#0x00008000
-12:
+	cmp \src,#0
+	beq 16f
+15:
 	tst \dst,\dst,lsr#16
 	rrx \dst,\dst
 	subs \src,\src,#1
-	bhi 12b
+	bhi 15b
+16:
 	movs r1,\dst,lsr#16
 	orrcs v30f,v30f,#PSR_C
 	eors r2,\dst,\dst,lsl#1
@@ -411,8 +415,8 @@
 	orrcs v30f,v30f,#PSR_C
 	orreq v30f,v30f,#PSR_Z
 	movs r0,r1,lsl#25			;@ Move bit 6 to bit 31 & 7 to Carry.
-	orrmi v30f,v30f,#PSR_V
-	eorcs v30f,v30f,#PSR_S+PSR_V
+	orrcs v30f,v30f,#PSR_S+PSR_V
+	eormi v30f,v30f,#PSR_V
 	strb r1,[v30ptr,#v30ParityVal]
 	.endm
 
@@ -422,8 +426,8 @@
 	orrcs v30f,v30f,#PSR_C
 	orreq v30f,v30f,#PSR_Z
 	movs r0,r1,lsl#17			;@ Move bit 14 to bit 31 & 15 to Carry.
-	orrmi v30f,v30f,#PSR_V
-	eorcs v30f,v30f,#PSR_S+PSR_V
+	orrcs v30f,v30f,#PSR_S+PSR_V
+	eormi v30f,v30f,#PSR_V
 	strb r1,[v30ptr,#v30ParityVal]
 	.endm
 ;@----------------------------------------------------------------------------
