@@ -4363,12 +4363,13 @@ notF6:
 ;@----------------------------------------------------------------------------
 negF6:
 	eatCycles 1
-	bic v30f,v30f,#PSR_S+PSR_Z+PSR_C	;@ Clear S, Z, & C.
-	mov r0,r0,lsl#24
-	rsbs r1,r0,#0
-	orrmi v30f,v30f,#PSR_S
-	orreq v30f,v30f,#PSR_Z
-	orrne v30f,v30f,#PSR_C
+	mov r1,r0,lsl#24
+	rsbs r1,r1,#0
+	mrs v30f,cpsr				;@ S, Z, V & C.
+	eor r0,r0,r1,lsr#24
+	and r0,r0,#PSR_A
+	orr v30f,r0,v30f,lsr#28
+	eor v30f,v30f,#PSR_C		;@ Invert C
 	mov r1,r1,lsr#24
 	strb r1,[v30ptr,#v30ParityVal]
 	cmp r4,#0xC0
@@ -4512,12 +4513,13 @@ notF7:
 ;@----------------------------------------------------------------------------
 negF7:
 	eatCycles 1
-	bic v30f,v30f,#PSR_S+PSR_Z+PSR_C	;@ Clear S, Z, & C.
-	mov r0,r0,lsl#16
-	rsbs r1,r0,#0
-	orrmi v30f,v30f,#PSR_S
-	orreq v30f,v30f,#PSR_Z
-	orrne v30f,v30f,#PSR_C
+	mov r1,r0,lsl#16
+	rsbs r1,r1,#0
+	mrs v30f,cpsr				;@ S, Z, V & C.
+	eor r0,r0,r1,lsr#16
+	and r0,r0,#PSR_A
+	orr v30f,r0,v30f,lsr#28
+	eor v30f,v30f,#PSR_C		;@ Invert C
 	mov r1,r1,lsr#16
 	strb r1,[v30ptr,#v30ParityVal]
 	cmp r4,#0xC0
