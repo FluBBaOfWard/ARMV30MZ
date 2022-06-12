@@ -403,7 +403,7 @@ _10:	;@ ADC BR8
 
 	cmp r4,#0xC0
 	strbpl r1,[v30ptr,-r5]
-	ldmfdpl sp!,{pc}
+	bxpl lr
 	mov r0,r5
 	b cpuWriteMem20
 1:
@@ -567,7 +567,7 @@ _18:	;@ SBB BR8
 
 	cmp r4,#0xC0
 	strbpl r1,[v30ptr,-r5]
-	ldmfdpl sp!,{pc}
+	bxpl lr
 	mov r0,r5
 	b cpuWriteMem20
 1:
