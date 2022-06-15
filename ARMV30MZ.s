@@ -1565,7 +1565,6 @@ _5C:	;@ POP SP
 	ldr r0,[v30ptr,#v30SRegSS]
 	add r0,r0,r1,lsr#4
 	bl cpuReadMem20W
-	add r0,r0,#2
 	strh r0,[v30ptr,#v30RegSP+2]
 	eatCycles 1
 	ldmfd sp!,{pc}
