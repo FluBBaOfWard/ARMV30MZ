@@ -205,7 +205,7 @@
 	tst v30f,#\flag
 	addne v30pc,v30pc,r0
 	subne v30cyc,v30cyc,#3*CYCLE
-	sub v30cyc,v30cyc,#1*CYCLE
+	eatCycles 1
 	v30ReEncodeFastPC
 	bx lr
 	.endm
@@ -215,7 +215,7 @@
 	tst v30f,#\flag
 	addeq v30pc,v30pc,r0
 	subeq v30cyc,v30cyc,#3*CYCLE
-	sub v30cyc,v30cyc,#1*CYCLE
+	eatCycles 1
 	v30ReEncodeFastPC
 	bx lr
 	.endm

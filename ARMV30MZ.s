@@ -1916,26 +1916,12 @@ _75:	;@ Branch if Not Equal / Branch if Not Zero
 i_bnh:
 _76:	;@ Branch if Not Higher, C | Z = 1.
 ;@----------------------------------------------------------------------------
-	getNextSignedByte
-	tst v30f,#PSR_C
-	tsteq v30f,#PSR_Z
-	addne v30pc,v30pc,r0
-	subne v30cyc,v30cyc,#3*CYCLE
-	eatCycles 1
-	v30ReEncodeFastPC
-	bx lr
+	jmpne PSR_C|PSR_Z
 ;@----------------------------------------------------------------------------
 i_bh:
 _77:	;@ Branch if Higher, C | Z = 0.
 ;@----------------------------------------------------------------------------
-	getNextSignedByte
-	tst v30f,#PSR_C
-	tsteq v30f,#PSR_Z
-	addeq v30pc,v30pc,r0
-	subeq v30cyc,v30cyc,#3*CYCLE
-	eatCycles 1
-	v30ReEncodeFastPC
-	bx lr
+	jmpeq PSR_C|PSR_Z
 ;@----------------------------------------------------------------------------
 i_bn:
 _78:	;@ Branch if Negative
@@ -2003,11 +1989,10 @@ i_ble:
 _7E:	;@ Branch if Less than or Equal, (S ^ V) | Z = 1.
 ;@----------------------------------------------------------------------------
 	getNextSignedByte
-	eor r1,v30f,v30f,lsr#3			;@ S ^ V
-	orr r1,r1,v30f,lsr#2			;@ | Z
-	tst r1,#1
-	addne v30pc,v30pc,r0
-	subne v30cyc,v30cyc,#3*CYCLE
+	mov r1,v30f,lsl#28
+	msr cpsr_flg,r1
+	addle v30pc,v30pc,r0
+	suble v30cyc,v30cyc,#3*CYCLE
 	eatCycles 1
 	v30ReEncodeFastPC
 	bx lr
@@ -2016,11 +2001,10 @@ i_bgt:
 _7F:	;@ Branch if Greater Than, (S ^ V) | Z = 0.
 ;@----------------------------------------------------------------------------
 	getNextSignedByte
-	eor r1,v30f,v30f,lsr#3			;@ S ^ V
-	orr r1,r1,v30f,lsr#2			;@ | Z
-	tst r1,#1
-	addeq v30pc,v30pc,r0
-	subeq v30cyc,v30cyc,#3*CYCLE
+	mov r1,v30f,lsl#28
+	msr cpsr_flg,r1
+	addgt v30pc,v30pc,r0
+	subgt v30cyc,v30cyc,#3*CYCLE
 	eatCycles 1
 	v30ReEncodeFastPC
 	bx lr

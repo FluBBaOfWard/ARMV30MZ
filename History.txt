@@ -2,7 +2,7 @@ ARMV30MZ revision history
 -=-=-=-=-=-=-=-=-=-=-=-=-
 
 
-V0.5.0 - 2022-06-15 (FluBBa)
+V0.5.0 - 2022-06-26 (FluBBa)
 	Fixed INMB/INMW opcodes.
 	Fixed flags for multiplication.
 	Fixed division opcodes.
@@ -21,6 +21,7 @@ V0.5.0 - 2022-06-15 (FluBBa)
 	Fixed SAR/SHRA opcode.
 	Fixed NEG opcode.
 	Fixed POP SP.
+	Optimized BNH, BH, BLE & BGT opcodes.
 
 V0.4.7 - 2022-04-07 (FluBBa)
 	Fixed load/save state.
