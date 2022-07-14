@@ -1,6 +1,7 @@
 ARMV30MZ To do
 --------------
 
+	Log opcode for undefined instructions.
 	Make SRegs access different code paths for each reg.
 	Make ModRM use 32bit instead of bytes to optimize EA access.
 	Prepare (C8) uses r4-r8, (r8 = SP).
@@ -8,6 +9,5 @@ ARMV30MZ To do
 	Hard to use a dedicated register for v30Regs since they can be accessed by index.
 	Rename more opcodes.
 	Make 26, 2E, 36 & 3E share code?
-	Poll (0x9b) is a NOP.
 	Buslock is used with REP and hinders interrupts until finished.
 	Make define for combining PC + CS + Rom offset.

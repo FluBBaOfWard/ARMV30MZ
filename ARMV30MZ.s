@@ -380,11 +380,6 @@ _0E:	;@ PUSH CS
 	eatCycles 2
 	b cpuWriteMem20W
 ;@----------------------------------------------------------------------------
-i_pop_cs:
-_0F:	;@ 2 byte instruction, not on V30MZ.
-;@----------------------------------------------------------------------------
-	b i_invalid
-;@----------------------------------------------------------------------------
 i_adc_br8:
 _10:	;@ ADC BR8
 ;@----------------------------------------------------------------------------
@@ -2576,14 +2571,6 @@ _9A:	;@ CALL FAR
 	b cpuWriteMem20W
 
 ;@----------------------------------------------------------------------------
-i_poll:
-_9B:	;@ POLL, poll the "poll" pin?
-;@----------------------------------------------------------------------------
-	mov r11,r11					;@ NoCash breakpoint
-	eatCycles 9
-	sub v30pc,v30pc,#0x1
-	bx lr
-;@----------------------------------------------------------------------------
 i_pushf:
 _9C:	;@ PUSH F
 ;@----------------------------------------------------------------------------
@@ -3121,8 +3108,8 @@ d2Continue:
 
 	and r2,r4,#0x38
 	ldr pc,[pc,r2,lsr#1]
-	b 3f
-	.long rolC0, rorC0, rolcC0, rorcC0, shlC0, shrC0, invC0, shraC0
+	b 2f
+	.long rolC0, rorC0, rolcC0, rorcC0, shlC0, shrC0, undC0, shraC0
 rolC0:
 	rol8 r0,r1
 	b 2f
@@ -3141,15 +3128,14 @@ shlC0:
 shrC0:
 	shr8 r0,r1
 	b 2f
-invC0:
-	b i_invalid
+undC0:
+	stmfd sp!,{lr}
+	bl i_undefined
+	ldmfd sp!,{lr}
+	mov r1,#0
+	b 2f
 shraC0:
 	shra8 r0,r1
-	b 2f
-3:
-	mov r1,r0
-	tst r1,#0x80
-	eorne v30f,v30f,#PSR_V		;@ Invert V.
 2:
 	cmp r4,#0xC0
 	strbpl r1,[v30ptr,-r5]
@@ -3183,9 +3169,9 @@ d3Continue:
 	ands r1,r1,#0x1F
 
 	and r2,r4,#0x38
-	ldrne pc,[pc,r2,lsr#1]
-	b 3f
-	.long rolC1, rorC1, rolcC1, rorcC1, shlC1, shrC1, invC1, shraC1
+	ldr pc,[pc,r2,lsr#1]
+	b 2f
+	.long rolC1, rorC1, rolcC1, rorcC1, shlC1, shrC1, undC1, shraC1
 rolC1:
 	rol16 r0,r1
 	b 2f
@@ -3204,13 +3190,14 @@ shlC1:
 shrC1:
 	shr16 r0,r1
 	b 2f
-invC1:
-	b i_invalid
+undC1:
+	stmfd sp!,{lr}
+	bl i_undefined
+	ldmfd sp!,{lr}
+	mov r1,#0
+	b 2f
 shraC1:
 	shra16 r0,r1
-	b 2f
-3:
-	mov r1,r0
 2:
 	cmp r4,#0xC0
 	strhpl r1,[r5,#v30Regs]
@@ -3665,10 +3652,14 @@ _D5:	;@ AAD/CVTDB	;@ Adjust After Division / Convert Decimal to Binary
 	eatCycles 6
 	bx lr
 ;@----------------------------------------------------------------------------
-i_trans2:
-_D6:	;@ TRANS
+i_salc:
+_D6:	;@ SALC			;@ Set AL on Carry
 ;@----------------------------------------------------------------------------
-	eatCycles 3
+	ands r0,v30f,PSR_C
+	movne r0,#0xFF
+	strb r0,[v30ptr,#v30RegAL]
+	eatCycles 1
+	bx lr
 ;@----------------------------------------------------------------------------
 i_trans:
 _D7:	;@ TRANS
@@ -3687,6 +3678,13 @@ _D7:	;@ TRANS
 	strb r0,[v30ptr,#v30RegAL]
 	eatCycles 5
 	ldmfd sp!,{pc}
+;@----------------------------------------------------------------------------
+i_fpo1:
+_D8:	;@ FPO1
+;@----------------------------------------------------------------------------
+	getNextByte
+	eatCycles 1
+	b i_undefined
 ;@----------------------------------------------------------------------------
 i_loopne:
 _E0:	;@ LOOPNE
@@ -3900,6 +3898,11 @@ _F0:	;@ BUS LOCK
 	strb r0,[v30ptr,#v30NoInterrupt]
 	eatCycles 1
 	bx lr
+;@----------------------------------------------------------------------------
+i_brks:
+_F1:	;@ BRKS, Break to Security Mode. Not working on V30MZ?
+;@----------------------------------------------------------------------------
+	b i_crash
 ;@----------------------------------------------------------------------------
 i_repne:
 _F2:	;@ REPNE
@@ -4316,7 +4319,7 @@ _F6:	;@ PRE F6
 	and r2,r4,#0x38
 	ldr pc,[pc,r2,lsr#1]
 	nop
-	.long testF6, testF6, notF6, negF6, muluF6, mulF6, divubF6, divbF6
+	.long testF6, i_undefined, notF6, negF6, muluF6, mulF6, divubF6, divbF6
 1:
 	stmfd sp!,{lr}
 	eatCycles 1
@@ -4465,7 +4468,7 @@ _F7:	;@ PRE F7
 	and r2,r4,#0x38
 	ldr pc,[pc,r2,lsr#1]
 	nop
-	.long testF7, testF7, notF7, negF7, muluF7, mulF7, divuwF7, divwF7
+	.long testF7, i_undefined, notF7, negF7, muluF7, mulF7, divuwF7, divwF7
 1:
 	stmfd sp!,{lr}
 	eatCycles 1
@@ -4658,6 +4661,8 @@ i_fepre:
 _FE:	;@ PRE FE
 ;@----------------------------------------------------------------------------
 	getNextByteToReg r4
+	tst r4,#0x30
+	bne contFF
 	cmp r4,#0xC0
 	bmi 1f
 	add r1,v30ptr,r4
@@ -4666,22 +4671,20 @@ _FE:	;@ PRE FE
 	eatCycles 1
 0:
 	mov r1,r0,lsl#24
-	ands r3,r4,#0x38
-	beq incFE
-	cmp r3,#0x08
-	bne invalidFE
-decFE:
-	bic v30f,v30f,#PSR_S+PSR_Z+PSR_V+PSR_A		;@ Clear S, Z, V & A.
-	subs r1,r1,#0x1000000
-	orrvs v30f,v30f,#PSR_V						;@ Set Overflow.
-	tst r0,#0xF
-	b endFE
+	tst r4,#0x08
+	bne decFE
 incFE:
 	bic v30f,v30f,#PSR_S+PSR_Z+PSR_V+PSR_A		;@ Clear S, Z, V & A.
 	adds r1,r1,#0x1000000
 	orrvs v30f,v30f,#PSR_V						;@ Set Overflow.
 	tst r1,#0xF000000
-endFE:
+	b writeBackFE
+decFE:
+	bic v30f,v30f,#PSR_S+PSR_Z+PSR_V+PSR_A		;@ Clear S, Z, V & A.
+	subs r1,r1,#0x1000000
+	orrvs v30f,v30f,#PSR_V						;@ Set Overflow.
+	tst r0,#0xF
+writeBackFE:
 	orreq v30f,v30f,#PSR_A
 	movs r1,r1,asr#24
 	orrmi v30f,v30f,#PSR_S
@@ -4692,8 +4695,6 @@ endFE:
 	bxpl lr
 	mov r0,r5
 	b cpuWriteMem20
-invalidFE:
-	b i_invalid
 1:
 	stmfd sp!,{lr}
 	eatCycles 3
@@ -4704,12 +4705,14 @@ invalidFE:
 	bl cpuReadMem20
 	ldmfd sp!,{lr}
 	b 0b
+
 ;@----------------------------------------------------------------------------
 i_ffpre:
 _FF:	;@ PRE FF
 ;@----------------------------------------------------------------------------
-	stmfd sp!,{lr}
 	getNextByteToReg r4
+contFF:
+	stmfd sp!,{lr}
 	cmp r4,#0xC0
 	bmi 1f
 	and r2,r4,#7
@@ -4720,7 +4723,7 @@ _FF:	;@ PRE FF
 	and r2,r4,#0x38
 	ldr pc,[pc,r2,lsr#1]
 	nop
-	.long incFF, decFF, callFF, callFarFF, braFF, braFarFF, pushFF, pushFF
+	.long incFF, decFF, callFF, callFarFF, braFF, braFarFF, pushFF, i_undefined
 1:
 	eatCycles 1
 	add r1,v30ptr,#v30EATable
@@ -5315,18 +5318,28 @@ divideError:
 	mov r0,#0					;@ 0 = division error
 	b nec_interrupt
 ;@----------------------------------------------------------------------------
-i_invalid:
+i_undefined:
 ;@----------------------------------------------------------------------------
 	stmfd sp!,{lr}
-	ldr r0,=debugIllegalInstruction
+	ldr r0,=debugUndefinedInstruction
 	mov lr,pc
 	bx r0
 	ldmfd sp!,{lr}
 
 	mov r11,r11					;@ NoCash breakpoint
 	bx lr
-	mov r0,#6					;@ 6 = illegal instruction
-	b nec_interrupt
+;@----------------------------------------------------------------------------
+i_crash:
+;@----------------------------------------------------------------------------
+	stmfd sp!,{lr}
+	ldr r0,=debugCrashInstruction
+	mov lr,pc
+	bx r0
+	ldmfd sp!,{lr}
+
+	sub v30pc,v30pc,#1
+	mov r11,r11					;@ NoCash breakpoint
+	bx lr
 ;@----------------------------------------------------------------------------
 V30IrqVectorDummy:
 ;@----------------------------------------------------------------------------
@@ -5477,7 +5490,7 @@ V30OpTable:
 	.long i_or_ald8
 	.long i_or_axd16
 	.long i_push_cs
-	.long i_pop_cs
+	.long i_undefined
 	.long i_adc_br8
 	.long i_adc_wr16
 	.long i_adc_r8b
@@ -5561,11 +5574,11 @@ V30OpTable:
 	.long i_pusha
 	.long i_popa
 	.long i_chkind
-	.long i_invalid
-	.long i_invalid	// repnc
-	.long i_invalid	// repc
-	.long i_invalid	// fpo2
-	.long i_invalid	// fpo2
+	.long i_undefined	// arpl
+	.long i_undefined	// repnc
+	.long i_undefined	// repc
+	.long i_undefined	// fpo2
+	.long i_undefined	// fpo2
 	.long i_push_d16
 	.long i_imul_d16
 	.long i_push_d8
@@ -5617,7 +5630,7 @@ V30OpTable:
 	.long i_cbw
 	.long i_cwd
 	.long i_call_far
-	.long i_poll
+	.long i_undefined	// poll
 	.long i_pushf
 	.long i_popf
 	.long i_sahf
@@ -5676,16 +5689,16 @@ V30OpTable:
 	.long i_rotshft_wcl
 	.long i_aam
 	.long i_aad
-	.long i_trans2 	//xlat (undocumented mirror)
-	.long i_trans  	//xlat
-	.long i_invalid	// fpo1
-	.long i_invalid	// fpo1
-	.long i_invalid	// fpo1
-	.long i_invalid	// fpo1
-	.long i_invalid	// fpo1
-	.long i_invalid	// fpo1
-	.long i_invalid	// fpo1
-	.long i_invalid	// fpo1
+	.long i_salc 	// D6 undefined opcode
+	.long i_trans  	// xlat
+	.long i_fpo1	// fpo1
+	.long i_fpo1	// fpo1
+	.long i_fpo1	// fpo1
+	.long i_fpo1	// fpo1
+	.long i_fpo1	// fpo1
+	.long i_fpo1	// fpo1
+	.long i_fpo1	// fpo1
+	.long i_fpo1	// fpo1
 	.long i_loopne
 	.long i_loope
 	.long i_loop
@@ -5703,7 +5716,7 @@ V30OpTable:
 	.long i_outdxal
 	.long i_outdxax
 	.long i_lock
-	.long i_invalid
+	.long i_brks	// 0xF1
 	.long i_repne
 	.long i_repe
 	.long i_hlt
