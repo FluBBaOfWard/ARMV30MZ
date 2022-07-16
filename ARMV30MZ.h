@@ -18,20 +18,23 @@ extern "C" {
 typedef struct {
 	u32 v30Regs[8];
 	u32 v30SRegs[4];
-	u32 v30ICount;
-	u32 v30IP;
 	u32 v30Flags;
-	u32 v30EA;
-	void *v30IrqVectorFunc;
+	u32 v30IP;
+	u32 v30ICount;
 	u32 v30PrefixBase;
 	u8 v30IrqPin;
 	u8 v30IF;
+	u8 v30NmiPin;
+	u8 v30NmiPending;
 	u8 v30Halt;
 	u8 v30ParityVal;
 	u8 v30SegPrefix;
 	u8 v30TF;
 	u8 v30DF;
 	u8 v30NoInterrupt;
+
+	u32 v30LastBank;
+	void *v30IrqVectorFunc;
 
 	u32 v30MemTbl[16];
 
@@ -49,21 +52,21 @@ void V30Reset(int type);
 /**
  * Saves the state of the cpu to the destination.
  * @param  *destination: Where to save the state.
- * @param  *cpu: The ARMZ80Core cpu to save.
+ * @param  *cpu: The ARMV30Core cpu to save.
  * @return The size of the state.
  */
 int V30SaveState(void *destination, const ARMV30Core *cpu);
 
 /**
  * Loads the state of the cpu from the source.
- * @param  *cpu: The ARMZ80Core cpu to load a state into.
+ * @param  *cpu: The ARMV30Core cpu to load a state into.
  * @param  *source: Where to load the state from.
  * @return The size of the state.
  */
 int V30LoadState(ARMV30Core *cpu, const void *source);
 
 /**
- * Gets the state size of an ARMZ80Core state.
+ * Gets the state size of an ARMV30Core state.
  * @return The size of the state.
  */
 int V30GetStateSize(void);
