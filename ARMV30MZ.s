@@ -193,9 +193,7 @@ _04:	;@ ADD ALD8
 	stmfd sp!,{lr}
 	getNextByte
 	ldrb r1,[v30ptr,#v30RegAL]
-
 	add8 r0,r1
-
 	strb r1,[v30ptr,#v30RegAL]
 	eatCycles 1
 	ldmfd sp!,{pc}
@@ -206,9 +204,7 @@ _05:	;@ ADD AXD16
 	stmfd sp!,{lr}
 	getNextWord
 	ldr r1,[v30ptr,#v30RegAW-2]
-
 	add16 r0,r1
-
 	strh r1,[v30ptr,#v30RegAW]
 	eatCycles 1
 	ldmfd sp!,{pc}
@@ -362,9 +358,7 @@ _0C:	;@ OR ALD8
 	stmfd sp!,{lr}
 	getNextByte
 	ldrb r1,[v30ptr,#v30RegAL]
-
 	or8 r0,r1
-
 	strb r1,[v30ptr,#v30RegAL]
 	eatCycles 1
 	ldmfd sp!,{pc}
@@ -375,9 +369,7 @@ _0D:	;@ OR AXD16
 	stmfd sp!,{lr}
 	getNextWord
 	ldr r1,[v30ptr,#v30RegAW-2]
-
 	or16 r0,r1
-
 	strh r1,[v30ptr,#v30RegAW]
 	eatCycles 1
 	ldmfd sp!,{pc}
@@ -393,15 +385,6 @@ _0E:	;@ PUSH CS
 	ldrh r1,[v30ptr,#v30SRegCS+2]
 	eatCycles 2
 	b cpuWriteMem20W
-;@----------------------------------------------------------------------------
-i_pop_cs:
-_0F:	;@ POP CS
-;@----------------------------------------------------------------------------
-	stmfd sp!,{lr}
-	popWord
-	strh r0,[v30ptr,#v30SRegCS+2]
-	eatCycles 3
-	ldmfd sp!,{pc}
 ;@----------------------------------------------------------------------------
 i_adc_br8:
 _10:	;@ ADC BR8
@@ -532,9 +515,7 @@ _14:	;@ ADC ALD8
 	stmfd sp!,{lr}
 	getNextByte
 	ldrb r1,[v30ptr,#v30RegAL]
-
 	adc8 r0,r1
-
 	strb r1,[v30ptr,#v30RegAL]
 	eatCycles 1
 	ldmfd sp!,{pc}
@@ -545,9 +526,7 @@ _15:	;@ ADC AXD16
 	stmfd sp!,{lr}
 	getNextWord
 	ldr r1,[v30ptr,#v30RegAW-2]
-
 	adc16 r0,r1
-
 	strh r1,[v30ptr,#v30RegAW]
 	eatCycles 1
 	ldmfd sp!,{pc}
@@ -704,9 +683,7 @@ _1C:	;@ SBB ALD8
 	stmfd sp!,{lr}
 	getNextByte
 	ldrb r1,[v30ptr,#v30RegAL]
-
 	subc8 r0,r1
-
 	strb r1,[v30ptr,#v30RegAL]
 	eatCycles 1
 	ldmfd sp!,{pc}
@@ -717,9 +694,7 @@ _1D:	;@ SBB AXD16
 	stmfd sp!,{lr}
 	getNextWord
 	ldr r1,[v30ptr,#v30RegAW-2]
-
 	subc16 r0,r1
-
 	strh r1,[v30ptr,#v30RegAW]
 	eatCycles 1
 	ldmfd sp!,{pc}
@@ -873,9 +848,7 @@ _24:	;@ AND ALD8
 	stmfd sp!,{lr}
 	getNextByte
 	ldrb r1,[v30ptr,#v30RegAL]
-
 	and8 r0,r1
-
 	strb r1,[v30ptr,#v30RegAL]
 	eatCycles 1
 	ldmfd sp!,{pc}
@@ -886,9 +859,7 @@ _25:	;@ AND AXD16
 	stmfd sp!,{lr}
 	getNextWord
 	ldr r1,[v30ptr,#v30RegAW-2]
-
 	and16 r0,r1
-
 	strh r1,[v30ptr,#v30RegAW]
 	eatCycles 1
 	ldmfd sp!,{pc}
@@ -1062,9 +1033,7 @@ _2C:	;@ SUB ALD8
 	stmfd sp!,{lr}
 	getNextByte
 	ldrb r1,[v30ptr,#v30RegAL]
-
 	sub8 r0,r1
-
 	strb r1,[v30ptr,#v30RegAL]
 	eatCycles 1
 	ldmfd sp!,{pc}
@@ -1075,9 +1044,7 @@ _2D:	;@ SUB AXD16
 	stmfd sp!,{lr}
 	getNextWord
 	ldr r1,[v30ptr,#v30RegAW-2]
-
 	sub16 r0,r1
-
 	strh r1,[v30ptr,#v30RegAW]
 	eatCycles 1
 	ldmfd sp!,{pc}
@@ -1250,9 +1217,7 @@ _34:	;@ XOR ALD8
 	stmfd sp!,{lr}
 	getNextByte
 	ldrb r1,[v30ptr,#v30RegAL]
-
 	xor8 r0,r1
-
 	strb r1,[v30ptr,#v30RegAL]
 	eatCycles 1
 	ldmfd sp!,{pc}
@@ -1263,9 +1228,7 @@ _35:	;@ XOR AXD16
 	stmfd sp!,{lr}
 	getNextWord
 	ldr r1,[v30ptr,#v30RegAW-2]
-
 	xor16 r0,r1
-
 	strh r1,[v30ptr,#v30RegAW]
 	eatCycles 1
 	ldmfd sp!,{pc}
@@ -1313,17 +1276,15 @@ _38:	;@ CMP BR8
 	stmfd sp!,{lr}
 	getNextByte
 	add r1,v30ptr,r0
-	ldrb r4,[r1,#v30ModRmReg]
+	ldrb r2,[r1,#v30ModRmReg]
+	ldrb r4,[v30ptr,-r2]
 	cmp r0,#0xC0
 	bmi 1f
 	ldrb r2,[r1,#v30ModRmRm]
 	eatCycles 1
 	ldrb r0,[v30ptr,-r2]
 0:
-	ldrb r1,[v30ptr,-r4]
-
-	sub8 r1,r0
-
+	sub8 r4,r0
 	ldmfd sp!,{pc}
 1:
 	eatCycles 3
@@ -1338,7 +1299,9 @@ _39:	;@ CMP WR16
 ;@----------------------------------------------------------------------------
 	stmfd sp!,{lr}
 	getNextByte
-	and r4,r0,#0x38
+	and r1,r0,#0x38
+	add r2,v30ptr,r1,lsr#1
+	ldrh r4,[r2,#v30Regs]
 	cmp r0,#0xC0
 	bmi 1f
 	and r2,r0,#7
@@ -1346,12 +1309,8 @@ _39:	;@ CMP WR16
 	ldrh r0,[r2,#v30Regs]
 	eatCycles 1
 0:
-	add r2,v30ptr,r4,lsr#1
-	ldrh r1,[r2,#v30Regs]
-
 	mov r0,r0,lsl#16
-	sub16 r1,r0
-
+	sub16 r4,r0
 	ldmfd sp!,{pc}
 1:
 	eatCycles 2
@@ -1367,17 +1326,15 @@ _3A:	;@ CMP R8b
 	stmfd sp!,{lr}
 	getNextByte
 	add r1,v30ptr,r0
-	ldrb r4,[r1,#v30ModRmReg]
+	ldrb r2,[r1,#v30ModRmReg]
+	ldrb r4,[v30ptr,-r2]
 	cmp r0,#0xC0
 	bmi 1f
 	ldrb r2,[r1,#v30ModRmRm]
 	eatCycles 1
 	ldrb r0,[v30ptr,-r2]
 0:
-	ldrb r1,[v30ptr,-r4]
-
-	sub8 r0,r1
-
+	sub8 r0,r4
 	ldmfd sp!,{pc}
 1:
 	eatCycles 2
@@ -1393,7 +1350,8 @@ _3B:	;@ CMP R16W
 	stmfd sp!,{lr}
 	getNextByte
 	and r1,r0,#0x38
-	add r4,v30ptr,r1,lsr#1
+	add r2,v30ptr,r1,lsr#1
+	ldr r4,[r2,#v30Regs2]
 	cmp r0,#0xC0
 	bmi 1f
 	and r2,r0,#7
@@ -1401,10 +1359,7 @@ _3B:	;@ CMP R16W
 	ldrh r0,[r1,#v30Regs]
 	eatCycles 1
 0:
-	ldr r1,[r4,#v30Regs2]
-
-	sub16 r0,r1
-
+	sub16 r0,r4
 	ldmfd sp!,{pc}
 1:
 	eatCycles 2
@@ -1420,9 +1375,7 @@ _3C:	;@ CMP ALD8
 	stmfd sp!,{lr}
 	getNextByte
 	ldrb r1,[v30ptr,#v30RegAL]
-
 	sub8 r0,r1
-
 	eatCycles 1
 	ldmfd sp!,{pc}
 ;@----------------------------------------------------------------------------
@@ -1432,9 +1385,7 @@ _3D:	;@ CMP AXD16
 	stmfd sp!,{lr}
 	getNextWord
 	ldr r1,[v30ptr,#v30RegAW-2]
-
 	sub16 r0,r1
-
 	eatCycles 1
 	ldmfd sp!,{pc}
 ;@----------------------------------------------------------------------------
@@ -1460,18 +1411,18 @@ _3E:	;@ DS prefix
 i_aas:
 _3F:	;@ AAS
 ;@----------------------------------------------------------------------------
-	ldrb r0,[v30ptr,#v30RegAL]
-	mov r0,r0,lsl#28
-	cmp r0,#0xA0000000
-	biccc v30f,v30f,#PSR_C			;@ Clear Carry.
-	orrcs v30f,v30f,#PSR_C+PSR_A	;@ Set Carry & Aux.
+	ldrh r0,[v30ptr,#v30RegAW]
+	mov r1,r0,lsl#28
+	cmp r1,#0xA0000000
+	orrcs v30f,v30f,#PSR_A			;@ Set Aux.
 	tst v30f,#PSR_A
-	ldrbne r2,[v30ptr,#v30RegAH]
-	subne r0,r0,#0x60000000
-	subne r2,r2,#1
-	strbne r2,[v30ptr,#v30RegAH]
-	mov r0,r0,lsr#28
-	strb r0,[v30ptr,#v30RegAL]
+	moveq v30f,#PSR_S
+	movne v30f,#PSR_Z+PSR_A+PSR_C
+	strb r1,[v30ptr,#v30ParityVal]	;@ Parity allways set
+	bic r0,r0,#0x00F0
+	subne r0,r0,#0x16
+	bic r0,r0,#0x00F0
+	strh r0,[v30ptr,#v30RegAW]
 	eatCycles 9
 	bx lr
 
@@ -1632,7 +1583,6 @@ _5C:	;@ POP SP
 	ldr r0,[v30ptr,#v30SRegSS]
 	add r0,r0,r1,lsr#4
 	bl cpuReadMem20W
-	add r0,r0,#2
 	strh r0,[v30ptr,#v30RegSP+2]
 	eatCycles 1
 	ldmfd sp!,{pc}
@@ -1991,28 +1941,12 @@ _75:	;@ Branch if Not Equal / Branch if Not Zero
 i_bnh:
 _76:	;@ Branch if Not Higher, C | Z = 1.
 ;@----------------------------------------------------------------------------
-	stmfd sp!,{lr}
-	getNextByte
-	tst v30f,#PSR_C
-	tsteq v30f,#PSR_Z
-	movne r0,r0,lsl#24
-	addne v30pc,v30pc,r0,asr#8
-	subne v30cyc,v30cyc,#4*CYCLE
-	subeq v30cyc,v30cyc,#1*CYCLE
-	ldmfd sp!,{pc}
+	jmpne PSR_C|PSR_Z
 ;@----------------------------------------------------------------------------
 i_bh:
 _77:	;@ Branch if Higher, C | Z = 0.
 ;@----------------------------------------------------------------------------
-	stmfd sp!,{lr}
-	getNextByte
-	tst v30f,#PSR_C
-	tsteq v30f,#PSR_Z
-	moveq r0,r0,lsl#24
-	addeq v30pc,v30pc,r0,asr#8
-	subeq v30cyc,v30cyc,#4*CYCLE
-	subne v30cyc,v30cyc,#1*CYCLE
-	ldmfd sp!,{pc}
+	jmpeq PSR_C|PSR_Z
 ;@----------------------------------------------------------------------------
 i_bn:
 _78:	;@ Branch if Negative
@@ -2035,8 +1969,8 @@ _7A:	;@ Branch if Parity Even
 	tst r2,#PSR_P
 	movne r0,r0,lsl#24
 	addne v30pc,v30pc,r0,asr#8
-	subne v30cyc,v30cyc,#4*CYCLE
-	subeq v30cyc,v30cyc,#1*CYCLE
+	subne v30cyc,v30cyc,#3*CYCLE
+	eatCycles 1
 	ldmfd sp!,{pc}
 ;@----------------------------------------------------------------------------
 i_bpo:
@@ -2050,8 +1984,8 @@ _7B:	;@ Branch if Parity Odd
 	tst r2,#PSR_P
 	moveq r0,r0,lsl#24
 	addeq v30pc,v30pc,r0,asr#8
-	subeq v30cyc,v30cyc,#4*CYCLE
-	subne v30cyc,v30cyc,#1*CYCLE
+	subeq v30cyc,v30cyc,#3*CYCLE
+	eatCycles 1
 	ldmfd sp!,{pc}
 ;@----------------------------------------------------------------------------
 i_blt:
@@ -2063,8 +1997,8 @@ _7C:	;@ Branch if Less Than, S ^ V = 1.
 	tst r2,#PSR_V
 	movne r0,r0,lsl#24
 	addne v30pc,v30pc,r0,asr#8
-	subne v30cyc,v30cyc,#4*CYCLE
-	subeq v30cyc,v30cyc,#1*CYCLE
+	subne v30cyc,v30cyc,#3*CYCLE
+	eatCycles 1
 	ldmfd sp!,{pc}
 ;@----------------------------------------------------------------------------
 i_bge:
@@ -2076,8 +2010,8 @@ _7D:	;@ Branch if Greater than or Equal, S ^ V = 0.
 	tst r2,#PSR_V
 	moveq r0,r0,lsl#24
 	addeq v30pc,v30pc,r0,asr#8
-	subeq v30cyc,v30cyc,#4*CYCLE
-	subne v30cyc,v30cyc,#1*CYCLE
+	subeq v30cyc,v30cyc,#3*CYCLE
+	eatCycles 1
 	ldmfd sp!,{pc}
 ;@----------------------------------------------------------------------------
 i_ble:
@@ -2090,8 +2024,8 @@ _7E:	;@ Branch if Less than or Equal, (S ^ V) | Z = 1.
 	tst r1,#1
 	movne r0,r0,lsl#24
 	addne v30pc,v30pc,r0,asr#8
-	subne v30cyc,v30cyc,#4*CYCLE
-	subeq v30cyc,v30cyc,#1*CYCLE
+	subne v30cyc,v30cyc,#3*CYCLE
+	eatCycles 1
 	ldmfd sp!,{pc}
 ;@----------------------------------------------------------------------------
 i_bgt:
@@ -2104,8 +2038,8 @@ _7F:	;@ Branch if Greater Than, (S ^ V) | Z = 0.
 	tst r1,#1
 	moveq r0,r0,lsl#24
 	addeq v30pc,v30pc,r0,asr#8
-	subeq v30cyc,v30cyc,#4*CYCLE
-	subne v30cyc,v30cyc,#1*CYCLE
+	subeq v30cyc,v30cyc,#3*CYCLE
+	eatCycles 1
 	ldmfd sp!,{pc}
 ;@----------------------------------------------------------------------------
 i_80pre:
@@ -3788,6 +3722,15 @@ _D5:	;@ AAD/CVTDB			;@ Convert Decimal to Binary
 	strb r2,[v30ptr,#v30ParityVal]
 	ldmfd sp!,{pc}
 ;@----------------------------------------------------------------------------
+i_salc:
+_D6:	;@ SALC			;@ Set AL on Carry
+;@----------------------------------------------------------------------------
+	ands r0,v30f,PSR_C
+	movne r0,#0xFF
+	strb r0,[v30ptr,#v30RegAL]
+	eatCycles 1
+	bx lr
+;@----------------------------------------------------------------------------
 i_trans:
 _D7:	;@ TRANS
 ;@----------------------------------------------------------------------------
@@ -3805,6 +3748,15 @@ _D7:	;@ TRANS
 	strb r0,[v30ptr,#v30RegAL]
 	eatCycles 5
 	ldmfd sp!,{pc}
+;@----------------------------------------------------------------------------
+i_fpo1:
+_D8:	;@ FPO1
+;@----------------------------------------------------------------------------
+	stmfd sp!,{lr}
+	getNextByte
+	ldmfd sp!,{lr}
+	eatCycles 1
+	b i_undefined
 ;@----------------------------------------------------------------------------
 i_loopne:
 _E0:	;@ LOOPNE
@@ -4020,6 +3972,11 @@ _F0:	;@ LOCK
 	strb r0,[v30ptr,#v30NoInterrupt]
 	eatCycles 1
 	bx lr
+;@----------------------------------------------------------------------------
+i_brks:
+_F1:	;@ BRKS, Break to Security Mode. Not working on V30MZ?
+;@----------------------------------------------------------------------------
+	b i_crash
 ;@----------------------------------------------------------------------------
 i_repne:
 _F2:	;@ REPNE
@@ -4771,7 +4728,7 @@ endFE:
 	b cpuWriteMem20
 invalidFE:
 	ldmfd sp!,{lr}
-	b i_invalid
+	b i_undefined
 1:
 	eatCycles 3
 	add r1,v30ptr,#v30EATable
@@ -5341,10 +5298,10 @@ divideError:
 	mov r0,#0					;@ 0 = division error
 	b nec_interrupt
 ;@----------------------------------------------------------------------------
-i_invalid:
+i_undefined:
 ;@----------------------------------------------------------------------------
 	stmfd sp!,{lr}
-	ldr r0,=debugIllegalInstruction
+	ldr r0,=debugUndefinedInstruction
 	mov lr,pc
 	bx r0
 	ldmfd sp!,{lr}
@@ -5353,9 +5310,21 @@ i_invalid:
 	mov r0,#6					;@ 6 = illegal instruction
 	b nec_interrupt
 ;@----------------------------------------------------------------------------
+i_crash:
+;@----------------------------------------------------------------------------
+	stmfd sp!,{lr}
+	ldr r0,=debugCrashInstruction
+	mov lr,pc
+	bx r0
+	ldmfd sp!,{lr}
+
+	sub v30pc,v30pc,#0x10000
+	mov r11,r11					;@ NoCash breakpoint
+	bx lr
+;@----------------------------------------------------------------------------
 V30IrqVectorDummy:
 ;@----------------------------------------------------------------------------
-	mov r0,#0xFF
+	mov r0,#-1
 	bx lr
 
 ;@----------------------------------------------------------------------------
@@ -5409,11 +5378,6 @@ V30Reset:					;@ r0=v30ptr
 
 	ldmfd sp!,{r4-r11,lr}
 	bx lr
-;@----------------------------------------------------------------------------
-registerValues:
-	;@(SMS) OUT0, F  , A		 , BC		 , DE		 , HL		 , SP		 , IX		 , IY		 , F'		 , A'		 , BC'		 , DE'		 , HL'
-	.long 0x00, 0xFF , 0xFF000000, 0xBDBF0000, 0xFFFF0000, 0xFFFF0000, 0xFFFF0000, 0xBDFF0000, 0xFFBD0000, 0x000000FF, 0xFF000000, 0xBFBD0000, 0xFFFF0000, 0xFFFF0000
-
 ;@----------------------------------------------------------------------------
 V30SaveState:				;@ In r0=destination, r1=v30ptr. Out r0=size.
 	.type   V30SaveState STT_FUNC
@@ -5505,7 +5469,7 @@ V30OpTable:
 	.long i_or_ald8
 	.long i_or_axd16
 	.long i_push_cs
-	.long i_pop_cs
+	.long i_undefined
 	.long i_adc_br8
 	.long i_adc_wr16
 	.long i_adc_r8b
@@ -5589,11 +5553,11 @@ V30OpTable:
 	.long i_pusha
 	.long i_popa
 	.long i_chkind
-	.long i_invalid
-	.long i_invalid	// repnc
-	.long i_invalid	// repc
-	.long i_invalid	// fpo2
-	.long i_invalid	// fpo2
+	.long i_undefined	// arpl
+	.long i_undefined	// repnc
+	.long i_undefined	// repc
+	.long i_undefined	// fpo2
+	.long i_undefined	// fpo2
 	.long i_push_d16
 	.long i_imul_d16
 	.long i_push_d8
@@ -5645,7 +5609,7 @@ V30OpTable:
 	.long i_cbw
 	.long i_cwd
 	.long i_call_far
-	.long i_poll
+	.long i_undefined	// poll
 	.long i_pushf
 	.long i_popf
 	.long i_sahf
@@ -5704,16 +5668,16 @@ V30OpTable:
 	.long i_rotshft_wcl
 	.long i_aam
 	.long i_aad
-	.long i_trans  	//xlat (undocumented mirror)
-	.long i_trans  	//xlat
-	.long i_invalid	// fpo1
-	.long i_invalid	// fpo1
-	.long i_invalid	// fpo1
-	.long i_invalid	// fpo1
-	.long i_invalid	// fpo1
-	.long i_invalid	// fpo1
-	.long i_invalid	// fpo1
-	.long i_invalid	// fpo1
+	.long i_salc  	// D6 undefined opcode
+	.long i_trans  	// xlat
+	.long i_fpo1	// fpo1
+	.long i_fpo1	// fpo1
+	.long i_fpo1	// fpo1
+	.long i_fpo1	// fpo1
+	.long i_fpo1	// fpo1
+	.long i_fpo1	// fpo1
+	.long i_fpo1	// fpo1
+	.long i_fpo1	// fpo1
 	.long i_loopne
 	.long i_loope
 	.long i_loop
@@ -5731,7 +5695,7 @@ V30OpTable:
 	.long i_outdxal
 	.long i_outdxax
 	.long i_lock
-	.long i_invalid
+	.long i_brks
 	.long i_repne
 	.long i_repe
 	.long i_hlt

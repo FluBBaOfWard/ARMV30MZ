@@ -167,8 +167,8 @@
 	tst v30f,#\flag
 	movne r0,r0,lsl#24
 	addne v30pc,v30pc,r0,asr#8
-	subne v30cyc,v30cyc,#4*CYCLE
-	subeq v30cyc,v30cyc,#1*CYCLE
+	subne v30cyc,v30cyc,#3*CYCLE
+	eatCycles 1
 	ldmfd sp!,{pc}
 	.endm
 
@@ -178,8 +178,8 @@
 	tst v30f,#\flag
 	moveq r0,r0,lsl#24
 	addeq v30pc,v30pc,r0,asr#8
-	subeq v30cyc,v30cyc,#4*CYCLE
-	subne v30cyc,v30cyc,#1*CYCLE
+	subeq v30cyc,v30cyc,#3*CYCLE
+	eatCycles 1
 	ldmfd sp!,{pc}
 	.endm
 ;@----------------------------------------------------------------------------
