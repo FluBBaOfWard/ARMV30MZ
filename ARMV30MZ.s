@@ -79,7 +79,6 @@ _00:	;@ ADD BR8
 	ldrb r0,[v30ptr,-r5]
 0:
 	ldrb r1,[v30ptr,-r6]
-
 	add8 r1,r0
 
 	cmp r4,#0xC0
@@ -112,7 +111,6 @@ _01:	;@ ADD WR16
 	and r2,r4,#0x38
 	add r2,v30ptr,r2,lsr#1
 	ldrh r1,[r2,#v30Regs]
-
 	mov r0,r0,lsl#16
 	add16 r1,r0
 
@@ -146,9 +144,7 @@ _02:	;@ ADD R8b
 	ldrb r0,[v30ptr,-r2]
 0:
 	ldrb r1,[v30ptr,-r4]
-
 	add8 r0,r1
-
 	strb r1,[v30ptr,-r4]
 	ldmfd sp!,{pc}
 1:
@@ -174,9 +170,7 @@ _03:	;@ ADD R16W
 	ldrh r0,[r1,#v30Regs]
 0:
 	ldr r1,[r4,#v30Regs2]
-
 	add16 r0,r1
-
 	strh r1,[r4,#v30Regs]
 	ldmfd sp!,{pc}
 1:
@@ -241,7 +235,6 @@ _08:	;@ OR BR8
 	ldrb r0,[v30ptr,-r5]
 0:
 	ldrb r1,[v30ptr,-r6]
-
 	or8 r1,r0
 
 	cmp r4,#0xC0
@@ -274,7 +267,6 @@ _09:	;@ OR WR16
 	and r2,r4,#0x38
 	add r2,v30ptr,r2,lsr#1
 	ldr r1,[r2,#v30Regs2]
-
 	or16 r0,r1
 
 	cmp r4,#0xC0
@@ -307,9 +299,7 @@ _0A:	;@ OR R8b
 	ldrb r0,[v30ptr,-r2]
 0:
 	ldrb r1,[v30ptr,-r4]
-
 	or8 r0,r1
-
 	strb r1,[v30ptr,-r4]
 	ldmfd sp!,{pc}
 1:
@@ -335,9 +325,7 @@ _0B:	;@ OR R16W
 	eatCycles 1
 0:
 	ldr r1,[r4,#v30Regs2]
-
 	or16 r0,r1
-
 	strh r1,[r4,#v30Regs]
 	ldmfd sp!,{pc}
 1:
@@ -393,7 +381,6 @@ _10:	;@ ADC BR8
 	ldrb r0,[v30ptr,-r5]
 0:
 	ldrb r1,[v30ptr,-r6]
-
 	adc8 r1,r0
 
 	cmp r4,#0xC0
@@ -426,7 +413,6 @@ _11:	;@ ADC WR16
 	and r2,r4,#0x38
 	add r2,v30ptr,r2,lsr#1
 	ldrh r1,[r2,#v30Regs]
-
 	mov r0,r0,lsl#16
 	adc16 r1,r0
 
@@ -460,9 +446,7 @@ _12:	;@ ADC R8b
 	ldrb r0,[v30ptr,-r2]
 0:
 	ldrb r1,[v30ptr,-r4]
-
 	adc8 r0,r1
-
 	strb r1,[v30ptr,-r4]
 	ldmfd sp!,{pc}
 1:
@@ -488,9 +472,7 @@ _13:	;@ ADC R16W
 	eatCycles 1
 0:
 	ldr r1,[r4,#v30Regs2]
-
 	adc16 r0,r1
-
 	strh r1,[r4,#v30Regs]
 	ldmfd sp!,{pc}
 1:
@@ -557,7 +539,6 @@ _18:	;@ SBB BR8
 	ldrb r0,[v30ptr,-r5]
 0:
 	ldrb r1,[v30ptr,-r6]
-
 	subc8 r1,r0
 
 	cmp r4,#0xC0
@@ -590,7 +571,6 @@ _19:	;@ SBB WR16
 	and r2,r4,#0x38
 	add r2,v30ptr,r2,lsr#1
 	ldrh r1,[r2,#v30Regs]
-
 	mov r0,r0,lsl#16
 	subc16 r1,r0
 
@@ -624,9 +604,7 @@ _1A:	;@ SBB R8b
 	ldrb r0,[v30ptr,-r2]
 0:
 	ldrb r1,[v30ptr,-r4]
-
 	subc8 r0,r1
-
 	strb r1,[v30ptr,-r4]
 	ldmfd sp!,{pc}
 1:
@@ -652,9 +630,7 @@ _1B:	;@ SBB R16W
 	eatCycles 1
 0:
 	ldr r1,[r4,#v30Regs2]
-
 	subc16 r0,r1
-
 	strh r1,[r4,#v30Regs]
 	ldmfd sp!,{pc}
 1:
@@ -719,7 +695,6 @@ _20:	;@ AND BR8
 	ldrb r0,[v30ptr,-r5]
 0:
 	ldrb r1,[v30ptr,-r6]
-
 	and8 r1,r0
 
 	cmp r4,#0xC0
@@ -752,7 +727,6 @@ _21:	;@ AND WR16
 	and r2,r4,#0x38
 	add r2,v30ptr,r2,lsr#1
 	ldr r1,[r2,#v30Regs2]
-
 	and16 r0,r1
 
 	cmp r4,#0xC0
@@ -785,9 +759,7 @@ _22:	;@ AND R8b
 	ldrb r0,[v30ptr,-r2]
 0:
 	ldrb r1,[v30ptr,-r4]
-
 	and8 r0,r1
-
 	strb r1,[v30ptr,-r4]
 	ldmfd sp!,{pc}
 1:
@@ -813,9 +785,7 @@ _23:	;@ AND R16W
 	eatCycles 1
 0:
 	ldr r1,[r4,#v30Regs2]
-
 	and16 r0,r1
-
 	strh r1,[r4,#v30Regs]
 	ldmfd sp!,{pc}
 1:
@@ -901,7 +871,6 @@ _28:	;@ SUB BR8
 	ldrb r0,[v30ptr,-r5]
 0:
 	ldrb r1,[v30ptr,-r6]
-
 	sub8 r1,r0
 
 	cmp r4,#0xC0
@@ -934,7 +903,6 @@ _29:	;@ SUB WR16
 	and r2,r4,#0x38
 	add r2,v30ptr,r2,lsr#1
 	ldrh r1,[r2,#v30Regs]
-
 	mov r0,r0,lsl#16
 	sub16 r1,r0
 
@@ -968,9 +936,7 @@ _2A:	;@ SUB R8b
 	ldrb r0,[v30ptr,-r2]
 0:
 	ldrb r1,[v30ptr,-r4]
-
 	sub8 r0,r1
-
 	strb r1,[v30ptr,-r4]
 	ldmfd sp!,{pc}
 1:
@@ -996,9 +962,7 @@ _2B:	;@ SUB R16W
 	eatCycles 1
 0:
 	ldr r1,[r4,#v30Regs2]
-
 	sub16 r0,r1
-
 	strh r1,[r4,#v30Regs]
 	ldmfd sp!,{pc}
 1:
@@ -1085,7 +1049,6 @@ _30:	;@ XOR BR8
 	ldrb r0,[v30ptr,-r5]
 0:
 	ldrb r1,[v30ptr,-r6]
-
 	xor8 r1,r0
 
 	cmp r4,#0xC0
@@ -1118,7 +1081,6 @@ _31:	;@ XOR WR16
 	and r2,r4,#0x38
 	add r2,v30ptr,r2,lsr#1
 	ldr r1,[r2,#v30Regs2]
-
 	xor16 r0,r1
 
 	cmp r4,#0xC0
@@ -1151,9 +1113,7 @@ _32:	;@ XOR R8b
 	ldrb r0,[v30ptr,-r2]
 0:
 	ldrb r1,[v30ptr,-r4]
-
 	xor8 r0,r1
-
 	strb r1,[v30ptr,-r4]
 	ldmfd sp!,{pc}
 1:
@@ -1179,9 +1139,7 @@ _33:	;@ XOR R16W
 	eatCycles 1
 0:
 	ldr r1,[r4,#v30Regs2]
-
 	xor16 r0,r1
-
 	strh r1,[r4,#v30Regs]
 	ldmfd sp!,{pc}
 1:
@@ -1734,6 +1692,7 @@ _69:	;@ IMUL D16
 	movs r1,r0,asr#15
 	mvnsne r1,r1
 	orrne v30f,v30f,#PSR_C+PSR_V	;@ Set Carry & Overflow.
+	strb v30f,[v30ptr,#v30MulOverflow]
 
 	strh r0,[r4,#v30Regs]
 	ldmfd sp!,{pc}
@@ -1779,6 +1738,7 @@ _6B:	;@ IMUL D8
 	movs r1,r2,asr#15
 	mvnsne r1,r1
 	orrne v30f,v30f,#PSR_C+PSR_V	;@ Set Carry & Overflow.
+	strb v30f,[v30ptr,#v30MulOverflow]
 
 	strh r2,[r4,#v30Regs]
 	ldmfd sp!,{pc}
@@ -2025,6 +1985,16 @@ _82:	;@ PRE 82
 	ldr pc,[pc,r2,lsr#1]
 	b 2f
 	.long add80, or80, adc80, subc80, and80, sub80, xor80, cmp80
+1:
+	stmfd sp!,{lr}
+	eatCycles 3
+	add r1,v30ptr,#v30EATable
+	mov lr,pc
+	ldr pc,[r1,r4,lsl#2]
+	mov r5,r0
+	bl cpuReadMem20
+	ldmfd sp!,{lr}
+	b 0b
 add80:
 	add8 r1,r0
 	b 2f
@@ -2055,16 +2025,6 @@ cmp80:
 	bxpl lr
 	mov r0,r5
 	b cpuWriteMem20
-1:
-	stmfd sp!,{lr}
-	eatCycles 3
-	add r1,v30ptr,#v30EATable
-	mov lr,pc
-	ldr pc,[r1,r4,lsl#2]
-	mov r5,r0
-	bl cpuReadMem20
-	ldmfd sp!,{lr}
-	b 0b
 ;@----------------------------------------------------------------------------
 i_81pre:
 _81:	;@ PRE 81
@@ -2084,6 +2044,17 @@ pre81Continue:
 	ldr pc,[pc,r2,lsr#1]
 	b 2f
 	.long add81, or81, adc81, subc81, and81, sub81, xor81, cmp81
+1:
+	stmfd sp!,{lr}
+	eatCycles 3
+	add r1,v30ptr,#v30EATable
+	mov lr,pc
+	ldr pc,[r1,r4,lsl#2]
+	mov r5,r0
+	bl cpuReadMem20W
+	mov r6,r0,lsl#16
+	ldmfd sp!,{lr}
+	b 0b
 add81:
 	add16 r0,r6
 	b 2f
@@ -2114,17 +2085,6 @@ cmp81:
 	bxpl lr
 	mov r0,r5
 	b cpuWriteMem20W
-1:
-	stmfd sp!,{lr}
-	eatCycles 3
-	add r1,v30ptr,#v30EATable
-	mov lr,pc
-	ldr pc,[r1,r4,lsl#2]
-	mov r5,r0
-	bl cpuReadMem20W
-	mov r6,r0,lsl#16
-	ldmfd sp!,{lr}
-	b 0b
 ;@----------------------------------------------------------------------------
 i_83pre:
 _83:	;@ PRE 83
@@ -3110,6 +3070,16 @@ d2Continue:
 	ldr pc,[pc,r2,lsr#1]
 	b 2f
 	.long rolC0, rorC0, rolcC0, rorcC0, shlC0, shrC0, undC0, shraC0
+1:
+	stmfd sp!,{lr}
+	eatCycles 5
+	add r1,v30ptr,#v30EATable
+	mov lr,pc
+	ldr pc,[r1,r4,lsl#2]
+	mov r5,r0
+	bl cpuReadMem20
+	ldmfd sp!,{lr}
+	b 0b
 rolC0:
 	rol8 r0,r1
 	b 2f
@@ -3142,16 +3112,6 @@ shraC0:
 	bxpl lr
 	mov r0,r5
 	b cpuWriteMem20
-1:
-	stmfd sp!,{lr}
-	eatCycles 5
-	add r1,v30ptr,#v30EATable
-	mov lr,pc
-	ldr pc,[r1,r4,lsl#2]
-	mov r5,r0
-	bl cpuReadMem20
-	ldmfd sp!,{lr}
-	b 0b
 ;@----------------------------------------------------------------------------
 i_rotshft_wd8:
 _C1:	;@ ROTSHFT WD8
@@ -3172,6 +3132,16 @@ d3Continue:
 	ldr pc,[pc,r2,lsr#1]
 	b 2f
 	.long rolC1, rorC1, rolcC1, rorcC1, shlC1, shrC1, undC1, shraC1
+1:
+	stmfd sp!,{lr}
+	eatCycles 5
+	add r1,v30ptr,#v30EATable
+	mov lr,pc
+	ldr pc,[r1,r4,lsl#2]
+	mov r5,r0
+	bl cpuReadMem20W
+	ldmfd sp!,{lr}
+	b 0b
 rolC1:
 	rol16 r0,r1
 	b 2f
@@ -3204,16 +3174,6 @@ shraC1:
 	bxpl lr
 	mov r0,r5
 	b cpuWriteMem20W
-1:
-	stmfd sp!,{lr}
-	eatCycles 5
-	add r1,v30ptr,#v30EATable
-	mov lr,pc
-	ldr pc,[r1,r4,lsl#2]
-	mov r5,r0
-	bl cpuReadMem20W
-	ldmfd sp!,{lr}
-	b 0b
 ;@----------------------------------------------------------------------------
 i_ret_d16:
 _C2:	;@ RET D16
@@ -3335,13 +3295,13 @@ _C7:	;@ MOV WD16
 	getNextByte
 	eatCycles 1
 	cmp r0,#0xC0
-	bmi 1f
+	bmi 0f
 	and r1,r0,#7
 	add r4,v30ptr,r1,lsl#2
 	getNextWord
 	strh r0,[r4,#v30Regs]
 	bx lr
-1:
+0:
 	stmfd sp!,{lr}
 	add r1,v30ptr,#v30EATable
 	mov lr,pc
@@ -4319,7 +4279,7 @@ _F6:	;@ PRE F6
 	and r2,r4,#0x38
 	ldr pc,[pc,r2,lsr#1]
 	nop
-	.long testF6, i_undefined, notF6, negF6, muluF6, mulF6, divubF6, divbF6
+	.long testF6, undefF6, notF6, negF6, muluF6, mulF6, divubF6, divbF6
 1:
 	stmfd sp!,{lr}
 	eatCycles 1
@@ -4468,7 +4428,7 @@ _F7:	;@ PRE F7
 	and r2,r4,#0x38
 	ldr pc,[pc,r2,lsr#1]
 	nop
-	.long testF7, i_undefined, notF7, negF7, muluF7, mulF7, divuwF7, divwF7
+	.long testF7, undefF7, notF7, negF7, muluF7, mulF7, divuwF7, divwF7
 1:
 	stmfd sp!,{lr}
 	eatCycles 1
@@ -4723,7 +4683,7 @@ contFF:
 	and r2,r4,#0x38
 	ldr pc,[pc,r2,lsr#1]
 	nop
-	.long incFF, decFF, callFF, callFarFF, braFF, braFarFF, pushFF, i_undefined
+	.long incFF, decFF, callFF, callFarFF, braFF, braFarFF, pushFF, undefFF
 1:
 	eatCycles 1
 	add r1,v30ptr,#v30EATable
@@ -4829,6 +4789,11 @@ pushFF:
 	str r2,[v30ptr,#v30RegSP]
 	ldmfd sp!,{lr}
 	b cpuWriteMem20W
+;@----------------------------------------------------------------------------
+undefFF:
+	eatCycles 1
+	ldmfd sp!,{lr}
+	b i_undefined
 
 ;@----------------------------------------------------------------------------
 division16:
@@ -5178,7 +5143,7 @@ V30DecodePC:
 ;@----------------------------------------------------------------------------
 V30ReEncodePC:
 ;@----------------------------------------------------------------------------
-	ldr r0,[v30ptr,#v30LastBank]
+	loadLastBank r0
 	sub v30pc,v30pc,r0
 	mov v30pc,v30pc,lsl#16
 ;@----------------------------------------------------------------------------
@@ -5319,6 +5284,8 @@ divideError:
 	b nec_interrupt
 ;@----------------------------------------------------------------------------
 i_undefined:
+undefF6:
+undefF7:
 ;@----------------------------------------------------------------------------
 	stmfd sp!,{lr}
 	ldr r0,=debugUndefinedInstruction
