@@ -5400,11 +5400,6 @@ V30LoadState:				;@ In r0=v30ptr, r1=source. Out r0=size.
 	mov r2,#v30StateEnd-v30StateStart
 	bl memcpy
 
-	bl reBankSwitch4_F_W
-	bl reBankSwitch1_W
-	bl reBankSwitch2_W
-	bl reBankSwitch3_W
-
 	ldr v30pc,[v30ptr,#v30IP]			;@ Normal v30pc
 	v30EncodeFastPC
 	str v30pc,[v30ptr,#v30IP]			;@ Rewrite offseted v30pc
