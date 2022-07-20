@@ -3618,7 +3618,7 @@ _D6:	;@ SALC			;@ Set AL on Carry
 	ands r0,v30f,PSR_C
 	movne r0,#0xFF
 	strb r0,[v30ptr,#v30RegAL]
-	eatCycles 1
+	eatCycles 8
 	bx lr
 ;@----------------------------------------------------------------------------
 i_trans:
