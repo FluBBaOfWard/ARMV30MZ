@@ -1615,7 +1615,7 @@ _61:	;@ POPA
 	bl cpuReadMem20W
 	strh r0,[v30ptr,#v30RegAW]
 	str r4,[v30ptr,#v30RegSP]
-	eatCycles 8
+	eatCycles 9
 	ldmfd sp!,{pc}
 ;@----------------------------------------------------------------------------
 i_chkind:
@@ -1645,7 +1645,7 @@ _62:	;@ CHKIND
 	cmppl r0,r1
 	ldmfdpl sp!,{pc}
 	ldmfd sp!,{lr}
-	sub v30cyc,v30cyc,#7*CYCLE
+	eatCycles 7
 	mov r0,#5
 	b nec_interrupt
 1:
@@ -1681,7 +1681,7 @@ _69:	;@ IMUL D16
 	and r1,r0,#7
 	add r2,v30ptr,r1,lsl#2
 	ldrh r0,[r2,#v30Regs]
-	eatCycles 3
+	eatCycles 5
 0:
 	mov r5,r0
 	getNextWord
@@ -1697,7 +1697,7 @@ _69:	;@ IMUL D16
 	strh r0,[r4,#v30Regs]
 	ldmfd sp!,{pc}
 1:
-	eatCycles 4
+	eatCycles 6
 	add r1,v30ptr,#v30EATable
 	mov lr,pc
 	ldr pc,[r1,r0,lsl#2]
@@ -1728,7 +1728,7 @@ _6B:	;@ IMUL D8
 	and r2,r0,#7
 	add r1,v30ptr,r2,lsl#2
 	ldrh r0,[r1,#v30Regs]
-	eatCycles 3
+	eatCycles 5
 0:
 	getNextSignedByteToReg r1
 
@@ -1743,7 +1743,7 @@ _6B:	;@ IMUL D8
 	strh r2,[r4,#v30Regs]
 	ldmfd sp!,{pc}
 1:
-	eatCycles 4
+	eatCycles 6
 	add r1,v30ptr,#v30EATable
 	mov lr,pc
 	ldr pc,[r1,r0,lsl#2]
@@ -2531,6 +2531,12 @@ _9A:	;@ CALL FAR
 	b cpuWriteMem20W
 
 ;@----------------------------------------------------------------------------
+i_poll:
+_9B:	;@ POLL
+;@----------------------------------------------------------------------------
+	eatCycles 9
+	b logUndefinedOpcode
+;@----------------------------------------------------------------------------
 i_pushf:
 _9C:	;@ PUSH F
 ;@----------------------------------------------------------------------------
@@ -3100,7 +3106,7 @@ shrC0:
 	b 2f
 undC0:
 	stmfd sp!,{lr}
-	bl i_undefined
+	bl logUndefinedOpcode
 	ldmfd sp!,{lr}
 	mov r1,#0
 	b 2f
@@ -3162,7 +3168,7 @@ shrC1:
 	b 2f
 undC1:
 	stmfd sp!,{lr}
-	bl i_undefined
+	bl logUndefinedOpcode
 	ldmfd sp!,{lr}
 	mov r1,#0
 	b 2f
@@ -3455,7 +3461,7 @@ _CF:	;@ IRET
 	strh r0,[v30ptr,#v30SRegCS+2]
 	str r4,[v30ptr,#v30RegSP]
 	v30EncodeFastPC
-	eatCycles 10					;@ -3?
+	eatCycles 10-3					;@ i_popf eats 3 cycles
 	ldmfd sp!,{lr}
 	b i_popf
 
@@ -3563,7 +3569,7 @@ _D3:	;@ ROTSHFT WCL
 i_aam:
 _D4:	;@ AAM/CVTBD	;@ Adjust After Multiply / Convert Binary to Decimal
 ;@----------------------------------------------------------------------------
-	eatCycles 17
+	eatCycles 16
 	getNextByte
 
 	movs r1,r0,lsl#8
@@ -3643,7 +3649,6 @@ i_fpo1:
 _D8:	;@ FPO1
 ;@----------------------------------------------------------------------------
 	getNextByte
-	eatCycles 1
 	b i_undefined
 ;@----------------------------------------------------------------------------
 i_loopne:
@@ -4353,7 +4358,7 @@ mulF6:
 	bx lr
 ;@----------------------------------------------------------------------------
 divubF6:
-	eatCycles 15
+	eatCycles 14
 	ldrb v30f,[v30ptr,#v30MulOverflow]	;@ C & V from last mul, Z always set.
 	strb v30f,[v30ptr,#v30ParityVal]	;@ Clear parity
 	mov r1,r0,lsl#8
@@ -4375,7 +4380,7 @@ divubF6:
 	bx lr
 ;@----------------------------------------------------------------------------
 divbF6:
-	eatCycles 17
+	eatCycles 16
 	movs r1,r0,lsl#24
 	ldr r0,[v30ptr,#v30RegAW-2]
 	beq divbF6Error
@@ -4599,7 +4604,7 @@ _FB:	;@ EI
 	mov r0,#1
 	strb r0,[v30ptr,#v30IF]
 	eatCycles 4
-	bx lr
+	b v30ChkIrqInternal
 ;@----------------------------------------------------------------------------
 i_cld:
 _FC:	;@ CLD
@@ -4791,7 +4796,6 @@ pushFF:
 	b cpuWriteMem20W
 ;@----------------------------------------------------------------------------
 undefFF:
-	eatCycles 1
 	ldmfd sp!,{lr}
 	b i_undefined
 
@@ -5172,6 +5176,7 @@ V30SetNMIPin:			;@ r0=pin state
 doV30NMI:
 ;@----------------------------------------------------------------------------
 	mov r11,r11
+	eatCycles 1
 	mov r0,#0
 	strb r0,[v30ptr,#v30NmiPending]
 	mov r0,#2
@@ -5193,6 +5198,7 @@ doV30IRQ:
 	stmfd sp!,{lr}
 	mov lr,pc
 	ldr pc,[v30ptr,#v30IrqVectorFunc]
+	eatCycles 7
 	ldmfd sp!,{lr}
 ;@----------------------------------------------------------------------------
 V30SetIRQ:
@@ -5226,7 +5232,7 @@ nec_interrupt:				;@ r0 = vector number
 
 	mov v30pc,r5,lsl#16
 	v30EncodeFastPC
-	eatCycles 22
+	eatCycles 25
 	ldmfd sp!,{pc}
 ;@----------------------------------------------------------------------------
 V30RestoreAndRunXCycles:	;@ r0 = number of cycles to run
@@ -5287,6 +5293,8 @@ i_undefined:
 undefF6:
 undefF7:
 ;@----------------------------------------------------------------------------
+	eatCycles 1
+logUndefinedOpcode:
 	stmfd sp!,{lr}
 	ldr r0,=debugUndefinedInstruction
 	mov lr,pc
@@ -5592,7 +5600,7 @@ V30OpTable:
 	.long i_cbw
 	.long i_cwd
 	.long i_call_far
-	.long i_undefined	// poll
+	.long i_poll
 	.long i_pushf
 	.long i_popf
 	.long i_sahf
