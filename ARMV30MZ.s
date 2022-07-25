@@ -2534,7 +2534,7 @@ _9A:	;@ CALL FAR
 i_poll:
 _9B:	;@ POLL
 ;@----------------------------------------------------------------------------
-	eatCycles 9
+	eatCycles 10
 	b logUndefinedOpcode
 ;@----------------------------------------------------------------------------
 i_pushf:
@@ -3577,11 +3577,9 @@ _D4:	;@ AAM/CVTBD	;@ Adjust After Multiply / Convert Binary to Decimal
 	beq d4DivideError
 	rsb r1,r1,#1
 
-	mov r2,#8
-0:	adds r0,r1,r0,lsl#1
-	subcc r0,r0,r1
-	subs r2,r2,#1
-	bne 0b
+	mov r2,pc
+	b division8
+
 	mov r0,r0,ror#8
 	orr r0,r0,r0,lsr#16
 	strh r0,[v30ptr,#v30RegAW]
@@ -4367,14 +4365,11 @@ divubF6:
 	bcs divideError
 	rsb r1,r1,#1
 
-	mov r2,#8
-0:	adds r0,r1,r0,lsl#1
-	subcc r0,r0,r1
-	subs r2,r2,#1
-	bne 0b
+	mov r2,pc
+	b division8
 
 	strh r0,[v30ptr,#v30RegAW]
-	bic r0,#0xFE
+	bic r0,r0,#0xFE
 	cmp r0,#1
 	bicne v30f,v30f,#PSR_Z
 	bx lr
@@ -4392,11 +4387,8 @@ divbF6:
 	bcs divbF6Error2
 	add r1,r1,#1
 
-	mov r2,#8
-0:	adds r0,r1,r0,lsl#1
-	subcc r0,r0,r1
-	subs r2,r2,#1
-	bne 0b
+	mov r2,pc
+	b division8
 
 	mov r1,r0,lsr#24
 	tst r3,#0x8000
@@ -4511,7 +4503,7 @@ mulF7:
 	bx lr
 ;@----------------------------------------------------------------------------
 divuwF7:
-	eatCycles 23
+	eatCycles 22
 	ldrb v30f,[v30ptr,#v30MulOverflow]	;@ C & V from last mul, Z always set.
 	strb v30f,[v30ptr,#v30ParityVal]	;@ Clear parity
 	mov r1,r0,lsl#16
@@ -4534,7 +4526,7 @@ divuwF7:
 	bx lr
 ;@----------------------------------------------------------------------------
 divwF7:
-	eatCycles 24
+	eatCycles 23
 	movs r1,r0,lsl#16
 	ldrh r0,[v30ptr,#v30RegAW]
 	ldrh r2,[v30ptr,#v30RegDW]
@@ -4835,7 +4827,7 @@ division8:
 	subcc r0,r0,r1
 	adds r0,r1,r0,lsl#1
 	subcc r0,r0,r1
-	bx lr
+	bx r2
 
 ;@----------------------------------------------------------------------------
 // All EA functions must leave EO in top 16bits of r1!
