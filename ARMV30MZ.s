@@ -4253,13 +4253,16 @@ f3DefEnd:
 	ldmfd sp!,{pc}
 ;@----------------------------------------------------------------------------
 i_hlt:
-_F4:	;@ HLT
+_F4:	;@ HALT
 ;@----------------------------------------------------------------------------
+	eatCycles 9
 	ldrb r0,[v30ptr,#v30IrqPin]
 	cmp r0,#0
-	andeq v30cyc,v30cyc,#CYC_MASK
-	moveq r0,#1
-	strbeq r0,[v30ptr,#v30Halt]
+	bne v30ChkIrqInternal
+	mov r0,#1
+	strb r0,[v30ptr,#v30Halt]
+	cmp v30cyc,#0
+	andpl v30cyc,v30cyc,#CYC_MASK
 	bx lr
 ;@----------------------------------------------------------------------------
 i_cmc:
@@ -5185,12 +5188,12 @@ V30SetIRQPin:			;@ r0=pin state
 	strbne r0,[v30ptr,#v30Halt]
 	bx lr
 ;@----------------------------------------------------------------------------
-doV30IRQ:
+V30FetchIRQ:
 ;@----------------------------------------------------------------------------
 	stmfd sp!,{lr}
+	eatCycles 7
 	mov lr,pc
 	ldr pc,[v30ptr,#v30IrqVectorFunc]
-	eatCycles 7
 	ldmfd sp!,{lr}
 ;@----------------------------------------------------------------------------
 V30SetIRQ:
@@ -5229,10 +5232,8 @@ nec_interrupt:				;@ r0 = vector number
 ;@----------------------------------------------------------------------------
 V30RestoreAndRunXCycles:	;@ r0 = number of cycles to run
 ;@----------------------------------------------------------------------------
-	ldr v30cyc,[v30ptr,#v30ICount]
-	ldr v30pc,[v30ptr,#v30IP]
-	ldr v30f,[v30ptr,#v30Flags]
-	v30EncodeFastPC
+	add r1,v30ptr,#v30Flags
+	ldmia r1,{v30f-v30cyc}		;@ Restore V30MZ state
 ;@----------------------------------------------------------------------------
 V30RunXCycles:				;@ r0 = number of cycles to run
 ;@----------------------------------------------------------------------------
@@ -5241,12 +5242,12 @@ V30RunXCycles:				;@ r0 = number of cycles to run
 V30CheckIRQs:
 ;@----------------------------------------------------------------------------
 	stmfd sp!,{lr}
-v30ChkIrqInternal:					;@ This can be used on EI/IRET/POPF
+v30ChkIrqInternal:					;@ This can be used on EI/IRET/POPF/HALT
 	ldrh r0,[v30ptr,#v30IrqPin]		;@ NMI, Irq pin and IF
 //	movs r1,r0,lsr#24
 //	bne doV30NMI
 	ands r1,r0,r0,lsr#8
-	blne doV30IRQ
+	blne V30FetchIRQ
 	ldrb r1,[v30ptr,#v30Halt]
 	cmp r1,#0
 	andne v30cyc,v30cyc,#CYC_MASK
