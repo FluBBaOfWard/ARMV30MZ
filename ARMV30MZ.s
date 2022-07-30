@@ -1659,8 +1659,7 @@ _62:	;@ CHKIND
 i_push_d16:
 _68:	;@ PUSH D16
 ;@----------------------------------------------------------------------------
-	getNextWord
-	mov r1,r0
+	getNextWordToReg r1
 	ldr r2,[v30ptr,#v30RegSP]
 	ldr r0,[v30ptr,#v30SRegSS]
 	sub r2,r2,#0x20000
@@ -1755,7 +1754,7 @@ _6C:	;@ INMB
 ;@----------------------------------------------------------------------------
 	stmfd sp!,{lr}
 	ldrh r0,[v30ptr,#v30RegDW]
-	bl cpu_readport
+	bl v30ReadPort
 	ldrsb r3,[v30ptr,#v30DF]
 	ldr r2,[v30ptr,#v30RegIY]
 	mov r1,r0
@@ -1773,10 +1772,10 @@ _6D:	;@ INMW
 	stmfd sp!,{lr}
 	ldrh r0,[v30ptr,#v30RegDW]
 	add r4,r0,#1
-	bl cpu_readport
+	bl v30ReadPort
 	mov r5,r0
 	mov r0,r4
-	bl cpu_readport
+	bl v30ReadPort
 	ldrsb r3,[v30ptr,#v30DF]
 	ldr r2,[v30ptr,#v30RegIY]
 	orr r1,r5,r0,lsl#8
@@ -1806,7 +1805,7 @@ _6E:	;@ OUTMB
 	ldrh r0,[v30ptr,#v30RegDW]
 	eatCycles 7
 	ldmfd sp!,{lr}
-	b cpu_writeport
+	b v30WritePort
 ;@----------------------------------------------------------------------------
 i_outmw:
 _6F:	;@ OUTMW
@@ -1826,12 +1825,12 @@ _6F:	;@ OUTMW
 	mov r4,r0
 	ldrh r0,[v30ptr,#v30RegDW]
 	mov r5,r0
-	bl cpu_writeport
+	bl v30WritePort
 	mov r1,r4,lsr#8
 	add r0,r5,#1
 	ldmfd sp!,{lr}
 	eatCycles 7
-	b cpu_writeport
+	b v30WritePort
 
 ;@----------------------------------------------------------------------------
 i_bv:
@@ -2509,8 +2508,7 @@ i_call_far:
 _9A:	;@ CALL FAR
 ;@----------------------------------------------------------------------------
 	stmfd sp!,{lr}
-	getNextWord
-	mov r4,r0
+	getNextWordToReg r4
 	getNextWord
 	ldrh r1,[v30ptr,#v30SRegCS+2]
 	strh r0,[v30ptr,#v30SRegCS+2]
@@ -3313,8 +3311,7 @@ _C7:	;@ MOV WD16
 	mov lr,pc
 	ldr pc,[r1,r0,lsl#2]
 	mov r4,r0
-	getNextWord
-	mov r1,r0
+	getNextWordToReg r1
 	mov r0,r4
 	ldmfd sp!,{lr}
 	b cpuWriteMem20W
@@ -3709,7 +3706,7 @@ _E4:	;@ INAL
 ;@----------------------------------------------------------------------------
 	stmfd sp!,{lr}
 	getNextByte
-	bl cpu_readport
+	bl v30ReadPort
 	strb r0,[v30ptr,#v30RegAL]
 	eatCycles 6
 	ldmfd sp!,{pc}
@@ -3720,10 +3717,10 @@ _E5:	;@ INAX
 	stmfd sp!,{lr}
 	getNextByte
 	mov r4,r0
-	bl cpu_readport
+	bl v30ReadPort
 	strb r0,[v30ptr,#v30RegAL]
 	add r0,r4,#1
-	bl cpu_readport
+	bl v30ReadPort
 	strb r0,[v30ptr,#v30RegAH]
 	eatCycles 6
 	ldmfd sp!,{pc}
@@ -3734,7 +3731,7 @@ _E6:	;@ OUTAL
 	getNextByte
 	ldrb r1,[v30ptr,#v30RegAL]
 	eatCycles 6
-	b cpu_writeport
+	b v30WritePort
 ;@----------------------------------------------------------------------------
 i_outax:
 _E7:	;@ OUTAX
@@ -3743,12 +3740,12 @@ _E7:	;@ OUTAX
 	getNextByte
 	ldrb r1,[v30ptr,#v30RegAL]
 	mov r4,r0
-	bl cpu_writeport
+	bl v30WritePort
 	ldrb r1,[v30ptr,#v30RegAH]
 	add r0,r4,#1
 	eatCycles 6
 	ldmfd sp!,{lr}
-	b cpu_writeport
+	b v30WritePort
 
 ;@----------------------------------------------------------------------------
 i_call_d16:
@@ -3785,8 +3782,7 @@ _E9:	;@ JMP D16
 i_jmp_far:
 _EA:	;@ JMP FAR
 ;@----------------------------------------------------------------------------
-	getNextWord
-	mov r4,r0
+	getNextWordToReg r4
 	getNextWord
 	strh r0,[v30ptr,#v30SRegCS+2]
 	mov v30pc,r4,lsl#16
@@ -3798,12 +3794,11 @@ _EA:	;@ JMP FAR
 i_br_d8:
 _EB:	;@ Branch short
 ;@----------------------------------------------------------------------------
-	getNextByte
-	mov r1,r0,lsl#24
-	add v30pc,v30pc,r1,asr#PC_OFS_COUNT
+	getNextSignedByte
+	add v30pc,v30pc,r0
 	eatCycles 4
-	cmp r0,#0xFC
-	andhi v30cyc,v30cyc,#CYC_MASK
+	cmp r0,#-4
+	andcs v30cyc,v30cyc,#CYC_MASK
 	v30ReEncodeFastPC
 	bx lr
 ;@----------------------------------------------------------------------------
@@ -3812,7 +3807,7 @@ _EC:	;@ INALDX
 ;@----------------------------------------------------------------------------
 	stmfd sp!,{lr}
 	ldrh r0,[v30ptr,#v30RegDW]
-	bl cpu_readport
+	bl v30ReadPort
 	strb r0,[v30ptr,#v30RegAL]
 	eatCycles 6
 	ldmfd sp!,{pc}
@@ -3823,10 +3818,10 @@ _ED:	;@ INAXDX
 	stmfd sp!,{lr}
 	ldrh r4,[v30ptr,#v30RegDW]
 	mov r0,r4
-	bl cpu_readport
+	bl v30ReadPort
 	strb r0,[v30ptr,#v30RegAL]
 	add r0,r4,#1
-	bl cpu_readport
+	bl v30ReadPort
 	strb r0,[v30ptr,#v30RegAH]
 	eatCycles 6
 	ldmfd sp!,{pc}
@@ -3837,7 +3832,7 @@ _EE:	;@ OUTDXAL
 	ldrh r0,[v30ptr,#v30RegDW]
 	ldrb r1,[v30ptr,#v30RegAL]
 	eatCycles 6
-	b cpu_writeport
+	b v30WritePort
 ;@----------------------------------------------------------------------------
 i_outdxax:
 _EF:	;@ OUTDXAX
@@ -3846,12 +3841,12 @@ _EF:	;@ OUTDXAX
 	ldrh r4,[v30ptr,#v30RegDW]
 	ldrb r1,[v30ptr,#v30RegAL]
 	mov r0,r4
-	bl cpu_writeport
+	bl v30WritePort
 	ldrb r1,[v30ptr,#v30RegAH]
 	add r0,r4,#1
 	eatCycles 6
 	ldmfd sp!,{lr}
-	b cpu_writeport
+	b v30WritePort
 
 ;@----------------------------------------------------------------------------
 i_lock:
@@ -5196,9 +5191,8 @@ V30FetchIRQ:
 	ldr pc,[v30ptr,#v30IrqVectorFunc]
 	ldmfd sp!,{lr}
 ;@----------------------------------------------------------------------------
-V30SetIRQ:
+V30TakeIRQ:
 nec_interrupt:				;@ r0 = vector number
-	.type   nec_interrupt STT_FUNC
 ;@----------------------------------------------------------------------------
 	stmfd sp!,{lr}
 	mov r4,r0,lsl#12+2
@@ -5436,7 +5430,6 @@ v30StateEnd:
 	.long 0			;@ v30IrqVectorFunc
 	.space 16*4		;@ v30MemTbl $00000-FFFFF
 
-nec_instruction:
 V30OpTable:
 	.long i_add_br8
 	.long i_add_wr16

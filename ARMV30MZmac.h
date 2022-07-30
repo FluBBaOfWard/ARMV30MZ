@@ -41,8 +41,6 @@
 	.equ CYCLE, 1<<CYC_SHIFT	;@ One cycle
 	.equ CYC_MASK, CYCLE-1		;@ Mask
 
-	.equ PC_OFS_COUNT, 24		;@ Used for Branch to offset PC
-
 ;@----------------------------------------------------------------------------
 
 	.macro eatCycles count
@@ -69,10 +67,14 @@
 	getNextSignedByteToReg r0
 	.endm
 
-	.macro getNextWord
+	.macro getNextWordToReg reg
 	ldrb r0,[v30pc],#1
 	ldrb r1,[v30pc],#1
-	orr r0,r0,r1,lsl#8
+	orr \reg,r0,r1,lsl#8
+	.endm
+
+	.macro getNextWord
+	getNextWordToReg r0
 	.endm
 
 	.macro fetch count
