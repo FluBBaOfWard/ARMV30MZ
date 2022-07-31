@@ -820,9 +820,8 @@ i_es:
 _26:	;@ ES prefix
 ;@----------------------------------------------------------------------------
 	stmfd sp!,{lr}
-	mov r0,#1
 	ldrh r1,[v30ptr,#v30SRegES+2]
-	strb r0,[v30ptr,#v30SegPrefix]
+	orr v30cyc,v30cyc,#SEG_PREFIX
 	strh r1,[v30ptr,#v30PrefixBase+2]
 
 	eatCycles 1
@@ -831,8 +830,7 @@ _26:	;@ ES prefix
 	mov lr,pc
 	ldr pc,[v30ptr,r0,lsl#2]
 
-	mov r0,#0
-	strb r0,[v30ptr,#v30SegPrefix]
+	bic v30cyc,v30cyc,#SEG_PREFIX
 	ldmfd sp!,{pc}
 ;@----------------------------------------------------------------------------
 i_daa:
@@ -997,9 +995,8 @@ i_cs:
 _2E:	;@ CS prefix
 ;@----------------------------------------------------------------------------
 	stmfd sp!,{lr}
-	mov r0,#1
 	ldrh r1,[v30ptr,#v30SRegCS+2]
-	strb r0,[v30ptr,#v30SegPrefix]
+	orr v30cyc,v30cyc,#SEG_PREFIX
 	strh r1,[v30ptr,#v30PrefixBase+2]
 
 	eatCycles 1
@@ -1008,8 +1005,7 @@ _2E:	;@ CS prefix
 	mov lr,pc
 	ldr pc,[v30ptr,r0,lsl#2]
 
-	mov r0,#0
-	strb r0,[v30ptr,#v30SegPrefix]
+	bic v30cyc,v30cyc,#SEG_PREFIX
 	ldmfd sp!,{pc}
 ;@----------------------------------------------------------------------------
 i_das:
@@ -1174,9 +1170,8 @@ i_ss:
 _36:	;@ SS prefix
 ;@----------------------------------------------------------------------------
 	stmfd sp!,{lr}
-	mov r0,#1
 	ldrh r1,[v30ptr,#v30SRegSS+2]
-	strb r0,[v30ptr,#v30SegPrefix]
+	orr v30cyc,v30cyc,#SEG_PREFIX
 	strh r1,[v30ptr,#v30PrefixBase+2]
 
 	eatCycles 1
@@ -1185,8 +1180,7 @@ _36:	;@ SS prefix
 	mov lr,pc
 	ldr pc,[v30ptr,r0,lsl#2]
 
-	mov r0,#0
-	strb r0,[v30ptr,#v30SegPrefix]
+	bic v30cyc,v30cyc,#SEG_PREFIX
 	ldmfd sp!,{pc}
 ;@----------------------------------------------------------------------------
 i_aaa:
@@ -1328,9 +1322,8 @@ i_ds:
 _3E:	;@ DS prefix
 ;@----------------------------------------------------------------------------
 	stmfd sp!,{lr}
-	mov r0,#1
 	ldrh r1,[v30ptr,#v30SRegDS+2]
-	strb r0,[v30ptr,#v30SegPrefix]
+	orr v30cyc,v30cyc,#SEG_PREFIX
 	strh r1,[v30ptr,#v30PrefixBase+2]
 
 	eatCycles 1
@@ -1339,8 +1332,7 @@ _3E:	;@ DS prefix
 	mov lr,pc
 	ldr pc,[v30ptr,r0,lsl#2]
 
-	mov r0,#0
-	strb r0,[v30ptr,#v30SegPrefix]
+	bic v30cyc,v30cyc,#SEG_PREFIX
 	ldmfd sp!,{pc}
 ;@----------------------------------------------------------------------------
 i_aas:
@@ -1790,8 +1782,7 @@ _6D:	;@ INMW
 i_outmb:
 _6E:	;@ OUTMB
 ;@----------------------------------------------------------------------------
-	ldrb r2,[v30ptr,#v30SegPrefix]
-	cmp r2,#0
+	tst v30cyc,#SEG_PREFIX
 	ldrne r0,[v30ptr,#v30PrefixBase]
 	ldreq r0,[v30ptr,#v30SRegDS]
 	stmfd sp!,{lr}
@@ -1810,8 +1801,7 @@ _6E:	;@ OUTMB
 i_outmw:
 _6F:	;@ OUTMW
 ;@----------------------------------------------------------------------------
-	ldrb r2,[v30ptr,#v30SegPrefix]
-	cmp r2,#0
+	tst v30cyc,#SEG_PREFIX
 	ldrne r0,[v30ptr,#v30PrefixBase]
 	ldreq r0,[v30ptr,#v30SRegDS]
 	stmfd sp!,{lr}
@@ -2654,8 +2644,7 @@ _A0:	;@ MOV ALDISP
 ;@----------------------------------------------------------------------------
 	stmfd sp!,{lr}
 	getNextWord
-	ldrb r2,[v30ptr,#v30SegPrefix]
-	cmp r2,#0
+	tst v30cyc,#SEG_PREFIX
 	ldrne r1,[v30ptr,#v30PrefixBase]
 	ldreq r1,[v30ptr,#v30SRegDS]
 	add r0,r1,r0,lsl#12
@@ -2669,8 +2658,7 @@ _A1:	;@ MOV AXDISP
 ;@----------------------------------------------------------------------------
 	stmfd sp!,{lr}
 	getNextWord
-	ldrb r2,[v30ptr,#v30SegPrefix]
-	cmp r2,#0
+	tst v30cyc,#SEG_PREFIX
 	ldrne r1,[v30ptr,#v30PrefixBase]
 	ldreq r1,[v30ptr,#v30SRegDS]
 	add r0,r1,r0,lsl#12
@@ -2683,8 +2671,7 @@ i_mov_dispal:
 _A2:	;@ MOV DISPAL
 ;@----------------------------------------------------------------------------
 	getNextWord
-	ldrb r2,[v30ptr,#v30SegPrefix]
-	cmp r2,#0
+	tst v30cyc,#SEG_PREFIX
 	ldrne r1,[v30ptr,#v30PrefixBase]
 	ldreq r1,[v30ptr,#v30SRegDS]
 	add r0,r1,r0,lsl#12
@@ -2696,8 +2683,7 @@ i_mov_dispax:
 _A3:	;@ MOV DISPAX
 ;@----------------------------------------------------------------------------
 	getNextWord
-	ldrb r2,[v30ptr,#v30SegPrefix]
-	cmp r2,#0
+	tst v30cyc,#SEG_PREFIX
 	ldrne r1,[v30ptr,#v30PrefixBase]
 	ldreq r1,[v30ptr,#v30SRegDS]
 	add r0,r1,r0,lsl#12
@@ -2708,8 +2694,7 @@ _A3:	;@ MOV DISPAX
 i_movsb:
 _A4:	;@ MOVSB
 ;@----------------------------------------------------------------------------
-	ldrb r2,[v30ptr,#v30SegPrefix]
-	cmp r2,#0
+	tst v30cyc,#SEG_PREFIX
 	ldrne r0,[v30ptr,#v30PrefixBase]
 	ldreq r0,[v30ptr,#v30SRegDS]
 	stmfd sp!,{lr}
@@ -2732,8 +2717,7 @@ _A4:	;@ MOVSB
 i_movsw:
 _A5:	;@ MOVSW
 ;@----------------------------------------------------------------------------
-	ldrb r2,[v30ptr,#v30SegPrefix]
-	cmp r2,#0
+	tst v30cyc,#SEG_PREFIX
 	ldrne r0,[v30ptr,#v30PrefixBase]
 	ldreq r0,[v30ptr,#v30SRegDS]
 	stmfd sp!,{lr}
@@ -2756,8 +2740,7 @@ _A5:	;@ MOVSW
 i_cmpsb:
 _A6:	;@ CMPSB
 ;@----------------------------------------------------------------------------
-	ldrb r2,[v30ptr,#v30SegPrefix]
-	cmp r2,#0
+	tst v30cyc,#SEG_PREFIX
 	ldrne r0,[v30ptr,#v30PrefixBase]
 	ldreq r0,[v30ptr,#v30SRegDS]
 	stmfd sp!,{lr}
@@ -2784,8 +2767,7 @@ _A6:	;@ CMPSB
 i_cmpsw:
 _A7:	;@ CMPSW
 ;@----------------------------------------------------------------------------
-	ldrb r2,[v30ptr,#v30SegPrefix]
-	cmp r2,#0
+	tst v30cyc,#SEG_PREFIX
 	ldrne r0,[v30ptr,#v30PrefixBase]
 	ldreq r0,[v30ptr,#v30SRegDS]
 	stmfd sp!,{lr}
@@ -2856,8 +2838,7 @@ _AB:	;@ STOSW
 i_lodsb:
 _AC:	;@ LODSB
 ;@----------------------------------------------------------------------------
-	ldrb r2,[v30ptr,#v30SegPrefix]
-	cmp r2,#0
+	tst v30cyc,#SEG_PREFIX
 	ldrne r0,[v30ptr,#v30PrefixBase]
 	ldreq r0,[v30ptr,#v30SRegDS]
 	stmfd sp!,{lr}
@@ -2874,8 +2855,7 @@ _AC:	;@ LODSB
 i_lodsw:
 _AD:	;@ LODSW
 ;@----------------------------------------------------------------------------
-	ldrb r2,[v30ptr,#v30SegPrefix]
-	cmp r2,#0
+	tst v30cyc,#SEG_PREFIX
 	ldrne r0,[v30ptr,#v30PrefixBase]
 	ldreq r0,[v30ptr,#v30SRegDS]
 	stmfd sp!,{lr}
@@ -3337,8 +3317,7 @@ _C8:	;@ PREPARE
 	subs r5,r5,#1
 	bmi 2f
 	beq 1f
-	ldrb r2,[v30ptr,#v30SegPrefix]
-	cmp r2,#0
+	tst v30cyc,#SEG_PREFIX
 	moveq r7,r6
 	ldrne r7,[v30ptr,#v30PrefixBase]
 0:
@@ -3625,8 +3604,7 @@ _D6:	;@ SALC			;@ Set AL on Carry
 i_trans:
 _D7:	;@ TRANS
 ;@----------------------------------------------------------------------------
-	ldrb r2,[v30ptr,#v30SegPrefix]
-	cmp r2,#0
+	tst v30cyc,#SEG_PREFIX
 	ldrne r0,[v30ptr,#v30PrefixBase]
 	ldreq r0,[v30ptr,#v30SRegDS]
 	stmfd sp!,{lr}
@@ -3872,9 +3850,8 @@ _F2:	;@ REPNE
 	bne noF2Prefix
 	and r1,r0,#0x18
 	add r1,v30ptr,r1,lsr#1
-	mov r0,#1
 	ldrh r2,[r1,#v30SRegs+2]
-	strb r0,[v30ptr,#v30SegPrefix]
+	orr v30cyc,v30cyc,#SEG_PREFIX
 	strh r2,[v30ptr,#v30PrefixBase+2]
 
 	eatCycles 2
@@ -4012,9 +3989,8 @@ _F3:	;@ REPE
 	bne noF3Prefix
 	and r1,r0,#0x18
 	add r1,v30ptr,r1,lsr#1
-	mov r0,#1
 	ldrh r2,[r1,#v30SRegs+2]
-	strb r0,[v30ptr,#v30SegPrefix]
+	orr v30cyc,v30cyc,#SEG_PREFIX
 	strh r2,[v30ptr,#v30PrefixBase+2]
 
 	eatCycles 2
@@ -4243,8 +4219,7 @@ f3Default:
 f3End:
 	strh r7,[v30ptr,#v30RegCW]
 f3DefEnd:
-	mov r0,#0
-	strb r0,[v30ptr,#v30SegPrefix]
+	bic v30cyc,v30cyc,#SEG_PREFIX
 	ldmfd sp!,{pc}
 ;@----------------------------------------------------------------------------
 i_hlt:
@@ -4256,8 +4231,8 @@ _F4:	;@ HALT
 	bne v30ChkIrqInternal
 	mov r0,#1
 	strb r0,[v30ptr,#v30Halt]
-	cmp v30cyc,#0
-	andpl v30cyc,v30cyc,#CYC_MASK
+	mvns r0,v30cyc,asr#CYC_SHIFT			;@
+	addmi v30cyc,v30cyc,r0,lsl#CYC_SHIFT	;@ Consume all remaining cycles in steps of 1.
 	bx lr
 ;@----------------------------------------------------------------------------
 i_cmc:
@@ -4832,10 +4807,9 @@ division8:
 ;@----------------------------------------------------------------------------
 EA_000:	;@
 ;@----------------------------------------------------------------------------
-	ldrb r2,[v30ptr,#v30SegPrefix]
 	ldr r1,[v30ptr,#v30RegBW-2]
 	ldr r3,[v30ptr,#v30RegIX]
-	cmp r2,#0
+	tst v30cyc,#SEG_PREFIX
 	ldrne r0,[v30ptr,#v30PrefixBase]
 	ldreq r0,[v30ptr,#v30SRegDS]
 	add r1,r1,r3
@@ -4844,10 +4818,9 @@ EA_000:	;@
 ;@----------------------------------------------------------------------------
 EA_001:	;@
 ;@----------------------------------------------------------------------------
-	ldrb r2,[v30ptr,#v30SegPrefix]
 	ldr r1,[v30ptr,#v30RegBW-2]
 	ldr r3,[v30ptr,#v30RegIY]
-	cmp r2,#0
+	tst v30cyc,#SEG_PREFIX
 	ldrne r0,[v30ptr,#v30PrefixBase]
 	ldreq r0,[v30ptr,#v30SRegDS]
 	add r1,r1,r3
@@ -4856,10 +4829,9 @@ EA_001:	;@
 ;@----------------------------------------------------------------------------
 EA_002:	;@
 ;@----------------------------------------------------------------------------
-	ldrb r2,[v30ptr,#v30SegPrefix]
 	ldr r1,[v30ptr,#v30RegBP-2]
 	ldr r3,[v30ptr,#v30RegIX]
-	cmp r2,#0
+	tst v30cyc,#SEG_PREFIX
 	ldrne r0,[v30ptr,#v30PrefixBase]
 	ldreq r0,[v30ptr,#v30SRegSS]
 	add r1,r1,r3
@@ -4868,10 +4840,9 @@ EA_002:	;@
 ;@----------------------------------------------------------------------------
 EA_003:	;@
 ;@----------------------------------------------------------------------------
-	ldrb r2,[v30ptr,#v30SegPrefix]
 	ldr r1,[v30ptr,#v30RegBP-2]
 	ldr r3,[v30ptr,#v30RegIY]
-	cmp r2,#0
+	tst v30cyc,#SEG_PREFIX
 	ldrne r0,[v30ptr,#v30PrefixBase]
 	ldreq r0,[v30ptr,#v30SRegSS]
 	add r1,r1,r3
@@ -4880,9 +4851,8 @@ EA_003:	;@
 ;@----------------------------------------------------------------------------
 EA_004:	;@
 ;@----------------------------------------------------------------------------
-	ldrb r2,[v30ptr,#v30SegPrefix]
 	ldr r1,[v30ptr,#v30RegIX]
-	cmp r2,#0
+	tst v30cyc,#SEG_PREFIX
 	ldrne r0,[v30ptr,#v30PrefixBase]
 	ldreq r0,[v30ptr,#v30SRegDS]
 	add r0,r0,r1,lsr#4
@@ -4890,9 +4860,8 @@ EA_004:	;@
 ;@----------------------------------------------------------------------------
 EA_005:	;@
 ;@----------------------------------------------------------------------------
-	ldrb r2,[v30ptr,#v30SegPrefix]
 	ldr r1,[v30ptr,#v30RegIY]
-	cmp r2,#0
+	tst v30cyc,#SEG_PREFIX
 	ldrne r0,[v30ptr,#v30PrefixBase]
 	ldreq r0,[v30ptr,#v30SRegDS]
 	add r0,r0,r1,lsr#4
@@ -4901,9 +4870,8 @@ EA_005:	;@
 EA_006:	;@
 ;@----------------------------------------------------------------------------
 	getNextWord
-	ldrb r2,[v30ptr,#v30SegPrefix]
 	mov r1,r0,lsl#16
-	cmp r2,#0
+	tst v30cyc,#SEG_PREFIX
 	ldrne r0,[v30ptr,#v30PrefixBase]
 	ldreq r0,[v30ptr,#v30SRegDS]
 	add r0,r0,r1,lsr#4
@@ -4911,9 +4879,8 @@ EA_006:	;@
 ;@----------------------------------------------------------------------------
 EA_007:	;@
 ;@----------------------------------------------------------------------------
-	ldrb r2,[v30ptr,#v30SegPrefix]
 	ldr r1,[v30ptr,#v30RegBW-2]
-	cmp r2,#0
+	tst v30cyc,#SEG_PREFIX
 	ldrne r0,[v30ptr,#v30PrefixBase]
 	ldreq r0,[v30ptr,#v30SRegDS]
 	add r0,r0,r1,lsr#4
@@ -4922,10 +4889,9 @@ EA_007:	;@
 EA_100:	;@
 ;@----------------------------------------------------------------------------
 	getNextSignedByte
-	ldrb r2,[v30ptr,#v30SegPrefix]
 	ldr r1,[v30ptr,#v30RegBW-2]
 	ldr r3,[v30ptr,#v30RegIX]
-	cmp r2,#0
+	tst v30cyc,#SEG_PREFIX
 	ldrne r2,[v30ptr,#v30PrefixBase]
 	ldreq r2,[v30ptr,#v30SRegDS]
 	add r1,r1,r3
@@ -4937,10 +4903,9 @@ EA_100:	;@
 EA_101:	;@
 ;@----------------------------------------------------------------------------
 	getNextSignedByte
-	ldrb r2,[v30ptr,#v30SegPrefix]
 	ldr r1,[v30ptr,#v30RegBW-2]
 	ldr r3,[v30ptr,#v30RegIY]
-	cmp r2,#0
+	tst v30cyc,#SEG_PREFIX
 	ldrne r2,[v30ptr,#v30PrefixBase]
 	ldreq r2,[v30ptr,#v30SRegDS]
 	add r1,r1,r3
@@ -4952,10 +4917,9 @@ EA_101:	;@
 EA_102:	;@
 ;@----------------------------------------------------------------------------
 	getNextSignedByte
-	ldrb r2,[v30ptr,#v30SegPrefix]
 	ldr r1,[v30ptr,#v30RegBP-2]
 	ldr r3,[v30ptr,#v30RegIX]
-	cmp r2,#0
+	tst v30cyc,#SEG_PREFIX
 	ldrne r2,[v30ptr,#v30PrefixBase]
 	ldreq r2,[v30ptr,#v30SRegSS]
 	add r1,r1,r3
@@ -4967,10 +4931,9 @@ EA_102:	;@
 EA_103:	;@
 ;@----------------------------------------------------------------------------
 	getNextSignedByte
-	ldrb r2,[v30ptr,#v30SegPrefix]
 	ldr r1,[v30ptr,#v30RegBP-2]
 	ldr r3,[v30ptr,#v30RegIY]
-	cmp r2,#0
+	tst v30cyc,#SEG_PREFIX
 	ldrne r2,[v30ptr,#v30PrefixBase]
 	ldreq r2,[v30ptr,#v30SRegSS]
 	add r1,r1,r3
@@ -4982,9 +4945,8 @@ EA_103:	;@
 EA_104:	;@
 ;@----------------------------------------------------------------------------
 	getNextSignedByte
-	ldrb r2,[v30ptr,#v30SegPrefix]
 	ldr r1,[v30ptr,#v30RegIX]
-	cmp r2,#0
+	tst v30cyc,#SEG_PREFIX
 	ldrne r2,[v30ptr,#v30PrefixBase]
 	ldreq r2,[v30ptr,#v30SRegDS]
 	add r1,r1,r0,lsl#16
@@ -4994,9 +4956,8 @@ EA_104:	;@
 EA_105:	;@
 ;@----------------------------------------------------------------------------
 	getNextSignedByte
-	ldrb r2,[v30ptr,#v30SegPrefix]
 	ldr r1,[v30ptr,#v30RegIY]
-	cmp r2,#0
+	tst v30cyc,#SEG_PREFIX
 	ldrne r2,[v30ptr,#v30PrefixBase]
 	ldreq r2,[v30ptr,#v30SRegDS]
 	add r1,r1,r0,lsl#16
@@ -5006,9 +4967,8 @@ EA_105:	;@
 EA_106:	;@
 ;@----------------------------------------------------------------------------
 	getNextSignedByte
-	ldrb r2,[v30ptr,#v30SegPrefix]
 	ldr r1,[v30ptr,#v30RegBP-2]
-	cmp r2,#0
+	tst v30cyc,#SEG_PREFIX
 	ldrne r2,[v30ptr,#v30PrefixBase]
 	ldreq r2,[v30ptr,#v30SRegSS]
 	add r1,r1,r0,lsl#16
@@ -5018,9 +4978,8 @@ EA_106:	;@
 EA_107:	;@
 ;@----------------------------------------------------------------------------
 	getNextSignedByte
-	ldrb r2,[v30ptr,#v30SegPrefix]
 	ldr r1,[v30ptr,#v30RegBW-2]
-	cmp r2,#0
+	tst v30cyc,#SEG_PREFIX
 	ldrne r2,[v30ptr,#v30PrefixBase]
 	ldreq r2,[v30ptr,#v30SRegDS]
 	add r1,r1,r0,lsl#16
@@ -5030,10 +4989,9 @@ EA_107:	;@
 EA_200:	;@
 ;@----------------------------------------------------------------------------
 	getNextWord
-	ldrb r2,[v30ptr,#v30SegPrefix]
 	ldr r1,[v30ptr,#v30RegBW-2]
 	ldr r3,[v30ptr,#v30RegIX]
-	cmp r2,#0
+	tst v30cyc,#SEG_PREFIX
 	ldrne r2,[v30ptr,#v30PrefixBase]
 	ldreq r2,[v30ptr,#v30SRegDS]
 	add r1,r1,r3
@@ -5045,10 +5003,9 @@ EA_200:	;@
 EA_201:	;@
 ;@----------------------------------------------------------------------------
 	getNextWord
-	ldrb r2,[v30ptr,#v30SegPrefix]
 	ldr r1,[v30ptr,#v30RegBW-2]
 	ldr r3,[v30ptr,#v30RegIY]
-	cmp r2,#0
+	tst v30cyc,#SEG_PREFIX
 	ldrne r2,[v30ptr,#v30PrefixBase]
 	ldreq r2,[v30ptr,#v30SRegDS]
 	add r1,r1,r3
@@ -5060,10 +5017,9 @@ EA_201:	;@
 EA_202:	;@
 ;@----------------------------------------------------------------------------
 	getNextWord
-	ldrb r2,[v30ptr,#v30SegPrefix]
 	ldr r1,[v30ptr,#v30RegBP-2]
 	ldr r3,[v30ptr,#v30RegIX]
-	cmp r2,#0
+	tst v30cyc,#SEG_PREFIX
 	ldrne r2,[v30ptr,#v30PrefixBase]
 	ldreq r2,[v30ptr,#v30SRegSS]
 	add r1,r1,r3
@@ -5075,10 +5031,9 @@ EA_202:	;@
 EA_203:	;@
 ;@----------------------------------------------------------------------------
 	getNextWord
-	ldrb r2,[v30ptr,#v30SegPrefix]
 	ldr r1,[v30ptr,#v30RegBP-2]
 	ldr r3,[v30ptr,#v30RegIY]
-	cmp r2,#0
+	tst v30cyc,#SEG_PREFIX
 	ldrne r2,[v30ptr,#v30PrefixBase]
 	ldreq r2,[v30ptr,#v30SRegSS]
 	add r1,r1,r3
@@ -5090,9 +5045,8 @@ EA_203:	;@
 EA_204:	;@
 ;@----------------------------------------------------------------------------
 	getNextWord
-	ldrb r2,[v30ptr,#v30SegPrefix]
 	ldr r1,[v30ptr,#v30RegIX]
-	cmp r2,#0
+	tst v30cyc,#SEG_PREFIX
 	ldrne r2,[v30ptr,#v30PrefixBase]
 	ldreq r2,[v30ptr,#v30SRegDS]
 	add r1,r1,r0,lsl#16
@@ -5102,9 +5056,8 @@ EA_204:	;@
 EA_205:	;@
 ;@----------------------------------------------------------------------------
 	getNextWord
-	ldrb r2,[v30ptr,#v30SegPrefix]
 	ldr r1,[v30ptr,#v30RegIY]
-	cmp r2,#0
+	tst v30cyc,#SEG_PREFIX
 	ldrne r2,[v30ptr,#v30PrefixBase]
 	ldreq r2,[v30ptr,#v30SRegDS]
 	add r1,r1,r0,lsl#16
@@ -5114,9 +5067,8 @@ EA_205:	;@
 EA_206:	;@
 ;@----------------------------------------------------------------------------
 	getNextWord
-	ldrb r2,[v30ptr,#v30SegPrefix]
 	ldr r1,[v30ptr,#v30RegBP-2]
-	cmp r2,#0
+	tst v30cyc,#SEG_PREFIX
 	ldrne r2,[v30ptr,#v30PrefixBase]
 	ldreq r2,[v30ptr,#v30SRegSS]
 	add r1,r1,r0,lsl#16
@@ -5126,9 +5078,8 @@ EA_206:	;@
 EA_207:	;@
 ;@----------------------------------------------------------------------------
 	getNextWord
-	ldrb r2,[v30ptr,#v30SegPrefix]
 	ldr r1,[v30ptr,#v30RegBW-2]
-	cmp r2,#0
+	tst v30cyc,#SEG_PREFIX
 	ldrne r2,[v30ptr,#v30PrefixBase]
 	ldreq r2,[v30ptr,#v30SRegDS]
 	add r1,r1,r0,lsl#16
@@ -5252,7 +5203,7 @@ v30ChkIrqInternal:					;@ This can be used on EI/IRET/POPF/HALT
 	blne V30FetchIRQ
 	ldrb r1,[v30ptr,#v30Halt]
 	cmp r1,#0
-	andne v30cyc,v30cyc,#CYC_MASK
+	bne v30InHalt
 ;@----------------------------------------------------------------------------
 V30Go:						;@ Continue running
 ;@----------------------------------------------------------------------------
@@ -5262,7 +5213,10 @@ xLoop:
 xOut:
 outOfCycles:
 	ldmfd sp!,{pc}
-
+v30InHalt:
+	mvns r0,v30cyc,asr#CYC_SHIFT			;@
+	addmi v30cyc,v30cyc,r0,lsl#CYC_SHIFT	;@ Consume all remaining cycles in steps of 1.
+	ldmfd sp!,{pc}
 ;@----------------------------------------------------------------------------
 #if GBA
 	.section .ewram, "ax", %progbits	;@ For the GBA

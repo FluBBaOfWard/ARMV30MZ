@@ -9,8 +9,10 @@
 				;@ r0,r1,r2=temp regs.
 	v30f		.req r8
 	v30pc		.req r9
-	v30cyc		.req r10		;@ Bits 0-7=0
+	v30cyc		.req r10		;@ Bit 0 = segment prefix, bits 1-7=0
 	v30ptr		.req r11
+
+	.equ SEG_PREFIX, 1			;@ Bit 0
 
 	.struct -(37*4)			;@ Changes section so make sure it is set before real code.
 
