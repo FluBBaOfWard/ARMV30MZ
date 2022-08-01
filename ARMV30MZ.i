@@ -9,10 +9,14 @@
 				;@ r0,r1,r2=temp regs.
 	v30f		.req r8
 	v30pc		.req r9
-	v30cyc		.req r10		;@ Bit 0 = segment prefix, bits 1-7=0
+	v30cyc		.req r10		;@ Bit 0-7 = Misc flags, see below.
 	v30ptr		.req r11
 
-	.equ SEG_PREFIX, 1			;@ Bit 0
+;@--------------------------------
+;@ v30cyc flags in lower bits
+	.equ SEG_PREFIX, 1<<0		;@ Bit 0
+	.equ HALT_FLAG, 1<<1		;@ Bit 1
+;@--------------------------------
 
 	.struct -(37*4)			;@ Changes section so make sure it is set before real code.
 
@@ -67,13 +71,12 @@ v30IrqPin:			.byte 0		;@ IrqPin & IF needs to be together in the same Word.
 v30IF:				.byte 0
 v30NmiPin:			.byte 0
 v30NmiPending:		.byte 0
-v30Halt:			.byte 0
-v30ParityVal:		.byte 0
+v30ParityVal:		.short 0
 v30TF:				.byte 0
 v30DF:				.byte 0		;@ Direction flag, this is either 1 or -1.
-v30SegPrefix:		.byte 0
-v30NoInterrupt:		.byte 0
 v30MulOverflow:		.byte 0
+v30NoInterrupt:		.byte 0
+v30Halt:			.byte 0
 					.space 1
 
 v30IEnd:

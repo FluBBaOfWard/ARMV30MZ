@@ -26,12 +26,13 @@ typedef struct {
 	u8 v30IF;
 	u8 v30NmiPin;
 	u8 v30NmiPending;
-	u8 v30Halt;
-	u8 v30ParityVal;
-	u8 v30SegPrefix;
+	u16 v30ParityVal;
 	u8 v30TF;
 	u8 v30DF;
+	u8 v30MulOverflow;
 	u8 v30NoInterrupt;
+	u8 v30Halt;
+	u8 dummy0;
 
 	u32 v30LastBank;
 	void *v30IrqVectorFunc;

@@ -1881,9 +1881,8 @@ i_bpe:
 _7A:	;@ Branch if Parity Even
 ;@----------------------------------------------------------------------------
 	getNextSignedByte
-	ldrb r2,[v30ptr,#v30ParityVal]
-	add r3,v30ptr,#v30PZST
-	ldrb r2,[r3,r2]
+	ldrh r2,[v30ptr,#v30ParityVal]	;@ Top of ParityVal is pointer to v30PZST
+	ldrb r2,[v30ptr,r2]
 	tst r2,#PSR_P
 	addne v30pc,v30pc,r0
 	subne v30cyc,v30cyc,#3*CYCLE
@@ -1895,9 +1894,8 @@ i_bpo:
 _7B:	;@ Branch if Parity Odd
 ;@----------------------------------------------------------------------------
 	getNextSignedByte
-	ldrb r2,[v30ptr,#v30ParityVal]
-	add r3,v30ptr,#v30PZST
-	ldrb r2,[r3,r2]
+	ldrh r2,[v30ptr,#v30ParityVal]	;@ Top of ParityVal is pointer to v30PZST
+	ldrb r2,[v30ptr,r2]
 	tst r2,#PSR_P
 	addeq v30pc,v30pc,r0
 	subeq v30cyc,v30cyc,#3*CYCLE
@@ -2528,10 +2526,9 @@ _9B:	;@ POLL
 i_pushf:
 _9C:	;@ PUSH F
 ;@----------------------------------------------------------------------------
-	ldrb r2,[v30ptr,#v30ParityVal]
-	add r3,v30ptr,#v30PZST
+	ldrh r2,[v30ptr,#v30ParityVal]	;@ Top of ParityVal is pointer to v30PZST
 	ldr r1,=0xF002
-	ldrb r2,[r3,r2]
+	ldrb r2,[v30ptr,r2]
 	ldrb r0,[v30ptr,#v30TF]
 	tst v30f,#PSR_A
 	orrne r1,r1,#AF
@@ -2621,15 +2618,13 @@ i_lahf:
 _9F:	;@ LAHF
 ;@----------------------------------------------------------------------------
 	mov r1,#0x02
-	ldrb r2,[v30ptr,#v30ParityVal]
-	add r3,v30ptr,#v30PZST
-	ldrb r2,[r3,r2]
-	tst v30f,#PSR_S
-	orrne r1,r1,#SF
-	tst v30f,#PSR_Z
-	orrne r1,r1,#ZF
-	tst v30f,#PSR_C
-	orrne r1,r1,#CF
+	ldrh r2,[v30ptr,#v30ParityVal]	;@ Top of ParityVal is pointer to v30PZST
+	mov r0,v30f,lsl#28
+	ldrb r2,[v30ptr,r2]
+	msr cpsr_flg,r0
+	orrmi r1,r1,#SF
+	orreq r1,r1,#ZF
+	orrcs r1,r1,#CF
 	tst r2,#PSR_P
 	orrne r1,r1,#PF
 	tst v30f,#PSR_A
@@ -4803,17 +4798,17 @@ division8:
 	bx r2
 
 ;@----------------------------------------------------------------------------
-// All EA functions must leave EO in top 16bits of r1!
+// All EA functions must leave EO (EffectiveOffset) in top 16bits of r1!
 ;@----------------------------------------------------------------------------
 EA_000:	;@
 ;@----------------------------------------------------------------------------
 	ldr r1,[v30ptr,#v30RegBW-2]
 	ldr r3,[v30ptr,#v30RegIX]
 	tst v30cyc,#SEG_PREFIX
-	ldrne r0,[v30ptr,#v30PrefixBase]
-	ldreq r0,[v30ptr,#v30SRegDS]
+	ldrne r2,[v30ptr,#v30PrefixBase]
+	ldreq r2,[v30ptr,#v30SRegDS]
 	add r1,r1,r3
-	add r0,r0,r1,lsr#4
+	add r0,r2,r1,lsr#4
 	bx lr
 ;@----------------------------------------------------------------------------
 EA_001:	;@
@@ -4821,10 +4816,10 @@ EA_001:	;@
 	ldr r1,[v30ptr,#v30RegBW-2]
 	ldr r3,[v30ptr,#v30RegIY]
 	tst v30cyc,#SEG_PREFIX
-	ldrne r0,[v30ptr,#v30PrefixBase]
-	ldreq r0,[v30ptr,#v30SRegDS]
+	ldrne r2,[v30ptr,#v30PrefixBase]
+	ldreq r2,[v30ptr,#v30SRegDS]
 	add r1,r1,r3
-	add r0,r0,r1,lsr#4
+	add r0,r2,r1,lsr#4
 	bx lr
 ;@----------------------------------------------------------------------------
 EA_002:	;@
@@ -4832,10 +4827,10 @@ EA_002:	;@
 	ldr r1,[v30ptr,#v30RegBP-2]
 	ldr r3,[v30ptr,#v30RegIX]
 	tst v30cyc,#SEG_PREFIX
-	ldrne r0,[v30ptr,#v30PrefixBase]
-	ldreq r0,[v30ptr,#v30SRegSS]
+	ldrne r2,[v30ptr,#v30PrefixBase]
+	ldreq r2,[v30ptr,#v30SRegSS]
 	add r1,r1,r3
-	add r0,r0,r1,lsr#4
+	add r0,r2,r1,lsr#4
 	bx lr
 ;@----------------------------------------------------------------------------
 EA_003:	;@
@@ -4843,28 +4838,28 @@ EA_003:	;@
 	ldr r1,[v30ptr,#v30RegBP-2]
 	ldr r3,[v30ptr,#v30RegIY]
 	tst v30cyc,#SEG_PREFIX
-	ldrne r0,[v30ptr,#v30PrefixBase]
-	ldreq r0,[v30ptr,#v30SRegSS]
+	ldrne r2,[v30ptr,#v30PrefixBase]
+	ldreq r2,[v30ptr,#v30SRegSS]
 	add r1,r1,r3
-	add r0,r0,r1,lsr#4
+	add r0,r2,r1,lsr#4
 	bx lr
 ;@----------------------------------------------------------------------------
 EA_004:	;@
 ;@----------------------------------------------------------------------------
 	ldr r1,[v30ptr,#v30RegIX]
 	tst v30cyc,#SEG_PREFIX
-	ldrne r0,[v30ptr,#v30PrefixBase]
-	ldreq r0,[v30ptr,#v30SRegDS]
-	add r0,r0,r1,lsr#4
+	ldrne r2,[v30ptr,#v30PrefixBase]
+	ldreq r2,[v30ptr,#v30SRegDS]
+	add r0,r2,r1,lsr#4
 	bx lr
 ;@----------------------------------------------------------------------------
 EA_005:	;@
 ;@----------------------------------------------------------------------------
 	ldr r1,[v30ptr,#v30RegIY]
 	tst v30cyc,#SEG_PREFIX
-	ldrne r0,[v30ptr,#v30PrefixBase]
-	ldreq r0,[v30ptr,#v30SRegDS]
-	add r0,r0,r1,lsr#4
+	ldrne r2,[v30ptr,#v30PrefixBase]
+	ldreq r2,[v30ptr,#v30SRegDS]
+	add r0,r2,r1,lsr#4
 	bx lr
 ;@----------------------------------------------------------------------------
 EA_006:	;@
@@ -4872,18 +4867,18 @@ EA_006:	;@
 	getNextWord
 	mov r1,r0,lsl#16
 	tst v30cyc,#SEG_PREFIX
-	ldrne r0,[v30ptr,#v30PrefixBase]
-	ldreq r0,[v30ptr,#v30SRegDS]
-	add r0,r0,r1,lsr#4
+	ldrne r2,[v30ptr,#v30PrefixBase]
+	ldreq r2,[v30ptr,#v30SRegDS]
+	add r0,r2,r1,lsr#4
 	bx lr
 ;@----------------------------------------------------------------------------
 EA_007:	;@
 ;@----------------------------------------------------------------------------
 	ldr r1,[v30ptr,#v30RegBW-2]
 	tst v30cyc,#SEG_PREFIX
-	ldrne r0,[v30ptr,#v30PrefixBase]
-	ldreq r0,[v30ptr,#v30SRegDS]
-	add r0,r0,r1,lsr#4
+	ldrne r2,[v30ptr,#v30PrefixBase]
+	ldreq r2,[v30ptr,#v30SRegDS]
+	add r0,r2,r1,lsr#4
 	bx lr
 ;@----------------------------------------------------------------------------
 EA_100:	;@
@@ -5318,6 +5313,8 @@ V30Reset:					;@ r0=v30ptr
 	str r0,[v30ptr,#v30SRegCS]
 	ldr r0,=0xFFFE0000
 	str r0,[v30ptr,#v30RegSP]
+	mov r0,#v30PZST
+	strh r0,[v30ptr,#v30ParityVal]
 
 	mov v30pc,#0
 	v30EncodeFastPC
