@@ -7,7 +7,17 @@ ARMV30MZ To do
 	Prepare (C8) uses r4-r8, (r8 = SP).
 	Interrupt uses r4-r6, (r6 = SP).
 	Hard to use a dedicated register for v30Regs since they can be accessed by index.
-	Rename more opcodes.
-	Make 26, 2E, 36 & 3E share code?
-	Buslock is used with REP and hinders interrupts until finished.
 	Make define for combining PC + CS + Rom offset.
+	Rename more opcodes.
+
+	Buslock is used with REP and hinders interrupts until finished.
+	Make 26, 2E, 36 & 3E share code?
+
+	Get rid of "bx lr" in all opcodes!
+	* i_popf needs to be able to be called from IRET.
+	* All SEG_PREFIX opcodes need its own jumptable.
+	* REPNE/REPE prefix opcodes need their own jumptable.
+		Rewrite all opcodes that can be repeating.
+		opcodes used with REP:
+		 i_inmb, i_inmw, i_outmb, i_outmw, i_movsb, i_movsw, i_cmpsb, i_cmpsw,
+		 i_stosb, i_stosw, i_lodsb, i_lodsw, i_scasb, i_scasw.
