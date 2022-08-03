@@ -30,9 +30,8 @@ typedef struct {
 	u8 v30TF;
 	u8 v30DF;
 	u8 v30MulOverflow;
-	u8 v30NoInterrupt;
 	u8 v30Halt;
-	u8 dummy0;
+	u8 dummy0[2];
 
 	u32 v30LastBank;
 	void *v30IrqVectorFunc;

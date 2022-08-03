@@ -77,9 +77,8 @@ v30ParityVal:		.short 0
 v30TF:				.byte 0
 v30DF:				.byte 0		;@ Direction flag, this is either 1 or -1.
 v30MulOverflow:		.byte 0
-v30NoInterrupt:		.byte 0
 v30Halt:			.byte 0
-					.space 1
+					.space 2
 
 v30IEnd:
 ;@--------------------------------
@@ -95,6 +94,7 @@ v30EATable:			.space 192*4
 v30ModRm:
 v30ModRmRm:			.space 256
 v30ModRmReg:		.space 256
+v30SegTbl:			.space 256
 v30Size:
 
 ;@----------------------------------------------------------------------------
