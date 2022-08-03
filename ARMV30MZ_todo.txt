@@ -15,7 +15,7 @@ ARMV30MZ To do
 
 	Get rid of "bx lr" in all opcodes!
 	* i_popf needs to be able to be called from IRET.
-	* All SEG_PREFIX opcodes need its own jumptable.
+	* All SEG_PREFIX opcodes need its own jumptable?
 	* REPNE/REPE prefix opcodes need their own jumptable.
 		Rewrite all opcodes that can be repeating.
 		opcodes used with REP:
