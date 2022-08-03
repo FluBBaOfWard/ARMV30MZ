@@ -16,8 +16,4 @@ ARMV30MZ To do
 	Get rid of "bx lr" in all opcodes!
 	* i_popf needs to be able to be called from IRET.
 	* All SEG_PREFIX opcodes need its own jumptable?
-	* REPNE/REPE prefix opcodes need their own jumptable.
-		Rewrite all opcodes that can be repeating.
-		opcodes used with REP:
-		 i_inmb, i_inmw, i_outmb, i_outmw, i_movsb, i_movsw, i_cmpsb, i_cmpsw,
-		 i_stosb, i_stosw, i_lodsb, i_lodsw, i_scasb, i_scasw.
+	* REPNE/REPE prefix opcodes need their own jumptable?

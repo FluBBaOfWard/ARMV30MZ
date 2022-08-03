@@ -838,19 +838,16 @@ _25:	;@ AND AXD16
 i_es:
 _26:	;@ ES prefix
 ;@----------------------------------------------------------------------------
-	stmfd sp!,{lr}
 	ldrh r1,[v30ptr,#v30SRegES+2]
-	orr v30cyc,v30cyc,#SEG_PREFIX
 	strh r1,[v30ptr,#v30PrefixBase+2]
 
-	eatCycles 1
-
 	getNextByte
-	mov lr,pc
+	add r2,v30ptr,#v30SegTbl
+	ldrb r1,[r2,r0]
+	orr v30cyc,v30cyc,r1		;@ SEG_PREFIX
+	eatCycles 1
 	ldr pc,[v30ptr,r0,lsl#2]
 
-	bic v30cyc,v30cyc,#SEG_PREFIX
-	ldmfd sp!,{pc}
 ;@----------------------------------------------------------------------------
 i_daa:
 _27:	;@ DAA / ADJ4A
@@ -1017,19 +1014,15 @@ _2D:	;@ SUB AXD16
 i_cs:
 _2E:	;@ CS prefix
 ;@----------------------------------------------------------------------------
-	stmfd sp!,{lr}
 	ldrh r1,[v30ptr,#v30SRegCS+2]
-	orr v30cyc,v30cyc,#SEG_PREFIX
 	strh r1,[v30ptr,#v30PrefixBase+2]
 
-	eatCycles 1
-
 	getNextByte
-	mov lr,pc
+	add r2,v30ptr,#v30SegTbl
+	ldrb r1,[r2,r0]
+	orr v30cyc,v30cyc,r1		;@ SEG_PREFIX
+	eatCycles 1
 	ldr pc,[v30ptr,r0,lsl#2]
-
-	bic v30cyc,v30cyc,#SEG_PREFIX
-	ldmfd sp!,{pc}
 ;@----------------------------------------------------------------------------
 i_das:
 _2F:	;@ DAS / ADJ4S
@@ -1196,19 +1189,15 @@ _35:	;@ XOR AXD16
 i_ss:
 _36:	;@ SS prefix
 ;@----------------------------------------------------------------------------
-	stmfd sp!,{lr}
 	ldrh r1,[v30ptr,#v30SRegSS+2]
-	orr v30cyc,v30cyc,#SEG_PREFIX
 	strh r1,[v30ptr,#v30PrefixBase+2]
 
-	eatCycles 1
-
 	getNextByte
-	mov lr,pc
+	add r2,v30ptr,#v30SegTbl
+	ldrb r1,[r2,r0]
+	orr v30cyc,v30cyc,r1		;@ SEG_PREFIX
+	eatCycles 1
 	ldr pc,[v30ptr,r0,lsl#2]
-
-	bic v30cyc,v30cyc,#SEG_PREFIX
-	ldmfd sp!,{pc}
 ;@----------------------------------------------------------------------------
 i_aaa:
 _37:	;@ AAA / ADJBA
@@ -1352,19 +1341,15 @@ _3D:	;@ CMP AXD16
 i_ds:
 _3E:	;@ DS prefix
 ;@----------------------------------------------------------------------------
-	stmfd sp!,{lr}
 	ldrh r1,[v30ptr,#v30SRegDS+2]
-	orr v30cyc,v30cyc,#SEG_PREFIX
 	strh r1,[v30ptr,#v30PrefixBase+2]
 
-	eatCycles 1
-
 	getNextByte
-	mov lr,pc
+	add r2,v30ptr,#v30SegTbl
+	ldrb r1,[r2,r0]
+	orr v30cyc,v30cyc,r1		;@ SEG_PREFIX
+	eatCycles 1
 	ldr pc,[v30ptr,r0,lsl#2]
-
-	bic v30cyc,v30cyc,#SEG_PREFIX
-	ldmfd sp!,{pc}
 ;@----------------------------------------------------------------------------
 i_aas:
 _3F:	;@ AAS / ADJBS
@@ -4466,9 +4451,13 @@ _F2:	;@ REPNE
 	orr v30cyc,v30cyc,#SEG_PREFIX
 	strh r2,[v30ptr,#v30PrefixBase+2]
 
-	eatCycles 2
+	eatCycles 1
 	getNextByte
 noF2Prefix:
+	add r2,v30ptr,#v30SegTbl
+	ldrb r1,[r2,r0]
+	tst r1,#1
+	biceq v30cyc,v30cyc,#SEG_PREFIX
 	sub r3,r0,#0x6C
 	cmp r3,#0x43
 	ldrls pc,[pc,r3,lsl#2]
@@ -4557,9 +4546,13 @@ _F3:	;@ REPE
 	orr v30cyc,v30cyc,#SEG_PREFIX
 	strh r2,[v30ptr,#v30PrefixBase+2]
 
-	eatCycles 2
+	eatCycles 1
 	getNextByte
 noF3Prefix:
+	add r2,v30ptr,#v30SegTbl
+	ldrb r1,[r2,r0]
+	tst r1,#1
+	biceq v30cyc,v30cyc,#SEG_PREFIX
 	sub r3,r0,#0x6C
 	cmp r3,#0x43
 	ldrls pc,[pc,r3,lsl#2]
