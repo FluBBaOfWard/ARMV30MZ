@@ -17,7 +17,7 @@ ARMV30MZ To do
 
 	Get rid of "bx lr" in all opcodes!
 	* nec_interrupt should execute next opcode?
-	* i_popf needs to be able to be called from IRET.
-	*i_pushf is called from nec_interrupt
+	* i_pushf is called from nec_interrupt
 	* All SEG_PREFIX opcodes need its own jumptable?
 	* REPNE/REPE prefix opcodes need their own jumptable?
+	* i_popf needs to be able to be called from IRET.

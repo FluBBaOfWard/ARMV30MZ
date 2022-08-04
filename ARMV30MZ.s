@@ -69,68 +69,66 @@
 i_add_br8:
 _00:	;@ ADD BR8
 ;@----------------------------------------------------------------------------
+	stmfd sp!,{lr}
 	getNextByteToReg r4
 	add r1,v30ptr,r4
-	ldrb r6,[r1,#v30ModRmReg]
+	ldrb r2,[r1,#v30ModRmReg]
+	ldrb r6,[v30ptr,-r2]
 	cmp r4,#0xC0
 	bmi 1f
 	ldrb r5,[r1,#v30ModRmRm]
-	eatCycles 1
 	ldrb r0,[v30ptr,-r5]
 0:
-	ldrb r1,[v30ptr,-r6]
-	add8 r1,r0
+	add8 r6,r0
 
-	bic v30cyc,v30cyc,#SEG_PREFIX
 	cmp r4,#0xC0
 	strbpl r1,[v30ptr,-r5]
-	bxpl lr
-	mov r0,r5
-	b cpuWriteMem20
+	movmi r0,r5
+	blmi cpuWriteMem20
+	ldmfd sp!,{lr}
+	bic v30cyc,v30cyc,#SEG_PREFIX
+	fetch 1
 1:
-	stmfd sp!,{lr}
-	eatCycles 3
+	eatCycles 2
 	add r1,v30ptr,#v30EATable
 	mov lr,pc
 	ldr pc,[r1,r4,lsl#2]
 	mov r5,r0
-	bl cpuReadMem20
-	ldmfd sp!,{lr}
-	b 0b
+	adr lr,0b
+	b cpuReadMem20
 ;@----------------------------------------------------------------------------
 i_add_wr16:
 _01:	;@ ADD WR16
 ;@----------------------------------------------------------------------------
+	stmfd sp!,{lr}
 	getNextByteToReg r4
+	and r2,r4,#0x38
+	add r2,v30ptr,r2,lsr#1
+	ldrh r6,[r2,#v30Regs]
 	cmp r4,#0xC0
 	bmi 1f
 	and r2,r4,#7
 	add r5,v30ptr,r2,lsl#2
 	ldrh r0,[r5,#v30Regs]
-	eatCycles 1
 0:
-	and r2,r4,#0x38
-	add r2,v30ptr,r2,lsr#1
-	ldrh r1,[r2,#v30Regs]
 	mov r0,r0,lsl#16
-	add16 r1,r0
+	add16 r6,r0
 
-	bic v30cyc,v30cyc,#SEG_PREFIX
 	cmp r4,#0xC0
 	strhpl r1,[r5,#v30Regs]
-	bxpl lr
-	mov r0,r5
-	b cpuWriteMem20W
+	movmi r0,r5
+	blmi cpuWriteMem20W
+	ldmfd sp!,{lr}
+	bic v30cyc,v30cyc,#SEG_PREFIX
+	fetch 1
 1:
-	stmfd sp!,{lr}
-	eatCycles 3
+	eatCycles 2
 	add r1,v30ptr,#v30EATable
 	mov lr,pc
 	ldr pc,[r1,r4,lsl#2]
 	mov r5,r0
-	bl cpuReadMem20W
-	ldmfd sp!,{lr}
-	b 0b
+	adr lr,0b
+	b cpuReadMem20W
 ;@----------------------------------------------------------------------------
 i_add_r8b:
 _02:	;@ ADD R8b
@@ -229,67 +227,65 @@ _07:	;@ POP ES
 i_or_br8:
 _08:	;@ OR BR8
 ;@----------------------------------------------------------------------------
+	stmfd sp!,{lr}
 	getNextByteToReg r4
 	add r1,v30ptr,r4
-	ldrb r6,[r1,#v30ModRmReg]
+	ldrb r2,[r1,#v30ModRmReg]
+	ldrb r6,[v30ptr,-r2]
 	cmp r4,#0xC0
 	bmi 1f
 	ldrb r5,[r1,#v30ModRmRm]
-	eatCycles 1
 	ldrb r0,[v30ptr,-r5]
 0:
-	ldrb r1,[v30ptr,-r6]
-	or8 r1,r0
+	or8 r6,r0
 
-	bic v30cyc,v30cyc,#SEG_PREFIX
 	cmp r4,#0xC0
 	strbpl r1,[v30ptr,-r5]
-	bxpl lr
-	mov r0,r5
-	b cpuWriteMem20
+	movmi r0,r5
+	blmi cpuWriteMem20
+	ldmfd sp!,{lr}
+	bic v30cyc,v30cyc,#SEG_PREFIX
+	fetch 1
 1:
-	stmfd sp!,{lr}
-	eatCycles 3
+	eatCycles 2
 	add r1,v30ptr,#v30EATable
 	mov lr,pc
 	ldr pc,[r1,r4,lsl#2]
 	mov r5,r0
-	bl cpuReadMem20
-	ldmfd sp!,{lr}
-	b 0b
+	adr lr,0b
+	b cpuReadMem20
 ;@----------------------------------------------------------------------------
 i_or_wr16:
 _09:	;@ OR WR16
 ;@----------------------------------------------------------------------------
+	stmfd sp!,{lr}
 	getNextByteToReg r4
+	and r2,r4,#0x38
+	add r2,v30ptr,r2,lsr#1
+	ldr r6,[r2,#v30Regs2]
 	cmp r4,#0xC0
 	bmi 1f
-	eatCycles 1
 	and r2,r4,#7
 	add r5,v30ptr,r2,lsl#2
 	ldrh r0,[r5,#v30Regs]
 0:
-	and r2,r4,#0x38
-	add r2,v30ptr,r2,lsr#1
-	ldr r1,[r2,#v30Regs2]
-	or16 r0,r1
+	or16 r0,r6
 
-	bic v30cyc,v30cyc,#SEG_PREFIX
 	cmp r4,#0xC0
 	strhpl r1,[r5,#v30Regs]
-	bxpl lr
-	mov r0,r5
-	b cpuWriteMem20W
+	movmi r0,r5
+	blmi cpuWriteMem20W
+	ldmfd sp!,{lr}
+	bic v30cyc,v30cyc,#SEG_PREFIX
+	fetch 1
 1:
-	stmfd sp!,{lr}
-	eatCycles 3
+	eatCycles 2
 	add r1,v30ptr,#v30EATable
 	mov lr,pc
 	ldr pc,[r1,r4,lsl#2]
 	mov r5,r0
-	bl cpuReadMem20W
-	ldmfd sp!,{lr}
-	b 0b
+	adr lr,0b
+	b cpuReadMem20W
 ;@----------------------------------------------------------------------------
 i_or_r8b:
 _0A:	;@ OR R8b
@@ -2665,6 +2661,12 @@ _9B:	;@ POLL
 i_pushf:
 _9C:	;@ PUSH F
 ;@----------------------------------------------------------------------------
+	stmfd sp!,{lr}
+	bl pushFlags
+	ldmfd sp!,{lr}
+	fetch 2
+;@----------------------------------------------------------------------------
+pushFlags:
 	ldrh r2,[v30ptr,#v30ParityVal]	;@ Top of ParityVal is pointer to v30PZST
 	ldr r1,=0xF002
 	ldrb r2,[v30ptr,r2]
@@ -2694,7 +2696,6 @@ _9C:	;@ PUSH F
 	sub r2,r2,#0x20000
 	add r0,r0,r2,lsr#4
 	str r2,[v30ptr,#v30RegSP]
-	eatCycles 2
 	b cpuWriteMem20W
 	.pool
 ;@----------------------------------------------------------------------------
@@ -5505,8 +5506,7 @@ doV30NMI:
 	mov r0,#0
 	strb r0,[v30ptr,#v30NmiPending]
 	mov r0,#2
-	bl nec_interrupt
-	b V30Go
+	b nec_interrupt
  */
 ;@----------------------------------------------------------------------------
 V30SetIRQPin:			;@ r0=pin state
@@ -5531,7 +5531,7 @@ nec_interrupt:				;@ r0 = vector number
 ;@----------------------------------------------------------------------------
 	stmfd sp!,{lr}
 	mov r4,r0,lsl#12+2
-	bl i_pushf
+	bl pushFlags
 	mov r0,#0
 	strb r0,[v30ptr,#v30IF]
 	strb r0,[v30ptr,#v30TF]
@@ -5558,6 +5558,7 @@ nec_interrupt:				;@ r0 = vector number
 	v30EncodeFastPC
 	eatCycles 25
 	ldmfd sp!,{pc}
+	fetch 25
 ;@----------------------------------------------------------------------------
 V30RestoreAndRunXCycles:	;@ r0 = number of cycles to run
 ;@----------------------------------------------------------------------------
