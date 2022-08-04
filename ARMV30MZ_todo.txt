@@ -14,6 +14,7 @@ ARMV30MZ To do
 	Make 26, 2E, 36 & 3E share code?
 
 	Get rid of "bx lr" in all opcodes!
+	* nec_interrupt should execute next opcode?
 	* i_popf needs to be able to be called from IRET.
 	* All SEG_PREFIX opcodes need its own jumptable?
 	* REPNE/REPE prefix opcodes need their own jumptable?

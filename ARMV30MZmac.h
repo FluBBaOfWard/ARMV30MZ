@@ -182,8 +182,7 @@
 	str r1,[v30ptr,#\reg -2]
 	mov r1,r1,lsr#16
 	strb r1,[v30ptr,#v30ParityVal]
-	eatCycles 1
-	bx lr
+	fetch 1
 	.endm
 ;@----------------------------------------------------------------------------
 	.macro incWord reg
@@ -198,8 +197,7 @@
 	str r1,[v30ptr,#\reg -2]
 	mov r1,r1,lsr#16
 	strb r1,[v30ptr,#v30ParityVal]
-	eatCycles 1
-	bx lr
+	fetch 1
 	.endm
 ;@----------------------------------------------------------------------------
 	.macro jmpne flag
@@ -207,9 +205,8 @@
 	tst v30f,#\flag
 	addne v30pc,v30pc,r0
 	subne v30cyc,v30cyc,#3*CYCLE
-	eatCycles 1
 	v30ReEncodeFastPC
-	bx lr
+	fetch 1
 	.endm
 
 	.macro jmpeq flag
@@ -217,9 +214,8 @@
 	tst v30f,#\flag
 	addeq v30pc,v30pc,r0
 	subeq v30cyc,v30cyc,#3*CYCLE
-	eatCycles 1
 	v30ReEncodeFastPC
-	bx lr
+	fetch 1
 	.endm
 ;@----------------------------------------------------------------------------
 	.macro or8 src dst
