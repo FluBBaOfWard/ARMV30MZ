@@ -10,6 +10,7 @@ ARMV30MZ To do
 	Make define for combining PC + CS + Rom offset.
 	Rename more opcodes.
 	Remove "-2" from dec/inc word macro.
+	Make macro for EXCH (0x91-0x97).
 
 	Buslock is used with REP and hinders interrupts until finished.
 	Make 26, 2E, 36 & 3E share code?
@@ -17,5 +18,6 @@ ARMV30MZ To do
 	Get rid of "bx lr" in all opcodes!
 	* nec_interrupt should execute next opcode?
 	* i_popf needs to be able to be called from IRET.
+	*i_pushf is called from nec_interrupt
 	* All SEG_PREFIX opcodes need its own jumptable?
 	* REPNE/REPE prefix opcodes need their own jumptable?

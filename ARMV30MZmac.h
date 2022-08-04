@@ -259,8 +259,10 @@
 	add r0,r0,r1,lsr#4
 	str r1,[v30ptr,#v30RegSP]
 	ldrh r1,[v30ptr,#\reg]
-	eatCycles 1
-	b cpuWriteMem20W
+	stmfd sp!,{lr}
+	bl cpuWriteMem20W
+	ldmfd sp!,{lr}
+	fetch 1
 	.endm
 ;@----------------------------------------------------------------------------
 	.macro rol8 dst src
