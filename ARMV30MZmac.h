@@ -248,8 +248,8 @@
 	stmfd sp!,{lr}
 	popWord
 	strh r0,[v30ptr,#\reg]
-	eatCycles 1
-	ldmfd sp!,{pc}
+	ldmfd sp!,{lr}
+	fetch 1
 	.endm
 
 	.macro pushRegister reg
