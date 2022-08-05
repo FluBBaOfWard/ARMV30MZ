@@ -245,10 +245,8 @@
 	.endm
 
 	.macro popRegister reg
-	stmfd sp!,{lr}
 	popWord
 	strh r0,[v30ptr,#\reg]
-	ldmfd sp!,{lr}
 	fetch 1
 	.endm
 
@@ -259,9 +257,7 @@
 	add r0,r0,r1,lsr#4
 	str r1,[v30ptr,#v30RegSP]
 	ldrh r1,[v30ptr,#\reg]
-	stmfd sp!,{lr}
 	bl cpuWriteMem20W
-	ldmfd sp!,{lr}
 	fetch 1
 	.endm
 ;@----------------------------------------------------------------------------

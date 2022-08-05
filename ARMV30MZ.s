@@ -69,7 +69,6 @@
 i_add_br8:
 _00:	;@ ADD BR8
 ;@----------------------------------------------------------------------------
-	stmfd sp!,{lr}
 	getNextByteToReg r4
 	add r1,v30ptr,r4
 	ldrb r2,[r1,#v30ModRmReg]
@@ -85,7 +84,6 @@ _00:	;@ ADD BR8
 	strbpl r1,[v30ptr,-r5]
 	movmi r0,r5
 	blmi cpuWriteMem20
-	ldmfd sp!,{lr}
 	bic v30cyc,v30cyc,#SEG_PREFIX
 	fetch 1
 1:
@@ -100,7 +98,6 @@ _00:	;@ ADD BR8
 i_add_wr16:
 _01:	;@ ADD WR16
 ;@----------------------------------------------------------------------------
-	stmfd sp!,{lr}
 	getNextByteToReg r4
 	and r2,r4,#0x38
 	add r2,v30ptr,r2,lsr#1
@@ -118,7 +115,6 @@ _01:	;@ ADD WR16
 	strhpl r1,[r5,#v30Regs]
 	movmi r0,r5
 	blmi cpuWriteMem20W
-	ldmfd sp!,{lr}
 	bic v30cyc,v30cyc,#SEG_PREFIX
 	fetch 1
 1:
@@ -133,7 +129,6 @@ _01:	;@ ADD WR16
 i_add_r8b:
 _02:	;@ ADD R8b
 ;@----------------------------------------------------------------------------
-	stmfd sp!,{lr}
 	getNextByte
 	add r1,v30ptr,r0
 	ldrb r4,[r1,#v30ModRmReg]
@@ -146,7 +141,6 @@ _02:	;@ ADD R8b
 	add8 r0,r1
 	strb r1,[v30ptr,-r4]
 	bic v30cyc,v30cyc,#SEG_PREFIX
-	ldmfd sp!,{lr}
 	fetch 1
 1:
 	eatCycles 1
@@ -159,7 +153,6 @@ _02:	;@ ADD R8b
 i_add_r16w:
 _03:	;@ ADD R16W
 ;@----------------------------------------------------------------------------
-	stmfd sp!,{lr}
 	getNextByte
 	and r1,r0,#0x38
 	add r4,v30ptr,r1,lsr#1
@@ -173,7 +166,6 @@ _03:	;@ ADD R16W
 	add16 r0,r1
 	strh r1,[r4,#v30Regs]
 	bic v30cyc,v30cyc,#SEG_PREFIX
-	ldmfd sp!,{lr}
 	fetch 1
 1:
 	eatCycles 1
@@ -210,24 +202,19 @@ _06:	;@ PUSH ES
 	add r0,r0,r1,lsr#4
 	str r1,[v30ptr,#v30RegSP]
 	ldrh r1,[v30ptr,#v30SRegES+2]
-	stmfd sp!,{lr}
 	bl cpuWriteMem20W
-	ldmfd sp!,{lr}
 	fetch 2
 ;@----------------------------------------------------------------------------
 i_pop_es:
 _07:	;@ POP ES
 ;@----------------------------------------------------------------------------
-	stmfd sp!,{lr}
 	popWord
 	strh r0,[v30ptr,#v30SRegES+2]
-	ldmfd sp!,{lr}
 	fetch 3
 ;@----------------------------------------------------------------------------
 i_or_br8:
 _08:	;@ OR BR8
 ;@----------------------------------------------------------------------------
-	stmfd sp!,{lr}
 	getNextByteToReg r4
 	add r1,v30ptr,r4
 	ldrb r2,[r1,#v30ModRmReg]
@@ -243,7 +230,6 @@ _08:	;@ OR BR8
 	strbpl r1,[v30ptr,-r5]
 	movmi r0,r5
 	blmi cpuWriteMem20
-	ldmfd sp!,{lr}
 	bic v30cyc,v30cyc,#SEG_PREFIX
 	fetch 1
 1:
@@ -258,7 +244,6 @@ _08:	;@ OR BR8
 i_or_wr16:
 _09:	;@ OR WR16
 ;@----------------------------------------------------------------------------
-	stmfd sp!,{lr}
 	getNextByteToReg r4
 	and r2,r4,#0x38
 	add r2,v30ptr,r2,lsr#1
@@ -275,7 +260,6 @@ _09:	;@ OR WR16
 	strhpl r1,[r5,#v30Regs]
 	movmi r0,r5
 	blmi cpuWriteMem20W
-	ldmfd sp!,{lr}
 	bic v30cyc,v30cyc,#SEG_PREFIX
 	fetch 1
 1:
@@ -290,7 +274,6 @@ _09:	;@ OR WR16
 i_or_r8b:
 _0A:	;@ OR R8b
 ;@----------------------------------------------------------------------------
-	stmfd sp!,{lr}
 	getNextByte
 	add r1,v30ptr,r0
 	ldrb r4,[r1,#v30ModRmReg]
@@ -303,7 +286,6 @@ _0A:	;@ OR R8b
 	or8 r0,r1
 	strb r1,[v30ptr,-r4]
 	bic v30cyc,v30cyc,#SEG_PREFIX
-	ldmfd sp!,{lr}
 	fetch 1
 1:
 	eatCycles 1
@@ -316,7 +298,6 @@ _0A:	;@ OR R8b
 i_or_r16w:
 _0B:	;@ OR R16W
 ;@----------------------------------------------------------------------------
-	stmfd sp!,{lr}
 	getNextByte
 	and r1,r0,#0x38
 	add r4,v30ptr,r1,lsr#1
@@ -330,7 +311,6 @@ _0B:	;@ OR R16W
 	or16 r0,r1
 	strh r1,[r4,#v30Regs]
 	bic v30cyc,v30cyc,#SEG_PREFIX
-	ldmfd sp!,{lr}
 	fetch 1
 1:
 	eatCycles 1
@@ -367,15 +347,12 @@ _0E:	;@ PUSH CS
 	add r0,r0,r1,lsr#4
 	str r1,[v30ptr,#v30RegSP]
 	ldrh r1,[v30ptr,#v30SRegCS+2]
-	stmfd sp!,{lr}
 	bl cpuWriteMem20W
-	ldmfd sp!,{lr}
 	fetch 2
 ;@----------------------------------------------------------------------------
 i_adc_br8:
 _10:	;@ ADC BR8
 ;@----------------------------------------------------------------------------
-	stmfd sp!,{lr}
 	getNextByteToReg r4
 	add r1,v30ptr,r4
 	ldrb r2,[r1,#v30ModRmReg]
@@ -391,7 +368,6 @@ _10:	;@ ADC BR8
 	strbpl r1,[v30ptr,-r5]
 	movmi r0,r5
 	blmi cpuWriteMem20
-	ldmfd sp!,{lr}
 	bic v30cyc,v30cyc,#SEG_PREFIX
 	fetch 1
 1:
@@ -406,7 +382,6 @@ _10:	;@ ADC BR8
 i_adc_wr16:
 _11:	;@ ADC WR16
 ;@----------------------------------------------------------------------------
-	stmfd sp!,{lr}
 	getNextByteToReg r4
 	and r2,r4,#0x38
 	add r2,v30ptr,r2,lsr#1
@@ -424,7 +399,6 @@ _11:	;@ ADC WR16
 	strhpl r1,[r5,#v30Regs]
 	movmi r0,r5
 	blmi cpuWriteMem20W
-	ldmfd sp!,{lr}
 	bic v30cyc,v30cyc,#SEG_PREFIX
 	fetch 1
 1:
@@ -439,7 +413,6 @@ _11:	;@ ADC WR16
 i_adc_r8b:
 _12:	;@ ADC R8b
 ;@----------------------------------------------------------------------------
-	stmfd sp!,{lr}
 	getNextByte
 	add r1,v30ptr,r0
 	ldrb r4,[r1,#v30ModRmReg]
@@ -452,7 +425,6 @@ _12:	;@ ADC R8b
 	adc8 r0,r1
 	strb r1,[v30ptr,-r4]
 	bic v30cyc,v30cyc,#SEG_PREFIX
-	ldmfd sp!,{lr}
 	fetch 1
 1:
 	eatCycles 1
@@ -465,7 +437,6 @@ _12:	;@ ADC R8b
 i_adc_r16w:
 _13:	;@ ADC R16W
 ;@----------------------------------------------------------------------------
-	stmfd sp!,{lr}
 	getNextByte
 	and r1,r0,#0x38
 	add r4,v30ptr,r1,lsr#1
@@ -479,7 +450,6 @@ _13:	;@ ADC R16W
 	adc16 r0,r1
 	strh r1,[r4,#v30Regs]
 	bic v30cyc,v30cyc,#SEG_PREFIX
-	ldmfd sp!,{lr}
 	fetch 1
 1:
 	eatCycles 1
@@ -516,25 +486,20 @@ _16:	;@ PUSH SS
 	add r0,r1,r2,lsr#4
 	str r2,[v30ptr,#v30RegSP]
 	mov r1,r1,lsr#16
-	stmfd sp!,{lr}
 	bl cpuWriteMem20W
-	ldmfd sp!,{lr}
 	fetch 2
 ;@----------------------------------------------------------------------------
 i_pop_ss:
 _17:	;@ POP SS
 ;@----------------------------------------------------------------------------
-	stmfd sp!,{lr}
 	popWord
 	strh r0,[v30ptr,#v30SRegSS+2]
 //	orr v30cyc,v30cyc,#LOCK_PREFIX
-	ldmfd sp!,{lr}
 	fetch 3
 ;@----------------------------------------------------------------------------
 i_sbb_br8:
 _18:	;@ SBB BR8
 ;@----------------------------------------------------------------------------
-	stmfd sp!,{lr}
 	getNextByteToReg r4
 	add r1,v30ptr,r4
 	ldrb r2,[r1,#v30ModRmReg]
@@ -550,7 +515,6 @@ _18:	;@ SBB BR8
 	strbpl r1,[v30ptr,-r5]
 	movmi r0,r5
 	blmi cpuWriteMem20
-	ldmfd sp!,{lr}
 	bic v30cyc,v30cyc,#SEG_PREFIX
 	fetch 1
 1:
@@ -565,7 +529,6 @@ _18:	;@ SBB BR8
 i_sbb_wr16:
 _19:	;@ SBB WR16
 ;@----------------------------------------------------------------------------
-	stmfd sp!,{lr}
 	getNextByteToReg r4
 	and r2,r4,#0x38
 	add r2,v30ptr,r2,lsr#1
@@ -583,7 +546,6 @@ _19:	;@ SBB WR16
 	strhpl r1,[r5,#v30Regs]
 	movmi r0,r5
 	blmi cpuWriteMem20W
-	ldmfd sp!,{lr}
 	bic v30cyc,v30cyc,#SEG_PREFIX
 	fetch 1
 1:
@@ -598,7 +560,6 @@ _19:	;@ SBB WR16
 i_sbb_r8b:
 _1A:	;@ SBB R8b
 ;@----------------------------------------------------------------------------
-	stmfd sp!,{lr}
 	getNextByte
 	add r1,v30ptr,r0
 	ldrb r4,[r1,#v30ModRmReg]
@@ -611,7 +572,6 @@ _1A:	;@ SBB R8b
 	subc8 r0,r1
 	strb r1,[v30ptr,-r4]
 	bic v30cyc,v30cyc,#SEG_PREFIX
-	ldmfd sp!,{lr}
 	fetch 1
 1:
 	eatCycles 1
@@ -624,7 +584,6 @@ _1A:	;@ SBB R8b
 i_sbb_r16w:
 _1B:	;@ SBB R16W
 ;@----------------------------------------------------------------------------
-	stmfd sp!,{lr}
 	getNextByte
 	and r1,r0,#0x38
 	add r4,v30ptr,r1,lsr#1
@@ -638,7 +597,6 @@ _1B:	;@ SBB R16W
 	subc16 r0,r1
 	strh r1,[r4,#v30Regs]
 	bic v30cyc,v30cyc,#SEG_PREFIX
-	ldmfd sp!,{lr}
 	fetch 1
 1:
 	eatCycles 1
@@ -675,24 +633,19 @@ _1E:	;@ PUSH DS
 	add r0,r0,r1,lsr#4
 	str r1,[v30ptr,#v30RegSP]
 	ldrh r1,[v30ptr,#v30SRegDS+2]
-	stmfd sp!,{lr}
 	bl cpuWriteMem20W
-	ldmfd sp!,{lr}
 	fetch 2
 ;@----------------------------------------------------------------------------
 i_pop_ds:
 _1F:	;@ POP DS
 ;@----------------------------------------------------------------------------
-	stmfd sp!,{lr}
 	popWord
 	strh r0,[v30ptr,#v30SRegDS+2]
-	ldmfd sp!,{lr}
 	fetch 3
 ;@----------------------------------------------------------------------------
 i_and_br8:
 _20:	;@ AND BR8
 ;@----------------------------------------------------------------------------
-	stmfd sp!,{lr}
 	getNextByteToReg r4
 	add r1,v30ptr,r4
 	ldrb r2,[r1,#v30ModRmReg]
@@ -708,7 +661,6 @@ _20:	;@ AND BR8
 	strbpl r1,[v30ptr,-r5]
 	movmi r0,r5
 	blmi cpuWriteMem20
-	ldmfd sp!,{lr}
 	bic v30cyc,v30cyc,#SEG_PREFIX
 	fetch 1
 1:
@@ -723,7 +675,6 @@ _20:	;@ AND BR8
 i_and_wr16:
 _21:	;@ AND WR16
 ;@----------------------------------------------------------------------------
-	stmfd sp!,{lr}
 	getNextByteToReg r4
 	and r2,r4,#0x38
 	add r2,v30ptr,r2,lsr#1
@@ -740,7 +691,6 @@ _21:	;@ AND WR16
 	strhpl r1,[r5,#v30Regs]
 	movmi r0,r5
 	blmi cpuWriteMem20W
-	ldmfd sp!,{lr}
 	bic v30cyc,v30cyc,#SEG_PREFIX
 	fetch 1
 1:
@@ -755,7 +705,6 @@ _21:	;@ AND WR16
 i_and_r8b:
 _22:	;@ AND R8b
 ;@----------------------------------------------------------------------------
-	stmfd sp!,{lr}
 	getNextByte
 	add r1,v30ptr,r0
 	ldrb r4,[r1,#v30ModRmReg]
@@ -768,7 +717,6 @@ _22:	;@ AND R8b
 	and8 r0,r1
 	strb r1,[v30ptr,-r4]
 	bic v30cyc,v30cyc,#SEG_PREFIX
-	ldmfd sp!,{lr}
 	fetch 1
 1:
 	eatCycles 1
@@ -781,7 +729,6 @@ _22:	;@ AND R8b
 i_and_r16w:
 _23:	;@ AND R16W
 ;@----------------------------------------------------------------------------
-	stmfd sp!,{lr}
 	getNextByte
 	and r1,r0,#0x38
 	add r4,v30ptr,r1,lsr#1
@@ -795,7 +742,6 @@ _23:	;@ AND R16W
 	and16 r0,r1
 	strh r1,[r4,#v30Regs]
 	bic v30cyc,v30cyc,#SEG_PREFIX
-	ldmfd sp!,{lr}
 	fetch 1
 1:
 	eatCycles 1
@@ -862,7 +808,6 @@ _27:	;@ DAA / ADJ4A
 i_sub_br8:
 _28:	;@ SUB BR8
 ;@----------------------------------------------------------------------------
-	stmfd sp!,{lr}
 	getNextByteToReg r4
 	add r1,v30ptr,r4
 	ldrb r6,[r1,#v30ModRmReg]
@@ -878,7 +823,6 @@ _28:	;@ SUB BR8
 	strbpl r1,[v30ptr,-r5]
 	movmi r0,r5
 	blmi cpuWriteMem20
-	ldmfd sp!,{lr}
 	bic v30cyc,v30cyc,#SEG_PREFIX
 	fetch 1
 1:
@@ -893,7 +837,6 @@ _28:	;@ SUB BR8
 i_sub_wr16:
 _29:	;@ SUB WR16
 ;@----------------------------------------------------------------------------
-	stmfd sp!,{lr}
 	getNextByteToReg r4
 	and r2,r4,#0x38
 	add r2,v30ptr,r2,lsr#1
@@ -911,7 +854,6 @@ _29:	;@ SUB WR16
 	strhpl r1,[r5,#v30Regs]
 	movmi r0,r5
 	blmi cpuWriteMem20W
-	ldmfd sp!,{lr}
 	bic v30cyc,v30cyc,#SEG_PREFIX
 	fetch 1
 1:
@@ -926,7 +868,6 @@ _29:	;@ SUB WR16
 i_sub_r8b:
 _2A:	;@ SUB R8b
 ;@----------------------------------------------------------------------------
-	stmfd sp!,{lr}
 	getNextByte
 	add r1,v30ptr,r0
 	ldrb r4,[r1,#v30ModRmReg]
@@ -939,7 +880,6 @@ _2A:	;@ SUB R8b
 	sub8 r0,r1
 	strb r1,[v30ptr,-r4]
 	bic v30cyc,v30cyc,#SEG_PREFIX
-	ldmfd sp!,{lr}
 	fetch 1
 1:
 	eatCycles 1
@@ -952,7 +892,6 @@ _2A:	;@ SUB R8b
 i_sub_r16w:
 _2B:	;@ SUB R16W
 ;@----------------------------------------------------------------------------
-	stmfd sp!,{lr}
 	getNextByte
 	and r1,r0,#0x38
 	add r4,v30ptr,r1,lsr#1
@@ -966,7 +905,6 @@ _2B:	;@ SUB R16W
 	sub16 r0,r1
 	strh r1,[r4,#v30Regs]
 	bic v30cyc,v30cyc,#SEG_PREFIX
-	ldmfd sp!,{lr}
 	fetch 1
 1:
 	eatCycles 1
@@ -1033,7 +971,6 @@ _2F:	;@ DAS / ADJ4S
 i_xor_br8:
 _30:	;@ XOR BR8
 ;@----------------------------------------------------------------------------
-	stmfd sp!,{lr}
 	getNextByteToReg r4
 	add r1,v30ptr,r4
 	ldrb r6,[r1,#v30ModRmReg]
@@ -1049,7 +986,6 @@ _30:	;@ XOR BR8
 	strbpl r1,[v30ptr,-r5]
 	movmi r0,r5
 	blmi cpuWriteMem20
-	ldmfd sp!,{lr}
 	bic v30cyc,v30cyc,#SEG_PREFIX
 	fetch 1
 1:
@@ -1064,7 +1000,6 @@ _30:	;@ XOR BR8
 i_xor_wr16:
 _31:	;@ XOR WR16
 ;@----------------------------------------------------------------------------
-	stmfd sp!,{lr}
 	getNextByteToReg r4
 	and r2,r4,#0x38
 	add r2,v30ptr,r2,lsr#1
@@ -1081,7 +1016,6 @@ _31:	;@ XOR WR16
 	strhpl r1,[r5,#v30Regs]
 	movmi r0,r5
 	blmi cpuWriteMem20W
-	ldmfd sp!,{lr}
 	bic v30cyc,v30cyc,#SEG_PREFIX
 	fetch 1
 1:
@@ -1096,7 +1030,6 @@ _31:	;@ XOR WR16
 i_xor_r8b:
 _32:	;@ XOR R8b
 ;@----------------------------------------------------------------------------
-	stmfd sp!,{lr}
 	getNextByte
 	add r1,v30ptr,r0
 	ldrb r4,[r1,#v30ModRmReg]
@@ -1109,7 +1042,6 @@ _32:	;@ XOR R8b
 	xor8 r0,r1
 	strb r1,[v30ptr,-r4]
 	bic v30cyc,v30cyc,#SEG_PREFIX
-	ldmfd sp!,{lr}
 	fetch 1
 1:
 	eatCycles 1
@@ -1122,7 +1054,6 @@ _32:	;@ XOR R8b
 i_xor_r16w:
 _33:	;@ XOR R16W
 ;@----------------------------------------------------------------------------
-	stmfd sp!,{lr}
 	getNextByte
 	and r1,r0,#0x38
 	add r4,v30ptr,r1,lsr#1
@@ -1136,7 +1067,6 @@ _33:	;@ XOR R16W
 	xor16 r0,r1
 	strh r1,[r4,#v30Regs]
 	bic v30cyc,v30cyc,#SEG_PREFIX
-	ldmfd sp!,{lr}
 	fetch 1
 1:
 	eatCycles 1
@@ -1197,7 +1127,6 @@ _37:	;@ AAA / ADJBA
 i_cmp_br8:
 _38:	;@ CMP BR8
 ;@----------------------------------------------------------------------------
-	stmfd sp!,{lr}
 	getNextByte
 	add r1,v30ptr,r0
 	ldrb r2,[r1,#v30ModRmReg]
@@ -1209,7 +1138,6 @@ _38:	;@ CMP BR8
 0:
 	sub8 r4,r0
 	bic v30cyc,v30cyc,#SEG_PREFIX
-	ldmfd sp!,{lr}
 	fetch 1
 1:
 	eatCycles 1
@@ -1222,7 +1150,6 @@ _38:	;@ CMP BR8
 i_cmp_wr16:
 _39:	;@ CMP WR16
 ;@----------------------------------------------------------------------------
-	stmfd sp!,{lr}
 	getNextByte
 	and r1,r0,#0x38
 	add r2,v30ptr,r1,lsr#1
@@ -1236,7 +1163,6 @@ _39:	;@ CMP WR16
 	mov r0,r0,lsl#16
 	sub16 r4,r0
 	bic v30cyc,v30cyc,#SEG_PREFIX
-	ldmfd sp!,{lr}
 	fetch 1
 1:
 	eatCycles 1
@@ -1249,7 +1175,6 @@ _39:	;@ CMP WR16
 i_cmp_r8b:
 _3A:	;@ CMP R8b
 ;@----------------------------------------------------------------------------
-	stmfd sp!,{lr}
 	getNextByte
 	add r1,v30ptr,r0
 	ldrb r2,[r1,#v30ModRmReg]
@@ -1261,7 +1186,6 @@ _3A:	;@ CMP R8b
 0:
 	sub8 r0,r4
 	bic v30cyc,v30cyc,#SEG_PREFIX
-	ldmfd sp!,{lr}
 	fetch 1
 1:
 	eatCycles 1
@@ -1274,7 +1198,6 @@ _3A:	;@ CMP R8b
 i_cmp_r16w:
 _3B:	;@ CMP R16W
 ;@----------------------------------------------------------------------------
-	stmfd sp!,{lr}
 	getNextByte
 	and r1,r0,#0x38
 	add r2,v30ptr,r1,lsr#1
@@ -1287,7 +1210,6 @@ _3B:	;@ CMP R16W
 0:
 	sub16 r0,r4
 	bic v30cyc,v30cyc,#SEG_PREFIX
-	ldmfd sp!,{lr}
 	fetch 1
 1:
 	eatCycles 1
@@ -1453,9 +1375,7 @@ _54:	;@ PUSH SP
 	add r0,r0,r1,lsr#4
 	str r1,[v30ptr,#v30RegSP]
 	mov r1,r1,lsr#16
-	stmfd sp!,{lr}
 	bl cpuWriteMem20W
-	ldmfd sp!,{lr}
 	fetch 1
 ;@----------------------------------------------------------------------------
 i_push_bp:
@@ -1497,13 +1417,11 @@ _5B:	;@ POP BX
 i_pop_sp:
 _5C:	;@ POP SP
 ;@----------------------------------------------------------------------------
-	stmfd sp!,{lr}
 	ldr r1,[v30ptr,#v30RegSP]
 	ldr r0,[v30ptr,#v30SRegSS]
 	add r0,r0,r1,lsr#4
 	bl cpuReadMem20W
 	strh r0,[v30ptr,#v30RegSP+2]
-	ldmfd sp!,{lr}
 	fetch 1
 ;@----------------------------------------------------------------------------
 i_pop_bp:
@@ -1525,7 +1443,6 @@ _5F:	;@ POP DI
 i_pusha:
 _60:	;@ PUSHA
 ;@----------------------------------------------------------------------------
-	stmfd sp!,{lr}
 	ldr r4,[v30ptr,#v30RegSP]
 	ldr r5,[v30ptr,#v30SRegSS]
 	sub r4,r4,#0x20000
@@ -1561,13 +1478,11 @@ _60:	;@ PUSHA
 	ldrh r1,[v30ptr,#v30RegIY+2]
 	bl cpuWriteMem20W
 	str r4,[v30ptr,#v30RegSP]
-	ldmfd sp!,{lr}
 	fetch 9
 ;@----------------------------------------------------------------------------
 i_popa:
 _61:	;@ POPA
 ;@----------------------------------------------------------------------------
-	stmfd sp!,{lr}
 	ldr r1,[v30ptr,#v30RegSP]
 	ldr r5,[v30ptr,#v30SRegSS]
 	add r4,r1,#0x20000
@@ -1599,13 +1514,11 @@ _61:	;@ POPA
 	bl cpuReadMem20W
 	strh r0,[v30ptr,#v30RegAW]
 	str r4,[v30ptr,#v30RegSP]
-	ldmfd sp!,{lr}
 	fetch 9
 ;@----------------------------------------------------------------------------
 i_chkind:
 _62:	;@ CHKIND
 ;@----------------------------------------------------------------------------
-	stmfd sp!,{lr}
 	getNextByte
 	and r1,r0,#0x38
 	add r2,v30ptr,r1,lsr#1
@@ -1624,7 +1537,6 @@ _62:	;@ CHKIND
 	mov r0,r5
 	bl cpuReadMem20W
 
-	ldmfd sp!,{lr}
 	bic v30cyc,v30cyc,#SEG_PREFIX
 	cmp r4,r6
 	cmppl r0,r4
@@ -1649,15 +1561,12 @@ _68:	;@ PUSH D16
 	sub r2,r2,#0x20000
 	add r0,r0,r2,lsr#4
 	str r2,[v30ptr,#v30RegSP]
-	stmfd sp!,{lr}
 	bl cpuWriteMem20W
-	ldmfd sp!,{lr}
 	fetch 1
 ;@----------------------------------------------------------------------------
 i_imul_d16:
 _69:	;@ IMUL D16
 ;@----------------------------------------------------------------------------
-	stmfd sp!,{lr}
 	getNextByte
 	and r1,r0,#0x38
 	add r4,v30ptr,r1,lsr#1
@@ -1680,7 +1589,6 @@ _69:	;@ IMUL D16
 
 	strh r0,[r4,#v30Regs]
 	bic v30cyc,v30cyc,#SEG_PREFIX
-	ldmfd sp!,{lr}
 	fetch 5
 1:
 	eatCycles 1
@@ -1699,15 +1607,12 @@ _6A:	;@ PUSH D8
 	sub r2,r2,#0x20000
 	add r0,r0,r2,lsr#4
 	str r2,[v30ptr,#v30RegSP]
-	stmfd sp!,{lr}
 	bl cpuWriteMem20W
-	ldmfd sp!,{lr}
 	fetch 1
 ;@----------------------------------------------------------------------------
 i_imul_d8:
 _6B:	;@ IMUL D8
 ;@----------------------------------------------------------------------------
-	stmfd sp!,{lr}
 	getNextByte
 	and r1,r0,#0x38
 	add r4,v30ptr,r1,lsr#1
@@ -1729,7 +1634,6 @@ _6B:	;@ IMUL D8
 
 	strh r2,[r4,#v30Regs]
 	bic v30cyc,v30cyc,#SEG_PREFIX
-	ldmfd sp!,{lr}
 	fetch 5
 1:
 	eatCycles 1
@@ -1745,7 +1649,6 @@ f36c:	;@ REP INMB
 	ldrh r7,[v30ptr,#v30RegCW]
 	cmp r7,#1
 	bmi 1f
-	stmfd sp!,{lr}
 0:
 	ldrh r0,[v30ptr,#v30RegDW]
 	bl v30ReadPort
@@ -1760,7 +1663,6 @@ f36c:	;@ REP INMB
 	eatCycles 6
 	subs r7,r7,#1
 	bne 0b
-	ldmfd sp!,{lr}
 1:
 	strh r7,[v30ptr,#v30RegCW]
 	bic v30cyc,v30cyc,#SEG_PREFIX+REP_PREFIX+LOCK_PREFIX
@@ -1769,7 +1671,6 @@ f36c:	;@ REP INMB
 i_inmb:
 _6C:	;@ INMB
 ;@----------------------------------------------------------------------------
-	stmfd sp!,{lr}
 	ldrh r0,[v30ptr,#v30RegDW]
 	bl v30ReadPort
 	ldrsb r3,[v30ptr,#v30DF]
@@ -1780,7 +1681,6 @@ _6C:	;@ INMB
 	add r0,r0,r2,lsr#4
 	str r3,[v30ptr,#v30RegIY]
 	bl cpuWriteMem20
-	ldmfd sp!,{lr}
 	fetch 6
 
 ;@----------------------------------------------------------------------------
@@ -1789,7 +1689,6 @@ f36d:	;@ REP INMW
 	ldrh r7,[v30ptr,#v30RegCW]
 	cmp r7,#1
 	bmi 1f
-	stmfd sp!,{lr}
 0:
 	ldrh r0,[v30ptr,#v30RegDW]
 	add r4,r0,#1
@@ -1808,7 +1707,6 @@ f36d:	;@ REP INMW
 	eatCycles 6
 	subs r7,r7,#1
 	bne 0b
-	ldmfd sp!,{lr}
 1:
 	strh r7,[v30ptr,#v30RegCW]
 	bic v30cyc,v30cyc,#SEG_PREFIX+REP_PREFIX+LOCK_PREFIX
@@ -1817,7 +1715,6 @@ f36d:	;@ REP INMW
 i_inmw:
 _6D:	;@ INMW
 ;@----------------------------------------------------------------------------
-	stmfd sp!,{lr}
 	ldrh r0,[v30ptr,#v30RegDW]
 	add r4,r0,#1
 	bl v30ReadPort
@@ -1832,7 +1729,6 @@ _6D:	;@ INMW
 	add r0,r0,r2,lsr#4
 	str r3,[v30ptr,#v30RegIY]
 	bl cpuWriteMem20W
-	ldmfd sp!,{lr}
 	fetch 6
 
 ;@----------------------------------------------------------------------------
@@ -1841,7 +1737,6 @@ f36e:	;@ REP OUTMB
 	ldrh r7,[v30ptr,#v30RegCW]
 	cmp r7,#1
 	bmi 1f
-	stmfd sp!,{lr}
 0:
 	tst v30cyc,#SEG_PREFIX
 	ldrne r0,[v30ptr,#v30PrefixBase]
@@ -1858,7 +1753,6 @@ f36e:	;@ REP OUTMB
 	eatCycles 6
 	subs r7,r7,#1
 	bne 0b
-	ldmfd sp!,{lr}
 1:
 	strh r7,[v30ptr,#v30RegCW]
 	bic v30cyc,v30cyc,#SEG_PREFIX+REP_PREFIX+LOCK_PREFIX
@@ -1870,7 +1764,6 @@ _6E:	;@ OUTMB
 	tst v30cyc,#SEG_PREFIX
 	ldrne r0,[v30ptr,#v30PrefixBase]
 	ldreq r0,[v30ptr,#v30SRegDS]
-	stmfd sp!,{lr}
 	ldr r1,[v30ptr,#v30RegIX]
 	ldrsb r2,[v30ptr,#v30DF]
 	add r0,r0,r1,lsr#4
@@ -1880,7 +1773,6 @@ _6E:	;@ OUTMB
 	mov r1,r0
 	ldrh r0,[v30ptr,#v30RegDW]
 	bl v30WritePort
-	ldmfd sp!,{lr}
 	bic v30cyc,v30cyc,#SEG_PREFIX
 	fetch 7
 
@@ -1890,7 +1782,6 @@ f36f:	;@ REP OUTMW
 	ldrh r7,[v30ptr,#v30RegCW]
 	cmp r7,#1
 	bmi 1f
-	stmfd sp!,{lr}
 0:
 	tst v30cyc,#SEG_PREFIX
 	ldrne r0,[v30ptr,#v30PrefixBase]
@@ -1912,7 +1803,6 @@ f36f:	;@ REP OUTMW
 	eatCycles 6
 	subs r7,r7,#1
 	bne 0b
-	ldmfd sp!,{lr}
 1:
 	strh r7,[v30ptr,#v30RegCW]
 	bic v30cyc,v30cyc,#SEG_PREFIX+REP_PREFIX+LOCK_PREFIX
@@ -1924,7 +1814,6 @@ _6F:	;@ OUTMW
 	tst v30cyc,#SEG_PREFIX
 	ldrne r0,[v30ptr,#v30PrefixBase]
 	ldreq r0,[v30ptr,#v30SRegDS]
-	stmfd sp!,{lr}
 	ldr r1,[v30ptr,#v30RegIX]
 	ldrsb r2,[v30ptr,#v30DF]
 	add r0,r0,r1,lsr#4
@@ -1939,7 +1828,6 @@ _6F:	;@ OUTMW
 	mov r1,r4,lsr#8
 	add r0,r5,#1
 	bl v30WritePort
-	ldmfd sp!,{lr}
 	bic v30cyc,v30cyc,#SEG_PREFIX
 	fetch 7
 
@@ -2073,7 +1961,6 @@ _80:	;@ PRE 80
 i_82pre:
 _82:	;@ PRE 82
 ;@----------------------------------------------------------------------------
-	stmfd sp!,{lr}
 	getNextByteToReg r4
 	cmp r4,#0xC0
 	bmi 1f
@@ -2119,20 +2006,17 @@ xor80:
 	b 2f
 cmp80:
 	sub8 r1,r0
-	ldmfd sp!,{lr}
 	fetch 1
 2:
 	cmp r4,#0xC0
 	strbpl r1,[v30ptr,-r5]
 	movmi r0,r5
 	blmi cpuWriteMem20
-	ldmfd sp!,{lr}
 	fetch 1
 ;@----------------------------------------------------------------------------
 i_81pre:
 _81:	;@ PRE 81
 ;@----------------------------------------------------------------------------
-	stmfd sp!,{lr}
 	getNextByteToReg r4
 	cmp r4,#0xC0
 	bmi 1f
@@ -2181,20 +2065,17 @@ xor81:
 	b 2f
 cmp81:
 	sub16 r0,r6
-	ldmfd sp!,{lr}
 	fetch 1
 2:
 	cmp r4,#0xC0
 	strhpl r1,[r5,#v30Regs]
 	movmi r0,r5
 	blmi cpuWriteMem20W
-	ldmfd sp!,{lr}
 	fetch 1
 ;@----------------------------------------------------------------------------
 i_83pre:
 _83:	;@ PRE 83
 ;@----------------------------------------------------------------------------
-	stmfd sp!,{lr}
 	getNextByteToReg r4
 	cmp r4,#0xC0
 	bmi 1f
@@ -2219,7 +2100,6 @@ _83:	;@ PRE 83
 i_test_br8:
 _84:	;@ TEST BR8
 ;@----------------------------------------------------------------------------
-	stmfd sp!,{lr}
 	getNextByte
 	add r1,v30ptr,r0
 	ldrb r2,[r1,#v30ModRmReg]
@@ -2231,7 +2111,6 @@ _84:	;@ TEST BR8
 0:
 	and8 r4,r0
 	bic v30cyc,v30cyc,#SEG_PREFIX
-	ldmfd sp!,{lr}
 	fetch 1
 1:
 	eatCycles 1
@@ -2244,7 +2123,6 @@ _84:	;@ TEST BR8
 i_test_wr16:
 _85:	;@ TEST WR16
 ;@----------------------------------------------------------------------------
-	stmfd sp!,{lr}
 	getNextByte
 	and r1,r0,#0x38
 	add r2,v30ptr,r1,lsr#1
@@ -2257,7 +2135,6 @@ _85:	;@ TEST WR16
 0:
 	and16 r0,r4
 	bic v30cyc,v30cyc,#SEG_PREFIX
-	ldmfd sp!,{lr}
 	fetch 1
 1:
 	eatCycles 1
@@ -2284,7 +2161,6 @@ _86:	;@ XCHG BR8
 	bic v30cyc,v30cyc,#SEG_PREFIX
 	fetch 3
 0:
-	stmfd sp!,{lr}
 	add r1,v30ptr,#v30EATable
 	mov lr,pc
 	ldr pc,[r1,r0,lsl#2]
@@ -2294,7 +2170,6 @@ _86:	;@ XCHG BR8
 	strb r0,[v30ptr,-r4]
 	mov r0,r5
 	bl cpuWriteMem20
-	ldmfd sp!,{lr}
 	bic v30cyc,v30cyc,#SEG_PREFIX
 	fetch 5
 
@@ -2317,7 +2192,6 @@ _87:	;@ XCHG WR16
 	bic v30cyc,v30cyc,#SEG_PREFIX
 	fetch 3
 0:
-	stmfd sp!,{lr}
 	add r1,v30ptr,#v30EATable
 	mov lr,pc
 	ldr pc,[r1,r0,lsl#2]
@@ -2327,7 +2201,6 @@ _87:	;@ XCHG WR16
 	strh r0,[r4,#v30Regs]
 	mov r0,r5
 	bl cpuWriteMem20W
-	ldmfd sp!,{lr}
 	bic v30cyc,v30cyc,#SEG_PREFIX
 	fetch 5
 ;@----------------------------------------------------------------------------
@@ -2346,13 +2219,11 @@ _88:	;@ MOV BR8
 	bic v30cyc,v30cyc,#SEG_PREFIX
 	fetch 1
 0:
-	stmfd sp!,{lr}
 	add r1,v30ptr,#v30EATable
 	mov lr,pc
 	ldr pc,[r1,r0,lsl#2]
 	mov r1,r4
 	bl cpuWriteMem20
-	ldmfd sp!,{lr}
 	bic v30cyc,v30cyc,#SEG_PREFIX
 	fetch 1
 ;@----------------------------------------------------------------------------
@@ -2372,13 +2243,11 @@ _89:	;@ MOV WR16
 	bic v30cyc,v30cyc,#SEG_PREFIX
 	fetch 1
 0:
-	stmfd sp!,{lr}
 	add r1,v30ptr,#v30EATable
 	mov lr,pc
 	ldr pc,[r1,r0,lsl#2]
 	mov r1,r4
 	bl cpuWriteMem20W
-	ldmfd sp!,{lr}
 	bic v30cyc,v30cyc,#SEG_PREFIX
 	fetch 1
 ;@----------------------------------------------------------------------------
@@ -2397,13 +2266,11 @@ _8A:	;@ MOV R8B
 	bic v30cyc,v30cyc,#SEG_PREFIX
 	fetch 1
 0:
-	stmfd sp!,{lr}
 	add r1,v30ptr,#v30EATable
 	mov lr,pc
 	ldr pc,[r1,r0,lsl#2]
 	bl cpuReadMem20
 	strb r0,[v30ptr,-r4]
-	ldmfd sp!,{lr}
 	bic v30cyc,v30cyc,#SEG_PREFIX
 	fetch 1
 ;@----------------------------------------------------------------------------
@@ -2423,13 +2290,11 @@ Str_8B:
 	bic v30cyc,v30cyc,#SEG_PREFIX
 	fetch 1
 0:
-	stmfd sp!,{lr}
 	add r1,v30ptr,#v30EATable
 	mov lr,pc
 	ldr pc,[r1,r0,lsl#2]
 	bl cpuReadMem20W
 	strh r0,[r4,#v30Regs]
-	ldmfd sp!,{lr}
 	bic v30cyc,v30cyc,#SEG_PREFIX
 	fetch 1
 ;@----------------------------------------------------------------------------
@@ -2449,13 +2314,11 @@ _8C:	;@ MOV WSREG
 	bic v30cyc,v30cyc,#SEG_PREFIX
 	fetch 1
 0:
-	stmfd sp!,{lr}
 	add r1,v30ptr,#v30EATable
 	mov lr,pc
 	ldr pc,[r1,r0,lsl#2]
 	mov r1,r4
 	bl cpuWriteMem20W
-	ldmfd sp!,{lr}
 	bic v30cyc,v30cyc,#SEG_PREFIX
 	fetch 1
 ;@----------------------------------------------------------------------------
@@ -2468,19 +2331,16 @@ _8D:	;@ LEA
 	cmp r0,#0xC0
 	bpl Str_8B
 
-	stmfd sp!,{lr}
 	add r1,v30ptr,#v30EATable
 	mov lr,pc
 	ldr pc,[r1,r0,lsl#2]		;@ EATable return EO in r1
 	str r1,[r4,#v30Regs2]
 	bic v30cyc,v30cyc,#SEG_PREFIX
-	ldmfd sp!,{lr}
 	fetch 1
 ;@----------------------------------------------------------------------------
 i_mov_sregw:
 _8E:	;@ MOV SREGW
 ;@----------------------------------------------------------------------------
-	stmfd sp!,{lr}
 	getNextByte
 	and r4,r0,#0x38
 	cmp r0,#0xC0
@@ -2496,7 +2356,6 @@ _8E:	;@ MOV SREGW
 	bic v30cyc,v30cyc,#SEG_PREFIX
 	cmp r4,#0x08			;@ CS?
 	bleq V30ReEncodePC
-	ldmfd sp!,{lr}
 	fetch 2
 1:
 	eatCycles 1
@@ -2509,7 +2368,6 @@ _8E:	;@ MOV SREGW
 i_popw:
 _8F:	;@ POPW
 ;@----------------------------------------------------------------------------
-	stmfd sp!,{lr}
 	popWord
 	mov r4,r0
 	getNextByte
@@ -2518,7 +2376,6 @@ _8F:	;@ POPW
 	and r0,r0,#7
 	add r2,v30ptr,r0,lsl#2
 	strh r4,[r2,#v30Regs]
-	ldmfd sp!,{lr}
 	bic v30cyc,v30cyc,#SEG_PREFIX
 	fetch 1
 0:
@@ -2527,7 +2384,6 @@ _8F:	;@ POPW
 	ldr pc,[r1,r0,lsl#2]
 	mov r1,r4
 	bl cpuWriteMem20W
-	ldmfd sp!,{lr}
 	bic v30cyc,v30cyc,#SEG_PREFIX
 	fetch 3
 ;@----------------------------------------------------------------------------
@@ -2617,7 +2473,6 @@ _99:	;@ CVTWL
 i_call_far:
 _9A:	;@ CALL FAR
 ;@----------------------------------------------------------------------------
-	stmfd sp!,{lr}
 	getNextWordToReg r4
 	getNextWord
 	ldrh r1,[v30ptr,#v30SRegCS+2]
@@ -2635,7 +2490,6 @@ _9A:	;@ CALL FAR
 	add r0,r5,r6,lsr#4
 	mov r1,r7
 	bl cpuWriteMem20W
-	ldmfd sp!,{lr}
 	fetch 7
 
 ;@----------------------------------------------------------------------------
@@ -2648,9 +2502,7 @@ _9B:	;@ POLL
 i_pushf:
 _9C:	;@ PUSH F
 ;@----------------------------------------------------------------------------
-	stmfd sp!,{lr}
 	bl pushFlags
-	ldmfd sp!,{lr}
 	fetch 2
 ;@----------------------------------------------------------------------------
 pushFlags:
@@ -2689,7 +2541,6 @@ pushFlags:
 i_popf:
 _9D:	;@ POP F
 ;@----------------------------------------------------------------------------
-	stmfd sp!,{lr}
 	popWord
 	bic v30f,v30f,#PSR_ALL	;@ Clear S, Z, C, V & A.
 	and r1,r0,#PF
@@ -2717,7 +2568,6 @@ _9D:	;@ POP F
 	strb r1,[v30ptr,#v30DF]
 
 	eatCycles 3
-	ldmfd sp!,{lr}
 	b v30ChkIrqInternal
 ;@----------------------------------------------------------------------------
 i_sahf:
@@ -2762,7 +2612,6 @@ _9F:	;@ LAHF
 i_mov_aldisp:
 _A0:	;@ MOV ALDISP
 ;@----------------------------------------------------------------------------
-	stmfd sp!,{lr}
 	getNextWord
 	tst v30cyc,#SEG_PREFIX
 	ldrne r1,[v30ptr,#v30PrefixBase]
@@ -2770,14 +2619,12 @@ _A0:	;@ MOV ALDISP
 	add r0,r1,r0,lsl#12
 	bl cpuReadMem20
 	strb r0,[v30ptr,#v30RegAL]
-	ldmfd sp!,{lr}
 	bic v30cyc,v30cyc,#SEG_PREFIX
 	fetch 1
 ;@----------------------------------------------------------------------------
 i_mov_axdisp:
 _A1:	;@ MOV AXDISP
 ;@----------------------------------------------------------------------------
-	stmfd sp!,{lr}
 	getNextWord
 	tst v30cyc,#SEG_PREFIX
 	ldrne r1,[v30ptr,#v30PrefixBase]
@@ -2785,7 +2632,6 @@ _A1:	;@ MOV AXDISP
 	add r0,r1,r0,lsl#12
 	bl cpuReadMem20W
 	strh r0,[v30ptr,#v30RegAW]
-	ldmfd sp!,{lr}
 	bic v30cyc,v30cyc,#SEG_PREFIX
 	fetch 1
 ;@----------------------------------------------------------------------------
@@ -2799,9 +2645,7 @@ _A2:	;@ MOV DISPAL
 	add r0,r1,r0,lsl#12
 	ldrb r1,[v30ptr,#v30RegAL]
 	bic v30cyc,v30cyc,#SEG_PREFIX
-	stmfd sp!,{lr}
 	bl cpuWriteMem20
-	ldmfd sp!,{lr}
 	fetch 1
 ;@----------------------------------------------------------------------------
 i_mov_dispax:
@@ -2814,9 +2658,7 @@ _A3:	;@ MOV DISPAX
 	add r0,r1,r0,lsl#12
 	ldrh r1,[v30ptr,#v30RegAW]
 	bic v30cyc,v30cyc,#SEG_PREFIX
-	stmfd sp!,{lr}
 	bl cpuWriteMem20W
-	ldmfd sp!,{lr}
 	fetch 1
 
 ;@----------------------------------------------------------------------------
@@ -2825,7 +2667,6 @@ f3a4:	;@ REP MOVSB
 	ldrh r7,[v30ptr,#v30RegCW]
 	cmp r7,#1
 	bmi 1f
-	stmfd sp!,{lr}
 0:
 	tst v30cyc,#SEG_PREFIX
 	ldrne r0,[v30ptr,#v30PrefixBase]
@@ -2846,7 +2687,6 @@ f3a4:	;@ REP MOVSB
 	eatCycles 7
 	subs r7,r7,#1
 	bne 0b
-	ldmfd sp!,{lr}
 1:
 	strh r7,[v30ptr,#v30RegCW]
 	bic v30cyc,v30cyc,#SEG_PREFIX+REP_PREFIX+LOCK_PREFIX
@@ -2858,7 +2698,6 @@ _A4:	;@ MOVSB
 	tst v30cyc,#SEG_PREFIX
 	ldrne r0,[v30ptr,#v30PrefixBase]
 	ldreq r0,[v30ptr,#v30SRegDS]
-	stmfd sp!,{lr}
 	ldr r1,[v30ptr,#v30RegIX]
 	ldrsb r4,[v30ptr,#v30DF]
 	add r0,r0,r1,lsr#4
@@ -2872,7 +2711,6 @@ _A4:	;@ MOVSB
 	add r0,r0,r3,lsr#4
 	str r2,[v30ptr,#v30RegIY]
 	bl cpuWriteMem20
-	ldmfd sp!,{lr}
 	bic v30cyc,v30cyc,#SEG_PREFIX
 	fetch 5
 
@@ -2882,7 +2720,6 @@ f3a5:	;@ REP MOSW
 	ldrh r7,[v30ptr,#v30RegCW]
 	cmp r7,#1
 	bmi 1f
-	stmfd sp!,{lr}
 0:
 	tst v30cyc,#SEG_PREFIX
 	ldrne r0,[v30ptr,#v30PrefixBase]
@@ -2903,7 +2740,6 @@ f3a5:	;@ REP MOSW
 	eatCycles 7
 	subs r7,r7,#1
 	bne 0b
-	ldmfd sp!,{lr}
 1:
 	strh r7,[v30ptr,#v30RegCW]
 	bic v30cyc,v30cyc,#SEG_PREFIX+REP_PREFIX+LOCK_PREFIX
@@ -2915,7 +2751,6 @@ _A5:	;@ MOVSW
 	tst v30cyc,#SEG_PREFIX
 	ldrne r0,[v30ptr,#v30PrefixBase]
 	ldreq r0,[v30ptr,#v30SRegDS]
-	stmfd sp!,{lr}
 	ldr r1,[v30ptr,#v30RegIX]
 	ldrsb r4,[v30ptr,#v30DF]
 	add r0,r0,r1,lsr#4
@@ -2929,7 +2764,6 @@ _A5:	;@ MOVSW
 	add r0,r0,r3,lsr#4
 	str r2,[v30ptr,#v30RegIY]
 	bl cpuWriteMem20W
-	ldmfd sp!,{lr}
 	bic v30cyc,v30cyc,#SEG_PREFIX
 	fetch 5
 
@@ -2939,7 +2773,6 @@ f2a6:	;@ REPNZ CMPSB
 	ldrh r7,[v30ptr,#v30RegCW]
 	cmp r7,#1
 	bmi 1f
-	stmfd sp!,{lr}
 0:
 	tst v30cyc,#SEG_PREFIX
 	ldrne r0,[v30ptr,#v30PrefixBase]
@@ -2966,7 +2799,6 @@ f2a6:	;@ REPNZ CMPSB
 	andne r0,v30f,#PSR_Z
 	cmpne r0,#PSR_Z
 	bne 0b
-	ldmfd sp!,{lr}
 1:
 	strh r7,[v30ptr,#v30RegCW]
 	bic v30cyc,v30cyc,#SEG_PREFIX+REP_PREFIX+LOCK_PREFIX
@@ -2977,7 +2809,6 @@ f3a6:	;@ REPZ CMPSB
 	ldrh r7,[v30ptr,#v30RegCW]
 	cmp r7,#1
 	bmi 1f
-	stmfd sp!,{lr}
 0:
 	tst v30cyc,#SEG_PREFIX
 	ldrne r0,[v30ptr,#v30PrefixBase]
@@ -3003,7 +2834,6 @@ f3a6:	;@ REPZ CMPSB
 	subs r7,r7,#1
 	tstne v30f,#PSR_Z
 	bne 0b
-	ldmfd sp!,{lr}
 1:
 	strh r7,[v30ptr,#v30RegCW]
 	bic v30cyc,v30cyc,#SEG_PREFIX+REP_PREFIX+LOCK_PREFIX
@@ -3015,7 +2845,6 @@ _A6:	;@ CMPSB
 	tst v30cyc,#SEG_PREFIX
 	ldrne r0,[v30ptr,#v30PrefixBase]
 	ldreq r0,[v30ptr,#v30SRegDS]
-	stmfd sp!,{lr}
 	ldr r1,[v30ptr,#v30RegIX]
 	ldrsb r4,[v30ptr,#v30DF]
 	add r0,r0,r1,lsr#4
@@ -3033,7 +2862,6 @@ _A6:	;@ CMPSB
 
 	sub8 r0,r4
 
-	ldmfd sp!,{lr}
 	bic v30cyc,v30cyc,#SEG_PREFIX
 	fetch 6
 
@@ -3043,7 +2871,6 @@ f2a7:	;@ REPNZ CMPSW
 	ldrh r7,[v30ptr,#v30RegCW]
 	cmp r7,#1
 	bmi 1f
-	stmfd sp!,{lr}
 0:
 	tst v30cyc,#SEG_PREFIX
 	ldrne r0,[v30ptr,#v30PrefixBase]
@@ -3070,7 +2897,6 @@ f2a7:	;@ REPNZ CMPSW
 	andne r0,v30f,#PSR_Z
 	cmpne r0,#PSR_Z
 	bne 0b
-	ldmfd sp!,{lr}
 1:
 	strh r7,[v30ptr,#v30RegCW]
 	bic v30cyc,v30cyc,#SEG_PREFIX+REP_PREFIX+LOCK_PREFIX
@@ -3081,7 +2907,6 @@ f3a7:	;@ REPZ CMPSW
 	ldrh r7,[v30ptr,#v30RegCW]
 	cmp r7,#1
 	bmi 1f
-	stmfd sp!,{lr}
 0:
 	tst v30cyc,#SEG_PREFIX
 	ldrne r0,[v30ptr,#v30PrefixBase]
@@ -3107,7 +2932,6 @@ f3a7:	;@ REPZ CMPSW
 	subs r7,r7,#1
 	tstne v30f,#PSR_Z
 	bne 0b
-	ldmfd sp!,{lr}
 1:
 	strh r7,[v30ptr,#v30RegCW]
 	bic v30cyc,v30cyc,#SEG_PREFIX+REP_PREFIX+LOCK_PREFIX
@@ -3119,7 +2943,6 @@ _A7:	;@ CMPSW
 	tst v30cyc,#SEG_PREFIX
 	ldrne r0,[v30ptr,#v30PrefixBase]
 	ldreq r0,[v30ptr,#v30SRegDS]
-	stmfd sp!,{lr}
 	ldr r1,[v30ptr,#v30RegIX]
 	ldrsb r4,[v30ptr,#v30DF]
 	add r0,r0,r1,lsr#4
@@ -3137,7 +2960,6 @@ _A7:	;@ CMPSW
 
 	sub16 r0,r4
 
-	ldmfd sp!,{lr}
 	bic v30cyc,v30cyc,#SEG_PREFIX
 	fetch 6
 ;@----------------------------------------------------------------------------
@@ -3163,7 +2985,6 @@ f3aa:	;@ REP STOSB
 	ldrh r7,[v30ptr,#v30RegCW]
 	cmp r7,#1
 	bmi 1f
-	stmfd sp!,{lr}
 0:
 	ldr r0,[v30ptr,#v30SRegES]
 	ldr r1,[v30ptr,#v30RegIY]
@@ -3176,7 +2997,6 @@ f3aa:	;@ REP STOSB
 	eatCycles 6
 	subs r7,r7,#1
 	bne 0b
-	ldmfd sp!,{lr}
 1:
 	strh r7,[v30ptr,#v30RegCW]
 	bic v30cyc,v30cyc,#SEG_PREFIX+REP_PREFIX+LOCK_PREFIX
@@ -3192,9 +3012,7 @@ _AA:	;@ STOSB
 	add r2,r1,r3,lsl#16
 	str r2,[v30ptr,#v30RegIY]
 	ldrb r1,[v30ptr,#v30RegAL]
-	stmfd sp!,{lr}
 	bl cpuWriteMem20
-	ldmfd sp!,{lr}
 	fetch 3
 
 ;@----------------------------------------------------------------------------
@@ -3203,7 +3021,6 @@ f3ab:	;@ REP STOSW
 	ldrh r7,[v30ptr,#v30RegCW]
 	cmp r7,#1
 	bmi 1f
-	stmfd sp!,{lr}
 0:
 	ldr r0,[v30ptr,#v30SRegES]
 	ldr r1,[v30ptr,#v30RegIY]
@@ -3216,7 +3033,6 @@ f3ab:	;@ REP STOSW
 	eatCycles 6
 	subs r7,r7,#1
 	bne 0b
-	ldmfd sp!,{lr}
 1:
 	strh r7,[v30ptr,#v30RegCW]
 	bic v30cyc,v30cyc,#SEG_PREFIX+REP_PREFIX+LOCK_PREFIX
@@ -3232,9 +3048,7 @@ _AB:	;@ STOSW
 	add r2,r1,r3,lsl#17
 	str r2,[v30ptr,#v30RegIY]
 	ldrh r1,[v30ptr,#v30RegAW]
-	stmfd sp!,{lr}
 	bl cpuWriteMem20W
-	ldmfd sp!,{lr}
 	fetch 3
 
 ;@----------------------------------------------------------------------------
@@ -3243,7 +3057,6 @@ f3ac:	;@ REP LODSB
 	ldrh r7,[v30ptr,#v30RegCW]
 	cmp r7,#1
 	bmi 1f
-	stmfd sp!,{lr}
 0:
 	tst v30cyc,#SEG_PREFIX
 	ldrne r0,[v30ptr,#v30PrefixBase]
@@ -3258,7 +3071,6 @@ f3ac:	;@ REP LODSB
 	eatCycles 6
 	subs r7,r7,#1
 	bne 0b
-	ldmfd sp!,{lr}
 1:
 	strh r7,[v30ptr,#v30RegCW]
 	bic v30cyc,v30cyc,#SEG_PREFIX+REP_PREFIX+LOCK_PREFIX
@@ -3270,7 +3082,6 @@ _AC:	;@ LODSB
 	tst v30cyc,#SEG_PREFIX
 	ldrne r0,[v30ptr,#v30PrefixBase]
 	ldreq r0,[v30ptr,#v30SRegDS]
-	stmfd sp!,{lr}
 	ldr r1,[v30ptr,#v30RegIX]
 	ldrsb r2,[v30ptr,#v30DF]
 	add r0,r0,r1,lsr#4
@@ -3278,7 +3089,6 @@ _AC:	;@ LODSB
 	str r2,[v30ptr,#v30RegIX]
 	bl cpuReadMem20
 	strb r0,[v30ptr,#v30RegAL]
-	ldmfd sp!,{lr}
 	bic v30cyc,v30cyc,#SEG_PREFIX
 	fetch 3
 
@@ -3288,7 +3098,6 @@ f3ad:	;@ REP LODSW
 	ldrh r7,[v30ptr,#v30RegCW]
 	cmp r7,#1
 	bmi 1f
-	stmfd sp!,{lr}
 0:
 	tst v30cyc,#SEG_PREFIX
 	ldrne r0,[v30ptr,#v30PrefixBase]
@@ -3303,7 +3112,6 @@ f3ad:	;@ REP LODSW
 	eatCycles 6
 	subs r7,r7,#1
 	bne 0b
-	ldmfd sp!,{lr}
 1:
 	strh r7,[v30ptr,#v30RegCW]
 	bic v30cyc,v30cyc,#SEG_PREFIX+REP_PREFIX+LOCK_PREFIX
@@ -3315,7 +3123,6 @@ _AD:	;@ LODSW
 	tst v30cyc,#SEG_PREFIX
 	ldrne r0,[v30ptr,#v30PrefixBase]
 	ldreq r0,[v30ptr,#v30SRegDS]
-	stmfd sp!,{lr}
 	ldr r1,[v30ptr,#v30RegIX]
 	ldrsb r2,[v30ptr,#v30DF]
 	add r0,r0,r1,lsr#4
@@ -3323,7 +3130,6 @@ _AD:	;@ LODSW
 	str r2,[v30ptr,#v30RegIX]
 	bl cpuReadMem20W
 	strh r0,[v30ptr,#v30RegAW]
-	ldmfd sp!,{lr}
 	bic v30cyc,v30cyc,#SEG_PREFIX
 	fetch 3
 
@@ -3333,7 +3139,6 @@ f2ae:	;@ REPNE SCASB
 	ldrh r7,[v30ptr,#v30RegCW]
 	cmp r7,#1
 	bmi 1f
-	stmfd sp!,{lr}
 0:
 	ldr r0,[v30ptr,#v30SRegES]
 	ldr r1,[v30ptr,#v30RegIY]
@@ -3351,7 +3156,6 @@ f2ae:	;@ REPNE SCASB
 	andne r0,v30f,#PSR_Z
 	cmpne r0,#PSR_Z
 	bne 0b
-	ldmfd sp!,{lr}
 1:
 	strh r7,[v30ptr,#v30RegCW]
 	bic v30cyc,v30cyc,#SEG_PREFIX+REP_PREFIX+LOCK_PREFIX
@@ -3362,7 +3166,6 @@ f3ae:	;@ REPE SCASB
 	ldrh r7,[v30ptr,#v30RegCW]
 	cmp r7,#1
 	bmi 1f
-	stmfd sp!,{lr}
 0:
 	ldr r0,[v30ptr,#v30SRegES]
 	ldr r1,[v30ptr,#v30RegIY]
@@ -3379,7 +3182,6 @@ f3ae:	;@ REPE SCASB
 	subs r7,r7,#1
 	tstne v30f,#PSR_Z
 	bne 0b
-	ldmfd sp!,{lr}
 1:
 	strh r7,[v30ptr,#v30RegCW]
 	bic v30cyc,v30cyc,#SEG_PREFIX+REP_PREFIX+LOCK_PREFIX
@@ -3388,7 +3190,6 @@ f3ae:	;@ REPE SCASB
 i_scasb:
 _AE:	;@ SCASB
 ;@----------------------------------------------------------------------------
-	stmfd sp!,{lr}
 	ldr r0,[v30ptr,#v30SRegES]
 	ldr r1,[v30ptr,#v30RegIY]
 	ldrsb r3,[v30ptr,#v30DF]
@@ -3400,7 +3201,6 @@ _AE:	;@ SCASB
 
 	sub8 r0,r1
 
-	ldmfd sp!,{lr}
 	fetch 4
 
 ;@----------------------------------------------------------------------------
@@ -3409,7 +3209,6 @@ f2af:	;@ REPNE SCASW
 	ldrh r7,[v30ptr,#v30RegCW]
 	cmp r7,#1
 	bmi 1f
-	stmfd sp!,{lr}
 0:
 	ldr r0,[v30ptr,#v30SRegES]
 	ldr r1,[v30ptr,#v30RegIY]
@@ -3427,7 +3226,6 @@ f2af:	;@ REPNE SCASW
 	andne r0,v30f,#PSR_Z
 	cmpne r0,#PSR_Z
 	bne 0b
-	ldmfd sp!,{lr}
 1:
 	strh r7,[v30ptr,#v30RegCW]
 	bic v30cyc,v30cyc,#SEG_PREFIX+REP_PREFIX+LOCK_PREFIX
@@ -3438,7 +3236,6 @@ f3af:	;@ REPE SCASW
 	ldrh r7,[v30ptr,#v30RegCW]
 	cmp r7,#1
 	bmi 1f
-	stmfd sp!,{lr}
 0:
 	ldr r0,[v30ptr,#v30SRegES]
 	ldr r1,[v30ptr,#v30RegIY]
@@ -3455,7 +3252,6 @@ f3af:	;@ REPE SCASW
 	subs r7,r7,#1
 	tstne v30f,#PSR_Z
 	bne 0b
-	ldmfd sp!,{lr}
 1:
 	strh r7,[v30ptr,#v30RegCW]
 	bic v30cyc,v30cyc,#SEG_PREFIX+REP_PREFIX+LOCK_PREFIX
@@ -3464,7 +3260,6 @@ f3af:	;@ REPE SCASW
 i_scasw:
 _AF:	;@ SCASW
 ;@----------------------------------------------------------------------------
-	stmfd sp!,{lr}
 	ldr r0,[v30ptr,#v30SRegES]
 	ldr r1,[v30ptr,#v30RegIY]
 	ldrsb r3,[v30ptr,#v30DF]
@@ -3476,7 +3271,6 @@ _AF:	;@ SCASW
 
 	sub16 r0,r1
 
-	ldmfd sp!,{lr}
 	fetch 4
 ;@----------------------------------------------------------------------------
 i_mov_ald8:
@@ -3596,7 +3390,6 @@ _BF:	;@ MOV DID16
 i_rotshft_bd8:
 _C0:	;@ ROTSHFT BD8
 ;@----------------------------------------------------------------------------
-	stmfd sp!,{lr}
 	getNextByteToReg r4
 	cmp r4,#0xC0
 	bmi 1f
@@ -3650,14 +3443,12 @@ shraC0:
 	strbpl r1,[v30ptr,-r5]
 	movmi r0,r5
 	blmi cpuWriteMem20
-	ldmfd sp!,{lr}
 	bic v30cyc,v30cyc,#SEG_PREFIX
 	fetch 1
 ;@----------------------------------------------------------------------------
 i_rotshft_wd8:
 _C1:	;@ ROTSHFT WD8
 ;@----------------------------------------------------------------------------
-	stmfd sp!,{lr}
 	getNextByteToReg r4
 	cmp r4,#0xC0
 	bmi 1f
@@ -3711,14 +3502,12 @@ shraC1:
 	strhpl r1,[r5,#v30Regs]
 	movmi r0,r5
 	blmi cpuWriteMem20W
-	ldmfd sp!,{lr}
 	bic v30cyc,v30cyc,#SEG_PREFIX
 	fetch 1
 ;@----------------------------------------------------------------------------
 i_ret_d16:
 _C2:	;@ RET D16
 ;@----------------------------------------------------------------------------
-	stmfd sp!,{lr}
 	getNextWord
 	ldr r1,[v30ptr,#v30RegSP]
 	ldr r3,[v30ptr,#v30SRegSS]
@@ -3729,13 +3518,11 @@ _C2:	;@ RET D16
 	bl cpuReadMem20W
 	mov v30pc,r0,lsl#16
 	v30EncodeFastPC
-	ldmfd sp!,{lr}
 	fetch 6
 ;@----------------------------------------------------------------------------
 i_ret:
 _C3:	;@ RET
 ;@----------------------------------------------------------------------------
-	stmfd sp!,{lr}
 	ldr r1,[v30ptr,#v30RegSP]
 	ldr r0,[v30ptr,#v30SRegSS]
 	add r2,r1,#0x20000
@@ -3744,13 +3531,11 @@ _C3:	;@ RET
 	bl cpuReadMem20W
 	mov v30pc,r0,lsl#16
 	v30EncodeFastPC
-	ldmfd sp!,{lr}
 	fetch 6
 ;@----------------------------------------------------------------------------
 i_les_dw:
 _C4:	;@ LES DW
 ;@----------------------------------------------------------------------------
-	stmfd sp!,{lr}
 	getNextByte
 	and r4,r0,#0x38
 	cmp r0,#0xC0
@@ -3768,7 +3553,6 @@ _C4:	;@ LES DW
 	bl cpuReadMem20W
 	strh r0,[v30ptr,#v30SRegES+2]
 
-	ldmfd sp!,{lr}
 	bic v30cyc,v30cyc,#SEG_PREFIX
 	fetch 6
 1:
@@ -3781,7 +3565,6 @@ _C4:	;@ LES DW
 i_lds_dw:
 _C5:	;@ LDS DW
 ;@----------------------------------------------------------------------------
-	stmfd sp!,{lr}
 	getNextByte
 	and r4,r0,#0x38
 	cmp r0,#0xC0
@@ -3799,7 +3582,6 @@ _C5:	;@ LDS DW
 	bl cpuReadMem20W
 	strh r0,[v30ptr,#v30SRegDS+2]
 
-	ldmfd sp!,{lr}
 	bic v30cyc,v30cyc,#SEG_PREFIX
 	fetch 6
 1:
@@ -3822,13 +3604,11 @@ _C6:	;@ MOV BD8
 	bic v30cyc,v30cyc,#SEG_PREFIX
 	fetch 1
 0:
-	stmfd sp!,{lr}
 	add r1,v30ptr,#v30EATable
 	mov lr,pc
 	ldr pc,[r1,r0,lsl#2]
 	getNextByteToReg r1
 	bl cpuWriteMem20
-	ldmfd sp!,{lr}
 	bic v30cyc,v30cyc,#SEG_PREFIX
 	fetch 1
 
@@ -3846,7 +3626,6 @@ _C7:	;@ MOV WD16
 	bic v30cyc,v30cyc,#SEG_PREFIX
 	fetch 1
 0:
-	stmfd sp!,{lr}
 	add r1,v30ptr,#v30EATable
 	mov lr,pc
 	ldr pc,[r1,r0,lsl#2]
@@ -3854,14 +3633,13 @@ _C7:	;@ MOV WD16
 	getNextWordToReg r1
 	mov r0,r4
 	bl cpuWriteMem20W
-	ldmfd sp!,{lr}
 	bic v30cyc,v30cyc,#SEG_PREFIX
 	fetch 1
 ;@----------------------------------------------------------------------------
 i_prepare:
 _C8:	;@ PREPARE
 ;@----------------------------------------------------------------------------
-	stmfd sp!,{r8,lr}
+	stmfd sp!,{r8}
 	getNextWord
 	stmfd sp!,{r0}				;@ temp
 	getNextByte
@@ -3903,13 +3681,12 @@ _C8:	;@ PREPARE
 	sub r8,r8,r0,lsl#16
 	str r8,[v30ptr,#v30RegSP]
 	bic v30cyc,v30cyc,#SEG_PREFIX
-	ldmfd sp!,{r8,lr}
+	ldmfd sp!,{r8}
 	fetch 8
 ;@----------------------------------------------------------------------------
 i_dispose:
 _C9:	;@ DISPOSE
 ;@----------------------------------------------------------------------------
-	stmfd sp!,{lr}
 	ldr r1,[v30ptr,#v30RegBP-2]
 	ldr r0,[v30ptr,#v30SRegSS]
 	add r2,r1,#0x20000
@@ -3917,13 +3694,11 @@ _C9:	;@ DISPOSE
 	str r2,[v30ptr,#v30RegSP]
 	bl cpuReadMem20W
 	strh r0,[v30ptr,#v30RegBP]
-	ldmfd sp!,{lr}
 	fetch 2
 ;@----------------------------------------------------------------------------
 i_retf_d16:
 _CA:	;@ RETF D16
 ;@----------------------------------------------------------------------------
-	stmfd sp!,{lr}
 	getNextWord
 	add r6,r0,#2
 	ldr r1,[v30ptr,#v30RegSP]
@@ -3938,13 +3713,11 @@ _CA:	;@ RETF D16
 	bl cpuReadMem20W
 	strh r0,[v30ptr,#v30SRegCS+2]
 	v30EncodeFastPC
-	ldmfd sp!,{lr}
 	fetch 6
 ;@----------------------------------------------------------------------------
 i_retf:
 _CB:	;@ RETF
 ;@----------------------------------------------------------------------------
-	stmfd sp!,{lr}
 	ldr r1,[v30ptr,#v30RegSP]
 	ldr r5,[v30ptr,#v30SRegSS]
 	add r4,r1,#0x20000
@@ -3957,7 +3730,6 @@ _CB:	;@ RETF
 	strh r0,[v30ptr,#v30SRegCS+2]
 	str r4,[v30ptr,#v30RegSP]
 	v30EncodeFastPC
-	ldmfd sp!,{lr}
 	fetch 8
 ;@----------------------------------------------------------------------------
 i_int3:
@@ -3986,7 +3758,6 @@ _CE:	;@ BRKV					;@ Break if Overflow
 i_iret:
 _CF:	;@ IRET
 ;@----------------------------------------------------------------------------
-	stmfd sp!,{lr}
 	ldr r1,[v30ptr,#v30RegSP]
 	ldr r5,[v30ptr,#v30SRegSS]
 	add r4,r1,#0x20000
@@ -4000,14 +3771,12 @@ _CF:	;@ IRET
 	str r4,[v30ptr,#v30RegSP]
 	v30EncodeFastPC
 	eatCycles 10-3					;@ i_popf eats 3 cycles
-	ldmfd sp!,{lr}
 	b i_popf
 
 ;@----------------------------------------------------------------------------
 i_rotshft_b:
 _D0:	;@ ROTSHFT B
 ;@----------------------------------------------------------------------------
-	stmfd sp!,{lr}
 	getNextByteToReg r4
 	cmp r4,#0xC0
 	bmi 0f
@@ -4030,7 +3799,6 @@ _D0:	;@ ROTSHFT B
 i_rotshft_w:
 _D1:	;@ ROTSHFT W
 ;@----------------------------------------------------------------------------
-	stmfd sp!,{lr}
 	getNextByteToReg r4
 	cmp r4,#0xC0
 	bmi 0f
@@ -4053,7 +3821,6 @@ _D1:	;@ ROTSHFT W
 i_rotshft_bcl:
 _D2:	;@ ROTSHFT BCL
 ;@----------------------------------------------------------------------------
-	stmfd sp!,{lr}
 	getNextByteToReg r4
 	cmp r4,#0xC0
 	bmi 0f
@@ -4077,7 +3844,6 @@ _D2:	;@ ROTSHFT BCL
 i_rotshft_wcl:
 _D3:	;@ ROTSHFT WCL
 ;@----------------------------------------------------------------------------
-	stmfd sp!,{lr}
 	getNextByteToReg r4
 	cmp r4,#0xC0
 	bmi 0f
@@ -4161,7 +3927,6 @@ _D7:	;@ TRANS
 	tst v30cyc,#SEG_PREFIX
 	ldrne r0,[v30ptr,#v30PrefixBase]
 	ldreq r0,[v30ptr,#v30SRegDS]
-	stmfd sp!,{lr}
 	ldrb r2,[v30ptr,#v30RegAL]
 	ldrh r1,[v30ptr,#v30RegBW]
 	mov r1,r1,lsl#16
@@ -4169,7 +3934,6 @@ _D7:	;@ TRANS
 	add r0,r0,r1,lsr#4
 	bl cpuReadMem20
 	strb r0,[v30ptr,#v30RegAL]
-	ldmfd sp!,{lr}
 	bic v30cyc,v30cyc,#SEG_PREFIX
 	fetch 5
 ;@----------------------------------------------------------------------------
@@ -4233,17 +3997,14 @@ _E3:	;@ JCXZ
 i_inal:
 _E4:	;@ INAL
 ;@----------------------------------------------------------------------------
-	stmfd sp!,{lr}
 	getNextByte
 	bl v30ReadPort
 	strb r0,[v30ptr,#v30RegAL]
-	ldmfd sp!,{lr}
 	fetch 6
 ;@----------------------------------------------------------------------------
 i_inax:
 _E5:	;@ INAX
 ;@----------------------------------------------------------------------------
-	stmfd sp!,{lr}
 	getNextByte
 	mov r4,r0
 	bl v30ReadPort
@@ -4251,7 +4012,6 @@ _E5:	;@ INAX
 	add r0,r4,#1
 	bl v30ReadPort
 	strb r0,[v30ptr,#v30RegAH]
-	ldmfd sp!,{lr}
 	fetch 6
 ;@----------------------------------------------------------------------------
 i_outal:
@@ -4259,15 +4019,12 @@ _E6:	;@ OUTAL
 ;@----------------------------------------------------------------------------
 	getNextByte
 	ldrb r1,[v30ptr,#v30RegAL]
-	stmfd sp!,{lr}
 	bl v30WritePort
-	ldmfd sp!,{lr}
 	fetch 6
 ;@----------------------------------------------------------------------------
 i_outax:
 _E7:	;@ OUTAX
 ;@----------------------------------------------------------------------------
-	stmfd sp!,{lr}
 	getNextByte
 	ldrb r1,[v30ptr,#v30RegAL]
 	mov r4,r0
@@ -4275,14 +4032,12 @@ _E7:	;@ OUTAX
 	ldrb r1,[v30ptr,#v30RegAH]
 	add r0,r4,#1
 	bl v30WritePort
-	ldmfd sp!,{lr}
 	fetch 6
 
 ;@----------------------------------------------------------------------------
 i_call_d16:
 _E8:	;@ CALL D16
 ;@----------------------------------------------------------------------------
-	stmfd sp!,{lr}
 	getNextWord
 	v30DecodeFastPCToReg r4
 	mov r1,r4,lsl#16
@@ -4295,7 +4050,6 @@ _E8:	;@ CALL D16
 	add r0,r0,r2,lsr#4
 	str r2,[v30ptr,#v30RegSP]
 	bl cpuWriteMem20W
-	ldmfd sp!,{lr}
 	fetch 5
 ;@----------------------------------------------------------------------------
 i_jmp_d16:
@@ -4305,9 +4059,7 @@ _E9:	;@ JMP D16
 	v30DecodeFastPCToReg r1
 	mov r1,r1,lsl#16
 	add v30pc,r1,r0,lsl#16
-	stmfd sp!,{lr}
 	v30EncodeFastPC
-	ldmfd sp!,{lr}
 	fetch 4
 ;@----------------------------------------------------------------------------
 i_jmp_far:
@@ -4317,9 +4069,7 @@ _EA:	;@ JMP FAR
 	getNextWord
 	strh r0,[v30ptr,#v30SRegCS+2]
 	mov v30pc,r4,lsl#16
-	stmfd sp!,{lr}
 	v30EncodeFastPC
-	ldmfd sp!,{lr}
 	fetch 7
 ;@----------------------------------------------------------------------------
 i_br_d8:
@@ -4335,17 +4085,14 @@ _EB:	;@ Branch short
 i_inaldx:
 _EC:	;@ INALDX
 ;@----------------------------------------------------------------------------
-	stmfd sp!,{lr}
 	ldrh r0,[v30ptr,#v30RegDW]
 	bl v30ReadPort
 	strb r0,[v30ptr,#v30RegAL]
-	ldmfd sp!,{lr}
 	fetch 6
 ;@----------------------------------------------------------------------------
 i_inaxdx:
 _ED:	;@ INAXDX
 ;@----------------------------------------------------------------------------
-	stmfd sp!,{lr}
 	ldrh r4,[v30ptr,#v30RegDW]
 	mov r0,r4
 	bl v30ReadPort
@@ -4353,7 +4100,6 @@ _ED:	;@ INAXDX
 	add r0,r4,#1
 	bl v30ReadPort
 	strb r0,[v30ptr,#v30RegAH]
-	ldmfd sp!,{lr}
 	fetch 6
 ;@----------------------------------------------------------------------------
 i_outdxal:
@@ -4361,15 +4107,12 @@ _EE:	;@ OUTDXAL
 ;@----------------------------------------------------------------------------
 	ldrh r0,[v30ptr,#v30RegDW]
 	ldrb r1,[v30ptr,#v30RegAL]
-	stmfd sp!,{lr}
 	bl v30WritePort
-	ldmfd sp!,{lr}
 	fetch 6
 ;@----------------------------------------------------------------------------
 i_outdxax:
 _EF:	;@ OUTDXAX
 ;@----------------------------------------------------------------------------
-	stmfd sp!,{lr}
 	ldrh r4,[v30ptr,#v30RegDW]
 	ldrb r1,[v30ptr,#v30RegAL]
 	mov r0,r4
@@ -4377,7 +4120,6 @@ _EF:	;@ OUTDXAX
 	ldrb r1,[v30ptr,#v30RegAH]
 	add r0,r4,#1
 	bl v30WritePort
-	ldmfd sp!,{lr}
 	fetch 6
 
 ;@----------------------------------------------------------------------------
@@ -4604,7 +4346,6 @@ _F5:	;@ CMC
 i_f6pre:
 _F6:	;@ PRE F6
 ;@----------------------------------------------------------------------------
-	stmfd sp!,{lr}
 	getNextByteToReg r4
 	cmp r4,#0xC0
 	bmi 1f
@@ -4629,7 +4370,6 @@ _F6:	;@ PRE F6
 testF6:
 	getNextByteToReg r1
 	and8 r1,r0
-	ldmfd sp!,{lr}
 	fetch 1
 ;@----------------------------------------------------------------------------
 notF6:
@@ -4639,7 +4379,6 @@ notF6:
 	submi v30cyc,v30cyc,#1*CYCLE
 	movmi r0,r5
 	blmi cpuWriteMem20
-	ldmfd sp!,{lr}
 	fetch 1
 ;@----------------------------------------------------------------------------
 negF6:
@@ -4658,7 +4397,6 @@ negF6:
 	submi v30cyc,v30cyc,#1*CYCLE
 	movmi r0,r5
 	blmi cpuWriteMem20
-	ldmfd sp!,{lr}
 	fetch 1
 ;@----------------------------------------------------------------------------
 muluF6:
@@ -4670,7 +4408,6 @@ muluF6:
 	movs r2,r2,lsr#8
 	orrne v30f,v30f,#PSR_C+PSR_V
 	strb v30f,[v30ptr,#v30MulOverflow]
-	ldmfd sp!,{lr}
 	fetch 3
 ;@----------------------------------------------------------------------------
 mulF6:
@@ -4685,11 +4422,9 @@ mulF6:
 	mvnsne r1,r1
 	orrne v30f,v30f,#PSR_C+PSR_V
 	strb v30f,[v30ptr,#v30MulOverflow]
-	ldmfd sp!,{lr}
 	fetch 3
 ;@----------------------------------------------------------------------------
 divubF6:
-	ldmfd sp!,{lr}
 	eatCycles 14
 	ldrb v30f,[v30ptr,#v30MulOverflow]	;@ C & V from last mul, Z always set.
 	strb v30f,[v30ptr,#v30ParityVal]	;@ Clear parity
@@ -4709,7 +4444,6 @@ divubF6:
 	fetch 0
 ;@----------------------------------------------------------------------------
 divbF6:
-	ldmfd sp!,{lr}
 	eatCycles 16
 	movs r1,r0,lsl#24
 	ldr r0,[v30ptr,#v30RegAW-2]
@@ -4750,7 +4484,6 @@ divbF6Error2:
 i_f7pre:
 _F7:	;@ PRE F7
 ;@----------------------------------------------------------------------------
-	stmfd sp!,{lr}
 	getNextByteToReg r4
 	cmp r4,#0xC0
 	bmi 1f
@@ -4776,7 +4509,6 @@ testF7:
 	mov r4,r0,lsl#16
 	getNextWord
 	and16 r0,r4
-	ldmfd sp!,{lr}
 	fetch 1
 ;@----------------------------------------------------------------------------
 notF7:
@@ -4786,7 +4518,6 @@ notF7:
 	submi v30cyc,v30cyc,#1*CYCLE
 	movmi r0,r5
 	blmi cpuWriteMem20W
-	ldmfd sp!,{lr}
 	fetch 1
 ;@----------------------------------------------------------------------------
 negF7:
@@ -4804,7 +4535,6 @@ negF7:
 	submi v30cyc,v30cyc,#1*CYCLE
 	movmi r0,r5
 	blmi cpuWriteMem20W
-	ldmfd sp!,{lr}
 	fetch 1
 ;@----------------------------------------------------------------------------
 muluF7:
@@ -4817,7 +4547,6 @@ muluF7:
 	strh r2,[v30ptr,#v30RegDW]
 	orrne v30f,v30f,#PSR_C+PSR_V		;@ Set Carry & Overflow.
 	strb v30f,[v30ptr,#v30MulOverflow]
-	ldmfd sp!,{lr}
 	fetch 3
 ;@----------------------------------------------------------------------------
 mulF7:
@@ -4834,11 +4563,9 @@ mulF7:
 	mvnsne r1,r1
 	orrne v30f,v30f,#PSR_C+PSR_V		;@ Set Carry & Overflow.
 	strb v30f,[v30ptr,#v30MulOverflow]
-	ldmfd sp!,{lr}
 	fetch 3
 ;@----------------------------------------------------------------------------
 divuwF7:
-	ldmfd sp!,{lr}
 	eatCycles 22
 	ldrb v30f,[v30ptr,#v30MulOverflow]	;@ C & V from last mul, Z always set.
 	strb v30f,[v30ptr,#v30ParityVal]	;@ Clear parity
@@ -4862,7 +4589,6 @@ divuwF7:
 	fetch 0
 ;@----------------------------------------------------------------------------
 divwF7:
-	ldmfd sp!,{lr}
 	eatCycles 23
 	movs r1,r0,lsl#16
 	ldrh r0,[v30ptr,#v30RegAW]
@@ -4949,7 +4675,6 @@ _FD:	;@ STD
 i_fepre:
 _FE:	;@ PRE FE
 ;@----------------------------------------------------------------------------
-	stmfd sp!,{lr}
 	getNextByteToReg r4
 	tst r4,#0x30
 	bne contFF
@@ -4985,7 +4710,6 @@ writeBackFE:
 	strbpl r1,[v30ptr,-r5]
 	movmi r0,r5
 	blmi cpuWriteMem20
-	ldmfd sp!,{lr}
 	fetch 1
 1:
 	eatCycles 2
@@ -5000,7 +4724,6 @@ writeBackFE:
 i_ffpre:
 _FF:	;@ PRE FF
 ;@----------------------------------------------------------------------------
-	stmfd sp!,{lr}
 	getNextByteToReg r4
 contFF:
 	cmp r4,#0xC0
@@ -5049,7 +4772,6 @@ writeBackFF:
 	submi v30cyc,v30cyc,#1*CYCLE
 	movmi r0,r5
 	blmi cpuWriteMem20W
-	ldmfd sp!,{lr}
 	fetch 1
 ;@----------------------------------------------------------------------------
 callFF:
@@ -5063,7 +4785,6 @@ callFF:
 	add r0,r0,r2,lsr#4
 	str r2,[v30ptr,#v30RegSP]
 	bl cpuWriteMem20W
-	ldmfd sp!,{lr}
 	fetch 5
 ;@----------------------------------------------------------------------------
 callFarFF:
@@ -5088,13 +4809,11 @@ callFarFF:
 	add r0,r6,r5,lsr#4
 	str r5,[v30ptr,#v30RegSP]
 	bl cpuWriteMem20W
-	ldmfd sp!,{lr}
 	fetch 11
 ;@----------------------------------------------------------------------------
 braFF:
 	mov v30pc,r0,lsl#16
 	v30EncodeFastPC
-	ldmfd sp!,{lr}
 	fetch 4
 ;@----------------------------------------------------------------------------
 braFarFF:
@@ -5105,7 +4824,6 @@ braFarFF:
 	bl cpuReadMem20W
 	strh r0,[v30ptr,#v30SRegCS+2]
 	v30EncodeFastPC
-	ldmfd sp!,{lr}
 	fetch 9
 ;@----------------------------------------------------------------------------
 pushFF:
@@ -5116,12 +4834,7 @@ pushFF:
 	add r0,r0,r2,lsr#4
 	str r2,[v30ptr,#v30RegSP]
 	bl cpuWriteMem20W
-	ldmfd sp!,{lr}
 	fetch 1
-;@----------------------------------------------------------------------------
-undefFF:
-	ldmfd sp!,{lr}
-	b i_undefined
 
 ;@----------------------------------------------------------------------------
 division16:
@@ -5502,16 +5215,13 @@ V30SetIRQPin:			;@ r0=pin state
 ;@----------------------------------------------------------------------------
 V30FetchIRQ:
 ;@----------------------------------------------------------------------------
-	stmfd sp!,{lr}
 	eatCycles 7
 	mov lr,pc
 	ldr pc,[v30ptr,#v30IrqVectorFunc]
-	ldmfd sp!,{lr}
 ;@----------------------------------------------------------------------------
 V30TakeIRQ:
 nec_interrupt:				;@ r0 = vector number
 ;@----------------------------------------------------------------------------
-	stmfd sp!,{lr}
 	mov r4,r0,lsl#12+2
 	bl pushFlags
 	mov r0,#0
@@ -5538,7 +5248,6 @@ nec_interrupt:				;@ r0 = vector number
 
 	mov v30pc,r5,lsl#16
 	v30EncodeFastPC
-	ldmfd sp!,{lr}
 	fetch 25
 ;@----------------------------------------------------------------------------
 V30RestoreAndRunXCycles:	;@ r0 = number of cycles to run
@@ -5569,12 +5278,11 @@ xLoop:
 //	adr lr,xLoop
 	ldr lr,=lrError
 	fetch 0
-xOut:
-outOfCycles:
-	ldmfd sp!,{pc}
 v30InHalt:
 	mvns r0,v30cyc,asr#CYC_SHIFT			;@
 	addmi v30cyc,v30cyc,r0,lsl#CYC_SHIFT	;@ Consume all remaining cycles in steps of 1.
+xOut:
+outOfCycles:
 	ldmfd sp!,{pc}
 ;@----------------------------------------------------------------------------
 #if GBA
@@ -5604,23 +5312,20 @@ logUndefinedOpcode:
 	bx r0
 ;@----------------------------------------------------------------------------
 i_undefined:
-	stmfd sp!,{lr}
 undefF6:
 undefF7:
+undefFF:
 ;@----------------------------------------------------------------------------
 	bl logUndefinedOpcode
-	ldmfd sp!,{lr}
 
 	mov r11,r11					;@ NoCash breakpoint
 	fetch 1
 ;@----------------------------------------------------------------------------
 i_crash:
 ;@----------------------------------------------------------------------------
-	stmfd sp!,{lr}
 	ldr r0,=debugCrashInstruction
 	mov lr,pc
 	bx r0
-	ldmfd sp!,{lr}
 
 	sub v30pc,v30pc,#1
 	mov r11,r11					;@ NoCash breakpoint
@@ -5628,11 +5333,9 @@ i_crash:
 ;@----------------------------------------------------------------------------
 lrError:
 ;@----------------------------------------------------------------------------
-	stmfd sp!,{lr}
 	ldr r0,=debugCrashInstruction
 	mov lr,pc
 	bx r0
-	ldmfd sp!,{lr}
 
 	adr lr,lrError
 	fetch 0
