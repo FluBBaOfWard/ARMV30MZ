@@ -1033,67 +1033,65 @@ _2F:	;@ DAS / ADJ4S
 i_xor_br8:
 _30:	;@ XOR BR8
 ;@----------------------------------------------------------------------------
+	stmfd sp!,{lr}
 	getNextByteToReg r4
 	add r1,v30ptr,r4
 	ldrb r6,[r1,#v30ModRmReg]
 	cmp r4,#0xC0
 	bmi 1f
 	ldrb r5,[r1,#v30ModRmRm]
-	eatCycles 1
 	ldrb r0,[v30ptr,-r5]
 0:
 	ldrb r1,[v30ptr,-r6]
 	xor8 r1,r0
 
-	bic v30cyc,v30cyc,#SEG_PREFIX
 	cmp r4,#0xC0
 	strbpl r1,[v30ptr,-r5]
-	bxpl lr
-	mov r0,r5
-	b cpuWriteMem20
+	movmi r0,r5
+	blmi cpuWriteMem20
+	ldmfd sp!,{lr}
+	bic v30cyc,v30cyc,#SEG_PREFIX
+	fetch 1
 1:
-	stmfd sp!,{lr}
-	eatCycles 3
+	eatCycles 2
 	add r1,v30ptr,#v30EATable
 	mov lr,pc
 	ldr pc,[r1,r4,lsl#2]
 	mov r5,r0
-	bl cpuReadMem20
-	ldmfd sp!,{lr}
-	b 0b
+	adr lr,0b
+	b cpuReadMem20
 ;@----------------------------------------------------------------------------
 i_xor_wr16:
 _31:	;@ XOR WR16
 ;@----------------------------------------------------------------------------
+	stmfd sp!,{lr}
 	getNextByteToReg r4
+	and r2,r4,#0x38
+	add r2,v30ptr,r2,lsr#1
+	ldr r6,[r2,#v30Regs2]
 	cmp r4,#0xC0
 	bmi 1f
 	and r2,r4,#7
 	add r5,v30ptr,r2,lsl#2
 	ldrh r0,[r5,#v30Regs]
-	eatCycles 1
 0:
-	and r2,r4,#0x38
-	add r2,v30ptr,r2,lsr#1
-	ldr r1,[r2,#v30Regs2]
-	xor16 r0,r1
+	xor16 r0,r6
 
-	bic v30cyc,v30cyc,#SEG_PREFIX
 	cmp r4,#0xC0
 	strhpl r1,[r5,#v30Regs]
-	bxpl lr
-	mov r0,r5
-	b cpuWriteMem20W
+	movmi r0,r5
+	blmi cpuWriteMem20W
+	ldmfd sp!,{lr}
+	bic v30cyc,v30cyc,#SEG_PREFIX
+	fetch 1
 1:
-	stmfd sp!,{lr}
-	eatCycles 3
+	eatCycles 2
 	add r1,v30ptr,#v30EATable
 	mov lr,pc
 	ldr pc,[r1,r4,lsl#2]
 	mov r5,r0
-	bl cpuReadMem20W
-	ldmfd sp!,{lr}
-	b 0b
+	adr lr,0b
+	b cpuReadMem20W
 ;@----------------------------------------------------------------------------
 i_xor_r8b:
 _32:	;@ XOR R8b
@@ -1610,7 +1608,8 @@ _62:	;@ CHKIND
 	stmfd sp!,{lr}
 	getNextByte
 	and r1,r0,#0x38
-	add r4,v30ptr,r1,lsr#1
+	add r2,v30ptr,r1,lsr#1
+	ldrh r4,[r2,#v30Regs]
 	cmp r0,#0xC0
 	bpl 1f
 	add r1,v30ptr,#v30EATable
@@ -1624,17 +1623,15 @@ _62:	;@ CHKIND
 	mov r6,r0
 	mov r0,r5
 	bl cpuReadMem20W
-	ldrh r1,[r4,#v30Regs]
 
-	bic v30cyc,v30cyc,#SEG_PREFIX
-	eatCycles 13
-	cmp r1,r6
-	cmppl r0,r1
-	ldmfdpl sp!,{pc}
 	ldmfd sp!,{lr}
-	eatCycles 7
-	mov r0,#5
-	b nec_interrupt
+	bic v30cyc,v30cyc,#SEG_PREFIX
+	cmp r4,r6
+	cmppl r0,r4
+	submi v30cyc,v30cyc,#20*CYCLE
+	movmi r0,#5
+	bmi nec_interrupt
+	fetch 13
 1:
 	mov r11,r11					;@ Not correct?
 	and r2,r0,#7
@@ -2076,12 +2073,12 @@ _80:	;@ PRE 80
 i_82pre:
 _82:	;@ PRE 82
 ;@----------------------------------------------------------------------------
+	stmfd sp!,{lr}
 	getNextByteToReg r4
 	cmp r4,#0xC0
 	bmi 1f
 	add r1,v30ptr,r4
 	ldrb r5,[r1,#v30ModRmRm]
-	eatCycles 1
 	ldrb r0,[v30ptr,-r5]
 0:
 	bic v30cyc,v30cyc,#SEG_PREFIX
@@ -2092,15 +2089,13 @@ _82:	;@ PRE 82
 	b 2f
 	.long add80, or80, adc80, subc80, and80, sub80, xor80, cmp80
 1:
-	stmfd sp!,{lr}
-	eatCycles 3
+	eatCycles 2
 	add r1,v30ptr,#v30EATable
 	mov lr,pc
 	ldr pc,[r1,r4,lsl#2]
 	mov r5,r0
-	bl cpuReadMem20
-	ldmfd sp!,{lr}
-	b 0b
+	adr lr,0b
+	b cpuReadMem20
 add80:
 	add8 r1,r0
 	b 2f
@@ -2124,17 +2119,20 @@ xor80:
 	b 2f
 cmp80:
 	sub8 r1,r0
-	bx lr
+	ldmfd sp!,{lr}
+	fetch 1
 2:
 	cmp r4,#0xC0
 	strbpl r1,[v30ptr,-r5]
-	bxpl lr
-	mov r0,r5
-	b cpuWriteMem20
+	movmi r0,r5
+	blmi cpuWriteMem20
+	ldmfd sp!,{lr}
+	fetch 1
 ;@----------------------------------------------------------------------------
 i_81pre:
 _81:	;@ PRE 81
 ;@----------------------------------------------------------------------------
+	stmfd sp!,{lr}
 	getNextByteToReg r4
 	cmp r4,#0xC0
 	bmi 1f
@@ -2152,15 +2150,13 @@ pre81Continue:
 	b 2f
 	.long add81, or81, adc81, subc81, and81, sub81, xor81, cmp81
 1:
-	stmfd sp!,{lr}
-	eatCycles 3
+	eatCycles 2
 	add r1,v30ptr,#v30EATable
 	mov lr,pc
 	ldr pc,[r1,r4,lsl#2]
 	mov r5,r0
 	bl cpuReadMem20W
 	mov r6,r0,lsl#16
-	ldmfd sp!,{lr}
 	b 0b
 add81:
 	add16 r0,r6
@@ -2185,39 +2181,39 @@ xor81:
 	b 2f
 cmp81:
 	sub16 r0,r6
-	bx lr
+	ldmfd sp!,{lr}
+	fetch 1
 2:
 	cmp r4,#0xC0
 	strhpl r1,[r5,#v30Regs]
-	bxpl lr
-	mov r0,r5
-	b cpuWriteMem20W
+	movmi r0,r5
+	blmi cpuWriteMem20W
+	ldmfd sp!,{lr}
+	fetch 1
 ;@----------------------------------------------------------------------------
 i_83pre:
 _83:	;@ PRE 83
 ;@----------------------------------------------------------------------------
+	stmfd sp!,{lr}
 	getNextByteToReg r4
 	cmp r4,#0xC0
 	bmi 1f
 	and r2,r4,#7
 	add r5,v30ptr,r2,lsl#2
 	ldr r6,[r5,#v30Regs2]
-	eatCycles 1
 0:
 	getNextByte
 	tst r0,#0x80
 	orrne r0,r0,#0xFF00
 	b pre81Continue
 1:
-	stmfd sp!,{lr}
-	eatCycles 3
+	eatCycles 2
 	add r1,v30ptr,#v30EATable
 	mov lr,pc
 	ldr pc,[r1,r4,lsl#2]
 	mov r5,r0
 	bl cpuReadMem20W
 	mov r6,r0,lsl#16
-	ldmfd sp!,{lr}
 	b 0b
 ;@----------------------------------------------------------------------------
 i_test_br8:
