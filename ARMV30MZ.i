@@ -46,8 +46,8 @@ v30RegBH:			.byte 0
 v30RegSP:			.short 0
 v30RegSPL:			.byte 0
 v30RegSPH:			.byte 0
-					.short 0
-v30RegBP:
+
+v30RegBP:			.short 0
 v30RegBPL:			.byte 0
 v30RegBPH:			.byte 0
 

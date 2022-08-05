@@ -525,4 +525,12 @@
 	strb r1,[v30ptr,#v30ParityVal]
 	.endm
 
+	.macro xchgreg src
+	ldrh r0,[v30ptr,#v30RegAW]
+	ldrh r1,[v30ptr,#\src]
+	strh r0,[v30ptr,#\src]
+	strh r1,[v30ptr,#v30RegAW]
+	fetch 3
+	.endm
+
 ;@---------------------------------------

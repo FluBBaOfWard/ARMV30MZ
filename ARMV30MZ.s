@@ -1294,7 +1294,7 @@ _44:	;@ INC SP
 i_inc_bp:
 _45:	;@ INC BP
 ;@----------------------------------------------------------------------------
-	incWord v30RegBP
+	incWord v30RegBP+2
 ;@----------------------------------------------------------------------------
 i_inc_si:
 _46:	;@ INC SI
@@ -1334,7 +1334,7 @@ _4C:	;@ DEC SP
 i_dec_bp:
 _4D:	;@ DEC BP
 ;@----------------------------------------------------------------------------
-	decWord v30RegBP
+	decWord v30RegBP+2
 ;@----------------------------------------------------------------------------
 i_dec_si:
 _4E:	;@ DEC SI
@@ -1381,7 +1381,7 @@ _54:	;@ PUSH SP
 i_push_bp:
 _55:	;@ PUSH BP
 ;@----------------------------------------------------------------------------
-	pushRegister v30RegBP
+	pushRegister v30RegBP+2
 ;@----------------------------------------------------------------------------
 i_push_si:
 _56:	;@ PUSH SI
@@ -1427,7 +1427,7 @@ _5C:	;@ POP SP
 i_pop_bp:
 _5D:	;@ POP BP
 ;@----------------------------------------------------------------------------
-	popRegister v30RegBP
+	popRegister v30RegBP+2
 ;@----------------------------------------------------------------------------
 i_pop_si:
 _5E:	;@ POP SI
@@ -1467,7 +1467,7 @@ _60:	;@ PUSHA
 	bl cpuWriteMem20W
 	sub r4,r4,#0x20000
 	add r0,r5,r4,lsr#4
-	ldrh r1,[v30ptr,#v30RegBP]
+	ldrh r1,[v30ptr,#v30RegBP+2]
 	bl cpuWriteMem20W
 	sub r4,r4,#0x20000
 	add r0,r5,r4,lsr#4
@@ -1496,7 +1496,7 @@ _61:	;@ POPA
 	add r0,r5,r4,lsr#4
 	add r4,r4,#0x40000			;@ Skip one
 	bl cpuReadMem20W
-	strh r0,[v30ptr,#v30RegBP]
+	strh r0,[v30ptr,#v30RegBP+2]
 	add r0,r5,r4,lsr#4
 	add r4,r4,#0x20000
 	bl cpuReadMem20W
@@ -2395,65 +2395,37 @@ _90:	;@ NOP (XCHG AXAX)
 i_xchg_axcx:
 _91:	;@ XCHG AXCX
 ;@----------------------------------------------------------------------------
-	ldrh r0,[v30ptr,#v30RegAW]
-	ldrh r1,[v30ptr,#v30RegCW]
-	strh r0,[v30ptr,#v30RegCW]
-	strh r1,[v30ptr,#v30RegAW]
-	fetch 3
+	xchgreg v30RegCW
 ;@----------------------------------------------------------------------------
 i_xchg_axdx:
 _92:	;@ XCHG AXDX
 ;@----------------------------------------------------------------------------
-	ldrh r0,[v30ptr,#v30RegAW]
-	ldrh r1,[v30ptr,#v30RegDW]
-	strh r0,[v30ptr,#v30RegDW]
-	strh r1,[v30ptr,#v30RegAW]
-	fetch 3
+	xchgreg v30RegDW
 ;@----------------------------------------------------------------------------
 i_xchg_axbx:
 _93:	;@ XCHG AXBX
 ;@----------------------------------------------------------------------------
-	ldrh r0,[v30ptr,#v30RegAW]
-	ldrh r1,[v30ptr,#v30RegBW]
-	strh r0,[v30ptr,#v30RegBW]
-	strh r1,[v30ptr,#v30RegAW]
-	fetch 3
+	xchgreg v30RegBW
 ;@----------------------------------------------------------------------------
 i_xchg_axsp:
 _94:	;@ XCHG AXSP
 ;@----------------------------------------------------------------------------
-	ldrh r0,[v30ptr,#v30RegAW]
-	ldrh r1,[v30ptr,#v30RegSP+2]
-	strh r0,[v30ptr,#v30RegSP+2]
-	strh r1,[v30ptr,#v30RegAW]
-	fetch 3
+	xchgreg v30RegSP+2
 ;@----------------------------------------------------------------------------
 i_xchg_axbp:
 _95:	;@ XCHG AXBP
 ;@----------------------------------------------------------------------------
-	ldrh r0,[v30ptr,#v30RegAW]
-	ldrh r1,[v30ptr,#v30RegBP]
-	strh r0,[v30ptr,#v30RegBP]
-	strh r1,[v30ptr,#v30RegAW]
-	fetch 3
+	xchgreg v30RegBP+2
 ;@----------------------------------------------------------------------------
 i_xchg_axsi:
 _96:	;@ XCHG AXSI
 ;@----------------------------------------------------------------------------
-	ldrh r0,[v30ptr,#v30RegAW]
-	ldrh r1,[v30ptr,#v30RegIX+2]
-	strh r0,[v30ptr,#v30RegIX+2]
-	strh r1,[v30ptr,#v30RegAW]
-	fetch 3
+	xchgreg v30RegIX+2
 ;@----------------------------------------------------------------------------
 i_xchg_axdi:
 _97:	;@ XCHG AXDI
 ;@----------------------------------------------------------------------------
-	ldrh r0,[v30ptr,#v30RegAW]
-	ldrh r1,[v30ptr,#v30RegIY+2]
-	strh r0,[v30ptr,#v30RegIY+2]
-	strh r1,[v30ptr,#v30RegAW]
-	fetch 3
+	xchgreg v30RegIY+2
 ;@----------------------------------------------------------------------------
 i_cbw:
 _98:	;@ CVTBW
@@ -3369,7 +3341,7 @@ i_mov_bpd16:
 _BD:	;@ MOV BPD16
 ;@----------------------------------------------------------------------------
 	getNextWord
-	strh r0,[v30ptr,#v30RegBP]
+	strh r0,[v30ptr,#v30RegBP+2]
 	fetch 1
 ;@----------------------------------------------------------------------------
 i_mov_sid16:
@@ -3647,12 +3619,12 @@ _C8:	;@ PREPARE
 
 	ldr r8,[v30ptr,#v30RegSP]
 	ldr r6,[v30ptr,#v30SRegSS]
-	ldr r4,[v30ptr,#v30RegBP-2]
+	ldr r4,[v30ptr,#v30RegBP]
 	sub r8,r8,#0x20000
 	add r0,r6,r8,lsr#4
 	mov r1,r4,lsr#16
 	bl cpuWriteMem20W
-	str r8,[v30ptr,#v30RegBP-2]
+	str r8,[v30ptr,#v30RegBP]
 	subs r5,r5,#1
 	bmi 2f
 	beq 1f
@@ -3671,7 +3643,7 @@ _C8:	;@ PREPARE
 	subs r5,r5,#1
 	bne 0b
 1:
-	ldrh r1,[v30ptr,#v30RegBP]
+	ldrh r1,[v30ptr,#v30RegBP+2]
 	sub r8,r8,#0x20000
 	add r0,r6,r8,lsr#4
 	bl cpuWriteMem20W
@@ -3687,13 +3659,13 @@ _C8:	;@ PREPARE
 i_dispose:
 _C9:	;@ DISPOSE
 ;@----------------------------------------------------------------------------
-	ldr r1,[v30ptr,#v30RegBP-2]
+	ldr r1,[v30ptr,#v30RegBP]
 	ldr r0,[v30ptr,#v30SRegSS]
 	add r2,r1,#0x20000
 	add r0,r0,r1,lsr#4
 	str r2,[v30ptr,#v30RegSP]
 	bl cpuReadMem20W
-	strh r0,[v30ptr,#v30RegBP]
+	strh r0,[v30ptr,#v30RegBP+2]
 	fetch 2
 ;@----------------------------------------------------------------------------
 i_retf_d16:
@@ -4901,7 +4873,7 @@ EA_001:	;@
 ;@----------------------------------------------------------------------------
 EA_002:	;@
 ;@----------------------------------------------------------------------------
-	ldr r1,[v30ptr,#v30RegBP-2]
+	ldr r1,[v30ptr,#v30RegBP]
 	ldr r3,[v30ptr,#v30RegIX]
 	tst v30cyc,#SEG_PREFIX
 	ldrne r2,[v30ptr,#v30PrefixBase]
@@ -4912,7 +4884,7 @@ EA_002:	;@
 ;@----------------------------------------------------------------------------
 EA_003:	;@
 ;@----------------------------------------------------------------------------
-	ldr r1,[v30ptr,#v30RegBP-2]
+	ldr r1,[v30ptr,#v30RegBP]
 	ldr r3,[v30ptr,#v30RegIY]
 	tst v30cyc,#SEG_PREFIX
 	ldrne r2,[v30ptr,#v30PrefixBase]
@@ -4989,7 +4961,7 @@ EA_101:	;@
 EA_102:	;@
 ;@----------------------------------------------------------------------------
 	getNextSignedByte
-	ldr r1,[v30ptr,#v30RegBP-2]
+	ldr r1,[v30ptr,#v30RegBP]
 	ldr r3,[v30ptr,#v30RegIX]
 	tst v30cyc,#SEG_PREFIX
 	ldrne r2,[v30ptr,#v30PrefixBase]
@@ -5003,7 +4975,7 @@ EA_102:	;@
 EA_103:	;@
 ;@----------------------------------------------------------------------------
 	getNextSignedByte
-	ldr r1,[v30ptr,#v30RegBP-2]
+	ldr r1,[v30ptr,#v30RegBP]
 	ldr r3,[v30ptr,#v30RegIY]
 	tst v30cyc,#SEG_PREFIX
 	ldrne r2,[v30ptr,#v30PrefixBase]
@@ -5039,7 +5011,7 @@ EA_105:	;@
 EA_106:	;@
 ;@----------------------------------------------------------------------------
 	getNextSignedByte
-	ldr r1,[v30ptr,#v30RegBP-2]
+	ldr r1,[v30ptr,#v30RegBP]
 	tst v30cyc,#SEG_PREFIX
 	ldrne r2,[v30ptr,#v30PrefixBase]
 	ldreq r2,[v30ptr,#v30SRegSS]
@@ -5089,7 +5061,7 @@ EA_201:	;@
 EA_202:	;@
 ;@----------------------------------------------------------------------------
 	getNextWord
-	ldr r1,[v30ptr,#v30RegBP-2]
+	ldr r1,[v30ptr,#v30RegBP]
 	ldr r3,[v30ptr,#v30RegIX]
 	tst v30cyc,#SEG_PREFIX
 	ldrne r2,[v30ptr,#v30PrefixBase]
@@ -5103,7 +5075,7 @@ EA_202:	;@
 EA_203:	;@
 ;@----------------------------------------------------------------------------
 	getNextWord
-	ldr r1,[v30ptr,#v30RegBP-2]
+	ldr r1,[v30ptr,#v30RegBP]
 	ldr r3,[v30ptr,#v30RegIY]
 	tst v30cyc,#SEG_PREFIX
 	ldrne r2,[v30ptr,#v30PrefixBase]
@@ -5139,7 +5111,7 @@ EA_205:	;@
 EA_206:	;@
 ;@----------------------------------------------------------------------------
 	getNextWord
-	ldr r1,[v30ptr,#v30RegBP-2]
+	ldr r1,[v30ptr,#v30RegBP]
 	tst v30cyc,#SEG_PREFIX
 	ldrne r2,[v30ptr,#v30PrefixBase]
 	ldreq r2,[v30ptr,#v30SRegSS]
