@@ -5538,8 +5538,7 @@ nec_interrupt:				;@ r0 = vector number
 
 	mov v30pc,r5,lsl#16
 	v30EncodeFastPC
-	eatCycles 25
-	ldmfd sp!,{pc}
+	ldmfd sp!,{lr}
 	fetch 25
 ;@----------------------------------------------------------------------------
 V30RestoreAndRunXCycles:	;@ r0 = number of cycles to run
@@ -5559,7 +5558,7 @@ v30ChkIrqInternal:					;@ This can be used on EI/IRET/POPF/HALT
 //	movs r1,r0,lsr#24
 //	bne doV30NMI
 	ands r1,r0,r0,lsr#8
-	blne V30FetchIRQ
+	bne V30FetchIRQ
 	ldrb r1,[v30ptr,#v30Halt]
 	cmp r1,#0
 	bne v30InHalt
@@ -5567,7 +5566,8 @@ v30ChkIrqInternal:					;@ This can be used on EI/IRET/POPF/HALT
 V30Go:						;@ Continue running
 ;@----------------------------------------------------------------------------
 xLoop:
-	adr lr,xLoop
+//	adr lr,xLoop
+	ldr lr,=lrError
 	fetch 0
 xOut:
 outOfCycles:
@@ -5625,6 +5625,17 @@ i_crash:
 	sub v30pc,v30pc,#1
 	mov r11,r11					;@ NoCash breakpoint
 	fetch 10
+;@----------------------------------------------------------------------------
+lrError:
+;@----------------------------------------------------------------------------
+	stmfd sp!,{lr}
+	ldr r0,=debugCrashInstruction
+	mov lr,pc
+	bx r0
+	ldmfd sp!,{lr}
+
+	adr lr,lrError
+	fetch 0
 ;@----------------------------------------------------------------------------
 V30IrqVectorDummy:
 ;@----------------------------------------------------------------------------
