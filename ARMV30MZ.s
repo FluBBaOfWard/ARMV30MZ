@@ -4604,6 +4604,7 @@ _F5:	;@ CMC
 i_f6pre:
 _F6:	;@ PRE F6
 ;@----------------------------------------------------------------------------
+	stmfd sp!,{lr}
 	getNextByteToReg r4
 	cmp r4,#0xC0
 	bmi 1f
@@ -4617,33 +4618,31 @@ _F6:	;@ PRE F6
 	nop
 	.long testF6, undefF6, notF6, negF6, muluF6, mulF6, divubF6, divbF6
 1:
-	stmfd sp!,{lr}
 	eatCycles 1
 	add r1,v30ptr,#v30EATable
 	mov lr,pc
 	ldr pc,[r1,r4,lsl#2]
 	mov r5,r0
-	bl cpuReadMem20
-	ldmfd sp!,{lr}
-	b 0b
+	adr lr,0b
+	b cpuReadMem20
 ;@----------------------------------------------------------------------------
 testF6:
 	getNextByteToReg r1
 	and8 r1,r0
+	ldmfd sp!,{lr}
 	fetch 1
 ;@----------------------------------------------------------------------------
 notF6:
-	eatCycles 1
 	mvn r1,r0
 	cmp r4,#0xC0
 	strbpl r1,[v30ptr,-r5]
-	bxpl lr
-	mov r0,r5
-	eatCycles 1
-	b cpuWriteMem20
+	submi v30cyc,v30cyc,#1*CYCLE
+	movmi r0,r5
+	blmi cpuWriteMem20
+	ldmfd sp!,{lr}
+	fetch 1
 ;@----------------------------------------------------------------------------
 negF6:
-	eatCycles 1
 	mov r1,r0,lsl#24
 	rsbs r1,r1,#0
 	mrs v30f,cpsr				;@ S, Z, V & C.
@@ -4653,12 +4652,14 @@ negF6:
 	eor v30f,v30f,#PSR_C		;@ Invert C
 	mov r1,r1,lsr#24
 	strb r1,[v30ptr,#v30ParityVal]
+
 	cmp r4,#0xC0
 	strbpl r1,[v30ptr,-r5]
-	bxpl lr
-	mov r0,r5
-	eatCycles 1
-	b cpuWriteMem20
+	submi v30cyc,v30cyc,#1*CYCLE
+	movmi r0,r5
+	blmi cpuWriteMem20
+	ldmfd sp!,{lr}
+	fetch 1
 ;@----------------------------------------------------------------------------
 muluF6:
 	mov v30f,#PSR_Z						;@ Set Z and clear others.
@@ -4669,6 +4670,7 @@ muluF6:
 	movs r2,r2,lsr#8
 	orrne v30f,v30f,#PSR_C+PSR_V
 	strb v30f,[v30ptr,#v30MulOverflow]
+	ldmfd sp!,{lr}
 	fetch 3
 ;@----------------------------------------------------------------------------
 mulF6:
@@ -4683,9 +4685,11 @@ mulF6:
 	mvnsne r1,r1
 	orrne v30f,v30f,#PSR_C+PSR_V
 	strb v30f,[v30ptr,#v30MulOverflow]
+	ldmfd sp!,{lr}
 	fetch 3
 ;@----------------------------------------------------------------------------
 divubF6:
+	ldmfd sp!,{lr}
 	eatCycles 14
 	ldrb v30f,[v30ptr,#v30MulOverflow]	;@ C & V from last mul, Z always set.
 	strb v30f,[v30ptr,#v30ParityVal]	;@ Clear parity
@@ -4705,6 +4709,7 @@ divubF6:
 	fetch 0
 ;@----------------------------------------------------------------------------
 divbF6:
+	ldmfd sp!,{lr}
 	eatCycles 16
 	movs r1,r0,lsl#24
 	ldr r0,[v30ptr,#v30RegAW-2]
@@ -4745,6 +4750,7 @@ divbF6Error2:
 i_f7pre:
 _F7:	;@ PRE F7
 ;@----------------------------------------------------------------------------
+	stmfd sp!,{lr}
 	getNextByteToReg r4
 	cmp r4,#0xC0
 	bmi 1f
@@ -4758,34 +4764,32 @@ _F7:	;@ PRE F7
 	nop
 	.long testF7, undefF7, notF7, negF7, muluF7, mulF7, divuwF7, divwF7
 1:
-	stmfd sp!,{lr}
 	eatCycles 1
 	add r1,v30ptr,#v30EATable
 	mov lr,pc
 	ldr pc,[r1,r4,lsl#2]
 	mov r5,r0
-	bl cpuReadMem20W
-	ldmfd sp!,{lr}
-	b 0b
+	adr lr,0b
+	b cpuReadMem20W
 ;@----------------------------------------------------------------------------
 testF7:
 	mov r4,r0,lsl#16
 	getNextWord
 	and16 r0,r4
+	ldmfd sp!,{lr}
 	fetch 1
 ;@----------------------------------------------------------------------------
 notF7:
-	eatCycles 1
 	mvn r1,r0
 	cmp r4,#0xC0
 	strhpl r1,[r5,#v30Regs]
-	bxpl lr
-	mov r0,r5
-	eatCycles 1
-	b cpuWriteMem20W
+	submi v30cyc,v30cyc,#1*CYCLE
+	movmi r0,r5
+	blmi cpuWriteMem20W
+	ldmfd sp!,{lr}
+	fetch 1
 ;@----------------------------------------------------------------------------
 negF7:
-	eatCycles 1
 	mov r1,r0,lsl#16
 	rsbs r1,r1,#0
 	mrs v30f,cpsr				;@ S, Z, V & C.
@@ -4797,10 +4801,11 @@ negF7:
 	strb r1,[v30ptr,#v30ParityVal]
 	cmp r4,#0xC0
 	strhpl r1,[r5,#v30Regs]
-	bxpl lr
-	mov r0,r5
-	eatCycles 1
-	b cpuWriteMem20W
+	submi v30cyc,v30cyc,#1*CYCLE
+	movmi r0,r5
+	blmi cpuWriteMem20W
+	ldmfd sp!,{lr}
+	fetch 1
 ;@----------------------------------------------------------------------------
 muluF7:
 	mov v30f,#PSR_Z						;@ Set Z and clear others.
@@ -4812,6 +4817,7 @@ muluF7:
 	strh r2,[v30ptr,#v30RegDW]
 	orrne v30f,v30f,#PSR_C+PSR_V		;@ Set Carry & Overflow.
 	strb v30f,[v30ptr,#v30MulOverflow]
+	ldmfd sp!,{lr}
 	fetch 3
 ;@----------------------------------------------------------------------------
 mulF7:
@@ -4828,9 +4834,11 @@ mulF7:
 	mvnsne r1,r1
 	orrne v30f,v30f,#PSR_C+PSR_V		;@ Set Carry & Overflow.
 	strb v30f,[v30ptr,#v30MulOverflow]
+	ldmfd sp!,{lr}
 	fetch 3
 ;@----------------------------------------------------------------------------
 divuwF7:
+	ldmfd sp!,{lr}
 	eatCycles 22
 	ldrb v30f,[v30ptr,#v30MulOverflow]	;@ C & V from last mul, Z always set.
 	strb v30f,[v30ptr,#v30ParityVal]	;@ Clear parity
@@ -4854,6 +4862,7 @@ divuwF7:
 	fetch 0
 ;@----------------------------------------------------------------------------
 divwF7:
+	ldmfd sp!,{lr}
 	eatCycles 23
 	movs r1,r0,lsl#16
 	ldrh r0,[v30ptr,#v30RegAW]
@@ -4940,6 +4949,7 @@ _FD:	;@ STD
 i_fepre:
 _FE:	;@ PRE FE
 ;@----------------------------------------------------------------------------
+	stmfd sp!,{lr}
 	getNextByteToReg r4
 	tst r4,#0x30
 	bne contFF
@@ -4948,7 +4958,6 @@ _FE:	;@ PRE FE
 	add r1,v30ptr,r4
 	ldrb r5,[r1,#v30ModRmRm]
 	ldrb r0,[v30ptr,-r5]
-	eatCycles 1
 0:
 	mov r1,r0,lsl#24
 	tst r4,#0x08
@@ -4974,33 +4983,31 @@ writeBackFE:
 	bic v30cyc,v30cyc,#SEG_PREFIX
 	cmp r4,#0xC0
 	strbpl r1,[v30ptr,-r5]
-	bxpl lr
-	mov r0,r5
-	b cpuWriteMem20
+	movmi r0,r5
+	blmi cpuWriteMem20
+	ldmfd sp!,{lr}
+	fetch 1
 1:
-	stmfd sp!,{lr}
-	eatCycles 3
+	eatCycles 2
 	add r1,v30ptr,#v30EATable
 	mov lr,pc
 	ldr pc,[r1,r4,lsl#2]
 	mov r5,r0
-	bl cpuReadMem20
-	ldmfd sp!,{lr}
-	b 0b
+	adr lr,0b
+	b cpuReadMem20
 
 ;@----------------------------------------------------------------------------
 i_ffpre:
 _FF:	;@ PRE FF
 ;@----------------------------------------------------------------------------
+	stmfd sp!,{lr}
 	getNextByteToReg r4
 contFF:
-	stmfd sp!,{lr}
 	cmp r4,#0xC0
 	bmi 1f
 	and r2,r4,#7
 	add r5,v30ptr,r2,lsl#2
 	ldrh r0,[r5,#v30Regs]
-	eatCycles 1
 0:
 	bic v30cyc,v30cyc,#SEG_PREFIX
 	and r2,r4,#0x38
@@ -5037,14 +5044,13 @@ writeBackFF:
 	orrmi v30f,v30f,#PSR_S
 	orreq v30f,v30f,#PSR_Z
 	strb r1,[v30ptr,#v30ParityVal]
-	eatCycles 1
 	cmp r4,#0xC0
 	strhpl r1,[r5,#v30Regs]
-	ldmfdpl sp!,{pc}
-	mov r0,r5
+	submi v30cyc,v30cyc,#1*CYCLE
+	movmi r0,r5
+	blmi cpuWriteMem20W
 	ldmfd sp!,{lr}
-	eatCycles 1
-	b cpuWriteMem20W
+	fetch 1
 ;@----------------------------------------------------------------------------
 callFF:
 	v30DecodeFastPCToReg r5
@@ -5598,10 +5604,10 @@ logUndefinedOpcode:
 	bx r0
 ;@----------------------------------------------------------------------------
 i_undefined:
+	stmfd sp!,{lr}
 undefF6:
 undefF7:
 ;@----------------------------------------------------------------------------
-	stmfd sp!,{lr}
 	bl logUndefinedOpcode
 	ldmfd sp!,{lr}
 
