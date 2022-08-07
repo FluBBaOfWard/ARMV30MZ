@@ -1,6 +1,6 @@
 //
 //  ARMV30MZ.s
-//  ARMV30MZ
+//  V30MZ cpu emulator for arm32.
 //
 //  Created by Fredrik Ahlström on 2021-12-19.
 //  Copyright © 2021-2022 Fredrik Ahlström. All rights reserved.
@@ -2639,26 +2639,26 @@ f3a4:	;@ REP MOVSB
 	ldrh r7,[v30ptr,#v30RegCW]
 	cmp r7,#1
 	bmi 1f
-0:
 	tst v30cyc,#SEG_PREFIX
-	ldrne r0,[v30ptr,#v30PrefixBase]
-	ldreq r0,[v30ptr,#v30SRegDS]
-	ldr r1,[v30ptr,#v30RegIX]
-	ldrsb r4,[v30ptr,#v30DF]
-	add r0,r0,r1,lsr#4
-	add r2,r1,r4,lsl#16
-	str r2,[v30ptr,#v30RegIX]
+	ldrne r4,[v30ptr,#v30PrefixBase]
+	ldreq r4,[v30ptr,#v30SRegDS]
+	ldr r5,[v30ptr,#v30RegIX]
+	ldrsb r6,[v30ptr,#v30DF]
+0:
+	add r0,r4,r5,lsr#4
+	add r5,r5,r6,lsl#16
 	bl cpuReadMem20
 	mov r1,r0
 	ldr r3,[v30ptr,#v30RegIY]
 	ldr r0,[v30ptr,#v30SRegES]
-	add r2,r3,r4,lsl#16
+	add r2,r3,r6,lsl#16
 	add r0,r0,r3,lsr#4
 	str r2,[v30ptr,#v30RegIY]
 	bl cpuWriteMem20
 	eatCycles 7
 	subs r7,r7,#1
 	bne 0b
+	str r5,[v30ptr,#v30RegIX]
 1:
 	strh r7,[v30ptr,#v30RegCW]
 	bic v30cyc,v30cyc,#SEG_PREFIX+REP_PREFIX+LOCK_PREFIX
@@ -2692,26 +2692,26 @@ f3a5:	;@ REP MOSW
 	ldrh r7,[v30ptr,#v30RegCW]
 	cmp r7,#1
 	bmi 1f
-0:
 	tst v30cyc,#SEG_PREFIX
-	ldrne r0,[v30ptr,#v30PrefixBase]
-	ldreq r0,[v30ptr,#v30SRegDS]
-	ldr r1,[v30ptr,#v30RegIX]
-	ldrsb r4,[v30ptr,#v30DF]
-	add r0,r0,r1,lsr#4
-	add r2,r1,r4,lsl#17
-	str r2,[v30ptr,#v30RegIX]
+	ldrne r4,[v30ptr,#v30PrefixBase]
+	ldreq r4,[v30ptr,#v30SRegDS]
+	ldr r5,[v30ptr,#v30RegIX]
+	ldrsb r6,[v30ptr,#v30DF]
+0:
+	add r0,r4,r5,lsr#4
+	add r5,r5,r6,lsl#17
 	bl cpuReadMem20W
 	mov r1,r0
 	ldr r3,[v30ptr,#v30RegIY]
 	ldr r0,[v30ptr,#v30SRegES]
-	add r2,r3,r4,lsl#17
+	add r2,r3,r6,lsl#17
 	add r0,r0,r3,lsr#4
 	str r2,[v30ptr,#v30RegIY]
 	bl cpuWriteMem20W
 	eatCycles 7
 	subs r7,r7,#1
 	bne 0b
+	str r5,[v30ptr,#v30RegIX]
 1:
 	strh r7,[v30ptr,#v30RegCW]
 	bic v30cyc,v30cyc,#SEG_PREFIX+REP_PREFIX+LOCK_PREFIX
@@ -2957,18 +2957,18 @@ f3aa:	;@ REP STOSB
 	ldrh r7,[v30ptr,#v30RegCW]
 	cmp r7,#1
 	bmi 1f
+	ldr r4,[v30ptr,#v30SRegES]
+	ldr r5,[v30ptr,#v30RegIY]
+	ldrsb r6,[v30ptr,#v30DF]
 0:
-	ldr r0,[v30ptr,#v30SRegES]
-	ldr r1,[v30ptr,#v30RegIY]
-	ldrsb r3,[v30ptr,#v30DF]
-	add r0,r0,r1,lsr#4
-	add r2,r1,r3,lsl#16
-	str r2,[v30ptr,#v30RegIY]
+	add r0,r4,r5,lsr#4
+	add r5,r5,r6,lsl#16
 	ldrb r1,[v30ptr,#v30RegAL]
 	bl cpuWriteMem20
 	eatCycles 6
 	subs r7,r7,#1
 	bne 0b
+	str r5,[v30ptr,#v30RegIY]
 1:
 	strh r7,[v30ptr,#v30RegCW]
 	bic v30cyc,v30cyc,#SEG_PREFIX+REP_PREFIX+LOCK_PREFIX
@@ -2993,18 +2993,18 @@ f3ab:	;@ REP STOSW
 	ldrh r7,[v30ptr,#v30RegCW]
 	cmp r7,#1
 	bmi 1f
+	ldr r4,[v30ptr,#v30SRegES]
+	ldr r5,[v30ptr,#v30RegIY]
+	ldrsb r6,[v30ptr,#v30DF]
 0:
-	ldr r0,[v30ptr,#v30SRegES]
-	ldr r1,[v30ptr,#v30RegIY]
-	ldrsb r3,[v30ptr,#v30DF]
-	add r0,r0,r1,lsr#4
-	add r2,r1,r3,lsl#17
-	str r2,[v30ptr,#v30RegIY]
+	add r0,r4,r5,lsr#4
+	add r5,r5,r6,lsl#17
 	ldrh r1,[v30ptr,#v30RegAW]
 	bl cpuWriteMem20W
 	eatCycles 6
 	subs r7,r7,#1
 	bne 0b
+	str r5,[v30ptr,#v30RegIY]
 1:
 	strh r7,[v30ptr,#v30RegCW]
 	bic v30cyc,v30cyc,#SEG_PREFIX+REP_PREFIX+LOCK_PREFIX
@@ -3847,8 +3847,7 @@ _D4:	;@ AAM/CVTBD	;@ Adjust After Multiply / Convert Binary to Decimal
 	beq d4DivideError
 	rsb r1,r1,#1
 
-	mov r2,pc
-	b division8
+	bl division8
 
 	mov r0,r0,ror#8
 	orr r0,r0,r0,lsr#16
@@ -3900,8 +3899,7 @@ _D7:	;@ TRANS
 	ldrne r0,[v30ptr,#v30PrefixBase]
 	ldreq r0,[v30ptr,#v30SRegDS]
 	ldrb r2,[v30ptr,#v30RegAL]
-	ldrh r1,[v30ptr,#v30RegBW]
-	mov r1,r1,lsl#16
+	ldr r1,[v30ptr,#v30RegBW-2]
 	add r1,r1,r2,lsl#16
 	add r0,r0,r1,lsr#4
 	bl cpuReadMem20
@@ -4406,8 +4404,7 @@ divubF6:
 	bcs divideError
 	rsb r1,r1,#1
 
-	mov r2,pc
-	b division8
+	bl division8
 
 	strh r0,[v30ptr,#v30RegAW]
 	bic r0,r0,#0xFE
@@ -4428,8 +4425,7 @@ divbF6:
 	bcs divbF6Error2
 	add r1,r1,#1
 
-	mov r2,pc
-	b division8
+	bl division8
 
 	mov r1,r0,lsr#24
 	tst r3,#0x8000
@@ -4844,7 +4840,7 @@ division8:
 	subcc r0,r0,r1
 	adds r0,r1,r0,lsl#1
 	subcc r0,r0,r1
-	bx r2
+	bx lr
 
 ;@----------------------------------------------------------------------------
 // All EA functions must leave EO (EffectiveOffset) in top 16bits of r1!

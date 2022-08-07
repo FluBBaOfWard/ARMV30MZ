@@ -9,9 +9,9 @@ ARMV30MZ To do
 	Hard to use a dedicated register for v30Regs since they can be accessed by index.
 	Make define for combining PC + CS + Rom offset.
 	Rename more opcodes.
-	Remove "-2" from dec/inc word macro.
 
 	Buslock is used with REP and hinders interrupts until finished.
+	* Break in REPE/REPNE (0xF2/0xF3) to see if any games use BUSLOCK.
 	Make 26, 2E, 36 & 3E share code?
 
 	* All SEG_PREFIX opcodes need its own jumptable?
