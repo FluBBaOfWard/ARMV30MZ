@@ -37,11 +37,6 @@
 	.equ CF, 0x0001				;@ Carry
 
 ;@----------------------------------------------------------------------------
-	.equ CYC_SHIFT, 8
-	.equ CYCLE, 1<<CYC_SHIFT	;@ One cycle
-	.equ CYC_MASK, CYCLE-1		;@ Mask
-
-;@----------------------------------------------------------------------------
 
 	.macro eatCycles count
 	sub v30cyc,v30cyc,#(\count)*CYCLE

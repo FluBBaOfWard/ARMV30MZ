@@ -1545,10 +1545,10 @@ _62:	;@ CHKIND
 	bmi nec_interrupt
 	fetch 13
 1:
-	mov r11,r11					;@ Not correct?
 	and r2,r0,#7
 	add r1,v30ptr,r2,lsl#2
 	ldrh r0,[r1,#v30Regs]
+	bl logUndefinedOpcode
 	b 0b
 
 ;@----------------------------------------------------------------------------
@@ -1689,12 +1689,12 @@ f36d:	;@ REP INMW
 	ldrh r7,[v30ptr,#v30RegCW]
 	cmp r7,#1
 	bmi 1f
+	ldrh r4,[v30ptr,#v30RegDW]
 0:
-	ldrh r0,[v30ptr,#v30RegDW]
-	add r4,r0,#1
+	mov r0,r4
 	bl v30ReadPort
 	mov r5,r0
-	mov r0,r4
+	add r0,r4,#1
 	bl v30ReadPort
 	ldrsb r3,[v30ptr,#v30DF]
 	ldr r2,[v30ptr,#v30RegIY]
@@ -1715,11 +1715,11 @@ f36d:	;@ REP INMW
 i_inmw:
 _6D:	;@ INMW
 ;@----------------------------------------------------------------------------
-	ldrh r0,[v30ptr,#v30RegDW]
-	add r4,r0,#1
+	ldrh r4,[v30ptr,#v30RegDW]
+	mov r0,r4
 	bl v30ReadPort
 	mov r5,r0
-	mov r0,r4
+	add r0,r4,#1
 	bl v30ReadPort
 	ldrsb r3,[v30ptr,#v30DF]
 	ldr r2,[v30ptr,#v30RegIY]
@@ -1794,8 +1794,8 @@ f36f:	;@ REP OUTMW
 	bl cpuReadMem20W
 	and r1,r0,#0xFF
 	mov r4,r0
-	ldrh r0,[v30ptr,#v30RegDW]
-	mov r5,r0
+	ldrh r5,[v30ptr,#v30RegDW]
+	mov r0,r5
 	bl v30WritePort
 	mov r1,r4,lsr#8
 	add r0,r5,#1
@@ -1822,8 +1822,8 @@ _6F:	;@ OUTMW
 	bl cpuReadMem20W
 	and r1,r0,#0xFF
 	mov r4,r0
-	ldrh r0,[v30ptr,#v30RegDW]
-	mov r5,r0
+	ldrh r5,[v30ptr,#v30RegDW]
+	mov r0,r5
 	bl v30WritePort
 	mov r1,r4,lsr#8
 	add r0,r5,#1
@@ -2023,7 +2023,6 @@ _81:	;@ PRE 81
 	and r2,r4,#7
 	add r5,v30ptr,r2,lsl#2
 	ldr r6,[r5,#v30Regs2]
-	eatCycles 1
 0:
 	getNextWord
 pre81Continue:
@@ -2616,8 +2615,8 @@ _A2:	;@ MOV DISPAL
 	ldreq r1,[v30ptr,#v30SRegDS]
 	add r0,r1,r0,lsl#12
 	ldrb r1,[v30ptr,#v30RegAL]
-	bic v30cyc,v30cyc,#SEG_PREFIX
 	bl cpuWriteMem20
+	bic v30cyc,v30cyc,#SEG_PREFIX
 	fetch 1
 ;@----------------------------------------------------------------------------
 i_mov_dispax:
@@ -2629,8 +2628,8 @@ _A3:	;@ MOV DISPAX
 	ldreq r1,[v30ptr,#v30SRegDS]
 	add r0,r1,r0,lsl#12
 	ldrh r1,[v30ptr,#v30RegAW]
-	bic v30cyc,v30cyc,#SEG_PREFIX
 	bl cpuWriteMem20W
+	bic v30cyc,v30cyc,#SEG_PREFIX
 	fetch 1
 
 ;@----------------------------------------------------------------------------
@@ -3528,10 +3527,10 @@ _C4:	;@ LES DW
 	bic v30cyc,v30cyc,#SEG_PREFIX
 	fetch 6
 1:
-	mov r11,r11					;@ Not correct?
 	and r2,r0,#7
 	add r1,v30ptr,r2,lsl#2
 	ldrh r0,[r1,#v30Regs]
+	bl logUndefinedOpcode
 	b 0b
 ;@----------------------------------------------------------------------------
 i_lds_dw:
@@ -3557,10 +3556,10 @@ _C5:	;@ LDS DW
 	bic v30cyc,v30cyc,#SEG_PREFIX
 	fetch 6
 1:
-	mov r11,r11					;@ Not correct?
 	and r2,r0,#7
 	add r1,v30ptr,r2,lsl#2
 	ldrh r0,[r1,#v30Regs]
+	bl logUndefinedOpcode
 	b 0b
 ;@----------------------------------------------------------------------------
 i_mov_bd8:
@@ -5242,14 +5241,11 @@ v30ChkIrqInternal:					;@ This can be used on EI/IRET/POPF/HALT
 ;@----------------------------------------------------------------------------
 V30Go:						;@ Continue running
 ;@----------------------------------------------------------------------------
-xLoop:
-//	adr lr,xLoop
-	ldr lr,=lrError
+//	adr lr,V30Go
 	fetch 0
 v30InHalt:
 	mvns r0,v30cyc,asr#CYC_SHIFT			;@
 	addmi v30cyc,v30cyc,r0,lsl#CYC_SHIFT	;@ Consume all remaining cycles in steps of 1.
-xOut:
 outOfCycles:
 	ldmfd sp!,{pc}
 ;@----------------------------------------------------------------------------
@@ -5276,6 +5272,7 @@ divideError:
 ;@----------------------------------------------------------------------------
 logUndefinedOpcode:
 ;@----------------------------------------------------------------------------
+	mov r11,r11					;@ NoCash breakpoint
 	ldr r0,=debugUndefinedInstruction
 	bx r0
 ;@----------------------------------------------------------------------------
@@ -5285,8 +5282,6 @@ undefF7:
 undefFF:
 ;@----------------------------------------------------------------------------
 	bl logUndefinedOpcode
-
-	mov r11,r11					;@ NoCash breakpoint
 	fetch 1
 ;@----------------------------------------------------------------------------
 i_crash:
@@ -5298,15 +5293,6 @@ i_crash:
 	sub v30pc,v30pc,#1
 	mov r11,r11					;@ NoCash breakpoint
 	fetch 10
-;@----------------------------------------------------------------------------
-lrError:
-;@----------------------------------------------------------------------------
-	ldr r0,=debugCrashInstruction
-	mov lr,pc
-	bx r0
-
-	adr lr,lrError
-	fetch 0
 ;@----------------------------------------------------------------------------
 V30IrqVectorDummy:
 ;@----------------------------------------------------------------------------
