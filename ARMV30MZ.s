@@ -5349,6 +5349,8 @@ V30Reset:					;@ r0=v30ptr
 	str r0,[v30ptr,#v30RegSP]
 	mov r0,#v30PZST
 	strh r0,[v30ptr,#v30ParityVal]
+	mov r0,#1
+	strb r0,[v30ptr,#v30DF]
 
 	mov v30pc,#0
 	v30EncodeFastPC
