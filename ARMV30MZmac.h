@@ -259,8 +259,8 @@
 	.macro rol8 dst src
 	cmp \src,#0x10
 	andne \src,\src,#0x0F
-	tst v30f,v30f,lsr#2				;@ Move PSR_C to Carry
-	bic v30f,v30f,#PSR_C+PSR_V		;@ Clear C & V.
+	tst v30f,v30f,lsr#2			;@ Move PSR_C to Carry
+	bic v30f,v30f,#PSR_C+PSR_V	;@ Clear C & V.
 	orr \dst,\dst,\dst,lsl#8
 	orr \dst,\dst,\dst,lsl#16
 	movs \dst,\dst,lsl \src
@@ -272,8 +272,8 @@
 	.macro rol16 dst src
 	cmp \src,#0x10
 	andne \src,\src,#0x0F
-	tst v30f,v30f,lsr#2				;@ Move PSR_C to Carry
-	bic v30f,v30f,#PSR_C+PSR_V		;@ Clear C & V.
+	tst v30f,v30f,lsr#2			;@ Move PSR_C to Carry
+	bic v30f,v30f,#PSR_C+PSR_V	;@ Clear C & V.
 	orr \dst,\dst,\dst,lsl#16
 	movs \dst,\dst,lsl \src
 	orrcs v30f,v30f,#PSR_C+PSR_V
@@ -318,8 +318,8 @@
 	.endm
 ;@----------------------------------------------------------------------------
 	.macro ror8 dst src
-	tst v30f,v30f,lsr#2				;@ Move PSR_C to Carry
-	bic v30f,v30f,#PSR_C+PSR_V		;@ Clear C & V.
+	tst v30f,v30f,lsr#2			;@ Move PSR_C to Carry
+	bic v30f,v30f,#PSR_C+PSR_V	;@ Clear C & V.
 	orr \dst,\dst,\dst,lsl#8
 	orr \dst,\dst,\dst,lsl#16
 	movs \dst,\dst,ror \src
@@ -330,8 +330,8 @@
 	.endm
 
 	.macro ror16 dst src
-	tst v30f,v30f,lsr#2				;@ Move PSR_C to Carry
-	bic v30f,v30f,#PSR_C+PSR_V		;@ Clear C & V.
+	tst v30f,v30f,lsr#2			;@ Move PSR_C to Carry
+	bic v30f,v30f,#PSR_C+PSR_V	;@ Clear C & V.
 	orr \dst,\dst,\dst,lsl#16
 	movs \dst,\dst,ror \src
 	orrcs v30f,v30f,#PSR_C

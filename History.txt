@@ -2,8 +2,9 @@ ARMV30MZ revision history
 -=-=-=-=-=-=-=-=-=-=-=-=-
 
 
-V0.8.1 - 2022-08-17 (FluBBa)
+V0.8.1 - 2022-11-13 (FluBBa)
 	Fixed reset of Direction flag.
+	Added back NMI support.
 
 V0.8.0 - 2022-08-10 (FluBBa)
 	Fixed INMB/INMW opcodes.
