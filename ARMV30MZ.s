@@ -2455,12 +2455,11 @@ _9A:	;@ CALL FAR
 	bl cpuWriteMem20W
 	sub r6,r6,#0x20000
 	str r6,[v30ptr,#v30RegSP]
-	v30DecodeFastPCToReg r7
+	v30DecodeFastPCToReg r1
+	add r0,r5,r6,lsr#4
+	bl cpuWriteMem20W
 	mov v30pc,r4,lsl#16
 	v30EncodeFastPC
-	add r0,r5,r6,lsr#4
-	mov r1,r7
-	bl cpuWriteMem20W
 	fetch 7
 
 ;@----------------------------------------------------------------------------
