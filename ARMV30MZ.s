@@ -779,7 +779,7 @@ _26:	;@ ES prefix
 	add r2,v30ptr,#v30SegTbl
 	ldrb r1,[r2,r0]
 	orr v30cyc,v30cyc,r1		;@ SEG_PREFIX
-	eatCycles 1
+//	eatCycles 1
 	ldr pc,[v30ptr,r0,lsl#2]
 
 ;@----------------------------------------------------------------------------
@@ -942,7 +942,7 @@ _2E:	;@ CS prefix
 	add r2,v30ptr,#v30SegTbl
 	ldrb r1,[r2,r0]
 	orr v30cyc,v30cyc,r1		;@ SEG_PREFIX
-	eatCycles 1
+//	eatCycles 1
 	ldr pc,[v30ptr,r0,lsl#2]
 ;@----------------------------------------------------------------------------
 i_das:
@@ -1104,7 +1104,7 @@ _36:	;@ SS prefix
 	add r2,v30ptr,#v30SegTbl
 	ldrb r1,[r2,r0]
 	orr v30cyc,v30cyc,r1		;@ SEG_PREFIX
-	eatCycles 1
+//	eatCycles 1
 	ldr pc,[v30ptr,r0,lsl#2]
 ;@----------------------------------------------------------------------------
 i_aaa:
@@ -1245,7 +1245,7 @@ _3E:	;@ DS prefix
 	add r2,v30ptr,#v30SegTbl
 	ldrb r1,[r2,r0]
 	orr v30cyc,v30cyc,r1		;@ SEG_PREFIX
-	eatCycles 1
+//	eatCycles 1
 	ldr pc,[v30ptr,r0,lsl#2]
 ;@----------------------------------------------------------------------------
 i_aas:
@@ -2685,7 +2685,7 @@ _A4:	;@ MOVSB
 	fetch 5
 
 ;@----------------------------------------------------------------------------
-f3a5:	;@ REP MOSW
+f3a5:	;@ REP MOVSW
 ;@----------------------------------------------------------------------------
 	ldrh r7,[v30ptr,#v30RegCW]
 	cmp r7,#1
@@ -3968,7 +3968,7 @@ _E4:	;@ INAL
 	getNextByte
 	bl v30ReadPort
 	strb r0,[v30ptr,#v30RegAL]
-	fetch 6
+	fetch 7
 ;@----------------------------------------------------------------------------
 i_inax:
 _E5:	;@ INAX
@@ -3980,7 +3980,7 @@ _E5:	;@ INAX
 	add r0,r4,#1
 	bl v30ReadPort
 	strb r0,[v30ptr,#v30RegAH]
-	fetch 6
+	fetch 7
 ;@----------------------------------------------------------------------------
 i_outal:
 _E6:	;@ OUTAL
@@ -3988,7 +3988,7 @@ _E6:	;@ OUTAL
 	getNextByte
 	ldrb r1,[v30ptr,#v30RegAL]
 	bl v30WritePort
-	fetch 6
+	fetch 7
 ;@----------------------------------------------------------------------------
 i_outax:
 _E7:	;@ OUTAX
@@ -4000,7 +4000,7 @@ _E7:	;@ OUTAX
 	ldrb r1,[v30ptr,#v30RegAH]
 	add r0,r4,#1
 	bl v30WritePort
-	fetch 6
+	fetch 7
 
 ;@----------------------------------------------------------------------------
 i_call_d16:
@@ -4068,7 +4068,7 @@ _ED:	;@ INAXDX
 	add r0,r4,#1
 	bl v30ReadPort
 	strb r0,[v30ptr,#v30RegAH]
-	fetch 6
+	fetch 5
 ;@----------------------------------------------------------------------------
 i_outdxal:
 _EE:	;@ OUTDXAL
@@ -4076,7 +4076,7 @@ _EE:	;@ OUTDXAL
 	ldrh r0,[v30ptr,#v30RegDW]
 	ldrb r1,[v30ptr,#v30RegAL]
 	bl v30WritePort
-	fetch 6
+	fetch 5
 ;@----------------------------------------------------------------------------
 i_outdxax:
 _EF:	;@ OUTDXAX
@@ -4088,7 +4088,7 @@ _EF:	;@ OUTDXAX
 	ldrb r1,[v30ptr,#v30RegAH]
 	add r0,r4,#1
 	bl v30WritePort
-	fetch 6
+	fetch 5
 
 ;@----------------------------------------------------------------------------
 i_lock:
@@ -4299,8 +4299,7 @@ _F4:	;@ HALT
 	ldrb r0,[v30ptr,#v30IrqPin]
 	cmp r0,#0
 	bne v30ChkIrqInternal
-	mov r0,#1
-	strb r0,[v30ptr,#v30Halt]
+	orr v30cyc,v30cyc,#HALT_FLAG
 	mvns r0,v30cyc,asr#CYC_SHIFT			;@
 	addmi v30cyc,v30cyc,r0,lsl#CYC_SHIFT	;@ Consume all remaining cycles in steps of 1.
 	fetch 0
@@ -4393,7 +4392,7 @@ mulF6:
 	fetch 3
 ;@----------------------------------------------------------------------------
 divubF6:
-	eatCycles 14
+	eatCycles 15
 	ldrb v30f,[v30ptr,#v30MulOverflow]	;@ C & V from last mul, Z always set.
 	strb v30f,[v30ptr,#v30ParityVal]	;@ Clear parity
 	mov r1,r0,lsl#8
@@ -4411,7 +4410,7 @@ divubF6:
 	fetch 0
 ;@----------------------------------------------------------------------------
 divbF6:
-	eatCycles 16
+	eatCycles 17
 	movs r1,r0,lsl#24
 	ldr r0,[v30ptr,#v30RegAW-2]
 	beq divbF6Error
@@ -4532,7 +4531,7 @@ mulF7:
 	fetch 3
 ;@----------------------------------------------------------------------------
 divuwF7:
-	eatCycles 22
+	eatCycles 23
 	ldrb v30f,[v30ptr,#v30MulOverflow]	;@ C & V from last mul, Z always set.
 	strb v30f,[v30ptr,#v30ParityVal]	;@ Clear parity
 	mov r1,r0,lsl#16
@@ -4555,7 +4554,7 @@ divuwF7:
 	fetch 0
 ;@----------------------------------------------------------------------------
 divwF7:
-	eatCycles 23
+	eatCycles 24
 	movs r1,r0,lsl#16
 	ldrh r0,[v30ptr,#v30RegAW]
 	ldrh r2,[v30ptr,#v30RegDW]
@@ -5154,8 +5153,7 @@ V30SetIRQPin:			;@ r0=pin state
 	cmp r0,#0
 	movne r0,#0x01
 	strb r0,[v30ptr,#v30IrqPin]
-	movne r0,#0
-	strbne r0,[v30ptr,#v30Halt]
+	bicne v30cyc,v30cyc,#HALT_FLAG
 	bx lr
 ;@----------------------------------------------------------------------------
 V30FetchIRQ:
@@ -5213,8 +5211,7 @@ v30ChkIrqInternal:					;@ This can be used on EI/IRET/POPF/HALT
 	bne doV30NMI
 	ands r1,r0,r0,lsr#8
 	bne V30FetchIRQ
-	ldrb r1,[v30ptr,#v30Halt]
-	cmp r1,#0
+	tst v30cyc,#HALT_FLAG
 	bne v30InHalt
 ;@----------------------------------------------------------------------------
 V30Go:						;@ Continue running
@@ -5243,8 +5240,7 @@ V30SetNMIPin:			;@ r0=pin state
 	strb r0,[v30ptr,#v30NmiPin]
 	bics r0,r0,r1
 	strbne r0,[v30ptr,#v30NmiPending]
-	movne r0,#0
-	strbne r0,[v30ptr,#v30Halt]
+	bicne v30cyc,v30cyc,#HALT_FLAG
 	bx lr
 ;@----------------------------------------------------------------------------
 doV30NMI:

@@ -30,8 +30,7 @@ typedef struct {
 	u8 v30TF;
 	u8 v30DF;
 	u8 v30MulOverflow;
-	u8 v30Halt;
-	u8 dummy0[2];
+	u8 dummy0[3];
 
 	u32 v30LastBank;
 	void *v30IrqVectorFunc;
@@ -43,6 +42,7 @@ typedef struct {
 	void *EATable[192];
 	u8 v30ModRmRm[256];
 	u8 v30ModRmReg[256];
+	u8 v30SegTbl[256];
 } ARMV30Core;
 
 extern ARMV30Core V30OpTable;
