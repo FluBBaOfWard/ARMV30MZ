@@ -1589,7 +1589,7 @@ _69:	;@ IMUL D16
 
 	strh r0,[r4,#v30Regs]
 	bic v30cyc,v30cyc,#SEG_PREFIX
-	fetch 5
+	fetch 3
 1:
 	eatCycles 1
 	add r1,v30ptr,#v30EATable
@@ -1634,7 +1634,7 @@ _6B:	;@ IMUL D8
 
 	strh r2,[r4,#v30Regs]
 	bic v30cyc,v30cyc,#SEG_PREFIX
-	fetch 5
+	fetch 3
 1:
 	eatCycles 1
 	add r1,v30ptr,#v30EATable
@@ -2389,6 +2389,11 @@ _8F:	;@ POPW
 i_nop:
 _90:	;@ NOP (XCHG AXAX)
 ;@----------------------------------------------------------------------------
+	ldrb r0,[v30pc]				;@ Check for 3 NOPs
+	cmp r0,#0x90
+	ldrbeq r1,[v30pc,#1]
+	cmpeq r1,#0x90
+	subeq v30cyc,v30cyc,#1*CYCLE
 	fetch 1
 ;@----------------------------------------------------------------------------
 i_xchg_axcx:
@@ -4056,7 +4061,7 @@ _EC:	;@ INALDX
 	ldrh r0,[v30ptr,#v30RegDW]
 	bl v30ReadPort
 	strb r0,[v30ptr,#v30RegAL]
-	fetch 6
+	fetch 5
 ;@----------------------------------------------------------------------------
 i_inaxdx:
 _ED:	;@ INAXDX

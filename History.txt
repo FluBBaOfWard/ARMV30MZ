@@ -2,6 +2,14 @@ ARMV30MZ revision history
 -=-=-=-=-=-=-=-=-=-=-=-=-
 
 
+V0.8.3 - 2022-12-11 (FluBBa)
+	Optimized Halt function.
+	Fixed C header file.
+	Fixed segment prefix timing.
+	Fixed timing of in/out opcodes.
+	Fixed timing of div opcodes.
+	Fixed timing of mul opcodes.
+
 V0.8.2 - 2022-11-30 (FluBBa)
 	Optimized Call Far opcode.
 
