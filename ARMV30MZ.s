@@ -1543,7 +1543,7 @@ _62:	;@ CHKIND
 	submi v30cyc,v30cyc,#20*CYCLE
 	movmi r0,#5
 	bmi nec_interrupt
-	fetch 13
+	fetch 14
 1:
 	and r2,r0,#7
 	add r1,v30ptr,r2,lsl#2
@@ -1681,7 +1681,7 @@ _6C:	;@ INMB
 	add r0,r0,r2,lsr#4
 	str r3,[v30ptr,#v30RegIY]
 	bl cpuWriteMem20
-	fetch 6
+	fetch 5
 
 ;@----------------------------------------------------------------------------
 f36d:	;@ REP INMW
@@ -1729,7 +1729,7 @@ _6D:	;@ INMW
 	add r0,r0,r2,lsr#4
 	str r3,[v30ptr,#v30RegIY]
 	bl cpuWriteMem20W
-	fetch 6
+	fetch 5
 
 ;@----------------------------------------------------------------------------
 f36e:	;@ REP OUTMB
@@ -1774,7 +1774,7 @@ _6E:	;@ OUTMB
 	ldrh r0,[v30ptr,#v30RegDW]
 	bl v30WritePort
 	bic v30cyc,v30cyc,#SEG_PREFIX
-	fetch 7
+	fetch 5
 
 ;@----------------------------------------------------------------------------
 f36f:	;@ REP OUTMW
@@ -1829,7 +1829,7 @@ _6F:	;@ OUTMW
 	add r0,r5,#1
 	bl v30WritePort
 	bic v30cyc,v30cyc,#SEG_PREFIX
-	fetch 7
+	fetch 5
 
 ;@----------------------------------------------------------------------------
 i_bv:
