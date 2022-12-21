@@ -7,7 +7,7 @@
 //
 
 				;@ r0,r1,r2=temp regs.
-	v30br		.req r7			;@ Base segment register
+	v30bsr		.req r7			;@ Base segment register
 	v30f		.req r8
 	v30pc		.req r9
 	v30cyc		.req r10		;@ Bit 0-7 = Misc flags, see below.
@@ -68,10 +68,10 @@ v30SRegCS:			.long 0
 v30SRegSS:			.long 0
 v30SRegDS:			.long 0
 
+v30PrefixBase:		.long 0
 v30Flags:			.long 0
 v30IP:				.long 0
 v30ICount:			.long 0
-v30PrefixBase:		.long 0
 v30IrqPin:			.byte 0		;@ IrqPin & IF needs to be together in the same Word.
 v30IF:				.byte 0
 v30NmiPin:			.byte 0

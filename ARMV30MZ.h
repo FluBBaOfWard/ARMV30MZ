@@ -18,10 +18,10 @@ extern "C" {
 typedef struct {
 	u32 v30Regs[8];
 	u32 v30SRegs[4];
+	u32 v30PrefixBase;
 	u32 v30Flags;
 	u32 v30IP;
 	u32 v30ICount;
-	u32 v30PrefixBase;
 	u8 v30IrqPin;
 	u8 v30IF;
 	u8 v30NmiPin;
