@@ -1524,9 +1524,8 @@ _62:	;@ CHKIND
 	add r1,v30ptr,#v30EATable
 	mov lr,pc
 	ldr pc,[r1,r0,lsl#2]
-	sub r5,r0,r1,lsr#4
 	add r1,r1,#0x20000
-	add r5,r5,r1,lsr#4
+	add r5,v30bsr,r1,lsr#4
 	bl cpuReadMem20W
 0:
 	mov r6,r0
@@ -3508,13 +3507,12 @@ _C4:	;@ LES DW
 	add r1,v30ptr,#v30EATable
 	mov lr,pc
 	ldr pc,[r1,r0,lsl#2]
-	sub r5,r0,r1,lsr#4
 	add r6,r1,#0x20000
 	bl cpuReadMem20W
 0:
 	add r1,v30ptr,r4,lsr#1
 	strh r0,[r1,#v30Regs]
-	add r0,r5,r6,lsr#4
+	add r0,v30bsr,r6,lsr#4
 	bl cpuReadMem20W
 	strh r0,[v30ptr,#v30SRegES+2]
 
@@ -3537,13 +3535,12 @@ _C5:	;@ LDS DW
 	add r1,v30ptr,#v30EATable
 	mov lr,pc
 	ldr pc,[r1,r0,lsl#2]
-	sub r5,r0,r1,lsr#4
 	add r6,r1,#0x20000
 	bl cpuReadMem20W
 0:
 	add r1,v30ptr,r4,lsr#1
 	strh r0,[r1,#v30Regs]
-	add r0,r5,r6,lsr#4
+	add r0,v30bsr,r6,lsr#4
 	bl cpuReadMem20W
 	strh r0,[v30ptr,#v30SRegDS+2]
 
@@ -4698,7 +4695,6 @@ contFF:
 	add r1,v30ptr,#v30EATable
 	mov lr,pc
 	ldr pc,[r1,r4,lsl#2]
-	mov r5,r0
 	mov r6,r1
 	adr lr,0b
 	b cpuReadMem20W
@@ -4726,7 +4722,7 @@ writeBackFF:
 	cmp r4,#0xC0
 	strhpl r1,[r5,#v30Regs]
 	submi v30cyc,v30cyc,#1*CYCLE
-	movmi r0,r5
+	addmi r0,v30bsr,r6,lsr#4
 	blmi cpuWriteMem20W
 	fetch 1
 ;@----------------------------------------------------------------------------
@@ -4746,9 +4742,8 @@ callFF:
 callFarFF:
 	v30DecodeFastPCToReg r4
 	mov v30pc,r0,lsl#16
-	sub r5,r5,r6,lsr#4
 	add r6,r6,#0x20000
-	add r0,r5,r6,lsr#4
+	add r0,v30bsr,r6,lsr#4
 	bl cpuReadMem20W
 
 	ldrh r1,[v30ptr,#v30SRegCS+2]
@@ -4774,9 +4769,8 @@ braFF:
 ;@----------------------------------------------------------------------------
 braFarFF:
 	mov v30pc,r0,lsl#16
-	sub r5,r5,r6,lsr#4
 	add r6,r6,#0x20000
-	add r0,r5,r6,lsr#4
+	add r0,v30bsr,r6,lsr#4
 	bl cpuReadMem20W
 	strh r0,[v30ptr,#v30SRegCS+2]
 	v30EncodeFastPC
