@@ -1807,7 +1807,7 @@ _6F:	;@ OUTMW
 	ldreq v30csr,[v30ptr,#v30SRegDS]
 	ldr r1,[v30ptr,#v30RegIX]
 	ldrsb r2,[v30ptr,#v30DF]
-	add r0,r0,r1,lsr#4
+	add r0,v30csr,r1,lsr#4
 	add r2,r1,r2,lsl#17
 	str r2,[v30ptr,#v30RegIX]
 	bl cpuReadMem20W
@@ -4727,16 +4727,15 @@ writeBackFF:
 	fetch 1
 ;@----------------------------------------------------------------------------
 callFF:
-	v30DecodeFastPCToReg r5
+	v30DecodeFastPCToReg r1
 	mov v30pc,r0,lsl#16
-	V30EncodeFastPC
-	mov r1,r5
 	ldr r2,[v30ptr,#v30RegSP]
 	ldr v30csr,[v30ptr,#v30SRegSS]
 	sub r2,r2,#0x20000
 	add r0,v30csr,r2,lsr#4
 	str r2,[v30ptr,#v30RegSP]
 	bl cpuWriteMem20W
+	V30EncodeFastPC
 	fetch 5
 ;@----------------------------------------------------------------------------
 callFarFF:
