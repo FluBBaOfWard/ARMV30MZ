@@ -247,9 +247,9 @@
 
 	.macro pushRegister reg
 	ldr r1,[v30ptr,#v30RegSP]
-	ldr r0,[v30ptr,#v30SRegSS]
+	ldr v30csr,[v30ptr,#v30SRegSS]
 	sub r1,r1,#0x20000
-	add r0,r0,r1,lsr#4
+	add r0,v30csr,r1,lsr#4
 	str r1,[v30ptr,#v30RegSP]
 	ldrh r1,[v30ptr,#\reg]
 	bl cpuWriteMem20W

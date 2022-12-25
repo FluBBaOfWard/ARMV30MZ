@@ -7,7 +7,7 @@
 //
 
 				;@ r0,r1,r2=temp regs.
-	v30bsr		.req r7			;@ Base segment register
+	v30csr		.req r7			;@ Current Segment Register
 	v30f		.req r8
 	v30pc		.req r9
 	v30cyc		.req r10		;@ Bit 0-7 = Misc flags, see below.
