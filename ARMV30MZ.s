@@ -3495,7 +3495,7 @@ _C3:	;@ RET
 	bl cpuReadMem20W
 	mov v30pc,r0,lsl#16
 	v30EncodeFastPC
-	fetch 6
+	fetch 7
 ;@----------------------------------------------------------------------------
 i_les_dw:
 _C4:	;@ LES DW
@@ -3599,11 +3599,10 @@ _C7:	;@ MOV WD16
 	fetch 1
 ;@----------------------------------------------------------------------------
 i_prepare:
-_C8:	;@ PREPARE
+_C8:	;@ PREPARE/ENTER
 ;@----------------------------------------------------------------------------
-	stmfd sp!,{r8}
 	getNextWord
-	stmfd sp!,{r0}				;@ temp
+	stmfd sp!,{r0,r8}				;@ temp + flags
 	getNextByte
 	and r5,r0,#0x1F				;@ V30MZ specific
 
@@ -3646,7 +3645,7 @@ _C8:	;@ PREPARE
 	fetch 8
 ;@----------------------------------------------------------------------------
 i_dispose:
-_C9:	;@ DISPOSE
+_C9:	;@ DISPOSE/LEAVE
 ;@----------------------------------------------------------------------------
 	ldr r1,[v30ptr,#v30RegBP]
 	ldr v30csr,[v30ptr,#v30SRegSS]
@@ -3655,7 +3654,7 @@ _C9:	;@ DISPOSE
 	str r2,[v30ptr,#v30RegSP]
 	bl cpuReadMem20W
 	strh r0,[v30ptr,#v30RegBP+2]
-	fetch 2
+	fetch 3
 ;@----------------------------------------------------------------------------
 i_retf_d16:
 _CA:	;@ RETF D16
@@ -3674,7 +3673,7 @@ _CA:	;@ RETF D16
 	bl cpuReadMem20W
 	strh r0,[v30ptr,#v30SRegCS+2]
 	v30EncodeFastPC
-	fetch 6
+	fetch 9
 ;@----------------------------------------------------------------------------
 i_retf:
 _CB:	;@ RETF
@@ -3691,7 +3690,7 @@ _CB:	;@ RETF
 	strh r0,[v30ptr,#v30SRegCS+2]
 	str r4,[v30ptr,#v30RegSP]
 	v30EncodeFastPC
-	fetch 8
+	fetch 9
 ;@----------------------------------------------------------------------------
 i_int3:
 _CC:	;@ INT3
@@ -3731,7 +3730,7 @@ _CF:	;@ IRET
 	strh r0,[v30ptr,#v30SRegCS+2]
 	str r4,[v30ptr,#v30RegSP]
 	v30EncodeFastPC
-	eatCycles 10-3					;@ i_popf eats 3 cycles
+	eatCycles 11-3					;@ i_popf eats 3 cycles
 	b i_popf
 
 ;@----------------------------------------------------------------------------
@@ -5151,7 +5150,7 @@ nec_interrupt:				;@ r0 = vector number
 
 	mov v30pc,r5,lsl#16
 	v30EncodeFastPC
-	fetch 25
+	fetch 31
 ;@----------------------------------------------------------------------------
 V30RestoreAndRunXCycles:	;@ r0 = number of cycles to run
 ;@----------------------------------------------------------------------------
@@ -5176,7 +5175,6 @@ v30ChkIrqInternal:				;@ This can be used on EI/IRET/POPF/HALT
 ;@----------------------------------------------------------------------------
 V30Go:						;@ Continue running
 ;@----------------------------------------------------------------------------
-//	adr lr,V30Go
 	fetch 0
 v30InHalt:
 	mvns r0,v30cyc,asr#CYC_SHIFT			;@

@@ -2,7 +2,7 @@ ARMV30MZ revision history
 -=-=-=-=-=-=-=-=-=-=-=-=-
 
 
-V0.8.3 - 2022-12-25 (FluBBa)
+V0.8.3 - 2022-12-26 (FluBBa)
 	Fixed timing of segment prefix.
 	Fixed timing of in/out opcodes.
 	Fixed timing of div opcodes.
@@ -11,9 +11,13 @@ V0.8.3 - 2022-12-25 (FluBBa)
 	Fixed timing of inm/ins opcodes.
 	Fixed timing of outm/outs opcodes.
 	Fixed timing of dbnz/loop opcode.
+	Fixed timing of ret,retf,retf16,iret opcodes.
+	Fixed timing of dispose/leave opcode.
+	Fixed timing of interrupts.
 	Fixed C header file.
-	Optimized Halt function.
 	Optimized handling of segment prefix.
+	Optimized Halt function.
+	Optimized prepare/enter opcode.
 
 V0.8.2 - 2022-11-30 (FluBBa)
 	Optimized Call Far opcode.
