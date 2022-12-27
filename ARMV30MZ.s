@@ -3495,7 +3495,7 @@ _C3:	;@ RET
 	bl cpuReadMem20W
 	mov v30pc,r0,lsl#16
 	v30EncodeFastPC
-	fetch 7
+	fetch 6
 ;@----------------------------------------------------------------------------
 i_les_dw:
 _C4:	;@ LES DW
@@ -3690,7 +3690,7 @@ _CB:	;@ RETF
 	strh r0,[v30ptr,#v30SRegCS+2]
 	str r4,[v30ptr,#v30RegSP]
 	v30EncodeFastPC
-	fetch 9
+	fetch 8
 ;@----------------------------------------------------------------------------
 i_int3:
 _CC:	;@ INT3
@@ -3713,7 +3713,7 @@ _CE:	;@ BRKV					;@ Break if Overflow
 	subne v30cyc,v30cyc,#13*CYCLE
 	movne r0,#4
 	bne nec_interrupt
-	fetch 6
+	fetch 5
 ;@----------------------------------------------------------------------------
 i_iret:
 _CF:	;@ IRET
@@ -3730,7 +3730,7 @@ _CF:	;@ IRET
 	strh r0,[v30ptr,#v30SRegCS+2]
 	str r4,[v30ptr,#v30RegSP]
 	v30EncodeFastPC
-	eatCycles 11-3					;@ i_popf eats 3 cycles
+	eatCycles 10-3					;@ i_popf eats 3 cycles
 	b i_popf
 
 ;@----------------------------------------------------------------------------
@@ -3996,17 +3996,16 @@ i_call_d16:
 _E8:	;@ CALL D16
 ;@----------------------------------------------------------------------------
 	getNextWord
-	v30DecodeFastPCToReg r4
-	mov r1,r4,lsl#16
-	add v30pc,r1,r0,lsl#16
-	v30EncodeFastPC
-	mov r1,r4
+	v30DecodeFastPCToReg r1
+	mov r2,r1,lsl#16
+	add v30pc,r2,r0,lsl#16
 	ldr r2,[v30ptr,#v30RegSP]
 	ldr v30csr,[v30ptr,#v30SRegSS]
 	sub r2,r2,#0x20000
 	add r0,v30csr,r2,lsr#4
 	str r2,[v30ptr,#v30RegSP]
 	bl cpuWriteMem20W
+	v30EncodeFastPC
 	fetch 5
 ;@----------------------------------------------------------------------------
 i_jmp_d16:
@@ -5126,9 +5125,8 @@ nec_interrupt:				;@ r0 = vector number
 ;@----------------------------------------------------------------------------
 	mov r4,r0,lsl#12+2
 	bl pushFlags
-	mov r0,#0
-	strb r0,[v30ptr,#v30IF]
-	strb r0,[v30ptr,#v30TF]
+	strb r4,[v30ptr,#v30IF]		;@ Clear IF
+	strb r4,[v30ptr,#v30TF]		;@ Clear TF
 	mov r0,r4
 	bl cpuReadMem20W
 	mov r5,r0
@@ -5150,7 +5148,7 @@ nec_interrupt:				;@ r0 = vector number
 
 	mov v30pc,r5,lsl#16
 	v30EncodeFastPC
-	fetch 31
+	fetch 32
 ;@----------------------------------------------------------------------------
 V30RestoreAndRunXCycles:	;@ r0 = number of cycles to run
 ;@----------------------------------------------------------------------------
