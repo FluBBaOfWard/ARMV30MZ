@@ -14,6 +14,7 @@ V0.8.3 - 2022-12-28 (FluBBa)
 	Fixed timing of retf16 opcode.
 	Fixed timing of dispose/leave opcode.
 	Fixed timing of halt opcode.
+	Fixed timing of address calculations (EA).
 	Fixed timing of interrupts.
 	Fixed C header file.
 	Optimized handling of segment prefix.
