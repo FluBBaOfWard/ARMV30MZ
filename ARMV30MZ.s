@@ -3713,7 +3713,7 @@ _CE:	;@ BRKV					;@ Break if Overflow
 	subne v30cyc,v30cyc,#13*CYCLE
 	movne r0,#4
 	bne nec_interrupt
-	fetch 5
+	fetch 6
 ;@----------------------------------------------------------------------------
 i_iret:
 _CF:	;@ IRET
@@ -3937,7 +3937,7 @@ _E2:	;@ DBNZ/LOOP
 	subne v30cyc,v30cyc,#3*CYCLE
 	strh r2,[v30ptr,#v30RegCW]
 	v30ReEncodeFastPC
-	fetch 3
+	fetch 2
 ;@----------------------------------------------------------------------------
 i_jcxz:
 _E3:	;@ BCWZ/JCXZ
@@ -4083,7 +4083,7 @@ i_lock:
 _F0:	;@ BUS LOCK
 ;@----------------------------------------------------------------------------
 //	orr v30cyc,v30cyc,#LOCK_PREFIX
-	fetch 1
+	fetch 0
 ;@----------------------------------------------------------------------------
 i_brks:
 _F1:	;@ BRKS, Break to Security Mode. Not working on V30MZ?
