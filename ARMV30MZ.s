@@ -4635,6 +4635,7 @@ _FE:	;@ PRE FE
 	ldrb r5,[r1,#v30ModRmRm]
 	ldrb r0,[v30ptr,-r5]
 0:
+	bic v30cyc,v30cyc,#SEG_PREFIX
 	mov r1,r0,lsl#24
 	tst r4,#0x08
 	bne decFE
@@ -4656,7 +4657,6 @@ writeBackFE:
 	orreq v30f,v30f,#PSR_Z
 	strb r1,[v30ptr,#v30ParityVal]
 
-	bic v30cyc,v30cyc,#SEG_PREFIX
 	cmp r4,#0xC0
 	strbpl r1,[v30ptr,-r5]
 	movmi r0,r5
@@ -4762,7 +4762,7 @@ callFarFF:
 braFF:
 	mov v30pc,r0,lsl#16
 	v30EncodeFastPC
-	fetch 4
+	fetch 5
 ;@----------------------------------------------------------------------------
 braFarFF:
 	mov v30pc,r0,lsl#16

@@ -2,7 +2,7 @@ ARMV30MZ revision history
 -=-=-=-=-=-=-=-=-=-=-=-=-
 
 
-V0.8.3 - 2022-12-28 (FluBBa)
+V0.8.3 - 2022-12-29 (FluBBa)
 	Fixed timing of segment prefix.
 	Fixed timing of in/out opcodes.
 	Fixed timing of div opcodes.
@@ -11,6 +11,7 @@ V0.8.3 - 2022-12-28 (FluBBa)
 	Fixed timing of inm/ins opcodes.
 	Fixed timing of outm/outs opcodes.
 	Fixed timing of call far opcode.
+	Fixed timing of br/jmp memptr16 opcode.
 	Fixed timing of retf16 opcode.
 	Fixed timing of dispose/leave opcode.
 	Fixed timing of halt opcode.
