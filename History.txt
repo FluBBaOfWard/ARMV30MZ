@@ -14,6 +14,7 @@ V0.8.3 - 2022-12-30 (FluBBa)
 	Fixed timing of br/jmp memptr16 opcode.
 	Fixed timing of retf16 opcode.
 	Fixed timing of dispose/leave opcode.
+	Fixed timing of repnz cmpbkb/cmpsb & repnz cmpbkw/cmpsw opcodes.
 	Fixed timing of halt opcode.
 	Fixed timing of address calculations (EA).
 	Fixed timing of exceptions.
