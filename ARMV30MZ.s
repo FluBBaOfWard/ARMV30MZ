@@ -1535,7 +1535,7 @@ _62:	;@ CHKIND/BOUND
 	bic v30cyc,v30cyc,#SEG_PREFIX
 	cmp r4,r6
 	cmppl r0,r4
-	submi v30cyc,v30cyc,#20*CYCLE
+	submi v30cyc,v30cyc,#21*CYCLE
 	movmi r0,#5
 	bmi nec_interrupt
 	fetch 14
@@ -4377,14 +4377,13 @@ mulF6:			;@ MUL/IMUL
 	strb v30f,[v30ptr,#v30MulOverflow]
 	fetch 3
 ;@----------------------------------------------------------------------------
-divubF6:
-	eatCycles 15
+divubF6:		;@ DIVU/DIV
 	ldrb v30f,[v30ptr,#v30MulOverflow]	;@ C & V from last mul, Z always set.
 	strb v30f,[v30ptr,#v30ParityVal]	;@ Clear parity
 	mov r1,r0,lsl#8
 	ldrh r0,[v30ptr,#v30RegAW]
 	cmp r0,r1
-	bcs divideError
+	bcs divubF6Error
 	rsb r1,r1,#1
 
 	bl division8
@@ -4393,10 +4392,12 @@ divubF6:
 	bic r0,r0,#0xFE
 	cmp r0,#1
 	bicne v30f,v30f,#PSR_Z
-	fetch 0
-;@----------------------------------------------------------------------------
-divbF6:
+	fetch 15
+divubF6Error:
 	eatCycles 17
+	b divideError
+;@----------------------------------------------------------------------------
+divbF6:			;@ DIV/IDIV
 	movs r1,r0,lsl#24
 	ldr r0,[v30ptr,#v30RegAW-2]
 	beq divbF6Error
@@ -4422,7 +4423,7 @@ divbF6:
 	strb r0,[v30ptr,#v30RegAL]
 	strb r1,[v30ptr,#v30RegAH]
 	strb r0,[v30ptr,#v30ParityVal]		;@ Set parity
-	fetch 0
+	fetch 17
 divbF6Error:
 	cmp r0,#0x80000000
 	moveq r0,#0x0081
@@ -4430,6 +4431,7 @@ divbF6Error:
 divbF6Error2:
 	ldrb v30f,[v30ptr,#v30MulOverflow]	;@ C & V from last mul, Z always set.
 	strb v30f,[v30ptr,#v30ParityVal]	;@ Clear parity
+	eatCycles 20
 	b divideError
 ;@----------------------------------------------------------------------------
 i_f7pre:
@@ -4516,8 +4518,7 @@ mulF7:			;@ MUL/IMUL
 	strb v30f,[v30ptr,#v30MulOverflow]
 	fetch 3
 ;@----------------------------------------------------------------------------
-divuwF7:
-	eatCycles 23
+divuwF7:		;@ DIVU/DIV
 	ldrb v30f,[v30ptr,#v30MulOverflow]	;@ C & V from last mul, Z always set.
 	strb v30f,[v30ptr,#v30ParityVal]	;@ Clear parity
 	mov r1,r0,lsl#16
@@ -4525,22 +4526,20 @@ divuwF7:
 	ldrh r2,[v30ptr,#v30RegDW]
 	orr r0,r0,r2,lsl#16
 	cmp r0,r1
-	bcs divideError
+	bcs divuwF7Error
 	rsb r1,r1,#1
 
-	mov r2,#16
-0:	adds r0,r1,r0,lsl#1
-	subcc r0,r0,r1
-	subs r2,r2,#1
-	bne 0b
+	bl division16
 
 	mov r1,r0,lsr#16
 	strh r0,[v30ptr,#v30RegAW]
 	strh r1,[v30ptr,#v30RegDW]
-	fetch 0
+	fetch 23
+divuwF7Error:
+	eatCycles 17
+	b divideError
 ;@----------------------------------------------------------------------------
-divwF7:
-	eatCycles 24
+divwF7:			;@ DIV/IDIV
 	movs r1,r0,lsl#16
 	ldrh r0,[v30ptr,#v30RegAW]
 	ldrh r2,[v30ptr,#v30RegDW]
@@ -4554,11 +4553,7 @@ divwF7:
 	bcs divwF7Error2
 	add r1,r1,#1
 
-	mov r2,#16
-0:	adds r0,r1,r0,lsl#1
-	subcc r0,r0,r1
-	subs r2,r2,#1
-	bne 0b
+	bl division16
 
 	mov r1,r0,lsr#16
 	tst r3,#0x8000
@@ -4572,7 +4567,7 @@ divwF7:
 	strh r0,[v30ptr,#v30RegAW]
 	strh r1,[v30ptr,#v30RegDW]
 	strb r0,[v30ptr,#v30ParityVal]		;@ Set parity
-	fetch 0
+	fetch 24
 divwF7Error:
 	cmp r0,#0x80000000
 	moveq r0,#0x0081
@@ -4580,6 +4575,7 @@ divwF7Error:
 divwF7Error2:
 	ldrb v30f,[v30ptr,#v30MulOverflow]	;@ C & V from last mul, Z always set.
 	strb v30f,[v30ptr,#v30ParityVal]	;@ Clear parity
+	eatCycles 20
 	b divideError
 ;@----------------------------------------------------------------------------
 i_clc:
@@ -4788,19 +4784,19 @@ division16:
 ;@----------------------------------------------------------------------------
 	adds r0,r1,r0,lsl#1
 	subcc r0,r0,r1
-	adcs r0,r1,r0,lsl#1
+	adds r0,r1,r0,lsl#1
 	subcc r0,r0,r1
-	adcs r0,r1,r0,lsl#1
+	adds r0,r1,r0,lsl#1
 	subcc r0,r0,r1
-	adcs r0,r1,r0,lsl#1
+	adds r0,r1,r0,lsl#1
 	subcc r0,r0,r1
-	adcs r0,r1,r0,lsl#1
+	adds r0,r1,r0,lsl#1
 	subcc r0,r0,r1
-	adcs r0,r1,r0,lsl#1
+	adds r0,r1,r0,lsl#1
 	subcc r0,r0,r1
-	adcs r0,r1,r0,lsl#1
+	adds r0,r1,r0,lsl#1
 	subcc r0,r0,r1
-	adcs r0,r1,r0,lsl#1
+	adds r0,r1,r0,lsl#1
 	subcc r0,r0,r1
 division8:
 	adds r0,r1,r0,lsl#1
