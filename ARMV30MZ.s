@@ -1640,25 +1640,25 @@ _6B:	;@ MUL/IMUL D8
 ;@----------------------------------------------------------------------------
 f36c:	;@ REP INMB/INSB
 ;@----------------------------------------------------------------------------
-	ldrh r6,[v30ptr,#v30RegCW]
-	cmp r6,#1
+	ldrh r5,[v30ptr,#v30RegCW]
+	cmp r5,#1
 	bmi 1f
 	ldr v30csr,[v30ptr,#v30SRegES]
-	ldr r5,[v30ptr,#v30RegIY]
+	ldr v30ofs,[v30ptr,#v30RegIY]
 	ldrsb r4,[v30ptr,#v30DF]
 0:
 	ldrh r0,[v30ptr,#v30RegDW]
 	bl v30ReadPort
 	mov r1,r0
-	add r0,v30csr,r5,lsr#4
-	add r5,r5,r4,lsl#16
+	add r0,v30csr,v30ofs,lsr#4
 	bl cpuWriteMem20
+	add v30ofs,v30ofs,r4,lsl#16
 	eatCycles 6
-	subs r6,r6,#1
+	subs r5,r5,#1
 	bne 0b
-	str r5,[v30ptr,#v30RegIY]
+	str v30ofs,[v30ptr,#v30RegIY]
 1:
-	strh r6,[v30ptr,#v30RegCW]
+	strh r5,[v30ptr,#v30RegCW]
 	bic v30cyc,v30cyc,#SEG_PREFIX+REP_PREFIX+LOCK_PREFIX
 	fetch 5
 ;@----------------------------------------------------------------------------
@@ -1666,15 +1666,15 @@ i_inmb:
 _6C:	;@ INMB/INSB
 ;@----------------------------------------------------------------------------
 	ldr v30csr,[v30ptr,#v30SRegES]
-	ldr r5,[v30ptr,#v30RegIY]
+	ldr v30ofs,[v30ptr,#v30RegIY]
 	ldrsb r4,[v30ptr,#v30DF]
 	ldrh r0,[v30ptr,#v30RegDW]
 	bl v30ReadPort
 	mov r1,r0
-	add r0,v30csr,r5,lsr#4
-	add r5,r5,r4,lsl#16
-	str r5,[v30ptr,#v30RegIY]
+	add r0,v30csr,v30ofs,lsr#4
 	bl cpuWriteMem20
+	add v30ofs,v30ofs,r4,lsl#16
+	str v30ofs,[v30ptr,#v30RegIY]
 	fetch 5
 
 ;@----------------------------------------------------------------------------
@@ -1716,38 +1716,38 @@ _6D:	;@ INMW/INSW
 	mov r5,r0
 	add r0,r4,#1
 	bl v30ReadPort
-	ldrsb r3,[v30ptr,#v30DF]
-	ldr r2,[v30ptr,#v30RegIY]
+	ldrsb r4,[v30ptr,#v30DF]
+	ldr v30ofs,[v30ptr,#v30RegIY]
 	orr r1,r5,r0,lsl#8
-	add r3,r2,r3,lsl#17
-	add r0,v30csr,r2,lsr#4
-	str r3,[v30ptr,#v30RegIY]
+	add r0,v30csr,v30ofs,lsr#4
 	bl cpuWriteMem20W
+	add v30ofs,v30ofs,r4,lsl#17
+	str v30ofs,[v30ptr,#v30RegIY]
 	fetch 5
 
 ;@----------------------------------------------------------------------------
 f36e:	;@ REP OUTMB/OUTSB
 ;@----------------------------------------------------------------------------
-	ldrh r6,[v30ptr,#v30RegCW]
-	cmp r6,#1
+	ldrh r5,[v30ptr,#v30RegCW]
+	cmp r5,#1
 	bmi 1f
 	tst v30cyc,#SEG_PREFIX
 	ldreq v30csr,[v30ptr,#v30SRegDS]
-	ldr r5,[v30ptr,#v30RegIX]
+	ldr v30ofs,[v30ptr,#v30RegIX]
 	ldrsb r4,[v30ptr,#v30DF]
 0:
-	add r0,v30csr,r5,lsr#4
-	add r5,r5,r4,lsl#16
+	add r0,v30csr,v30ofs,lsr#4
 	bl cpuReadMem20
+	add v30ofs,v30ofs,r4,lsl#16
 	mov r1,r0
 	ldrh r0,[v30ptr,#v30RegDW]
 	bl v30WritePort
 	eatCycles 6
-	subs r6,r6,#1
+	subs r5,r5,#1
 	bne 0b
-	str r5,[v30ptr,#v30RegIX]
+	str v30ofs,[v30ptr,#v30RegIX]
 1:
-	strh r6,[v30ptr,#v30RegCW]
+	strh r5,[v30ptr,#v30RegCW]
 	bic v30cyc,v30cyc,#SEG_PREFIX+REP_PREFIX+LOCK_PREFIX
 	fetch 5
 ;@----------------------------------------------------------------------------
@@ -1756,12 +1756,12 @@ _6E:	;@ OUTMB/OUTSB
 ;@----------------------------------------------------------------------------
 	tst v30cyc,#SEG_PREFIX
 	ldreq v30csr,[v30ptr,#v30SRegDS]
-	ldr r5,[v30ptr,#v30RegIX]
+	ldr v30ofs,[v30ptr,#v30RegIX]
 	ldrsb r4,[v30ptr,#v30DF]
-	add r0,v30csr,r5,lsr#4
-	add r5,r5,r4,lsl#16
-	str r5,[v30ptr,#v30RegIX]
+	add r0,v30csr,v30ofs,lsr#4
 	bl cpuReadMem20
+	add v30ofs,v30ofs,r4,lsl#16
+	str v30ofs,[v30ptr,#v30RegIX]
 	mov r1,r0
 	ldrh r0,[v30ptr,#v30RegDW]
 	bl v30WritePort
@@ -1804,12 +1804,12 @@ _6F:	;@ OUTMW/OUTSW
 ;@----------------------------------------------------------------------------
 	tst v30cyc,#SEG_PREFIX
 	ldreq v30csr,[v30ptr,#v30SRegDS]
-	ldr r1,[v30ptr,#v30RegIX]
-	ldrsb r2,[v30ptr,#v30DF]
-	add r0,v30csr,r1,lsr#4
-	add r2,r1,r2,lsl#17
-	str r2,[v30ptr,#v30RegIX]
+	ldr v30ofs,[v30ptr,#v30RegIX]
+	ldrsb r4,[v30ptr,#v30DF]
+	add r0,v30csr,v30ofs,lsr#4
 	bl cpuReadMem20W
+	add v30ofs,v30ofs,r4,lsl#17
+	str v30ofs,[v30ptr,#v30RegIX]
 	and r1,r0,#0xFF
 	mov r4,r0
 	ldrh r5,[v30ptr,#v30RegDW]
