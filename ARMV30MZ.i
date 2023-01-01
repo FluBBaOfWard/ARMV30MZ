@@ -7,6 +7,7 @@
 //
 
 				;@ r0,r1,r2=temp regs.
+	v30ofs		.req r6			;@ Effective Offset 
 	v30csr		.req r7			;@ Current Segment Register
 	v30f		.req r8
 	v30pc		.req r9
