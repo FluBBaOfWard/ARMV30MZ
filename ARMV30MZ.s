@@ -82,7 +82,7 @@ _00:	;@ ADD BR8
 
 	cmp r4,#0xC0
 	strbpl r1,[v30ptr,-v30ofs]
-	movmi r0,v30ofs
+	addmi r0,v30csr,v30ofs,lsr#4
 	blmi cpuWriteMem20
 	bic v30cyc,v30cyc,#SEG_PREFIX
 	fetch 1
@@ -91,7 +91,6 @@ _00:	;@ ADD BR8
 	add r1,v30ptr,#v30EATable
 	mov lr,pc
 	ldr pc,[r1,r4,lsl#2]
-	mov v30ofs,r0
 	adr lr,0b
 	b cpuReadMem20
 ;@----------------------------------------------------------------------------
@@ -113,7 +112,7 @@ _01:	;@ ADD WR16
 
 	cmp r4,#0xC0
 	strhpl r1,[v30ofs,#v30Regs]
-	movmi r0,v30ofs
+	addmi r0,v30csr,v30ofs,lsr#4
 	blmi cpuWriteMem20W
 	bic v30cyc,v30cyc,#SEG_PREFIX
 	fetch 1
@@ -122,7 +121,6 @@ _01:	;@ ADD WR16
 	add r1,v30ptr,#v30EATable
 	mov lr,pc
 	ldr pc,[r1,r4,lsl#2]
-	mov v30ofs,r0
 	adr lr,0b
 	b cpuReadMem20W
 ;@----------------------------------------------------------------------------
@@ -228,7 +226,7 @@ _08:	;@ OR BR8
 
 	cmp r4,#0xC0
 	strbpl r1,[v30ptr,-v30ofs]
-	movmi r0,v30ofs
+	addmi r0,v30csr,v30ofs,lsr#4
 	blmi cpuWriteMem20
 	bic v30cyc,v30cyc,#SEG_PREFIX
 	fetch 1
@@ -237,7 +235,6 @@ _08:	;@ OR BR8
 	add r1,v30ptr,#v30EATable
 	mov lr,pc
 	ldr pc,[r1,r4,lsl#2]
-	mov v30ofs,r0
 	adr lr,0b
 	b cpuReadMem20
 ;@----------------------------------------------------------------------------
@@ -258,7 +255,7 @@ _09:	;@ OR WR16
 
 	cmp r4,#0xC0
 	strhpl r1,[v30ofs,#v30Regs]
-	movmi r0,v30ofs
+	addmi r0,v30csr,v30ofs,lsr#4
 	blmi cpuWriteMem20W
 	bic v30cyc,v30cyc,#SEG_PREFIX
 	fetch 1
@@ -267,7 +264,6 @@ _09:	;@ OR WR16
 	add r1,v30ptr,#v30EATable
 	mov lr,pc
 	ldr pc,[r1,r4,lsl#2]
-	mov v30ofs,r0
 	adr lr,0b
 	b cpuReadMem20W
 ;@----------------------------------------------------------------------------
@@ -366,7 +362,7 @@ _10:	;@ ADDC/ADC BR8
 
 	cmp r4,#0xC0
 	strbpl r1,[v30ptr,-v30ofs]
-	movmi r0,v30ofs
+	addmi r0,v30csr,v30ofs,lsr#4
 	blmi cpuWriteMem20
 	bic v30cyc,v30cyc,#SEG_PREFIX
 	fetch 1
@@ -375,7 +371,6 @@ _10:	;@ ADDC/ADC BR8
 	add r1,v30ptr,#v30EATable
 	mov lr,pc
 	ldr pc,[r1,r4,lsl#2]
-	mov v30ofs,r0
 	adr lr,0b
 	b cpuReadMem20
 ;@----------------------------------------------------------------------------
@@ -397,7 +392,7 @@ _11:	;@ ADDC/ADC WR16
 
 	cmp r4,#0xC0
 	strhpl r1,[v30ofs,#v30Regs]
-	movmi r0,v30ofs
+	addmi r0,v30csr,v30ofs,lsr#4
 	blmi cpuWriteMem20W
 	bic v30cyc,v30cyc,#SEG_PREFIX
 	fetch 1
@@ -406,7 +401,6 @@ _11:	;@ ADDC/ADC WR16
 	add r1,v30ptr,#v30EATable
 	mov lr,pc
 	ldr pc,[r1,r4,lsl#2]
-	mov v30ofs,r0
 	adr lr,0b
 	b cpuReadMem20W
 ;@----------------------------------------------------------------------------
@@ -513,7 +507,7 @@ _18:	;@ SUBC/SBB BR8
 
 	cmp r4,#0xC0
 	strbpl r1,[v30ptr,-v30ofs]
-	movmi r0,v30ofs
+	addmi r0,v30csr,v30ofs,lsr#4
 	blmi cpuWriteMem20
 	bic v30cyc,v30cyc,#SEG_PREFIX
 	fetch 1
@@ -522,7 +516,6 @@ _18:	;@ SUBC/SBB BR8
 	add r1,v30ptr,#v30EATable
 	mov lr,pc
 	ldr pc,[r1,r4,lsl#2]
-	mov v30ofs,r0
 	adr lr,0b
 	b cpuReadMem20
 ;@----------------------------------------------------------------------------
@@ -544,7 +537,7 @@ _19:	;@ SUBC/SBB WR16
 
 	cmp r4,#0xC0
 	strhpl r1,[v30ofs,#v30Regs]
-	movmi r0,v30ofs
+	addmi r0,v30csr,v30ofs,lsr#4
 	blmi cpuWriteMem20W
 	bic v30cyc,v30cyc,#SEG_PREFIX
 	fetch 1
@@ -553,7 +546,6 @@ _19:	;@ SUBC/SBB WR16
 	add r1,v30ptr,#v30EATable
 	mov lr,pc
 	ldr pc,[r1,r4,lsl#2]
-	mov v30ofs,r0
 	adr lr,0b
 	b cpuReadMem20W
 ;@----------------------------------------------------------------------------
@@ -659,7 +651,7 @@ _20:	;@ AND BR8
 
 	cmp r4,#0xC0
 	strbpl r1,[v30ptr,-v30ofs]
-	movmi r0,v30ofs
+	addmi r0,v30csr,v30ofs,lsr#4
 	blmi cpuWriteMem20
 	bic v30cyc,v30cyc,#SEG_PREFIX
 	fetch 1
@@ -668,7 +660,6 @@ _20:	;@ AND BR8
 	add r1,v30ptr,#v30EATable
 	mov lr,pc
 	ldr pc,[r1,r4,lsl#2]
-	mov v30ofs,r0
 	adr lr,0b
 	b cpuReadMem20
 ;@----------------------------------------------------------------------------
@@ -689,7 +680,7 @@ _21:	;@ AND WR16
 
 	cmp r4,#0xC0
 	strhpl r1,[v30ofs,#v30Regs]
-	movmi r0,v30ofs
+	addmi r0,v30csr,v30ofs,lsr#4
 	blmi cpuWriteMem20W
 	bic v30cyc,v30cyc,#SEG_PREFIX
 	fetch 1
@@ -698,7 +689,6 @@ _21:	;@ AND WR16
 	add r1,v30ptr,#v30EATable
 	mov lr,pc
 	ldr pc,[r1,r4,lsl#2]
-	mov v30ofs,r0
 	adr lr,0b
 	b cpuReadMem20W
 ;@----------------------------------------------------------------------------
@@ -820,7 +810,7 @@ _28:	;@ SUB BR8
 
 	cmp r4,#0xC0
 	strbpl r1,[v30ptr,-v30ofs]
-	movmi r0,v30ofs
+	addmi r0,v30csr,v30ofs,lsr#4
 	blmi cpuWriteMem20
 	bic v30cyc,v30cyc,#SEG_PREFIX
 	fetch 1
@@ -829,7 +819,6 @@ _28:	;@ SUB BR8
 	add r1,v30ptr,#v30EATable
 	mov lr,pc
 	ldr pc,[r1,r4,lsl#2]
-	mov v30ofs,r0
 	adr lr,0b
 	b cpuReadMem20
 ;@----------------------------------------------------------------------------
@@ -851,7 +840,7 @@ _29:	;@ SUB WR16
 
 	cmp r4,#0xC0
 	strhpl r1,[v30ofs,#v30Regs]
-	movmi r0,v30ofs
+	addmi r0,v30csr,v30ofs,lsr#4
 	blmi cpuWriteMem20W
 	bic v30cyc,v30cyc,#SEG_PREFIX
 	fetch 1
@@ -860,7 +849,6 @@ _29:	;@ SUB WR16
 	add r1,v30ptr,#v30EATable
 	mov lr,pc
 	ldr pc,[r1,r4,lsl#2]
-	mov v30ofs,r0
 	adr lr,0b
 	b cpuReadMem20W
 ;@----------------------------------------------------------------------------
@@ -982,7 +970,7 @@ _30:	;@ XOR BR8
 
 	cmp r4,#0xC0
 	strbpl r1,[v30ptr,-v30ofs]
-	movmi r0,v30ofs
+	addmi r0,v30csr,v30ofs,lsr#4
 	blmi cpuWriteMem20
 	bic v30cyc,v30cyc,#SEG_PREFIX
 	fetch 1
@@ -991,7 +979,6 @@ _30:	;@ XOR BR8
 	add r1,v30ptr,#v30EATable
 	mov lr,pc
 	ldr pc,[r1,r4,lsl#2]
-	mov v30ofs,r0
 	adr lr,0b
 	b cpuReadMem20
 ;@----------------------------------------------------------------------------
@@ -1012,7 +999,7 @@ _31:	;@ XOR WR16
 
 	cmp r4,#0xC0
 	strhpl r1,[v30ofs,#v30Regs]
-	movmi r0,v30ofs
+	addmi r0,v30csr,v30ofs,lsr#4
 	blmi cpuWriteMem20W
 	bic v30cyc,v30cyc,#SEG_PREFIX
 	fetch 1
@@ -1021,7 +1008,6 @@ _31:	;@ XOR WR16
 	add r1,v30ptr,#v30EATable
 	mov lr,pc
 	ldr pc,[r1,r4,lsl#2]
-	mov v30ofs,r0
 	adr lr,0b
 	b cpuReadMem20W
 ;@----------------------------------------------------------------------------
@@ -1524,8 +1510,8 @@ _62:	;@ CHKIND/BOUND
 	add r1,v30ptr,#v30EATable
 	mov lr,pc
 	ldr pc,[r1,r0,lsl#2]
-	add v30ofs,v30ofs,#0x20000
 	bl cpuReadMem20W
+	add v30ofs,v30ofs,#0x20000
 0:
 	mov r5,r0
 	add r0,v30csr,v30ofs,lsr#4
@@ -1986,7 +1972,6 @@ _82:	;@ PRE 82
 	add r1,v30ptr,#v30EATable
 	mov lr,pc
 	ldr pc,[r1,r4,lsl#2]
-	mov v30ofs,r0
 	adr lr,0b
 	b cpuReadMem20
 add80:
@@ -2016,7 +2001,7 @@ cmp80:
 2:
 	cmp r4,#0xC0
 	strbpl r1,[v30ptr,-v30ofs]
-	movmi r0,v30ofs
+	addmi r0,v30csr,v30ofs,lsr#4
 	blmi cpuWriteMem20
 	fetch 1
 ;@----------------------------------------------------------------------------
@@ -2043,7 +2028,6 @@ pre81Continue:
 	add r1,v30ptr,#v30EATable
 	mov lr,pc
 	ldr pc,[r1,r4,lsl#2]
-	mov v30ofs,r0
 	bl cpuReadMem20W
 	mov r5,r0,lsl#16
 	b 0b
@@ -2074,7 +2058,7 @@ cmp81:
 2:
 	cmp r4,#0xC0
 	strhpl r1,[v30ofs,#v30Regs]
-	movmi r0,v30ofs
+	addmi r0,v30csr,v30ofs,lsr#4
 	blmi cpuWriteMem20W
 	fetch 1
 ;@----------------------------------------------------------------------------
@@ -2097,7 +2081,6 @@ _83:	;@ PRE 83
 	add r1,v30ptr,#v30EATable
 	mov lr,pc
 	ldr pc,[r1,r4,lsl#2]
-	mov v30ofs,r0
 	bl cpuReadMem20W
 	mov r5,r0,lsl#16
 	b 0b
@@ -2169,11 +2152,10 @@ _86:	;@ XCH/XCHG BR8
 	add r1,v30ptr,#v30EATable
 	mov lr,pc
 	ldr pc,[r1,r0,lsl#2]
-	mov r5,r0
 	bl cpuReadMem20
 	ldrb r1,[v30ptr,-r4]
 	strb r0,[v30ptr,-r4]
-	mov r0,r5
+	add r0,v30csr,v30ofs,lsr#4
 	bl cpuWriteMem20
 	bic v30cyc,v30cyc,#SEG_PREFIX
 	fetch 5
@@ -2200,11 +2182,10 @@ _87:	;@ XCH/XCHG WR16
 	add r1,v30ptr,#v30EATable
 	mov lr,pc
 	ldr pc,[r1,r0,lsl#2]
-	mov r5,r0
 	bl cpuReadMem20W
 	ldrh r1,[r4,#v30Regs]
 	strh r0,[r4,#v30Regs]
-	mov r0,r5
+	add r0,v30csr,v30ofs,lsr#4
 	bl cpuWriteMem20W
 	bic v30cyc,v30cyc,#SEG_PREFIX
 	fetch 5
@@ -3374,7 +3355,6 @@ d2Continue:
 	add r1,v30ptr,#v30EATable
 	mov lr,pc
 	ldr pc,[r1,r4,lsl#2]
-	mov v30ofs,r0
 	adr lr,0b
 	b cpuReadMem20
 rolC0:
@@ -3404,7 +3384,7 @@ shraC0:
 2:
 	cmp r4,#0xC0
 	strbpl r1,[v30ptr,-v30ofs]
-	movmi r0,v30ofs
+	addmi r0,v30csr,v30ofs,lsr#4
 	blmi cpuWriteMem20
 	bic v30cyc,v30cyc,#SEG_PREFIX
 	fetch 1
@@ -3433,7 +3413,6 @@ d3Continue:
 	add r1,v30ptr,#v30EATable
 	mov lr,pc
 	ldr pc,[r1,r4,lsl#2]
-	mov v30ofs,r0
 	adr lr,0b
 	b cpuReadMem20W
 rolC1:
@@ -3463,7 +3442,7 @@ shraC1:
 2:
 	cmp r4,#0xC0
 	strhpl r1,[v30ofs,#v30Regs]
-	movmi r0,v30ofs
+	addmi r0,v30csr,v30ofs,lsr#4
 	blmi cpuWriteMem20W
 	bic v30cyc,v30cyc,#SEG_PREFIX
 	fetch 1
@@ -3506,8 +3485,8 @@ _C4:	;@ LES DW
 	add r1,v30ptr,#v30EATable
 	mov lr,pc
 	ldr pc,[r1,r0,lsl#2]
-	add v30ofs,v30ofs,#0x20000
 	bl cpuReadMem20W
+	add v30ofs,v30ofs,#0x20000
 0:
 	add r1,v30ptr,r4,lsr#1
 	strh r0,[r1,#v30Regs]
@@ -3534,8 +3513,8 @@ _C5:	;@ LDS DW
 	add r1,v30ptr,#v30EATable
 	mov lr,pc
 	ldr pc,[r1,r0,lsl#2]
-	add v30ofs,v30ofs,#0x20000
 	bl cpuReadMem20W
+	add v30ofs,v30ofs,#0x20000
 0:
 	add r1,v30ptr,r4,lsr#1
 	strh r0,[r1,#v30Regs]
@@ -3748,7 +3727,6 @@ _D0:	;@ ROTSHFT B
 	add r1,v30ptr,#v30EATable
 	mov lr,pc
 	ldr pc,[r1,r4,lsl#2]
-	mov v30ofs,r0
 	bl cpuReadMem20
 	mov r1,#1
 	b d2Continue
@@ -3770,7 +3748,6 @@ _D1:	;@ ROTSHFT W
 	add r1,v30ptr,#v30EATable
 	mov lr,pc
 	ldr pc,[r1,r4,lsl#2]
-	mov v30ofs,r0
 	bl cpuReadMem20W
 	mov r1,#1
 	b d3Continue
@@ -3793,7 +3770,6 @@ _D2:	;@ ROTSHFT BCL
 	add r1,v30ptr,#v30EATable
 	mov lr,pc
 	ldr pc,[r1,r4,lsl#2]
-	mov v30ofs,r0
 	bl cpuReadMem20
 	ldrb r1,[v30ptr,#v30RegCL]
 	b d2Continue
@@ -3816,7 +3792,6 @@ _D3:	;@ ROTSHFT WCL
 	add r1,v30ptr,#v30EATable
 	mov lr,pc
 	ldr pc,[r1,r4,lsl#2]
-	mov v30ofs,r0
 	bl cpuReadMem20W
 	ldrb r1,[v30ptr,#v30RegCL]
 	b d3Continue
@@ -4300,8 +4275,8 @@ _F6:	;@ PRE F6
 	cmp r4,#0xC0
 	bmi 1f
 	add r1,v30ptr,r4
-	ldrb r5,[r1,#v30ModRmRm]
-	ldrb r0,[v30ptr,-r5]
+	ldrb v30ofs,[r1,#v30ModRmRm]
+	ldrb r0,[v30ptr,-v30ofs]
 0:
 	bic v30cyc,v30cyc,#SEG_PREFIX
 	and r2,r4,#0x38
@@ -4313,7 +4288,6 @@ _F6:	;@ PRE F6
 	add r1,v30ptr,#v30EATable
 	mov lr,pc
 	ldr pc,[r1,r4,lsl#2]
-	mov r5,r0
 	adr lr,0b
 	b cpuReadMem20
 ;@----------------------------------------------------------------------------
@@ -4325,9 +4299,9 @@ testF6:
 notF6:
 	mvn r1,r0
 	cmp r4,#0xC0
-	strbpl r1,[v30ptr,-r5]
+	strbpl r1,[v30ptr,-v30ofs]
 	submi v30cyc,v30cyc,#1*CYCLE
-	movmi r0,r5
+	addmi r0,v30csr,v30ofs,lsr#4
 	blmi cpuWriteMem20
 	fetch 1
 ;@----------------------------------------------------------------------------
@@ -4343,9 +4317,9 @@ negF6:
 	strb r1,[v30ptr,#v30ParityVal]
 
 	cmp r4,#0xC0
-	strbpl r1,[v30ptr,-r5]
+	strbpl r1,[v30ptr,-v30ofs]
 	submi v30cyc,v30cyc,#1*CYCLE
-	movmi r0,r5
+	addmi r0,v30csr,v30ofs,lsr#4
 	blmi cpuWriteMem20
 	fetch 1
 ;@----------------------------------------------------------------------------
@@ -4438,8 +4412,8 @@ _F7:	;@ PRE F7
 	cmp r4,#0xC0
 	bmi 1f
 	and r2,r4,#7
-	add r5,v30ptr,r2,lsl#2
-	ldrh r0,[r5,#v30Regs]
+	add v30ofs,v30ptr,r2,lsl#2
+	ldrh r0,[v30ofs,#v30Regs]
 0:
 	bic v30cyc,v30cyc,#SEG_PREFIX
 	and r2,r4,#0x38
@@ -4451,7 +4425,6 @@ _F7:	;@ PRE F7
 	add r1,v30ptr,#v30EATable
 	mov lr,pc
 	ldr pc,[r1,r4,lsl#2]
-	mov r5,r0
 	adr lr,0b
 	b cpuReadMem20W
 ;@----------------------------------------------------------------------------
@@ -4464,9 +4437,9 @@ testF7:
 notF7:
 	mvn r1,r0
 	cmp r4,#0xC0
-	strhpl r1,[r5,#v30Regs]
+	strhpl r1,[v30ofs,#v30Regs]
 	submi v30cyc,v30cyc,#1*CYCLE
-	movmi r0,r5
+	addmi r0,v30csr,v30ofs,lsr#4
 	blmi cpuWriteMem20W
 	fetch 1
 ;@----------------------------------------------------------------------------
@@ -4481,9 +4454,9 @@ negF7:
 	mov r1,r1,lsr#16
 	strb r1,[v30ptr,#v30ParityVal]
 	cmp r4,#0xC0
-	strhpl r1,[r5,#v30Regs]
+	strhpl r1,[v30ofs,#v30Regs]
 	submi v30cyc,v30cyc,#1*CYCLE
-	movmi r0,r5
+	addmi r0,v30csr,v30ofs,lsr#4
 	blmi cpuWriteMem20W
 	fetch 1
 ;@----------------------------------------------------------------------------
