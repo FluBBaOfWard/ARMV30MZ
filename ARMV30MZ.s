@@ -1524,7 +1524,7 @@ _62:	;@ CHKIND/BOUND
 	add r1,v30ptr,#v30EATable
 	mov lr,pc
 	ldr pc,[r1,r0,lsl#2]
-	add v30ofs,r1,#0x20000
+	add v30ofs,v30ofs,#0x20000
 	bl cpuReadMem20W
 0:
 	mov r5,r0
@@ -2338,8 +2338,8 @@ _8D:	;@ LDEA/LEA
 
 	add r1,v30ptr,#v30EATable
 	mov lr,pc
-	ldr pc,[r1,r0,lsl#2]		;@ EATable return EO in r1
-	str r1,[r4,#v30Regs2]
+	ldr pc,[r1,r0,lsl#2]		;@ EATable return EO in v30ofs
+	str v30ofs,[r4,#v30Regs2]
 	bic v30cyc,v30cyc,#SEG_PREFIX
 	fetch 1
 ;@----------------------------------------------------------------------------
@@ -3433,7 +3433,7 @@ d3Continue:
 	add r1,v30ptr,#v30EATable
 	mov lr,pc
 	ldr pc,[r1,r4,lsl#2]
-	mov r5,r0
+	mov v30ofs,r0
 	adr lr,0b
 	b cpuReadMem20W
 rolC1:
@@ -3506,7 +3506,7 @@ _C4:	;@ LES DW
 	add r1,v30ptr,#v30EATable
 	mov lr,pc
 	ldr pc,[r1,r0,lsl#2]
-	add v30ofs,r1,#0x20000
+	add v30ofs,v30ofs,#0x20000
 	bl cpuReadMem20W
 0:
 	add r1,v30ptr,r4,lsr#1
@@ -3534,7 +3534,7 @@ _C5:	;@ LDS DW
 	add r1,v30ptr,#v30EATable
 	mov lr,pc
 	ldr pc,[r1,r0,lsl#2]
-	add v30ofs,r1,#0x20000
+	add v30ofs,v30ofs,#0x20000
 	bl cpuReadMem20W
 0:
 	add r1,v30ptr,r4,lsr#1
@@ -3590,7 +3590,6 @@ _C7:	;@ MOV WD16
 	add r1,v30ptr,#v30EATable
 	mov lr,pc
 	ldr pc,[r1,r0,lsl#2]
-	mov v30ofs,r1
 	getNextWordToReg r1
 	add r0,v30csr,v30ofs,lsr#4
 	bl cpuWriteMem20W
@@ -4626,8 +4625,8 @@ _FE:	;@ PRE FE
 	cmp r4,#0xC0
 	bmi 1f
 	add r1,v30ptr,r4
-	ldrb r5,[r1,#v30ModRmRm]
-	ldrb r0,[v30ptr,-r5]
+	ldrb v30ofs,[r1,#v30ModRmRm]
+	ldrb r0,[v30ptr,-v30ofs]
 0:
 	bic v30cyc,v30cyc,#SEG_PREFIX
 	mov r1,r0,lsl#24
@@ -4652,7 +4651,7 @@ writeBackFE:
 	strb r1,[v30ptr,#v30ParityVal]
 
 	cmp r4,#0xC0
-	strbpl r1,[v30ptr,-r5]
+	strbpl r1,[v30ptr,-v30ofs]
 	addmi r0,v30csr,v30ofs,lsr#4
 	blmi cpuWriteMem20
 	fetch 1
@@ -4661,7 +4660,6 @@ writeBackFE:
 	add r1,v30ptr,#v30EATable
 	mov lr,pc
 	ldr pc,[r1,r4,lsl#2]
-	mov v30ofs,r1
 	adr lr,0b
 	b cpuReadMem20
 
@@ -4674,8 +4672,8 @@ contFF:
 	cmp r4,#0xC0
 	bmi 1f
 	and r2,r4,#7
-	add r5,v30ptr,r2,lsl#2
-	ldrh r0,[r5,#v30Regs]
+	add v30ofs,v30ptr,r2,lsl#2
+	ldrh r0,[v30ofs,#v30Regs]
 0:
 	bic v30cyc,v30cyc,#SEG_PREFIX
 	and r2,r4,#0x38
@@ -4687,7 +4685,6 @@ contFF:
 	add r1,v30ptr,#v30EATable
 	mov lr,pc
 	ldr pc,[r1,r4,lsl#2]
-	mov v30ofs,r1
 	adr lr,0b
 	b cpuReadMem20W
 ;@----------------------------------------------------------------------------
@@ -4712,7 +4709,7 @@ writeBackFF:
 	orreq v30f,v30f,#PSR_Z
 	strb r1,[v30ptr,#v30ParityVal]
 	cmp r4,#0xC0
-	strhpl r1,[r5,#v30Regs]
+	strhpl r1,[v30ofs,#v30Regs]
 	submi v30cyc,v30cyc,#1*CYCLE
 	addmi r0,v30csr,v30ofs,lsr#4
 	blmi cpuWriteMem20W
@@ -4816,66 +4813,66 @@ division8:
 	bx lr
 
 ;@----------------------------------------------------------------------------
-// All EA functions must leave EO (EffectiveOffset) in top 16bits of r1!
+// All EA functions must leave EO (EffectiveOffset) in top 16bits of v30ofs!
 ;@----------------------------------------------------------------------------
 EA_000:	;@
 ;@----------------------------------------------------------------------------
-	ldr r1,[v30ptr,#v30RegBW-2]
+	ldr v30ofs,[v30ptr,#v30RegBW-2]
 	ldr r3,[v30ptr,#v30RegIX]
 	tst v30cyc,#SEG_PREFIX
 	ldreq v30csr,[v30ptr,#v30SRegDS]
-	add r1,r1,r3
-	add r0,v30csr,r1,lsr#4
+	add v30ofs,v30ofs,r3
+	add r0,v30csr,v30ofs,lsr#4
 	eatCycles 2
 	bx lr
 ;@----------------------------------------------------------------------------
 EA_001:	;@
 ;@----------------------------------------------------------------------------
-	ldr r1,[v30ptr,#v30RegBW-2]
+	ldr v30ofs,[v30ptr,#v30RegBW-2]
 	ldr r3,[v30ptr,#v30RegIY]
 	tst v30cyc,#SEG_PREFIX
 	ldreq v30csr,[v30ptr,#v30SRegDS]
-	add r1,r1,r3
-	add r0,v30csr,r1,lsr#4
+	add v30ofs,v30ofs,r3
+	add r0,v30csr,v30ofs,lsr#4
 	eatCycles 2
 	bx lr
 ;@----------------------------------------------------------------------------
 EA_002:	;@
 ;@----------------------------------------------------------------------------
-	ldr r1,[v30ptr,#v30RegBP]
+	ldr v30ofs,[v30ptr,#v30RegBP]
 	ldr r3,[v30ptr,#v30RegIX]
 	tst v30cyc,#SEG_PREFIX
 	ldreq v30csr,[v30ptr,#v30SRegSS]
-	add r1,r1,r3
-	add r0,v30csr,r1,lsr#4
+	add v30ofs,v30ofs,r3
+	add r0,v30csr,v30ofs,lsr#4
 	eatCycles 2
 	bx lr
 ;@----------------------------------------------------------------------------
 EA_003:	;@
 ;@----------------------------------------------------------------------------
-	ldr r1,[v30ptr,#v30RegBP]
+	ldr v30ofs,[v30ptr,#v30RegBP]
 	ldr r3,[v30ptr,#v30RegIY]
 	tst v30cyc,#SEG_PREFIX
 	ldreq v30csr,[v30ptr,#v30SRegSS]
-	add r1,r1,r3
-	add r0,v30csr,r1,lsr#4
+	add v30ofs,v30ofs,r3
+	add r0,v30csr,v30ofs,lsr#4
 	eatCycles 2
 	bx lr
 ;@----------------------------------------------------------------------------
 EA_004:	;@
 ;@----------------------------------------------------------------------------
-	ldr r1,[v30ptr,#v30RegIX]
+	ldr v30ofs,[v30ptr,#v30RegIX]
 	tst v30cyc,#SEG_PREFIX
 	ldreq v30csr,[v30ptr,#v30SRegDS]
-	add r0,v30csr,r1,lsr#4
+	add r0,v30csr,v30ofs,lsr#4
 	bx lr
 ;@----------------------------------------------------------------------------
 EA_005:	;@
 ;@----------------------------------------------------------------------------
-	ldr r1,[v30ptr,#v30RegIY]
+	ldr v30ofs,[v30ptr,#v30RegIY]
 	tst v30cyc,#SEG_PREFIX
 	ldreq v30csr,[v30ptr,#v30SRegDS]
-	add r0,v30csr,r1,lsr#4
+	add r0,v30csr,v30ofs,lsr#4
 	bx lr
 ;@----------------------------------------------------------------------------
 EA_006:	;@
@@ -4883,200 +4880,200 @@ EA_006:	;@
 	getNextWord
 	tst v30cyc,#SEG_PREFIX
 	ldreq v30csr,[v30ptr,#v30SRegDS]
-	mov r1,r0,lsl#16
-	add r0,v30csr,r1,lsr#4
+	mov v30ofs,r0,lsl#16
+	add r0,v30csr,v30ofs,lsr#4
 	bx lr
 ;@----------------------------------------------------------------------------
 EA_007:	;@
 ;@----------------------------------------------------------------------------
-	ldr r1,[v30ptr,#v30RegBW-2]
+	ldr v30ofs,[v30ptr,#v30RegBW-2]
 	tst v30cyc,#SEG_PREFIX
 	ldreq v30csr,[v30ptr,#v30SRegDS]
-	add r0,v30csr,r1,lsr#4
+	add r0,v30csr,v30ofs,lsr#4
 	bx lr
 ;@----------------------------------------------------------------------------
 EA_100:	;@
 ;@----------------------------------------------------------------------------
 	getNextSignedByte
-	ldr r1,[v30ptr,#v30RegBW-2]
+	ldr v30ofs,[v30ptr,#v30RegBW-2]
 	ldr r3,[v30ptr,#v30RegIX]
 	tst v30cyc,#SEG_PREFIX
 	ldreq v30csr,[v30ptr,#v30SRegDS]
-	add r1,r1,r3
-	add r1,r1,r0,lsl#16
-	add r0,v30csr,r1,lsr#4
+	add v30ofs,v30ofs,r3
+	add v30ofs,v30ofs,r0,lsl#16
+	add r0,v30csr,v30ofs,lsr#4
 	eatCycles 2
 	bx lr
 ;@----------------------------------------------------------------------------
 EA_101:	;@
 ;@----------------------------------------------------------------------------
 	getNextSignedByte
-	ldr r1,[v30ptr,#v30RegBW-2]
+	ldr v30ofs,[v30ptr,#v30RegBW-2]
 	ldr r3,[v30ptr,#v30RegIY]
 	tst v30cyc,#SEG_PREFIX
 	ldreq v30csr,[v30ptr,#v30SRegDS]
-	add r1,r1,r3
-	add r1,r1,r0,lsl#16
-	add r0,v30csr,r1,lsr#4
+	add v30ofs,v30ofs,r3
+	add v30ofs,v30ofs,r0,lsl#16
+	add r0,v30csr,v30ofs,lsr#4
 	eatCycles 2
 	bx lr
 ;@----------------------------------------------------------------------------
 EA_102:	;@
 ;@----------------------------------------------------------------------------
 	getNextSignedByte
-	ldr r1,[v30ptr,#v30RegBP]
+	ldr v30ofs,[v30ptr,#v30RegBP]
 	ldr r3,[v30ptr,#v30RegIX]
 	tst v30cyc,#SEG_PREFIX
 	ldreq v30csr,[v30ptr,#v30SRegSS]
-	add r1,r1,r3
-	add r1,r1,r0,lsl#16
-	add r0,v30csr,r1,lsr#4
+	add v30ofs,v30ofs,r3
+	add v30ofs,v30ofs,r0,lsl#16
+	add r0,v30csr,v30ofs,lsr#4
 	eatCycles 2
 	bx lr
 ;@----------------------------------------------------------------------------
 EA_103:	;@
 ;@----------------------------------------------------------------------------
 	getNextSignedByte
-	ldr r1,[v30ptr,#v30RegBP]
+	ldr v30ofs,[v30ptr,#v30RegBP]
 	ldr r3,[v30ptr,#v30RegIY]
 	tst v30cyc,#SEG_PREFIX
 	ldreq v30csr,[v30ptr,#v30SRegSS]
-	add r1,r1,r3
-	add r1,r1,r0,lsl#16
-	add r0,v30csr,r1,lsr#4
+	add v30ofs,v30ofs,r3
+	add v30ofs,v30ofs,r0,lsl#16
+	add r0,v30csr,v30ofs,lsr#4
 	eatCycles 2
 	bx lr
 ;@----------------------------------------------------------------------------
 EA_104:	;@
 ;@----------------------------------------------------------------------------
 	getNextSignedByte
-	ldr r1,[v30ptr,#v30RegIX]
+	ldr v30ofs,[v30ptr,#v30RegIX]
 	tst v30cyc,#SEG_PREFIX
 	ldreq v30csr,[v30ptr,#v30SRegDS]
-	add r1,r1,r0,lsl#16
-	add r0,v30csr,r1,lsr#4
+	add v30ofs,v30ofs,r0,lsl#16
+	add r0,v30csr,v30ofs,lsr#4
 	bx lr
 ;@----------------------------------------------------------------------------
 EA_105:	;@
 ;@----------------------------------------------------------------------------
 	getNextSignedByte
-	ldr r1,[v30ptr,#v30RegIY]
+	ldr v30ofs,[v30ptr,#v30RegIY]
 	tst v30cyc,#SEG_PREFIX
 	ldreq v30csr,[v30ptr,#v30SRegDS]
-	add r1,r1,r0,lsl#16
-	add r0,v30csr,r1,lsr#4
+	add v30ofs,v30ofs,r0,lsl#16
+	add r0,v30csr,v30ofs,lsr#4
 	bx lr
 ;@----------------------------------------------------------------------------
 EA_106:	;@
 ;@----------------------------------------------------------------------------
 	getNextSignedByte
-	ldr r1,[v30ptr,#v30RegBP]
+	ldr v30ofs,[v30ptr,#v30RegBP]
 	tst v30cyc,#SEG_PREFIX
 	ldreq v30csr,[v30ptr,#v30SRegSS]
-	add r1,r1,r0,lsl#16
-	add r0,v30csr,r1,lsr#4
+	add v30ofs,v30ofs,r0,lsl#16
+	add r0,v30csr,v30ofs,lsr#4
 	bx lr
 ;@----------------------------------------------------------------------------
 EA_107:	;@
 ;@----------------------------------------------------------------------------
 	getNextSignedByte
-	ldr r1,[v30ptr,#v30RegBW-2]
+	ldr v30ofs,[v30ptr,#v30RegBW-2]
 	tst v30cyc,#SEG_PREFIX
 	ldreq v30csr,[v30ptr,#v30SRegDS]
-	add r1,r1,r0,lsl#16
-	add r0,v30csr,r1,lsr#4
+	add v30ofs,v30ofs,r0,lsl#16
+	add r0,v30csr,v30ofs,lsr#4
 	bx lr
 ;@----------------------------------------------------------------------------
 EA_200:	;@
 ;@----------------------------------------------------------------------------
 	getNextWord
-	ldr r1,[v30ptr,#v30RegBW-2]
+	ldr v30ofs,[v30ptr,#v30RegBW-2]
 	ldr r3,[v30ptr,#v30RegIX]
 	tst v30cyc,#SEG_PREFIX
 	ldreq v30csr,[v30ptr,#v30SRegDS]
-	add r1,r1,r3
-	add r1,r1,r0,lsl#16
-	add r0,v30csr,r1,lsr#4
+	add v30ofs,v30ofs,r3
+	add v30ofs,v30ofs,r0,lsl#16
+	add r0,v30csr,v30ofs,lsr#4
 	eatCycles 2
 	bx lr
 ;@----------------------------------------------------------------------------
 EA_201:	;@
 ;@----------------------------------------------------------------------------
 	getNextWord
-	ldr r1,[v30ptr,#v30RegBW-2]
+	ldr v30ofs,[v30ptr,#v30RegBW-2]
 	ldr r3,[v30ptr,#v30RegIY]
 	tst v30cyc,#SEG_PREFIX
 	ldreq v30csr,[v30ptr,#v30SRegDS]
-	add r1,r1,r3
-	add r1,r1,r0,lsl#16
-	add r0,v30csr,r1,lsr#4
+	add v30ofs,v30ofs,r3
+	add v30ofs,v30ofs,r0,lsl#16
+	add r0,v30csr,v30ofs,lsr#4
 	eatCycles 2
 	bx lr
 ;@----------------------------------------------------------------------------
 EA_202:	;@
 ;@----------------------------------------------------------------------------
 	getNextWord
-	ldr r1,[v30ptr,#v30RegBP]
+	ldr v30ofs,[v30ptr,#v30RegBP]
 	ldr r3,[v30ptr,#v30RegIX]
 	tst v30cyc,#SEG_PREFIX
 	ldreq v30csr,[v30ptr,#v30SRegSS]
-	add r1,r1,r3
-	add r1,r1,r0,lsl#16
-	add r0,v30csr,r1,lsr#4
+	add v30ofs,v30ofs,r3
+	add v30ofs,v30ofs,r0,lsl#16
+	add r0,v30csr,v30ofs,lsr#4
 	eatCycles 2
 	bx lr
 ;@----------------------------------------------------------------------------
 EA_203:	;@
 ;@----------------------------------------------------------------------------
 	getNextWord
-	ldr r1,[v30ptr,#v30RegBP]
+	ldr v30ofs,[v30ptr,#v30RegBP]
 	ldr r3,[v30ptr,#v30RegIY]
 	tst v30cyc,#SEG_PREFIX
 	ldreq v30csr,[v30ptr,#v30SRegSS]
-	add r1,r1,r3
-	add r1,r1,r0,lsl#16
-	add r0,v30csr,r1,lsr#4
+	add v30ofs,v30ofs,r3
+	add v30ofs,v30ofs,r0,lsl#16
+	add r0,v30csr,v30ofs,lsr#4
 	eatCycles 2
 	bx lr
 ;@----------------------------------------------------------------------------
 EA_204:	;@
 ;@----------------------------------------------------------------------------
 	getNextWord
-	ldr r1,[v30ptr,#v30RegIX]
+	ldr v30ofs,[v30ptr,#v30RegIX]
 	tst v30cyc,#SEG_PREFIX
 	ldreq v30csr,[v30ptr,#v30SRegDS]
-	add r1,r1,r0,lsl#16
-	add r0,v30csr,r1,lsr#4
+	add v30ofs,v30ofs,r0,lsl#16
+	add r0,v30csr,v30ofs,lsr#4
 	bx lr
 ;@----------------------------------------------------------------------------
 EA_205:	;@
 ;@----------------------------------------------------------------------------
 	getNextWord
-	ldr r1,[v30ptr,#v30RegIY]
+	ldr v30ofs,[v30ptr,#v30RegIY]
 	tst v30cyc,#SEG_PREFIX
 	ldreq v30csr,[v30ptr,#v30SRegDS]
-	add r1,r1,r0,lsl#16
-	add r0,v30csr,r1,lsr#4
+	add v30ofs,v30ofs,r0,lsl#16
+	add r0,v30csr,v30ofs,lsr#4
 	bx lr
 ;@----------------------------------------------------------------------------
 EA_206:	;@
 ;@----------------------------------------------------------------------------
 	getNextWord
-	ldr r1,[v30ptr,#v30RegBP]
+	ldr v30ofs,[v30ptr,#v30RegBP]
 	tst v30cyc,#SEG_PREFIX
 	ldreq v30csr,[v30ptr,#v30SRegSS]
-	add r1,r1,r0,lsl#16
-	add r0,v30csr,r1,lsr#4
+	add v30ofs,v30ofs,r0,lsl#16
+	add r0,v30csr,v30ofs,lsr#4
 	bx lr
 ;@----------------------------------------------------------------------------
 EA_207:	;@
 ;@----------------------------------------------------------------------------
 	getNextWord
-	ldr r1,[v30ptr,#v30RegBW-2]
+	ldr v30ofs,[v30ptr,#v30RegBW-2]
 	tst v30cyc,#SEG_PREFIX
 	ldreq v30csr,[v30ptr,#v30SRegDS]
-	add r1,r1,r0,lsl#16
-	add r0,v30csr,r1,lsr#4
+	add v30ofs,v30ofs,r0,lsl#16
+	add r0,v30csr,v30ofs,lsr#4
 	bx lr
 
 ;@----------------------------------------------------------------------------
