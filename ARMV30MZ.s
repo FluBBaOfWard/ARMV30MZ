@@ -124,19 +124,15 @@ _02:	;@ ADD R8b
 	add r1,v30ptr,r0
 	ldrb r4,[r1,#v30ModRmReg]
 	cmp r0,#0xC0
-	bmi 1f
-	ldrb r2,[r1,#v30ModRmRm]
-	ldrb r0,[v30ptr,-r2]
-0:
+	ldrbpl r2,[r1,#v30ModRmRm]
+	ldrbpl r0,[v30ptr,-r2]
+	blmi v30ReadEA1
+
 	ldrb r1,[v30ptr,-r4]
 	add8 r0,r1
 	strb r1,[v30ptr,-r4]
 	bic v30cyc,v30cyc,#SEG_PREFIX
 	fetch 1
-1:
-	eatCycles 1
-	adr lr,0b
-	b v30ReadEA
 ;@----------------------------------------------------------------------------
 i_add_r16w:
 _03:	;@ ADD R16W
@@ -145,20 +141,16 @@ _03:	;@ ADD R16W
 	and r1,r0,#0x38
 	add r4,v30ptr,r1,lsr#1
 	cmp r0,#0xC0
-	bmi 1f
-	and r2,r0,#7
-	add r1,v30ptr,r2,lsl#2
-	ldrh r0,[r1,#v30Regs]
-0:
+	andpl r2,r0,#7
+	addpl r1,v30ptr,r2,lsl#2
+	ldrhpl r0,[r1,#v30Regs]
+	blmi v30ReadEAW1
+
 	ldr r1,[r4,#v30Regs2]
 	add16 r0,r1
 	strh r1,[r4,#v30Regs]
 	bic v30cyc,v30cyc,#SEG_PREFIX
 	fetch 1
-1:
-	eatCycles 1
-	adr lr,0b
-	b v30ReadEAW
 ;@----------------------------------------------------------------------------
 i_add_ald8:
 _04:	;@ ADD ALD8
@@ -254,19 +246,15 @@ _0A:	;@ OR R8b
 	add r1,v30ptr,r0
 	ldrb r4,[r1,#v30ModRmReg]
 	cmp r0,#0xC0
-	bmi 1f
-	ldrb r2,[r1,#v30ModRmRm]
-	ldrb r0,[v30ptr,-r2]
-0:
+	ldrbpl r2,[r1,#v30ModRmRm]
+	ldrbpl r0,[v30ptr,-r2]
+	blmi v30ReadEA1
+
 	ldrb r1,[v30ptr,-r4]
 	or8 r0,r1
 	strb r1,[v30ptr,-r4]
 	bic v30cyc,v30cyc,#SEG_PREFIX
 	fetch 1
-1:
-	eatCycles 1
-	adr lr,0b
-	b v30ReadEA
 ;@----------------------------------------------------------------------------
 i_or_r16w:
 _0B:	;@ OR R16W
@@ -275,20 +263,16 @@ _0B:	;@ OR R16W
 	and r1,r0,#0x38
 	add r4,v30ptr,r1,lsr#1
 	cmp r0,#0xC0
-	bmi 1f
-	and r2,r0,#7
-	add r1,v30ptr,r2,lsl#2
-	ldrh r0,[r1,#v30Regs]
-0:
+	andpl r2,r0,#7
+	addpl r1,v30ptr,r2,lsl#2
+	ldrhpl r0,[r1,#v30Regs]
+	blmi v30ReadEAW1
+
 	ldr r1,[r4,#v30Regs2]
 	or16 r0,r1
 	strh r1,[r4,#v30Regs]
 	bic v30cyc,v30cyc,#SEG_PREFIX
 	fetch 1
-1:
-	eatCycles 1
-	adr lr,0b
-	b v30ReadEAW
 ;@----------------------------------------------------------------------------
 i_or_ald8:
 _0C:	;@ OR ALD8
@@ -377,19 +361,15 @@ _12:	;@ ADDC/ADC R8b
 	add r1,v30ptr,r0
 	ldrb r4,[r1,#v30ModRmReg]
 	cmp r0,#0xC0
-	bmi 1f
-	ldrb r2,[r1,#v30ModRmRm]
-	ldrb r0,[v30ptr,-r2]
-0:
+	ldrbpl r2,[r1,#v30ModRmRm]
+	ldrbpl r0,[v30ptr,-r2]
+	blmi v30ReadEA1
+
 	ldrb r1,[v30ptr,-r4]
 	adc8 r0,r1
 	strb r1,[v30ptr,-r4]
 	bic v30cyc,v30cyc,#SEG_PREFIX
 	fetch 1
-1:
-	eatCycles 1
-	adr lr,0b
-	b v30ReadEA
 ;@----------------------------------------------------------------------------
 i_adc_r16w:
 _13:	;@ ADDC/ADC R16W
@@ -398,20 +378,16 @@ _13:	;@ ADDC/ADC R16W
 	and r1,r0,#0x38
 	add r4,v30ptr,r1,lsr#1
 	cmp r0,#0xC0
-	bmi 1f
-	and r2,r0,#7
-	add r1,v30ptr,r2,lsl#2
-	ldrh r0,[r1,#v30Regs]
-0:
+	andpl r2,r0,#7
+	addpl r1,v30ptr,r2,lsl#2
+	ldrhpl r0,[r1,#v30Regs]
+	blmi v30ReadEAW1
+
 	ldr r1,[r4,#v30Regs2]
 	adc16 r0,r1
 	strh r1,[r4,#v30Regs]
 	bic v30cyc,v30cyc,#SEG_PREFIX
 	fetch 1
-1:
-	eatCycles 1
-	adr lr,0b
-	b v30ReadEAW
 ;@----------------------------------------------------------------------------
 i_adc_ald8:
 _14:	;@ ADDC/ADC ALD8
@@ -509,19 +485,15 @@ _1A:	;@ SUBC/SBB R8b
 	add r1,v30ptr,r0
 	ldrb r4,[r1,#v30ModRmReg]
 	cmp r0,#0xC0
-	bmi 1f
-	ldrb r2,[r1,#v30ModRmRm]
-	ldrb r0,[v30ptr,-r2]
-0:
+	ldrbpl r2,[r1,#v30ModRmRm]
+	ldrbpl r0,[v30ptr,-r2]
+	blmi v30ReadEA1
+
 	ldrb r1,[v30ptr,-r4]
 	subc8 r0,r1
 	strb r1,[v30ptr,-r4]
 	bic v30cyc,v30cyc,#SEG_PREFIX
 	fetch 1
-1:
-	eatCycles 1
-	adr lr,0b
-	b v30ReadEA
 ;@----------------------------------------------------------------------------
 i_sbb_r16w:
 _1B:	;@ SUBC/SBB R16W
@@ -530,20 +502,16 @@ _1B:	;@ SUBC/SBB R16W
 	and r1,r0,#0x38
 	add r4,v30ptr,r1,lsr#1
 	cmp r0,#0xC0
-	bmi 1f
-	and r2,r0,#7
-	add r1,v30ptr,r2,lsl#2
-	ldrh r0,[r1,#v30Regs]
-0:
+	andpl r2,r0,#7
+	addpl r1,v30ptr,r2,lsl#2
+	ldrhpl r0,[r1,#v30Regs]
+	blmi v30ReadEAW1
+
 	ldr r1,[r4,#v30Regs2]
 	subc16 r0,r1
 	strh r1,[r4,#v30Regs]
 	bic v30cyc,v30cyc,#SEG_PREFIX
 	fetch 1
-1:
-	eatCycles 1
-	adr lr,0b
-	b v30ReadEAW
 ;@----------------------------------------------------------------------------
 i_sbb_ald8:
 _1C:	;@ SUBC/SBB ALD8
@@ -639,19 +607,15 @@ _22:	;@ AND R8b
 	add r1,v30ptr,r0
 	ldrb r4,[r1,#v30ModRmReg]
 	cmp r0,#0xC0
-	bmi 1f
-	ldrb r2,[r1,#v30ModRmRm]
-	ldrb r0,[v30ptr,-r2]
-0:
+	ldrbpl r2,[r1,#v30ModRmRm]
+	ldrbpl r0,[v30ptr,-r2]
+	blmi v30ReadEA1
+
 	ldrb r1,[v30ptr,-r4]
 	and8 r0,r1
 	strb r1,[v30ptr,-r4]
 	bic v30cyc,v30cyc,#SEG_PREFIX
 	fetch 1
-1:
-	eatCycles 1
-	adr lr,0b
-	b v30ReadEA
 ;@----------------------------------------------------------------------------
 i_and_r16w:
 _23:	;@ AND R16W
@@ -660,20 +624,16 @@ _23:	;@ AND R16W
 	and r1,r0,#0x38
 	add r4,v30ptr,r1,lsr#1
 	cmp r0,#0xC0
-	bmi 1f
-	and r2,r0,#7
-	add r1,v30ptr,r2,lsl#2
-	ldrh r0,[r1,#v30Regs]
-0:
+	andpl r2,r0,#7
+	addpl r1,v30ptr,r2,lsl#2
+	ldrhpl r0,[r1,#v30Regs]
+	blmi v30ReadEAW1
+
 	ldr r1,[r4,#v30Regs2]
 	and16 r0,r1
 	strh r1,[r4,#v30Regs]
 	bic v30cyc,v30cyc,#SEG_PREFIX
 	fetch 1
-1:
-	eatCycles 1
-	adr lr,0b
-	b v30ReadEAW
 ;@----------------------------------------------------------------------------
 i_and_ald8:
 _24:	;@ AND ALD8
@@ -787,19 +747,15 @@ _2A:	;@ SUB R8b
 	add r1,v30ptr,r0
 	ldrb r4,[r1,#v30ModRmReg]
 	cmp r0,#0xC0
-	bmi 1f
-	ldrb r2,[r1,#v30ModRmRm]
-	ldrb r0,[v30ptr,-r2]
-0:
+	ldrbpl r2,[r1,#v30ModRmRm]
+	ldrbpl r0,[v30ptr,-r2]
+	blmi v30ReadEA1
+
 	ldrb r1,[v30ptr,-r4]
 	sub8 r0,r1
 	strb r1,[v30ptr,-r4]
 	bic v30cyc,v30cyc,#SEG_PREFIX
 	fetch 1
-1:
-	eatCycles 1
-	adr lr,0b
-	b v30ReadEA
 ;@----------------------------------------------------------------------------
 i_sub_r16w:
 _2B:	;@ SUB R16W
@@ -808,20 +764,16 @@ _2B:	;@ SUB R16W
 	and r1,r0,#0x38
 	add r4,v30ptr,r1,lsr#1
 	cmp r0,#0xC0
-	bmi 1f
-	and r2,r0,#7
-	add r1,v30ptr,r2,lsl#2
-	ldrh r0,[r1,#v30Regs]
-0:
+	andpl r2,r0,#7
+	addpl r1,v30ptr,r2,lsl#2
+	ldrhpl r0,[r1,#v30Regs]
+	blmi v30ReadEAW1
+
 	ldr r1,[r4,#v30Regs2]
 	sub16 r0,r1
 	strh r1,[r4,#v30Regs]
 	bic v30cyc,v30cyc,#SEG_PREFIX
 	fetch 1
-1:
-	eatCycles 1
-	adr lr,0b
-	b v30ReadEAW
 ;@----------------------------------------------------------------------------
 i_sub_ald8:
 _2C:	;@ SUB ALD8
@@ -934,19 +886,15 @@ _32:	;@ XOR R8b
 	add r1,v30ptr,r0
 	ldrb r4,[r1,#v30ModRmReg]
 	cmp r0,#0xC0
-	bmi 1f
-	ldrb r2,[r1,#v30ModRmRm]
-	ldrb r0,[v30ptr,-r2]
-0:
+	ldrbpl r2,[r1,#v30ModRmRm]
+	ldrbpl r0,[v30ptr,-r2]
+	blmi v30ReadEA1
+
 	ldrb r1,[v30ptr,-r4]
 	xor8 r0,r1
 	strb r1,[v30ptr,-r4]
 	bic v30cyc,v30cyc,#SEG_PREFIX
 	fetch 1
-1:
-	eatCycles 1
-	adr lr,0b
-	b v30ReadEA
 ;@----------------------------------------------------------------------------
 i_xor_r16w:
 _33:	;@ XOR R16W
@@ -955,20 +903,16 @@ _33:	;@ XOR R16W
 	and r1,r0,#0x38
 	add r4,v30ptr,r1,lsr#1
 	cmp r0,#0xC0
-	bmi 1f
-	and r2,r0,#7
-	add r1,v30ptr,r2,lsl#2
-	ldrh r0,[r1,#v30Regs]
-0:
+	andpl r2,r0,#7
+	addpl r1,v30ptr,r2,lsl#2
+	ldrhpl r0,[r1,#v30Regs]
+	blmi v30ReadEAW1
+
 	ldr r1,[r4,#v30Regs2]
 	xor16 r0,r1
 	strh r1,[r4,#v30Regs]
 	bic v30cyc,v30cyc,#SEG_PREFIX
 	fetch 1
-1:
-	eatCycles 1
-	adr lr,0b
-	b v30ReadEAW
 ;@----------------------------------------------------------------------------
 i_xor_ald8:
 _34:	;@ XOR ALD8
@@ -1025,17 +969,13 @@ _38:	;@ CMP BR8
 	ldrb r2,[r1,#v30ModRmReg]
 	ldrb r4,[v30ptr,-r2]
 	cmp r0,#0xC0
-	bmi 1f
-	ldrb r2,[r1,#v30ModRmRm]
-	ldrb r0,[v30ptr,-r2]
-0:
+	ldrbpl r2,[r1,#v30ModRmRm]
+	ldrbpl r0,[v30ptr,-r2]
+	blmi v30ReadEA1
+
 	sub8 r4,r0
 	bic v30cyc,v30cyc,#SEG_PREFIX
 	fetch 1
-1:
-	eatCycles 1
-	adr lr,0b
-	b v30ReadEA
 ;@----------------------------------------------------------------------------
 i_cmp_wr16:
 _39:	;@ CMP WR16
@@ -1045,19 +985,15 @@ _39:	;@ CMP WR16
 	add r2,v30ptr,r1,lsr#1
 	ldrh r4,[r2,#v30Regs]
 	cmp r0,#0xC0
-	bmi 1f
-	and r1,r0,#7
-	add r2,v30ptr,r1,lsl#2
-	ldrh r0,[r2,#v30Regs]
-0:
+	andpl r1,r0,#7
+	addpl r2,v30ptr,r1,lsl#2
+	ldrhpl r0,[r2,#v30Regs]
+	blmi v30ReadEAW1
+
 	mov r0,r0,lsl#16
 	sub16 r4,r0
 	bic v30cyc,v30cyc,#SEG_PREFIX
 	fetch 1
-1:
-	eatCycles 1
-	adr lr,0b
-	b v30ReadEAW
 ;@----------------------------------------------------------------------------
 i_cmp_r8b:
 _3A:	;@ CMP R8b
@@ -1067,17 +1003,13 @@ _3A:	;@ CMP R8b
 	ldrb r2,[r1,#v30ModRmReg]
 	ldrb r4,[v30ptr,-r2]
 	cmp r0,#0xC0
-	bmi 1f
-	ldrb r2,[r1,#v30ModRmRm]
-	ldrb r0,[v30ptr,-r2]
-0:
+	ldrbpl r2,[r1,#v30ModRmRm]
+	ldrbpl r0,[v30ptr,-r2]
+	blmi v30ReadEA1
+
 	sub8 r0,r4
 	bic v30cyc,v30cyc,#SEG_PREFIX
 	fetch 1
-1:
-	eatCycles 1
-	adr lr,0b
-	b v30ReadEA
 ;@----------------------------------------------------------------------------
 i_cmp_r16w:
 _3B:	;@ CMP R16W
@@ -1087,18 +1019,14 @@ _3B:	;@ CMP R16W
 	add r2,v30ptr,r1,lsr#1
 	ldr r4,[r2,#v30Regs2]
 	cmp r0,#0xC0
-	bmi 1f
-	and r1,r0,#7
-	add r2,v30ptr,r1,lsl#2
-	ldrh r0,[r2,#v30Regs]
-0:
+	andpl r1,r0,#7
+	addpl r2,v30ptr,r1,lsl#2
+	ldrhpl r0,[r2,#v30Regs]
+	blmi v30ReadEAW1
+
 	sub16 r0,r4
 	bic v30cyc,v30cyc,#SEG_PREFIX
 	fetch 1
-1:
-	eatCycles 1
-	adr lr,0b
-	b v30ReadEAW
 ;@----------------------------------------------------------------------------
 i_cmp_ald8:
 _3C:	;@ CMP ALD8
@@ -1427,11 +1355,11 @@ _69:	;@ MUL/IMUL D16
 	and r1,r0,#0x38
 	add r4,v30ptr,r1,lsr#1
 	cmp r0,#0xC0
-	bmi 1f
-	and r1,r0,#7
-	add r2,v30ptr,r1,lsl#2
-	ldrh r0,[r2,#v30Regs]
-0:
+	andpl r1,r0,#7
+	addpl r2,v30ptr,r1,lsl#2
+	ldrhpl r0,[r2,#v30Regs]
+	blmi v30ReadEAW1
+
 	mov r5,r0
 	getNextWord
 
@@ -1446,10 +1374,6 @@ _69:	;@ MUL/IMUL D16
 	strh r0,[r4,#v30Regs]
 	bic v30cyc,v30cyc,#SEG_PREFIX
 	fetch 3
-1:
-	eatCycles 1
-	adr lr,0b
-	b v30ReadEAW
 ;@----------------------------------------------------------------------------
 i_push_d8:
 _6A:	;@ PUSH D8
@@ -1469,11 +1393,11 @@ _6B:	;@ MUL/IMUL D8
 	and r1,r0,#0x38
 	add r4,v30ptr,r1,lsr#1
 	cmp r0,#0xC0
-	bmi 1f
-	and r2,r0,#7
-	add r1,v30ptr,r2,lsl#2
-	ldrh r0,[r1,#v30Regs]
-0:
+	andpl r2,r0,#7
+	addpl r1,v30ptr,r2,lsl#2
+	ldrhpl r0,[r1,#v30Regs]
+	blmi v30ReadEAW1
+
 	getNextSignedByteTo r1
 
 	mov v30f,#PSR_Z					;@ Set Z and clear others.
@@ -1487,10 +1411,6 @@ _6B:	;@ MUL/IMUL D8
 	strh r2,[r4,#v30Regs]
 	bic v30cyc,v30cyc,#SEG_PREFIX
 	fetch 3
-1:
-	eatCycles 1
-	adr lr,0b
-	b v30ReadEAW
 
 ;@----------------------------------------------------------------------------
 f36c:	;@ REP INMB/INSB
@@ -1533,29 +1453,28 @@ _6C:	;@ INMB/INSB
 ;@----------------------------------------------------------------------------
 f36d:	;@ REP INMW/INSW
 ;@----------------------------------------------------------------------------
-	ldrh r6,[v30ptr,#v30RegCW]
-	cmp r6,#1
+	ldrh r5,[v30ptr,#v30RegCW]
+	cmp r5,#1
 	bmi 1f
 	ldr v30csr,[v30ptr,#v30SRegES]
 	ldrh r4,[v30ptr,#v30RegDW]
 0:
 	mov r0,r4
 	bl v30ReadPort
-	mov r5,r0
+	mov r6,r0
 	add r0,r4,#1
 	bl v30ReadPort
 	ldrsb r3,[v30ptr,#v30DF]
-	ldr r2,[v30ptr,#v30RegIY]
-	orr r1,r5,r0,lsl#8
-	add r3,r2,r3,lsl#17
-	add r0,v30csr,r2,lsr#4
+	orr r1,r6,r0,lsl#8
+	ldr v30ofs,[v30ptr,#v30RegIY]
+	add r3,v30ofs,r3,lsl#17
 	str r3,[v30ptr,#v30RegIY]
-	bl cpuWriteMem20W
+	bl v30WriteSegOfsW
 	eatCycles 6
-	subs r6,r6,#1
+	subs r5,r5,#1
 	bne 0b
 1:
-	strh r6,[v30ptr,#v30RegCW]
+	strh r5,[v30ptr,#v30RegCW]
 	bic v30cyc,v30cyc,#SEG_PREFIX+REP_PREFIX+LOCK_PREFIX
 	fetch 5
 ;@----------------------------------------------------------------------------
@@ -1953,17 +1872,13 @@ _84:	;@ TEST BR8
 	ldrb r2,[r1,#v30ModRmReg]
 	ldrb r4,[v30ptr,-r2]
 	cmp r0,#0xC0
-	bmi 1f
-	ldrb r2,[r1,#v30ModRmRm]
-	ldrb r0,[v30ptr,-r2]
-0:
+	ldrbpl r2,[r1,#v30ModRmRm]
+	ldrbpl r0,[v30ptr,-r2]
+	blmi v30ReadEA1
+
 	and8 r4,r0
 	bic v30cyc,v30cyc,#SEG_PREFIX
 	fetch 1
-1:
-	eatCycles 1
-	adr lr,0b
-	b v30ReadEA
 ;@----------------------------------------------------------------------------
 i_test_wr16:
 _85:	;@ TEST WR16
@@ -1973,18 +1888,14 @@ _85:	;@ TEST WR16
 	add r2,v30ptr,r1,lsr#1
 	ldr r4,[r2,#v30Regs2]
 	cmp r0,#0xC0
-	bmi 1f
-	and r1,r0,#7
-	add r2,v30ptr,r1,lsl#2
-	ldrh r0,[r2,#v30Regs]
-0:
+	andpl r1,r0,#7
+	addpl r2,v30ptr,r1,lsl#2
+	ldrhpl r0,[r2,#v30Regs]
+	blmi v30ReadEAW1
+
 	and16 r0,r4
 	bic v30cyc,v30cyc,#SEG_PREFIX
 	fetch 1
-1:
-	eatCycles 1
-	adr lr,0b
-	b v30ReadEAW
 ;@----------------------------------------------------------------------------
 i_xchg_br8:
 _86:	;@ XCH/XCHG BR8
@@ -2074,15 +1985,10 @@ _8A:	;@ MOV R8B
 	add r1,v30ptr,r0
 	ldrb r4,[r1,#v30ModRmReg]
 	cmp r0,#0xC0
-	bmi 0f
 
-	ldrb r2,[r1,#v30ModRmRm]
-	ldrb r0,[v30ptr,-r2]
-	strb r0,[v30ptr,-r4]
-	bic v30cyc,v30cyc,#SEG_PREFIX
-	fetch 1
-0:
-	bl v30ReadEA
+	ldrbpl r2,[r1,#v30ModRmRm]
+	ldrbpl r0,[v30ptr,-r2]
+	blmi v30ReadEA
 	strb r0,[v30ptr,-r4]
 	bic v30cyc,v30cyc,#SEG_PREFIX
 	fetch 1
@@ -2146,11 +2052,11 @@ _8E:	;@ MOV SREGW
 	getNextByte
 	and r4,r0,#0x38
 	cmp r0,#0xC0
-	bmi 1f
-	and r2,r0,#7
-	add r1,v30ptr,r2,lsl#2
-	ldrh r0,[r1,#v30Regs]
-0:
+	andpl r2,r0,#7
+	addpl r1,v30ptr,r2,lsl#2
+	ldrhpl r0,[r1,#v30Regs]
+	blmi v30ReadEAW1
+
 	tst r4,#0x20
 	addeq r1,v30ptr,r4,lsr#1
 	strheq r0,[r1,#v30SRegs+2]
@@ -2159,10 +2065,6 @@ _8E:	;@ MOV SREGW
 	cmp r4,#0x08			;@ CS?
 	bleq V30ReEncodePC
 	fetch 2
-1:
-	eatCycles 1
-	adr lr,0b
-	b v30ReadEAW
 ;@----------------------------------------------------------------------------
 i_popw:
 _8F:	;@ POPW
@@ -3353,40 +3255,39 @@ _C8:	;@ PREPARE/ENTER
 	getNextByte
 	and r5,r0,#0x1F				;@ V30MZ specific
 
-	ldr v30ofs,[v30ptr,#v30RegSP]
+	ldr r4,[v30ptr,#v30RegSP]
 	ldr r8,[v30ptr,#v30SRegSS]
-	ldr r4,[v30ptr,#v30RegBP]
-	sub v30ofs,v30ofs,#0x20000
-	add r0,r8,v30ofs,lsr#4
-	mov r1,r4,lsr#16
+	ldr v30ofs,[v30ptr,#v30RegBP]
+	sub r4,r4,#0x20000
+	add r0,r8,r4,lsr#4
+	mov r1,v30ofs,lsr#16
 	bl cpuWriteMem20W
-	str v30ofs,[v30ptr,#v30RegBP]
+	str r4,[v30ptr,#v30RegBP]
 	subs r5,r5,#1
 	bmi 2f
 	beq 1f
 	tst v30cyc,#SEG_PREFIX
 	moveq v30csr,r8
 0:
-	sub r4,r4,#0x20000
-	add r0,v30csr,r4,lsr#4
-	bl cpuReadMem20W
-	mov r1,r0
 	sub v30ofs,v30ofs,#0x20000
-	add r0,r8,v30ofs,lsr#4
+	bl v30ReadSegOfsW
+	mov r1,r0
+	sub r4,r4,#0x20000
+	add r0,r8,r4,lsr#4
 	bl cpuWriteMem20W
 	eatCycles 4
 	subs r5,r5,#1
 	bne 0b
 1:
 	ldrh r1,[v30ptr,#v30RegBP+2]
-	sub v30ofs,v30ofs,#0x20000
-	add r0,r8,v30ofs,lsr#4
+	sub r4,r4,#0x20000
+	add r0,r8,r4,lsr#4
 	bl cpuWriteMem20W
 	eatCycles 6
 2:
 	ldmfd sp!,{r0, r8}
-	sub v30ofs,v30ofs,r0,lsl#16
-	str v30ofs,[v30ptr,#v30RegSP]
+	sub r4,r4,r0,lsl#16
+	str r4,[v30ptr,#v30RegSP]
 	bic v30cyc,v30cyc,#SEG_PREFIX
 	fetch 8
 ;@----------------------------------------------------------------------------
