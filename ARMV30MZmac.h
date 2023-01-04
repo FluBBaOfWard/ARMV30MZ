@@ -62,14 +62,14 @@
 	getNextSignedByteToReg r0
 	.endm
 
-	.macro getNextWordToReg reg
-	ldrb r0,[v30pc],#1
-	ldrb r1,[v30pc],#1
-	orr \reg,r0,r1,lsl#8
+	.macro getNextWordTo dst use
+	ldrb \dst,[v30pc],#1
+	ldrb \use,[v30pc],#1
+	orr \dst,\dst,\use,lsl#8
 	.endm
 
 	.macro getNextWord
-	getNextWordToReg r0
+	getNextWordTo r0, r1
 	.endm
 
 	.macro fetch count

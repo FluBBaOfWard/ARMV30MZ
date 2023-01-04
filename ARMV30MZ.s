@@ -88,9 +88,9 @@ _00:	;@ ADD BR8
 	fetch 1
 1:
 	eatCycles 2
-	add r1,v30ptr,#v30EATable
+	add r2,v30ptr,#v30EATable
 	mov r12,pc					;@ Return reg for EA
-	ldr pc,[r1,r4,lsl#2]
+	ldr pc,[r2,r4,lsl#2]
 	adr lr,0b
 	b cpuReadMem20
 ;@----------------------------------------------------------------------------
@@ -117,9 +117,9 @@ _01:	;@ ADD WR16
 	fetch 1
 1:
 	eatCycles 2
-	add r1,v30ptr,#v30EATable
+	add r2,v30ptr,#v30EATable
 	mov r12,pc					;@ Return reg for EA
-	ldr pc,[r1,r4,lsl#2]
+	ldr pc,[r2,r4,lsl#2]
 	adr lr,0b
 	b cpuReadMem20W
 ;@----------------------------------------------------------------------------
@@ -141,9 +141,9 @@ _02:	;@ ADD R8b
 	fetch 1
 1:
 	eatCycles 1
-	add r1,v30ptr,#v30EATable
+	add r2,v30ptr,#v30EATable
 	mov r12,pc					;@ Return reg for EA
-	ldr pc,[r1,r0,lsl#2]
+	ldr pc,[r2,r0,lsl#2]
 	adr lr,0b
 	b cpuReadMem20
 ;@----------------------------------------------------------------------------
@@ -166,9 +166,9 @@ _03:	;@ ADD R16W
 	fetch 1
 1:
 	eatCycles 1
-	add r1,v30ptr,#v30EATable
+	add r2,v30ptr,#v30EATable
 	mov r12,pc					;@ Return reg for EA
-	ldr pc,[r1,r0,lsl#2]
+	ldr pc,[r2,r0,lsl#2]
 	adr lr,0b
 	b cpuReadMem20W
 ;@----------------------------------------------------------------------------
@@ -231,9 +231,9 @@ _08:	;@ OR BR8
 	fetch 1
 1:
 	eatCycles 2
-	add r1,v30ptr,#v30EATable
+	add r2,v30ptr,#v30EATable
 	mov r12,pc					;@ Return reg for EA
-	ldr pc,[r1,r4,lsl#2]
+	ldr pc,[r2,r4,lsl#2]
 	adr lr,0b
 	b cpuReadMem20
 ;@----------------------------------------------------------------------------
@@ -260,9 +260,9 @@ _09:	;@ OR WR16
 	fetch 1
 1:
 	eatCycles 2
-	add r1,v30ptr,#v30EATable
+	add r2,v30ptr,#v30EATable
 	mov r12,pc					;@ Return reg for EA
-	ldr pc,[r1,r4,lsl#2]
+	ldr pc,[r2,r4,lsl#2]
 	adr lr,0b
 	b cpuReadMem20W
 ;@----------------------------------------------------------------------------
@@ -284,9 +284,9 @@ _0A:	;@ OR R8b
 	fetch 1
 1:
 	eatCycles 1
-	add r1,v30ptr,#v30EATable
+	add r2,v30ptr,#v30EATable
 	mov r12,pc					;@ Return reg for EA
-	ldr pc,[r1,r0,lsl#2]
+	ldr pc,[r2,r0,lsl#2]
 	adr lr,0b
 	b cpuReadMem20
 ;@----------------------------------------------------------------------------
@@ -309,9 +309,9 @@ _0B:	;@ OR R16W
 	fetch 1
 1:
 	eatCycles 1
-	add r1,v30ptr,#v30EATable
+	add r2,v30ptr,#v30EATable
 	mov r12,pc					;@ Return reg for EA
-	ldr pc,[r1,r0,lsl#2]
+	ldr pc,[r2,r0,lsl#2]
 	adr lr,0b
 	b cpuReadMem20W
 ;@----------------------------------------------------------------------------
@@ -367,9 +367,9 @@ _10:	;@ ADDC/ADC BR8
 	fetch 1
 1:
 	eatCycles 2
-	add r1,v30ptr,#v30EATable
+	add r2,v30ptr,#v30EATable
 	mov r12,pc					;@ Return reg for EA
-	ldr pc,[r1,r4,lsl#2]
+	ldr pc,[r2,r4,lsl#2]
 	adr lr,0b
 	b cpuReadMem20
 ;@----------------------------------------------------------------------------
@@ -396,9 +396,9 @@ _11:	;@ ADDC/ADC WR16
 	fetch 1
 1:
 	eatCycles 2
-	add r1,v30ptr,#v30EATable
+	add r2,v30ptr,#v30EATable
 	mov r12,pc					;@ Return reg for EA
-	ldr pc,[r1,r4,lsl#2]
+	ldr pc,[r2,r4,lsl#2]
 	adr lr,0b
 	b cpuReadMem20W
 ;@----------------------------------------------------------------------------
@@ -420,9 +420,9 @@ _12:	;@ ADDC/ADC R8b
 	fetch 1
 1:
 	eatCycles 1
-	add r1,v30ptr,#v30EATable
+	add r2,v30ptr,#v30EATable
 	mov r12,pc					;@ Return reg for EA
-	ldr pc,[r1,r0,lsl#2]
+	ldr pc,[r2,r0,lsl#2]
 	adr lr,0b
 	b cpuReadMem20
 ;@----------------------------------------------------------------------------
@@ -445,9 +445,9 @@ _13:	;@ ADDC/ADC R16W
 	fetch 1
 1:
 	eatCycles 1
-	add r1,v30ptr,#v30EATable
+	add r2,v30ptr,#v30EATable
 	mov r12,pc					;@ Return reg for EA
-	ldr pc,[r1,r0,lsl#2]
+	ldr pc,[r2,r0,lsl#2]
 	adr lr,0b
 	b cpuReadMem20W
 ;@----------------------------------------------------------------------------
@@ -511,9 +511,9 @@ _18:	;@ SUBC/SBB BR8
 	fetch 1
 1:
 	eatCycles 2
-	add r1,v30ptr,#v30EATable
+	add r2,v30ptr,#v30EATable
 	mov r12,pc					;@ Return reg for EA
-	ldr pc,[r1,r4,lsl#2]
+	ldr pc,[r2,r4,lsl#2]
 	adr lr,0b
 	b cpuReadMem20
 ;@----------------------------------------------------------------------------
@@ -541,9 +541,9 @@ _19:	;@ SUBC/SBB WR16
 	fetch 1
 1:
 	eatCycles 2
-	add r1,v30ptr,#v30EATable
+	add r2,v30ptr,#v30EATable
 	mov r12,pc					;@ Return reg for EA
-	ldr pc,[r1,r4,lsl#2]
+	ldr pc,[r2,r4,lsl#2]
 	adr lr,0b
 	b cpuReadMem20W
 ;@----------------------------------------------------------------------------
@@ -565,9 +565,9 @@ _1A:	;@ SUBC/SBB R8b
 	fetch 1
 1:
 	eatCycles 1
-	add r1,v30ptr,#v30EATable
+	add r2,v30ptr,#v30EATable
 	mov r12,pc					;@ Return reg for EA
-	ldr pc,[r1,r0,lsl#2]
+	ldr pc,[r2,r0,lsl#2]
 	adr lr,0b
 	b cpuReadMem20
 ;@----------------------------------------------------------------------------
@@ -590,9 +590,9 @@ _1B:	;@ SUBC/SBB R16W
 	fetch 1
 1:
 	eatCycles 1
-	add r1,v30ptr,#v30EATable
+	add r2,v30ptr,#v30EATable
 	mov r12,pc					;@ Return reg for EA
-	ldr pc,[r1,r0,lsl#2]
+	ldr pc,[r2,r0,lsl#2]
 	adr lr,0b
 	b cpuReadMem20W
 ;@----------------------------------------------------------------------------
@@ -655,9 +655,9 @@ _20:	;@ AND BR8
 	fetch 1
 1:
 	eatCycles 2
-	add r1,v30ptr,#v30EATable
+	add r2,v30ptr,#v30EATable
 	mov r12,pc					;@ Return reg for EA
-	ldr pc,[r1,r4,lsl#2]
+	ldr pc,[r2,r4,lsl#2]
 	adr lr,0b
 	b cpuReadMem20
 ;@----------------------------------------------------------------------------
@@ -684,9 +684,9 @@ _21:	;@ AND WR16
 	fetch 1
 1:
 	eatCycles 2
-	add r1,v30ptr,#v30EATable
+	add r2,v30ptr,#v30EATable
 	mov r12,pc					;@ Return reg for EA
-	ldr pc,[r1,r4,lsl#2]
+	ldr pc,[r2,r4,lsl#2]
 	adr lr,0b
 	b cpuReadMem20W
 ;@----------------------------------------------------------------------------
@@ -708,9 +708,9 @@ _22:	;@ AND R8b
 	fetch 1
 1:
 	eatCycles 1
-	add r1,v30ptr,#v30EATable
+	add r2,v30ptr,#v30EATable
 	mov r12,pc					;@ Return reg for EA
-	ldr pc,[r1,r0,lsl#2]
+	ldr pc,[r2,r0,lsl#2]
 	adr lr,0b
 	b cpuReadMem20
 ;@----------------------------------------------------------------------------
@@ -733,9 +733,9 @@ _23:	;@ AND R16W
 	fetch 1
 1:
 	eatCycles 1
-	add r1,v30ptr,#v30EATable
+	add r2,v30ptr,#v30EATable
 	mov r12,pc					;@ Return reg for EA
-	ldr pc,[r1,r0,lsl#2]
+	ldr pc,[r2,r0,lsl#2]
 	adr lr,0b
 	b cpuReadMem20W
 ;@----------------------------------------------------------------------------
@@ -814,9 +814,9 @@ _28:	;@ SUB BR8
 	fetch 1
 1:
 	eatCycles 2
-	add r1,v30ptr,#v30EATable
+	add r2,v30ptr,#v30EATable
 	mov r12,pc					;@ Return reg for EA
-	ldr pc,[r1,r4,lsl#2]
+	ldr pc,[r2,r4,lsl#2]
 	adr lr,0b
 	b cpuReadMem20
 ;@----------------------------------------------------------------------------
@@ -844,9 +844,9 @@ _29:	;@ SUB WR16
 	fetch 1
 1:
 	eatCycles 2
-	add r1,v30ptr,#v30EATable
+	add r2,v30ptr,#v30EATable
 	mov r12,pc					;@ Return reg for EA
-	ldr pc,[r1,r4,lsl#2]
+	ldr pc,[r2,r4,lsl#2]
 	adr lr,0b
 	b cpuReadMem20W
 ;@----------------------------------------------------------------------------
@@ -868,9 +868,9 @@ _2A:	;@ SUB R8b
 	fetch 1
 1:
 	eatCycles 1
-	add r1,v30ptr,#v30EATable
+	add r2,v30ptr,#v30EATable
 	mov r12,pc					;@ Return reg for EA
-	ldr pc,[r1,r0,lsl#2]
+	ldr pc,[r2,r0,lsl#2]
 	adr lr,0b
 	b cpuReadMem20
 ;@----------------------------------------------------------------------------
@@ -893,9 +893,9 @@ _2B:	;@ SUB R16W
 	fetch 1
 1:
 	eatCycles 1
-	add r1,v30ptr,#v30EATable
+	add r2,v30ptr,#v30EATable
 	mov r12,pc					;@ Return reg for EA
-	ldr pc,[r1,r0,lsl#2]
+	ldr pc,[r2,r0,lsl#2]
 	adr lr,0b
 	b cpuReadMem20W
 ;@----------------------------------------------------------------------------
@@ -974,9 +974,9 @@ _30:	;@ XOR BR8
 	fetch 1
 1:
 	eatCycles 2
-	add r1,v30ptr,#v30EATable
+	add r2,v30ptr,#v30EATable
 	mov r12,pc					;@ Return reg for EA
-	ldr pc,[r1,r4,lsl#2]
+	ldr pc,[r2,r4,lsl#2]
 	adr lr,0b
 	b cpuReadMem20
 ;@----------------------------------------------------------------------------
@@ -1003,9 +1003,9 @@ _31:	;@ XOR WR16
 	fetch 1
 1:
 	eatCycles 2
-	add r1,v30ptr,#v30EATable
+	add r2,v30ptr,#v30EATable
 	mov r12,pc					;@ Return reg for EA
-	ldr pc,[r1,r4,lsl#2]
+	ldr pc,[r2,r4,lsl#2]
 	adr lr,0b
 	b cpuReadMem20W
 ;@----------------------------------------------------------------------------
@@ -1027,9 +1027,9 @@ _32:	;@ XOR R8b
 	fetch 1
 1:
 	eatCycles 1
-	add r1,v30ptr,#v30EATable
+	add r2,v30ptr,#v30EATable
 	mov r12,pc					;@ Return reg for EA
-	ldr pc,[r1,r0,lsl#2]
+	ldr pc,[r2,r0,lsl#2]
 	adr lr,0b
 	b cpuReadMem20
 ;@----------------------------------------------------------------------------
@@ -1052,9 +1052,9 @@ _33:	;@ XOR R16W
 	fetch 1
 1:
 	eatCycles 1
-	add r1,v30ptr,#v30EATable
+	add r2,v30ptr,#v30EATable
 	mov r12,pc					;@ Return reg for EA
-	ldr pc,[r1,r0,lsl#2]
+	ldr pc,[r2,r0,lsl#2]
 	adr lr,0b
 	b cpuReadMem20W
 ;@----------------------------------------------------------------------------
@@ -1122,9 +1122,9 @@ _38:	;@ CMP BR8
 	fetch 1
 1:
 	eatCycles 1
-	add r1,v30ptr,#v30EATable
+	add r2,v30ptr,#v30EATable
 	mov r12,pc					;@ Return reg for EA
-	ldr pc,[r1,r0,lsl#2]
+	ldr pc,[r2,r0,lsl#2]
 	adr lr,0b
 	b cpuReadMem20
 ;@----------------------------------------------------------------------------
@@ -1147,9 +1147,9 @@ _39:	;@ CMP WR16
 	fetch 1
 1:
 	eatCycles 1
-	add r1,v30ptr,#v30EATable
+	add r2,v30ptr,#v30EATable
 	mov r12,pc					;@ Return reg for EA
-	ldr pc,[r1,r0,lsl#2]
+	ldr pc,[r2,r0,lsl#2]
 	adr lr,0b
 	b cpuReadMem20W
 ;@----------------------------------------------------------------------------
@@ -1170,9 +1170,9 @@ _3A:	;@ CMP R8b
 	fetch 1
 1:
 	eatCycles 1
-	add r1,v30ptr,#v30EATable
+	add r2,v30ptr,#v30EATable
 	mov r12,pc					;@ Return reg for EA
-	ldr pc,[r1,r0,lsl#2]
+	ldr pc,[r2,r0,lsl#2]
 	adr lr,0b
 	b cpuReadMem20
 ;@----------------------------------------------------------------------------
@@ -1194,9 +1194,9 @@ _3B:	;@ CMP R16W
 	fetch 1
 1:
 	eatCycles 1
-	add r1,v30ptr,#v30EATable
+	add r2,v30ptr,#v30EATable
 	mov r12,pc					;@ Return reg for EA
-	ldr pc,[r1,r0,lsl#2]
+	ldr pc,[r2,r0,lsl#2]
 	adr lr,0b
 	b cpuReadMem20W
 ;@----------------------------------------------------------------------------
@@ -1505,9 +1505,9 @@ _62:	;@ CHKIND/BOUND
 	ldrh r4,[r2,#v30Regs]
 	cmp r0,#0xC0
 	bpl 1f
-	add r1,v30ptr,#v30EATable
+	add r2,v30ptr,#v30EATable
 	mov r12,pc					;@ Return reg for EA
-	ldr pc,[r1,r0,lsl#2]
+	ldr pc,[r2,r0,lsl#2]
 	bl cpuReadMem20W
 	add v30ofs,v30ofs,#0x20000
 0:
@@ -1533,7 +1533,7 @@ _62:	;@ CHKIND/BOUND
 i_push_d16:
 _68:	;@ PUSH D16
 ;@----------------------------------------------------------------------------
-	getNextWordToReg r1
+	getNextWordTo r1, r0
 	ldr v30ofs,[v30ptr,#v30RegSP]
 	ldr v30csr,[v30ptr,#v30SRegSS]
 	sub v30ofs,v30ofs,#0x20000
@@ -1570,9 +1570,9 @@ _69:	;@ MUL/IMUL D16
 	fetch 3
 1:
 	eatCycles 1
-	add r1,v30ptr,#v30EATable
+	add r2,v30ptr,#v30EATable
 	mov r12,pc					;@ Return reg for EA
-	ldr pc,[r1,r0,lsl#2]
+	ldr pc,[r2,r0,lsl#2]
 	adr lr,0b
 	b cpuReadMem20W
 ;@----------------------------------------------------------------------------
@@ -1615,9 +1615,9 @@ _6B:	;@ MUL/IMUL D8
 	fetch 3
 1:
 	eatCycles 1
-	add r1,v30ptr,#v30EATable
+	add r2,v30ptr,#v30EATable
 	mov r12,pc					;@ Return reg for EA
-	ldr pc,[r1,r0,lsl#2]
+	ldr pc,[r2,r0,lsl#2]
 	adr lr,0b
 	b cpuReadMem20W
 
@@ -1967,9 +1967,9 @@ _82:	;@ PRE 82
 	.long add80, or80, adc80, subc80, and80, sub80, xor80, cmp80
 1:
 	eatCycles 2
-	add r1,v30ptr,#v30EATable
+	add r2,v30ptr,#v30EATable
 	mov r12,pc					;@ Return reg for EA
-	ldr pc,[r1,r4,lsl#2]
+	ldr pc,[r2,r4,lsl#2]
 	adr lr,0b
 	b cpuReadMem20
 add80:
@@ -2023,9 +2023,9 @@ pre81Continue:
 	.long add81, or81, adc81, subc81, and81, sub81, xor81, cmp81
 1:
 	eatCycles 2
-	add r1,v30ptr,#v30EATable
+	add r2,v30ptr,#v30EATable
 	mov r12,pc					;@ Return reg for EA
-	ldr pc,[r1,r4,lsl#2]
+	ldr pc,[r2,r4,lsl#2]
 	bl cpuReadMem20W
 	mov r5,r0,lsl#16
 	b 0b
@@ -2076,9 +2076,9 @@ _83:	;@ PRE 83
 	b pre81Continue
 1:
 	eatCycles 2
-	add r1,v30ptr,#v30EATable
+	add r2,v30ptr,#v30EATable
 	mov r12,pc					;@ Return reg for EA
-	ldr pc,[r1,r4,lsl#2]
+	ldr pc,[r2,r4,lsl#2]
 	bl cpuReadMem20W
 	mov r5,r0,lsl#16
 	b 0b
@@ -2100,9 +2100,9 @@ _84:	;@ TEST BR8
 	fetch 1
 1:
 	eatCycles 1
-	add r1,v30ptr,#v30EATable
+	add r2,v30ptr,#v30EATable
 	mov r12,pc					;@ Return reg for EA
-	ldr pc,[r1,r0,lsl#2]
+	ldr pc,[r2,r0,lsl#2]
 	adr lr,0b
 	b cpuReadMem20
 ;@----------------------------------------------------------------------------
@@ -2124,9 +2124,9 @@ _85:	;@ TEST WR16
 	fetch 1
 1:
 	eatCycles 1
-	add r1,v30ptr,#v30EATable
+	add r2,v30ptr,#v30EATable
 	mov r12,pc					;@ Return reg for EA
-	ldr pc,[r1,r0,lsl#2]
+	ldr pc,[r2,r0,lsl#2]
 	adr lr,0b
 	b cpuReadMem20W
 ;@----------------------------------------------------------------------------
@@ -2147,9 +2147,9 @@ _86:	;@ XCH/XCHG BR8
 	bic v30cyc,v30cyc,#SEG_PREFIX
 	fetch 3
 0:
-	add r1,v30ptr,#v30EATable
+	add r2,v30ptr,#v30EATable
 	mov r12,pc					;@ Return reg for EA
-	ldr pc,[r1,r0,lsl#2]
+	ldr pc,[r2,r0,lsl#2]
 	bl cpuReadMem20
 	ldrb r1,[v30ptr,-r4]
 	strb r0,[v30ptr,-r4]
@@ -2177,9 +2177,9 @@ _87:	;@ XCH/XCHG WR16
 	bic v30cyc,v30cyc,#SEG_PREFIX
 	fetch 3
 0:
-	add r1,v30ptr,#v30EATable
+	add r2,v30ptr,#v30EATable
 	mov r12,pc					;@ Return reg for EA
-	ldr pc,[r1,r0,lsl#2]
+	ldr pc,[r2,r0,lsl#2]
 	bl cpuReadMem20W
 	ldrh r1,[r4,#v30Regs]
 	strh r0,[r4,#v30Regs]
@@ -2192,21 +2192,20 @@ i_mov_br8:
 _88:	;@ MOV BR8
 ;@----------------------------------------------------------------------------
 	getNextByte
-	add r1,v30ptr,r0
-	ldrb r2,[r1,#v30ModRmReg]
-	ldrb r4,[v30ptr,-r2]
+	add r4,v30ptr,r0
+	ldrb r2,[r4,#v30ModRmReg]
+	ldrb r1,[v30ptr,-r2]
 	cmp r0,#0xC0
 	bmi 0f
 
-	ldrb r2,[r1,#v30ModRmRm]
-	strb r4,[v30ptr,-r2]
+	ldrb r2,[r4,#v30ModRmRm]
+	strb r1,[v30ptr,-r2]
 	bic v30cyc,v30cyc,#SEG_PREFIX
 	fetch 1
 0:
-	add r1,v30ptr,#v30EATable
+	add r2,v30ptr,#v30EATable
 	mov r12,pc					;@ Return reg for EA
-	ldr pc,[r1,r0,lsl#2]
-	mov r1,r4
+	ldr pc,[r2,r0,lsl#2]
 	bl cpuWriteMem20
 	bic v30cyc,v30cyc,#SEG_PREFIX
 	fetch 1
@@ -2217,20 +2216,19 @@ _89:	;@ MOV WR16
 	getNextByte
 	and r1,r0,#0x38
 	add r2,v30ptr,r1,lsr#1
-	ldrh r4,[r2,#v30Regs]
+	ldrh r1,[r2,#v30Regs]
 	cmp r0,#0xC0
 	bmi 0f
 
 	and r0,r0,#7
 	add r2,v30ptr,r0,lsl#2
-	strh r4,[r2,#v30Regs]
+	strh r1,[r2,#v30Regs]
 	bic v30cyc,v30cyc,#SEG_PREFIX
 	fetch 1
 0:
-	add r1,v30ptr,#v30EATable
+	add r2,v30ptr,#v30EATable
 	mov r12,pc					;@ Return reg for EA
-	ldr pc,[r1,r0,lsl#2]
-	mov r1,r4
+	ldr pc,[r2,r0,lsl#2]
 	bl cpuWriteMem20W
 	bic v30cyc,v30cyc,#SEG_PREFIX
 	fetch 1
@@ -2250,9 +2248,9 @@ _8A:	;@ MOV R8B
 	bic v30cyc,v30cyc,#SEG_PREFIX
 	fetch 1
 0:
-	add r1,v30ptr,#v30EATable
+	add r2,v30ptr,#v30EATable
 	mov r12,pc					;@ Return reg for EA
-	ldr pc,[r1,r0,lsl#2]
+	ldr pc,[r2,r0,lsl#2]
 	bl cpuReadMem20
 	strb r0,[v30ptr,-r4]
 	bic v30cyc,v30cyc,#SEG_PREFIX
@@ -2274,9 +2272,9 @@ Str_8B:
 	bic v30cyc,v30cyc,#SEG_PREFIX
 	fetch 1
 0:
-	add r1,v30ptr,#v30EATable
+	add r2,v30ptr,#v30EATable
 	mov r12,pc					;@ Return reg for EA
-	ldr pc,[r1,r0,lsl#2]
+	ldr pc,[r2,r0,lsl#2]
 	bl cpuReadMem20W
 	strh r0,[r4,#v30Regs]
 	bic v30cyc,v30cyc,#SEG_PREFIX
@@ -2298,9 +2296,9 @@ _8C:	;@ MOV WSREG
 	bic v30cyc,v30cyc,#SEG_PREFIX
 	fetch 1
 0:
-	add r1,v30ptr,#v30EATable
+	add r2,v30ptr,#v30EATable
 	mov r12,pc					;@ Return reg for EA
-	ldr pc,[r1,r0,lsl#2]
+	ldr pc,[r2,r0,lsl#2]
 	mov r1,r4
 	bl cpuWriteMem20W
 	bic v30cyc,v30cyc,#SEG_PREFIX
@@ -2315,9 +2313,9 @@ _8D:	;@ LDEA/LEA
 	cmp r0,#0xC0
 	bpl Str_8B
 
-	add r1,v30ptr,#v30EATable
+	add r2,v30ptr,#v30EATable
 	mov r12,pc					;@ Return reg for EA
-	ldr pc,[r1,r0,lsl#2]		;@ EATable return EO in v30ofs
+	ldr pc,[r2,r0,lsl#2]		;@ EATable return EO in v30ofs
 	str v30ofs,[r4,#v30Regs2]
 	bic v30cyc,v30cyc,#SEG_PREFIX
 	fetch 1
@@ -2343,9 +2341,9 @@ _8E:	;@ MOV SREGW
 	fetch 2
 1:
 	eatCycles 1
-	add r1,v30ptr,#v30EATable
+	add r2,v30ptr,#v30EATable
 	mov r12,pc					;@ Return reg for EA
-	ldr pc,[r1,r0,lsl#2]
+	ldr pc,[r2,r0,lsl#2]
 	adr lr,0b
 	b cpuReadMem20W
 ;@----------------------------------------------------------------------------
@@ -2363,9 +2361,9 @@ _8F:	;@ POPW
 	bic v30cyc,v30cyc,#SEG_PREFIX
 	fetch 1
 0:
-	add r1,v30ptr,#v30EATable
+	add r2,v30ptr,#v30EATable
 	mov r12,pc					;@ Return reg for EA
-	ldr pc,[r1,r0,lsl#2]
+	ldr pc,[r2,r0,lsl#2]
 	mov r1,r4
 	bl cpuWriteMem20W
 	bic v30cyc,v30cyc,#SEG_PREFIX
@@ -2434,7 +2432,7 @@ _99:	;@ CVTWL / CWD. Convert Word to Long/Double
 i_call_far:
 _9A:	;@ CALL FAR
 ;@----------------------------------------------------------------------------
-	getNextWordToReg r4
+	getNextWordTo r4, r0
 	getNextWord
 	ldrh r1,[v30ptr,#v30SRegCS+2]
 	strh r0,[v30ptr,#v30SRegCS+2]
@@ -3350,9 +3348,9 @@ d2Continue:
 	.long rolC0, rorC0, rolcC0, rorcC0, shlC0, shrC0, undC0, shraC0
 1:
 	eatCycles 4
-	add r1,v30ptr,#v30EATable
+	add r2,v30ptr,#v30EATable
 	mov r12,pc					;@ Return reg for EA
-	ldr pc,[r1,r4,lsl#2]
+	ldr pc,[r2,r4,lsl#2]
 	adr lr,0b
 	b cpuReadMem20
 rolC0:
@@ -3408,9 +3406,9 @@ d3Continue:
 	.long rolC1, rorC1, rolcC1, rorcC1, shlC1, shrC1, undC1, shraC1
 1:
 	eatCycles 4
-	add r1,v30ptr,#v30EATable
+	add r2,v30ptr,#v30EATable
 	mov r12,pc					;@ Return reg for EA
-	ldr pc,[r1,r4,lsl#2]
+	ldr pc,[r2,r4,lsl#2]
 	adr lr,0b
 	b cpuReadMem20W
 rolC1:
@@ -3480,9 +3478,9 @@ _C4:	;@ LES DW
 	and r4,r0,#0x38
 	cmp r0,#0xC0
 	bpl 1f
-	add r1,v30ptr,#v30EATable
+	add r2,v30ptr,#v30EATable
 	mov r12,pc					;@ Return reg for EA
-	ldr pc,[r1,r0,lsl#2]
+	ldr pc,[r2,r0,lsl#2]
 	bl cpuReadMem20W
 	add v30ofs,v30ofs,#0x20000
 0:
@@ -3508,9 +3506,9 @@ _C5:	;@ LDS DW
 	and r4,r0,#0x38
 	cmp r0,#0xC0
 	bpl 1f
-	add r1,v30ptr,#v30EATable
+	add r2,v30ptr,#v30EATable
 	mov r12,pc					;@ Return reg for EA
-	ldr pc,[r1,r0,lsl#2]
+	ldr pc,[r2,r0,lsl#2]
 	bl cpuReadMem20W
 	add v30ofs,v30ofs,#0x20000
 0:
@@ -3542,9 +3540,9 @@ _C6:	;@ MOV BD8
 	bic v30cyc,v30cyc,#SEG_PREFIX
 	fetch 1
 0:
-	add r1,v30ptr,#v30EATable
+	add r2,v30ptr,#v30EATable
 	mov r12,pc					;@ Return reg for EA
-	ldr pc,[r1,r0,lsl#2]
+	ldr pc,[r2,r0,lsl#2]
 	getNextByteToReg r1
 	bl cpuWriteMem20
 	bic v30cyc,v30cyc,#SEG_PREFIX
@@ -3564,10 +3562,10 @@ _C7:	;@ MOV WD16
 	bic v30cyc,v30cyc,#SEG_PREFIX
 	fetch 1
 0:
-	add r1,v30ptr,#v30EATable
+	add r2,v30ptr,#v30EATable
 	mov r12,pc					;@ Return reg for EA
-	ldr pc,[r1,r0,lsl#2]
-	getNextWordToReg r1
+	ldr pc,[r2,r0,lsl#2]
+	getNextWordTo r1, r0
 	add r0,v30csr,v30ofs,lsr#4
 	bl cpuWriteMem20W
 	bic v30cyc,v30cyc,#SEG_PREFIX
@@ -3722,9 +3720,9 @@ _D0:	;@ ROTSHFT B
 	b d2Continue
 0:
 	eatCycles 2
-	add r1,v30ptr,#v30EATable
+	add r2,v30ptr,#v30EATable
 	mov r12,pc					;@ Return reg for EA
-	ldr pc,[r1,r4,lsl#2]
+	ldr pc,[r2,r4,lsl#2]
 	bl cpuReadMem20
 	mov r1,#1
 	b d2Continue
@@ -3743,9 +3741,9 @@ _D1:	;@ ROTSHFT W
 	b d3Continue
 0:
 	eatCycles 2
-	add r1,v30ptr,#v30EATable
+	add r2,v30ptr,#v30EATable
 	mov r12,pc					;@ Return reg for EA
-	ldr pc,[r1,r4,lsl#2]
+	ldr pc,[r2,r4,lsl#2]
 	bl cpuReadMem20W
 	mov r1,#1
 	b d3Continue
@@ -3765,9 +3763,9 @@ _D2:	;@ ROTSHFT BCL
 	b d2Continue
 0:
 	eatCycles 4
-	add r1,v30ptr,#v30EATable
+	add r2,v30ptr,#v30EATable
 	mov r12,pc					;@ Return reg for EA
-	ldr pc,[r1,r4,lsl#2]
+	ldr pc,[r2,r4,lsl#2]
 	bl cpuReadMem20
 	ldrb r1,[v30ptr,#v30RegCL]
 	b d2Continue
@@ -3787,9 +3785,9 @@ _D3:	;@ ROTSHFT WCL
 	b d3Continue
 0:
 	eatCycles 4
-	add r1,v30ptr,#v30EATable
+	add r2,v30ptr,#v30EATable
 	mov r12,pc					;@ Return reg for EA
-	ldr pc,[r1,r4,lsl#2]
+	ldr pc,[r2,r4,lsl#2]
 	bl cpuReadMem20W
 	ldrb r1,[v30ptr,#v30RegCL]
 	b d3Continue
@@ -3991,7 +3989,7 @@ _E9:	;@ BR/JMP D16
 i_jmp_far:
 _EA:	;@ BR/JMP FAR
 ;@----------------------------------------------------------------------------
-	getNextWordToReg r4
+	getNextWordTo r4, r0
 	getNextWord
 	strh r0,[v30ptr,#v30SRegCS+2]
 	mov v30pc,r4,lsl#16
@@ -4283,9 +4281,9 @@ _F6:	;@ PRE F6
 	.long testF6, undefF6, notF6, negF6, muluF6, mulF6, divubF6, divbF6
 1:
 	eatCycles 1
-	add r1,v30ptr,#v30EATable
+	add r2,v30ptr,#v30EATable
 	mov r12,pc					;@ Return reg for EA
-	ldr pc,[r1,r4,lsl#2]
+	ldr pc,[r2,r4,lsl#2]
 	adr lr,0b
 	b cpuReadMem20
 ;@----------------------------------------------------------------------------
@@ -4420,9 +4418,9 @@ _F7:	;@ PRE F7
 	.long testF7, undefF7, notF7, negF7, muluF7, mulF7, divuwF7, divwF7
 1:
 	eatCycles 1
-	add r1,v30ptr,#v30EATable
+	add r2,v30ptr,#v30EATable
 	mov r12,pc					;@ Return reg for EA
-	ldr pc,[r1,r4,lsl#2]
+	ldr pc,[r2,r4,lsl#2]
 	adr lr,0b
 	b cpuReadMem20W
 ;@----------------------------------------------------------------------------
@@ -4628,9 +4626,9 @@ writeBackFE:
 	fetch 1
 1:
 	eatCycles 2
-	add r1,v30ptr,#v30EATable
+	add r2,v30ptr,#v30EATable
 	mov r12,pc					;@ Return reg for EA
-	ldr pc,[r1,r4,lsl#2]
+	ldr pc,[r2,r4,lsl#2]
 	adr lr,0b
 	b cpuReadMem20
 
@@ -4653,9 +4651,9 @@ contFF:
 	.long incFF, decFF, callFF, callFarFF, braFF, braFarFF, pushFF, undefFF
 1:
 	eatCycles 1
-	add r1,v30ptr,#v30EATable
+	add r2,v30ptr,#v30EATable
 	mov r12,pc					;@ Return reg for EA
-	ldr pc,[r1,r4,lsl#2]
+	ldr pc,[r2,r4,lsl#2]
 	adr lr,0b
 	b cpuReadMem20W
 ;@----------------------------------------------------------------------------
@@ -4789,10 +4787,10 @@ division8:
 EA_000:	;@
 ;@----------------------------------------------------------------------------
 	ldr v30ofs,[v30ptr,#v30RegBW-2]
-	ldr r3,[v30ptr,#v30RegIX]
+	ldr r2,[v30ptr,#v30RegIX]
 	tst v30cyc,#SEG_PREFIX
 	ldreq v30csr,[v30ptr,#v30SRegDS]
-	add v30ofs,v30ofs,r3
+	add v30ofs,v30ofs,r2
 	add r0,v30csr,v30ofs,lsr#4
 	eatCycles 2
 	bx r12
@@ -4800,10 +4798,10 @@ EA_000:	;@
 EA_001:	;@
 ;@----------------------------------------------------------------------------
 	ldr v30ofs,[v30ptr,#v30RegBW-2]
-	ldr r3,[v30ptr,#v30RegIY]
+	ldr r2,[v30ptr,#v30RegIY]
 	tst v30cyc,#SEG_PREFIX
 	ldreq v30csr,[v30ptr,#v30SRegDS]
-	add v30ofs,v30ofs,r3
+	add v30ofs,v30ofs,r2
 	add r0,v30csr,v30ofs,lsr#4
 	eatCycles 2
 	bx r12
@@ -4811,10 +4809,10 @@ EA_001:	;@
 EA_002:	;@
 ;@----------------------------------------------------------------------------
 	ldr v30ofs,[v30ptr,#v30RegBP]
-	ldr r3,[v30ptr,#v30RegIX]
+	ldr r2,[v30ptr,#v30RegIX]
 	tst v30cyc,#SEG_PREFIX
 	ldreq v30csr,[v30ptr,#v30SRegSS]
-	add v30ofs,v30ofs,r3
+	add v30ofs,v30ofs,r2
 	add r0,v30csr,v30ofs,lsr#4
 	eatCycles 2
 	bx r12
@@ -4822,10 +4820,10 @@ EA_002:	;@
 EA_003:	;@
 ;@----------------------------------------------------------------------------
 	ldr v30ofs,[v30ptr,#v30RegBP]
-	ldr r3,[v30ptr,#v30RegIY]
+	ldr r2,[v30ptr,#v30RegIY]
 	tst v30cyc,#SEG_PREFIX
 	ldreq v30csr,[v30ptr,#v30SRegSS]
-	add v30ofs,v30ofs,r3
+	add v30ofs,v30ofs,r2
 	add r0,v30csr,v30ofs,lsr#4
 	eatCycles 2
 	bx r12
@@ -4848,7 +4846,7 @@ EA_005:	;@
 ;@----------------------------------------------------------------------------
 EA_006:	;@
 ;@----------------------------------------------------------------------------
-	getNextWord
+	getNextWordTo r0, r2
 	tst v30cyc,#SEG_PREFIX
 	ldreq v30csr,[v30ptr,#v30SRegDS]
 	mov v30ofs,r0,lsl#16
@@ -4867,10 +4865,10 @@ EA_100:	;@
 ;@----------------------------------------------------------------------------
 	getNextSignedByte
 	ldr v30ofs,[v30ptr,#v30RegBW-2]
-	ldr r3,[v30ptr,#v30RegIX]
+	ldr r2,[v30ptr,#v30RegIX]
 	tst v30cyc,#SEG_PREFIX
 	ldreq v30csr,[v30ptr,#v30SRegDS]
-	add v30ofs,v30ofs,r3
+	add v30ofs,v30ofs,r2
 	add v30ofs,v30ofs,r0,lsl#16
 	add r0,v30csr,v30ofs,lsr#4
 	eatCycles 2
@@ -4880,10 +4878,10 @@ EA_101:	;@
 ;@----------------------------------------------------------------------------
 	getNextSignedByte
 	ldr v30ofs,[v30ptr,#v30RegBW-2]
-	ldr r3,[v30ptr,#v30RegIY]
+	ldr r2,[v30ptr,#v30RegIY]
 	tst v30cyc,#SEG_PREFIX
 	ldreq v30csr,[v30ptr,#v30SRegDS]
-	add v30ofs,v30ofs,r3
+	add v30ofs,v30ofs,r2
 	add v30ofs,v30ofs,r0,lsl#16
 	add r0,v30csr,v30ofs,lsr#4
 	eatCycles 2
@@ -4893,10 +4891,10 @@ EA_102:	;@
 ;@----------------------------------------------------------------------------
 	getNextSignedByte
 	ldr v30ofs,[v30ptr,#v30RegBP]
-	ldr r3,[v30ptr,#v30RegIX]
+	ldr r2,[v30ptr,#v30RegIX]
 	tst v30cyc,#SEG_PREFIX
 	ldreq v30csr,[v30ptr,#v30SRegSS]
-	add v30ofs,v30ofs,r3
+	add v30ofs,v30ofs,r2
 	add v30ofs,v30ofs,r0,lsl#16
 	add r0,v30csr,v30ofs,lsr#4
 	eatCycles 2
@@ -4906,10 +4904,10 @@ EA_103:	;@
 ;@----------------------------------------------------------------------------
 	getNextSignedByte
 	ldr v30ofs,[v30ptr,#v30RegBP]
-	ldr r3,[v30ptr,#v30RegIY]
+	ldr r2,[v30ptr,#v30RegIY]
 	tst v30cyc,#SEG_PREFIX
 	ldreq v30csr,[v30ptr,#v30SRegSS]
-	add v30ofs,v30ofs,r3
+	add v30ofs,v30ofs,r2
 	add v30ofs,v30ofs,r0,lsl#16
 	add r0,v30csr,v30ofs,lsr#4
 	eatCycles 2
@@ -4957,12 +4955,12 @@ EA_107:	;@
 ;@----------------------------------------------------------------------------
 EA_200:	;@
 ;@----------------------------------------------------------------------------
-	getNextWord
+	getNextWordTo r0, r2
 	ldr v30ofs,[v30ptr,#v30RegBW-2]
-	ldr r3,[v30ptr,#v30RegIX]
+	ldr r2,[v30ptr,#v30RegIX]
 	tst v30cyc,#SEG_PREFIX
 	ldreq v30csr,[v30ptr,#v30SRegDS]
-	add v30ofs,v30ofs,r3
+	add v30ofs,v30ofs,r2
 	add v30ofs,v30ofs,r0,lsl#16
 	add r0,v30csr,v30ofs,lsr#4
 	eatCycles 2
@@ -4970,12 +4968,12 @@ EA_200:	;@
 ;@----------------------------------------------------------------------------
 EA_201:	;@
 ;@----------------------------------------------------------------------------
-	getNextWord
+	getNextWordTo r0, r2
 	ldr v30ofs,[v30ptr,#v30RegBW-2]
-	ldr r3,[v30ptr,#v30RegIY]
+	ldr r2,[v30ptr,#v30RegIY]
 	tst v30cyc,#SEG_PREFIX
 	ldreq v30csr,[v30ptr,#v30SRegDS]
-	add v30ofs,v30ofs,r3
+	add v30ofs,v30ofs,r2
 	add v30ofs,v30ofs,r0,lsl#16
 	add r0,v30csr,v30ofs,lsr#4
 	eatCycles 2
@@ -4983,12 +4981,12 @@ EA_201:	;@
 ;@----------------------------------------------------------------------------
 EA_202:	;@
 ;@----------------------------------------------------------------------------
-	getNextWord
+	getNextWordTo r0, r2
 	ldr v30ofs,[v30ptr,#v30RegBP]
-	ldr r3,[v30ptr,#v30RegIX]
+	ldr r2,[v30ptr,#v30RegIX]
 	tst v30cyc,#SEG_PREFIX
 	ldreq v30csr,[v30ptr,#v30SRegSS]
-	add v30ofs,v30ofs,r3
+	add v30ofs,v30ofs,r2
 	add v30ofs,v30ofs,r0,lsl#16
 	add r0,v30csr,v30ofs,lsr#4
 	eatCycles 2
@@ -4996,12 +4994,12 @@ EA_202:	;@
 ;@----------------------------------------------------------------------------
 EA_203:	;@
 ;@----------------------------------------------------------------------------
-	getNextWord
+	getNextWordTo r0, r2
 	ldr v30ofs,[v30ptr,#v30RegBP]
-	ldr r3,[v30ptr,#v30RegIY]
+	ldr r2,[v30ptr,#v30RegIY]
 	tst v30cyc,#SEG_PREFIX
 	ldreq v30csr,[v30ptr,#v30SRegSS]
-	add v30ofs,v30ofs,r3
+	add v30ofs,v30ofs,r2
 	add v30ofs,v30ofs,r0,lsl#16
 	add r0,v30csr,v30ofs,lsr#4
 	eatCycles 2
@@ -5009,7 +5007,7 @@ EA_203:	;@
 ;@----------------------------------------------------------------------------
 EA_204:	;@
 ;@----------------------------------------------------------------------------
-	getNextWord
+	getNextWordTo r0, r2
 	ldr v30ofs,[v30ptr,#v30RegIX]
 	tst v30cyc,#SEG_PREFIX
 	ldreq v30csr,[v30ptr,#v30SRegDS]
@@ -5019,7 +5017,7 @@ EA_204:	;@
 ;@----------------------------------------------------------------------------
 EA_205:	;@
 ;@----------------------------------------------------------------------------
-	getNextWord
+	getNextWordTo r0, r2
 	ldr v30ofs,[v30ptr,#v30RegIY]
 	tst v30cyc,#SEG_PREFIX
 	ldreq v30csr,[v30ptr,#v30SRegDS]
@@ -5029,7 +5027,7 @@ EA_205:	;@
 ;@----------------------------------------------------------------------------
 EA_206:	;@
 ;@----------------------------------------------------------------------------
-	getNextWord
+	getNextWordTo r0, r2
 	ldr v30ofs,[v30ptr,#v30RegBP]
 	tst v30cyc,#SEG_PREFIX
 	ldreq v30csr,[v30ptr,#v30SRegSS]
@@ -5039,7 +5037,7 @@ EA_206:	;@
 ;@----------------------------------------------------------------------------
 EA_207:	;@
 ;@----------------------------------------------------------------------------
-	getNextWord
+	getNextWordTo r0, r2
 	ldr v30ofs,[v30ptr,#v30RegBW-2]
 	tst v30cyc,#SEG_PREFIX
 	ldreq v30csr,[v30ptr,#v30SRegDS]
