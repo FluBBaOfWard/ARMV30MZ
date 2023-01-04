@@ -2121,17 +2121,10 @@ _88:	;@ MOV BR8
 	ldrb r2,[r4,#v30ModRmReg]
 	ldrb r1,[v30ptr,-r2]
 	cmp r0,#0xC0
-	bmi 0f
 
-	ldrb r2,[r4,#v30ModRmRm]
-	strb r1,[v30ptr,-r2]
-	bic v30cyc,v30cyc,#SEG_PREFIX
-	fetch 1
-0:
-	add r2,v30ptr,#v30EATable
-	mov r12,pc					;@ Return reg for EA
-	ldr pc,[r2,r0,lsl#2]
-	bl cpuWriteMem20
+	ldrbpl r2,[r4,#v30ModRmRm]
+	strbpl r1,[v30ptr,-r2]
+	blmi v30WriteEA
 	bic v30cyc,v30cyc,#SEG_PREFIX
 	fetch 1
 ;@----------------------------------------------------------------------------
@@ -2143,18 +2136,11 @@ _89:	;@ MOV WR16
 	add r2,v30ptr,r1,lsr#1
 	ldrh r1,[r2,#v30Regs]
 	cmp r0,#0xC0
-	bmi 0f
 
-	and r0,r0,#7
-	add r2,v30ptr,r0,lsl#2
-	strh r1,[r2,#v30Regs]
-	bic v30cyc,v30cyc,#SEG_PREFIX
-	fetch 1
-0:
-	add r2,v30ptr,#v30EATable
-	mov r12,pc					;@ Return reg for EA
-	ldr pc,[r2,r0,lsl#2]
-	bl cpuWriteMem20W
+	andpl r0,r0,#7
+	addpl r2,v30ptr,r0,lsl#2
+	strhpl r1,[r2,#v30Regs]
+	blmi v30WriteEAW
 	bic v30cyc,v30cyc,#SEG_PREFIX
 	fetch 1
 ;@----------------------------------------------------------------------------
@@ -2207,18 +2193,11 @@ _8C:	;@ MOV WSREG
 	add r4,v30ptr,r2,lsr#1
 	ldrh r1,[r4,#v30SRegs+2]
 	cmp r0,#0xC0
-	bmi 0f
 
-	and r2,r0,#7
-	add r4,v30ptr,r2,lsl#2
-	strh r1,[r4,#v30Regs]
-	bic v30cyc,v30cyc,#SEG_PREFIX
-	fetch 1
-0:
-	add r2,v30ptr,#v30EATable
-	mov r12,pc					;@ Return reg for EA
-	ldr pc,[r2,r0,lsl#2]
-	bl cpuWriteMem20W
+	andpl r2,r0,#7
+	addpl r4,v30ptr,r2,lsl#2
+	strhpl r1,[r4,#v30Regs]
+	blmi v30WriteEAW
 	bic v30cyc,v30cyc,#SEG_PREFIX
 	fetch 1
 ;@----------------------------------------------------------------------------
@@ -2270,16 +2249,14 @@ _8F:	;@ POPW
 	getNextByte
 	cmp r0,#0xC0
 	bmi 0f
+
 	and r0,r0,#7
 	add r2,v30ptr,r0,lsl#2
 	strh r1,[r2,#v30Regs]
 	bic v30cyc,v30cyc,#SEG_PREFIX
 	fetch 1
 0:
-	add r2,v30ptr,#v30EATable
-	mov r12,pc					;@ Return reg for EA
-	ldr pc,[r2,r0,lsl#2]
-	bl cpuWriteMem20W
+	bl v30WriteEAW
 	bic v30cyc,v30cyc,#SEG_PREFIX
 	fetch 3
 ;@----------------------------------------------------------------------------
