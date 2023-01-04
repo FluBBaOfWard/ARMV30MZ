@@ -7,3 +7,4 @@ then the Zero flag is not updated as it is on HW.
 Timing should be pretty close to HW as well, it doesn't handle extra cycles on branches to odd addresses.
 
 This is a version with insecure handling of PC.
+This version requires asm hooks for memory reading.

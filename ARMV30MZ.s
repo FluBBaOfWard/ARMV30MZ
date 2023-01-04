@@ -141,11 +141,8 @@ _02:	;@ ADD R8b
 	fetch 1
 1:
 	eatCycles 1
-	add r2,v30ptr,#v30EATable
-	mov r12,pc					;@ Return reg for EA
-	ldr pc,[r2,r0,lsl#2]
 	adr lr,0b
-	b cpuReadMem20
+	b v30ReadEA
 ;@----------------------------------------------------------------------------
 i_add_r16w:
 _03:	;@ ADD R16W
@@ -166,11 +163,8 @@ _03:	;@ ADD R16W
 	fetch 1
 1:
 	eatCycles 1
-	add r2,v30ptr,#v30EATable
-	mov r12,pc					;@ Return reg for EA
-	ldr pc,[r2,r0,lsl#2]
 	adr lr,0b
-	b cpuReadMem20W
+	b v30ReadEAW
 ;@----------------------------------------------------------------------------
 i_add_ald8:
 _04:	;@ ADD ALD8
@@ -284,11 +278,8 @@ _0A:	;@ OR R8b
 	fetch 1
 1:
 	eatCycles 1
-	add r2,v30ptr,#v30EATable
-	mov r12,pc					;@ Return reg for EA
-	ldr pc,[r2,r0,lsl#2]
 	adr lr,0b
-	b cpuReadMem20
+	b v30ReadEA
 ;@----------------------------------------------------------------------------
 i_or_r16w:
 _0B:	;@ OR R16W
@@ -309,11 +300,8 @@ _0B:	;@ OR R16W
 	fetch 1
 1:
 	eatCycles 1
-	add r2,v30ptr,#v30EATable
-	mov r12,pc					;@ Return reg for EA
-	ldr pc,[r2,r0,lsl#2]
 	adr lr,0b
-	b cpuReadMem20W
+	b v30ReadEAW
 ;@----------------------------------------------------------------------------
 i_or_ald8:
 _0C:	;@ OR ALD8
@@ -420,11 +408,8 @@ _12:	;@ ADDC/ADC R8b
 	fetch 1
 1:
 	eatCycles 1
-	add r2,v30ptr,#v30EATable
-	mov r12,pc					;@ Return reg for EA
-	ldr pc,[r2,r0,lsl#2]
 	adr lr,0b
-	b cpuReadMem20
+	b v30ReadEA
 ;@----------------------------------------------------------------------------
 i_adc_r16w:
 _13:	;@ ADDC/ADC R16W
@@ -445,11 +430,8 @@ _13:	;@ ADDC/ADC R16W
 	fetch 1
 1:
 	eatCycles 1
-	add r2,v30ptr,#v30EATable
-	mov r12,pc					;@ Return reg for EA
-	ldr pc,[r2,r0,lsl#2]
 	adr lr,0b
-	b cpuReadMem20W
+	b v30ReadEAW
 ;@----------------------------------------------------------------------------
 i_adc_ald8:
 _14:	;@ ADDC/ADC ALD8
@@ -565,11 +547,8 @@ _1A:	;@ SUBC/SBB R8b
 	fetch 1
 1:
 	eatCycles 1
-	add r2,v30ptr,#v30EATable
-	mov r12,pc					;@ Return reg for EA
-	ldr pc,[r2,r0,lsl#2]
 	adr lr,0b
-	b cpuReadMem20
+	b v30ReadEA
 ;@----------------------------------------------------------------------------
 i_sbb_r16w:
 _1B:	;@ SUBC/SBB R16W
@@ -590,11 +569,8 @@ _1B:	;@ SUBC/SBB R16W
 	fetch 1
 1:
 	eatCycles 1
-	add r2,v30ptr,#v30EATable
-	mov r12,pc					;@ Return reg for EA
-	ldr pc,[r2,r0,lsl#2]
 	adr lr,0b
-	b cpuReadMem20W
+	b v30ReadEAW
 ;@----------------------------------------------------------------------------
 i_sbb_ald8:
 _1C:	;@ SUBC/SBB ALD8
@@ -708,11 +684,8 @@ _22:	;@ AND R8b
 	fetch 1
 1:
 	eatCycles 1
-	add r2,v30ptr,#v30EATable
-	mov r12,pc					;@ Return reg for EA
-	ldr pc,[r2,r0,lsl#2]
 	adr lr,0b
-	b cpuReadMem20
+	b v30ReadEA
 ;@----------------------------------------------------------------------------
 i_and_r16w:
 _23:	;@ AND R16W
@@ -733,11 +706,8 @@ _23:	;@ AND R16W
 	fetch 1
 1:
 	eatCycles 1
-	add r2,v30ptr,#v30EATable
-	mov r12,pc					;@ Return reg for EA
-	ldr pc,[r2,r0,lsl#2]
 	adr lr,0b
-	b cpuReadMem20W
+	b v30ReadEAW
 ;@----------------------------------------------------------------------------
 i_and_ald8:
 _24:	;@ AND ALD8
@@ -868,11 +838,8 @@ _2A:	;@ SUB R8b
 	fetch 1
 1:
 	eatCycles 1
-	add r2,v30ptr,#v30EATable
-	mov r12,pc					;@ Return reg for EA
-	ldr pc,[r2,r0,lsl#2]
 	adr lr,0b
-	b cpuReadMem20
+	b v30ReadEA
 ;@----------------------------------------------------------------------------
 i_sub_r16w:
 _2B:	;@ SUB R16W
@@ -893,11 +860,8 @@ _2B:	;@ SUB R16W
 	fetch 1
 1:
 	eatCycles 1
-	add r2,v30ptr,#v30EATable
-	mov r12,pc					;@ Return reg for EA
-	ldr pc,[r2,r0,lsl#2]
 	adr lr,0b
-	b cpuReadMem20W
+	b v30ReadEAW
 ;@----------------------------------------------------------------------------
 i_sub_ald8:
 _2C:	;@ SUB ALD8
@@ -1027,11 +991,8 @@ _32:	;@ XOR R8b
 	fetch 1
 1:
 	eatCycles 1
-	add r2,v30ptr,#v30EATable
-	mov r12,pc					;@ Return reg for EA
-	ldr pc,[r2,r0,lsl#2]
 	adr lr,0b
-	b cpuReadMem20
+	b v30ReadEA
 ;@----------------------------------------------------------------------------
 i_xor_r16w:
 _33:	;@ XOR R16W
@@ -1052,11 +1013,8 @@ _33:	;@ XOR R16W
 	fetch 1
 1:
 	eatCycles 1
-	add r2,v30ptr,#v30EATable
-	mov r12,pc					;@ Return reg for EA
-	ldr pc,[r2,r0,lsl#2]
 	adr lr,0b
-	b cpuReadMem20W
+	b v30ReadEAW
 ;@----------------------------------------------------------------------------
 i_xor_ald8:
 _34:	;@ XOR ALD8
@@ -1122,11 +1080,8 @@ _38:	;@ CMP BR8
 	fetch 1
 1:
 	eatCycles 1
-	add r2,v30ptr,#v30EATable
-	mov r12,pc					;@ Return reg for EA
-	ldr pc,[r2,r0,lsl#2]
 	adr lr,0b
-	b cpuReadMem20
+	b v30ReadEA
 ;@----------------------------------------------------------------------------
 i_cmp_wr16:
 _39:	;@ CMP WR16
@@ -1147,11 +1102,8 @@ _39:	;@ CMP WR16
 	fetch 1
 1:
 	eatCycles 1
-	add r2,v30ptr,#v30EATable
-	mov r12,pc					;@ Return reg for EA
-	ldr pc,[r2,r0,lsl#2]
 	adr lr,0b
-	b cpuReadMem20W
+	b v30ReadEAW
 ;@----------------------------------------------------------------------------
 i_cmp_r8b:
 _3A:	;@ CMP R8b
@@ -1170,11 +1122,8 @@ _3A:	;@ CMP R8b
 	fetch 1
 1:
 	eatCycles 1
-	add r2,v30ptr,#v30EATable
-	mov r12,pc					;@ Return reg for EA
-	ldr pc,[r2,r0,lsl#2]
 	adr lr,0b
-	b cpuReadMem20
+	b v30ReadEA
 ;@----------------------------------------------------------------------------
 i_cmp_r16w:
 _3B:	;@ CMP R16W
@@ -1194,11 +1143,8 @@ _3B:	;@ CMP R16W
 	fetch 1
 1:
 	eatCycles 1
-	add r2,v30ptr,#v30EATable
-	mov r12,pc					;@ Return reg for EA
-	ldr pc,[r2,r0,lsl#2]
 	adr lr,0b
-	b cpuReadMem20W
+	b v30ReadEAW
 ;@----------------------------------------------------------------------------
 i_cmp_ald8:
 _3C:	;@ CMP ALD8
@@ -1505,10 +1451,7 @@ _62:	;@ CHKIND/BOUND
 	ldrh r4,[r2,#v30Regs]
 	cmp r0,#0xC0
 	bpl 1f
-	add r2,v30ptr,#v30EATable
-	mov r12,pc					;@ Return reg for EA
-	ldr pc,[r2,r0,lsl#2]
-	bl cpuReadMem20W
+	bl v30ReadEAW
 	add v30ofs,v30ofs,#0x20000
 0:
 	mov r5,r0
@@ -1570,11 +1513,8 @@ _69:	;@ MUL/IMUL D16
 	fetch 3
 1:
 	eatCycles 1
-	add r2,v30ptr,#v30EATable
-	mov r12,pc					;@ Return reg for EA
-	ldr pc,[r2,r0,lsl#2]
 	adr lr,0b
-	b cpuReadMem20W
+	b v30ReadEAW
 ;@----------------------------------------------------------------------------
 i_push_d8:
 _6A:	;@ PUSH D8
@@ -1615,11 +1555,8 @@ _6B:	;@ MUL/IMUL D8
 	fetch 3
 1:
 	eatCycles 1
-	add r2,v30ptr,#v30EATable
-	mov r12,pc					;@ Return reg for EA
-	ldr pc,[r2,r0,lsl#2]
 	adr lr,0b
-	b cpuReadMem20W
+	b v30ReadEAW
 
 ;@----------------------------------------------------------------------------
 f36c:	;@ REP INMB/INSB
@@ -2100,11 +2037,8 @@ _84:	;@ TEST BR8
 	fetch 1
 1:
 	eatCycles 1
-	add r2,v30ptr,#v30EATable
-	mov r12,pc					;@ Return reg for EA
-	ldr pc,[r2,r0,lsl#2]
 	adr lr,0b
-	b cpuReadMem20
+	b v30ReadEA
 ;@----------------------------------------------------------------------------
 i_test_wr16:
 _85:	;@ TEST WR16
@@ -2124,11 +2058,8 @@ _85:	;@ TEST WR16
 	fetch 1
 1:
 	eatCycles 1
-	add r2,v30ptr,#v30EATable
-	mov r12,pc					;@ Return reg for EA
-	ldr pc,[r2,r0,lsl#2]
 	adr lr,0b
-	b cpuReadMem20W
+	b v30ReadEAW
 ;@----------------------------------------------------------------------------
 i_xchg_br8:
 _86:	;@ XCH/XCHG BR8
@@ -2147,10 +2078,7 @@ _86:	;@ XCH/XCHG BR8
 	bic v30cyc,v30cyc,#SEG_PREFIX
 	fetch 3
 0:
-	add r2,v30ptr,#v30EATable
-	mov r12,pc					;@ Return reg for EA
-	ldr pc,[r2,r0,lsl#2]
-	bl cpuReadMem20
+	bl v30ReadEA
 	ldrb r1,[v30ptr,-r4]
 	strb r0,[v30ptr,-r4]
 	add r0,v30csr,v30ofs,lsr#4
@@ -2177,10 +2105,7 @@ _87:	;@ XCH/XCHG WR16
 	bic v30cyc,v30cyc,#SEG_PREFIX
 	fetch 3
 0:
-	add r2,v30ptr,#v30EATable
-	mov r12,pc					;@ Return reg for EA
-	ldr pc,[r2,r0,lsl#2]
-	bl cpuReadMem20W
+	bl v30ReadEAW
 	ldrh r1,[r4,#v30Regs]
 	strh r0,[r4,#v30Regs]
 	add r0,v30csr,v30ofs,lsr#4
@@ -2248,10 +2173,7 @@ _8A:	;@ MOV R8B
 	bic v30cyc,v30cyc,#SEG_PREFIX
 	fetch 1
 0:
-	add r2,v30ptr,#v30EATable
-	mov r12,pc					;@ Return reg for EA
-	ldr pc,[r2,r0,lsl#2]
-	bl cpuReadMem20
+	bl v30ReadEA
 	strb r0,[v30ptr,-r4]
 	bic v30cyc,v30cyc,#SEG_PREFIX
 	fetch 1
@@ -2272,10 +2194,7 @@ Str_8B:
 	bic v30cyc,v30cyc,#SEG_PREFIX
 	fetch 1
 0:
-	add r2,v30ptr,#v30EATable
-	mov r12,pc					;@ Return reg for EA
-	ldr pc,[r2,r0,lsl#2]
-	bl cpuReadMem20W
+	bl v30ReadEAW
 	strh r0,[r4,#v30Regs]
 	bic v30cyc,v30cyc,#SEG_PREFIX
 	fetch 1
@@ -2340,11 +2259,8 @@ _8E:	;@ MOV SREGW
 	fetch 2
 1:
 	eatCycles 1
-	add r2,v30ptr,#v30EATable
-	mov r12,pc					;@ Return reg for EA
-	ldr pc,[r2,r0,lsl#2]
 	adr lr,0b
-	b cpuReadMem20W
+	b v30ReadEAW
 ;@----------------------------------------------------------------------------
 i_popw:
 _8F:	;@ POPW
@@ -3476,10 +3392,7 @@ _C4:	;@ LES DW
 	and r4,r0,#0x38
 	cmp r0,#0xC0
 	bpl 1f
-	add r2,v30ptr,#v30EATable
-	mov r12,pc					;@ Return reg for EA
-	ldr pc,[r2,r0,lsl#2]
-	bl cpuReadMem20W
+	bl v30ReadEAW
 	add v30ofs,v30ofs,#0x20000
 0:
 	add r1,v30ptr,r4,lsr#1
@@ -3504,10 +3417,7 @@ _C5:	;@ LDS DW
 	and r4,r0,#0x38
 	cmp r0,#0xC0
 	bpl 1f
-	add r2,v30ptr,#v30EATable
-	mov r12,pc					;@ Return reg for EA
-	ldr pc,[r2,r0,lsl#2]
-	bl cpuReadMem20W
+	bl v30ReadEAW
 	add v30ofs,v30ofs,#0x20000
 0:
 	add r1,v30ptr,r4,lsr#1
