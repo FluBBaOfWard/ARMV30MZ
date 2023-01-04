@@ -69,7 +69,7 @@
 i_add_br8:
 _00:	;@ ADD BR8
 ;@----------------------------------------------------------------------------
-	getNextByteToReg r4
+	getNextByteTo r4
 	add r1,v30ptr,r4
 	ldrb r2,[r1,#v30ModRmReg]
 	ldrb r5,[v30ptr,-r2]
@@ -97,7 +97,7 @@ _00:	;@ ADD BR8
 i_add_wr16:
 _01:	;@ ADD WR16
 ;@----------------------------------------------------------------------------
-	getNextByteToReg r4
+	getNextByteTo r4
 	and r2,r4,#0x38
 	add r2,v30ptr,r2,lsr#1
 	ldr r5,[r2,#v30Regs2]
@@ -212,7 +212,7 @@ _07:	;@ POP ES
 i_or_br8:
 _08:	;@ OR BR8
 ;@----------------------------------------------------------------------------
-	getNextByteToReg r4
+	getNextByteTo r4
 	add r1,v30ptr,r4
 	ldrb r2,[r1,#v30ModRmReg]
 	ldrb r5,[v30ptr,-r2]
@@ -240,7 +240,7 @@ _08:	;@ OR BR8
 i_or_wr16:
 _09:	;@ OR WR16
 ;@----------------------------------------------------------------------------
-	getNextByteToReg r4
+	getNextByteTo r4
 	and r2,r4,#0x38
 	add r2,v30ptr,r2,lsr#1
 	ldr r5,[r2,#v30Regs2]
@@ -348,7 +348,7 @@ _0E:	;@ PUSH CS
 i_adc_br8:
 _10:	;@ ADDC/ADC BR8
 ;@----------------------------------------------------------------------------
-	getNextByteToReg r4
+	getNextByteTo r4
 	add r1,v30ptr,r4
 	ldrb r2,[r1,#v30ModRmReg]
 	ldrb r5,[v30ptr,-r2]
@@ -376,7 +376,7 @@ _10:	;@ ADDC/ADC BR8
 i_adc_wr16:
 _11:	;@ ADDC/ADC WR16
 ;@----------------------------------------------------------------------------
-	getNextByteToReg r4
+	getNextByteTo r4
 	and r2,r4,#0x38
 	add r2,v30ptr,r2,lsr#1
 	ldr r5,[r2,#v30Regs2]
@@ -492,7 +492,7 @@ _17:	;@ POP SS
 i_sbb_br8:
 _18:	;@ SUBC/SBB BR8
 ;@----------------------------------------------------------------------------
-	getNextByteToReg r4
+	getNextByteTo r4
 	add r1,v30ptr,r4
 	ldrb r2,[r1,#v30ModRmReg]
 	ldrb r5,[v30ptr,-r2]
@@ -520,7 +520,7 @@ _18:	;@ SUBC/SBB BR8
 i_sbb_wr16:
 _19:	;@ SUBC/SBB WR16
 ;@----------------------------------------------------------------------------
-	getNextByteToReg r4
+	getNextByteTo r4
 	and r2,r4,#0x38
 	add r2,v30ptr,r2,lsr#1
 	ldrh r5,[r2,#v30Regs]
@@ -636,7 +636,7 @@ _1F:	;@ POP DS
 i_and_br8:
 _20:	;@ AND BR8
 ;@----------------------------------------------------------------------------
-	getNextByteToReg r4
+	getNextByteTo r4
 	add r1,v30ptr,r4
 	ldrb r2,[r1,#v30ModRmReg]
 	ldrb r5,[v30ptr,-r2]
@@ -664,7 +664,7 @@ _20:	;@ AND BR8
 i_and_wr16:
 _21:	;@ AND WR16
 ;@----------------------------------------------------------------------------
-	getNextByteToReg r4
+	getNextByteTo r4
 	and r2,r4,#0x38
 	add r2,v30ptr,r2,lsr#1
 	ldr r5,[r2,#v30Regs2]
@@ -795,7 +795,7 @@ _27:	;@ ADJ4A/DAA
 i_sub_br8:
 _28:	;@ SUB BR8
 ;@----------------------------------------------------------------------------
-	getNextByteToReg r4
+	getNextByteTo r4
 	add r1,v30ptr,r4
 	ldrb r5,[r1,#v30ModRmReg]
 	cmp r4,#0xC0
@@ -823,7 +823,7 @@ _28:	;@ SUB BR8
 i_sub_wr16:
 _29:	;@ SUB WR16
 ;@----------------------------------------------------------------------------
-	getNextByteToReg r4
+	getNextByteTo r4
 	and r2,r4,#0x38
 	add r2,v30ptr,r2,lsr#1
 	ldrh r5,[r2,#v30Regs]
@@ -955,7 +955,7 @@ _2F:	;@ ADJ4S/DAS
 i_xor_br8:
 _30:	;@ XOR BR8
 ;@----------------------------------------------------------------------------
-	getNextByteToReg r4
+	getNextByteTo r4
 	add r1,v30ptr,r4
 	ldrb r5,[r1,#v30ModRmReg]
 	cmp r4,#0xC0
@@ -983,7 +983,7 @@ _30:	;@ XOR BR8
 i_xor_wr16:
 _31:	;@ XOR WR16
 ;@----------------------------------------------------------------------------
-	getNextByteToReg r4
+	getNextByteTo r4
 	and r2,r4,#0x38
 	add r2,v30ptr,r2,lsr#1
 	ldr r5,[r2,#v30Regs2]
@@ -1579,7 +1579,7 @@ _69:	;@ MUL/IMUL D16
 i_push_d8:
 _6A:	;@ PUSH D8
 ;@----------------------------------------------------------------------------
-	getNextSignedByteToReg r1
+	getNextSignedByteTo r1
 	ldr v30ofs,[v30ptr,#v30RegSP]
 	ldr v30csr,[v30ptr,#v30SRegSS]
 	sub v30ofs,v30ofs,#0x20000
@@ -1600,7 +1600,7 @@ _6B:	;@ MUL/IMUL D8
 	add r1,v30ptr,r2,lsl#2
 	ldrh r0,[r1,#v30Regs]
 0:
-	getNextSignedByteToReg r1
+	getNextSignedByteTo r1
 
 	mov v30f,#PSR_Z					;@ Set Z and clear others.
 	strb v30f,[v30ptr,#v30ParityVal]	;@ Clear parity
@@ -1951,7 +1951,7 @@ _80:	;@ PRE 80
 i_82pre:
 _82:	;@ PRE 82
 ;@----------------------------------------------------------------------------
-	getNextByteToReg r4
+	getNextByteTo r4
 	cmp r4,#0xC0
 	bmi 1f
 	add r1,v30ptr,r4
@@ -1959,7 +1959,7 @@ _82:	;@ PRE 82
 	ldrb r0,[v30ptr,-v30ofs]
 0:
 	bic v30cyc,v30cyc,#SEG_PREFIX
-	getNextByteToReg r1
+	getNextByteTo r1
 
 	and r2,r4,#0x38
 	ldr pc,[pc,r2,lsr#1]
@@ -2006,7 +2006,7 @@ cmp80:
 i_81pre:
 _81:	;@ PRE 81
 ;@----------------------------------------------------------------------------
-	getNextByteToReg r4
+	getNextByteTo r4
 	cmp r4,#0xC0
 	bmi 1f
 	and r2,r4,#7
@@ -2063,7 +2063,7 @@ cmp81:
 i_83pre:
 _83:	;@ PRE 83
 ;@----------------------------------------------------------------------------
-	getNextByteToReg r4
+	getNextByteTo r4
 	cmp r4,#0xC0
 	bmi 1f
 	and r2,r4,#7
@@ -2285,21 +2285,20 @@ _8C:	;@ MOV WSREG
 ;@----------------------------------------------------------------------------
 	getNextByte
 	and r2,r0,#0x38				;@ Mask with 0x18?
-	add r1,v30ptr,r2,lsr#1
-	ldrh r4,[r1,#v30SRegs+2]
+	add r4,v30ptr,r2,lsr#1
+	ldrh r1,[r4,#v30SRegs+2]
 	cmp r0,#0xC0
 	bmi 0f
 
 	and r2,r0,#7
-	add r1,v30ptr,r2,lsl#2
-	strh r4,[r1,#v30Regs]
+	add r4,v30ptr,r2,lsl#2
+	strh r1,[r4,#v30Regs]
 	bic v30cyc,v30cyc,#SEG_PREFIX
 	fetch 1
 0:
 	add r2,v30ptr,#v30EATable
 	mov r12,pc					;@ Return reg for EA
 	ldr pc,[r2,r0,lsl#2]
-	mov r1,r4
 	bl cpuWriteMem20W
 	bic v30cyc,v30cyc,#SEG_PREFIX
 	fetch 1
@@ -2351,20 +2350,19 @@ i_popw:
 _8F:	;@ POPW
 ;@----------------------------------------------------------------------------
 	popWord
-	mov r4,r0
+	mov r1,r0
 	getNextByte
 	cmp r0,#0xC0
 	bmi 0f
 	and r0,r0,#7
 	add r2,v30ptr,r0,lsl#2
-	strh r4,[r2,#v30Regs]
+	strh r1,[r2,#v30Regs]
 	bic v30cyc,v30cyc,#SEG_PREFIX
 	fetch 1
 0:
 	add r2,v30ptr,#v30EATable
 	mov r12,pc					;@ Return reg for EA
 	ldr pc,[r2,r0,lsl#2]
-	mov r1,r4
 	bl cpuWriteMem20W
 	bic v30cyc,v30cyc,#SEG_PREFIX
 	fetch 3
@@ -3330,7 +3328,7 @@ _BF:	;@ MOV DID16
 i_rotshft_bd8:
 _C0:	;@ ROTSHFT BD8
 ;@----------------------------------------------------------------------------
-	getNextByteToReg r4
+	getNextByteTo r4
 	cmp r4,#0xC0
 	bmi 1f
 	add r1,v30ptr,r4
@@ -3338,7 +3336,7 @@ _C0:	;@ ROTSHFT BD8
 	ldrb r0,[v30ptr,-v30ofs]
 	eatCycles 2
 0:
-	getNextByteToReg r1
+	getNextByteTo r1
 d2Continue:
 	ands r1,r1,#0x1F
 
@@ -3388,7 +3386,7 @@ shraC0:
 i_rotshft_wd8:
 _C1:	;@ ROTSHFT WD8
 ;@----------------------------------------------------------------------------
-	getNextByteToReg r4
+	getNextByteTo r4
 	cmp r4,#0xC0
 	bmi 1f
 	and r2,r4,#7
@@ -3396,7 +3394,7 @@ _C1:	;@ ROTSHFT WD8
 	ldrh r0,[v30ofs,#v30Regs]
 	eatCycles 2
 0:
-	getNextByteToReg r1
+	getNextByteTo r1
 d3Continue:
 	ands r1,r1,#0x1F
 
@@ -3543,7 +3541,7 @@ _C6:	;@ MOV BD8
 	add r2,v30ptr,#v30EATable
 	mov r12,pc					;@ Return reg for EA
 	ldr pc,[r2,r0,lsl#2]
-	getNextByteToReg r1
+	getNextByteTo r1
 	bl cpuWriteMem20
 	bic v30cyc,v30cyc,#SEG_PREFIX
 	fetch 1
@@ -3565,8 +3563,7 @@ _C7:	;@ MOV WD16
 	add r2,v30ptr,#v30EATable
 	mov r12,pc					;@ Return reg for EA
 	ldr pc,[r2,r0,lsl#2]
-	getNextWordTo r1, r0
-	add r0,v30csr,v30ofs,lsr#4
+	getNextWordTo r1, r2
 	bl cpuWriteMem20W
 	bic v30cyc,v30cyc,#SEG_PREFIX
 	fetch 1
@@ -3709,7 +3706,7 @@ _CF:	;@ IRET
 i_rotshft_b:
 _D0:	;@ ROTSHFT B
 ;@----------------------------------------------------------------------------
-	getNextByteToReg r4
+	getNextByteTo r4
 	cmp r4,#0xC0
 	bmi 0f
 
@@ -3730,7 +3727,7 @@ _D0:	;@ ROTSHFT B
 i_rotshft_w:
 _D1:	;@ ROTSHFT W
 ;@----------------------------------------------------------------------------
-	getNextByteToReg r4
+	getNextByteTo r4
 	cmp r4,#0xC0
 	bmi 0f
 
@@ -3751,7 +3748,7 @@ _D1:	;@ ROTSHFT W
 i_rotshft_bcl:
 _D2:	;@ ROTSHFT BCL
 ;@----------------------------------------------------------------------------
-	getNextByteToReg r4
+	getNextByteTo r4
 	cmp r4,#0xC0
 	bmi 0f
 
@@ -3773,7 +3770,7 @@ _D2:	;@ ROTSHFT BCL
 i_rotshft_wcl:
 _D3:	;@ ROTSHFT WCL
 ;@----------------------------------------------------------------------------
-	getNextByteToReg r4
+	getNextByteTo r4
 	cmp r4,#0xC0
 	bmi 0f
 
@@ -4267,7 +4264,7 @@ _F5:	;@ NOT1 CY/CMC		;@ Not Carry/Complement Carry
 i_f6pre:
 _F6:	;@ PRE F6
 ;@----------------------------------------------------------------------------
-	getNextByteToReg r4
+	getNextByteTo r4
 	cmp r4,#0xC0
 	bmi 1f
 	add r1,v30ptr,r4
@@ -4288,7 +4285,7 @@ _F6:	;@ PRE F6
 	b cpuReadMem20
 ;@----------------------------------------------------------------------------
 testF6:
-	getNextByteToReg r1
+	getNextByteTo r1
 	and8 r1,r0
 	fetch 1
 ;@----------------------------------------------------------------------------
@@ -4404,7 +4401,7 @@ divbF6Error2:
 i_f7pre:
 _F7:	;@ PRE F7
 ;@----------------------------------------------------------------------------
-	getNextByteToReg r4
+	getNextByteTo r4
 	cmp r4,#0xC0
 	bmi 1f
 	and r2,r4,#7
@@ -4588,7 +4585,7 @@ _FD:	;@ SET1 DIR/STD			;@ Set Direction
 i_fepre:
 _FE:	;@ PRE FE
 ;@----------------------------------------------------------------------------
-	getNextByteToReg r4
+	getNextByteTo r4
 	tst r4,#0x30
 	bne contFF
 	cmp r4,#0xC0
@@ -4636,7 +4633,7 @@ writeBackFE:
 i_ffpre:
 _FF:	;@ PRE FF
 ;@----------------------------------------------------------------------------
-	getNextByteToReg r4
+	getNextByteTo r4
 contFF:
 	cmp r4,#0xC0
 	bmi 1f

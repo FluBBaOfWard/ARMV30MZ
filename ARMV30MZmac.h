@@ -46,20 +46,20 @@
 	ldr \reg,[v30ptr,#v30LastBank]
 	.endm
 
-	.macro getNextByteToReg reg
+	.macro getNextByteTo reg
 	ldrb \reg,[v30pc],#1
 	.endm
 
 	.macro getNextByte
-	getNextByteToReg r0
+	getNextByteTo r0
 	.endm
 
-	.macro getNextSignedByteToReg reg
+	.macro getNextSignedByteTo reg
 	ldrsb \reg,[v30pc],#1
 	.endm
 
 	.macro getNextSignedByte
-	getNextSignedByteToReg r0
+	getNextSignedByteTo r0
 	.endm
 
 	.macro getNextWordTo dst use
