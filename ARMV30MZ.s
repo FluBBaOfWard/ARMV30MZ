@@ -102,7 +102,7 @@ _01:	;@ ADD WR16
 	cmp r0,#0xC0
 	bmi 0f
 
-	and r2,r4,#7
+	and r2,r0,#7
 	add v30ofs,v30ptr,r2,lsl#2
 	ldrh r0,[v30ofs,#v30Regs]
 	add16 r0,r5
@@ -361,7 +361,7 @@ _11:	;@ ADDC/ADC WR16
 	cmp r0,#0xC0
 	bmi 0f
 
-	and r2,r4,#7
+	and r2,r0,#7
 	add v30ofs,v30ptr,r2,lsl#2
 	ldrh r0,[v30ofs,#v30Regs]
 	adc16 r0,r5
@@ -495,7 +495,7 @@ _19:	;@ SUBC/SBB WR16
 	cmp r0,#0xC0
 	bmi 0f
 
-	and r2,r4,#7
+	and r2,r0,#7
 	add v30ofs,v30ptr,r2,lsl#2
 	ldr r0,[v30ofs,#v30Regs2]
 	subc16 r5,r0
@@ -778,7 +778,7 @@ _29:	;@ SUB WR16
 	cmp r0,#0xC0
 	bmi 0f
 
-	and r2,r4,#7
+	and r2,r0,#7
 	add v30ofs,v30ptr,r2,lsl#2
 	ldr r0,[v30ofs,#v30Regs2]
 	sub16 r5,r0
