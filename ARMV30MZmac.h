@@ -249,10 +249,9 @@
 	ldr v30ofs,[v30ptr,#v30RegSP]
 	ldr v30csr,[v30ptr,#v30SRegSS]
 	sub v30ofs,v30ofs,#0x20000
-	add r0,v30csr,v30ofs,lsr#4
 	str v30ofs,[v30ptr,#v30RegSP]
 	ldrh r1,[v30ptr,#\reg]
-	bl cpuWriteMem20W
+	bl v30WriteSegOfsW
 	fetch 1
 	.endm
 ;@----------------------------------------------------------------------------
