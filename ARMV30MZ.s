@@ -100,15 +100,14 @@ _01:	;@ ADD WR16
 	getNextByteToReg r4
 	and r2,r4,#0x38
 	add r2,v30ptr,r2,lsr#1
-	ldrh r5,[r2,#v30Regs]
+	ldr r5,[r2,#v30Regs2]
 	cmp r4,#0xC0
 	bmi 1f
 	and r2,r4,#7
 	add v30ofs,v30ptr,r2,lsl#2
 	ldrh r0,[v30ofs,#v30Regs]
 0:
-	mov r0,r0,lsl#16
-	add16 r5,r0
+	add16 r0,r5
 
 	cmp r4,#0xC0
 	strhpl r1,[v30ofs,#v30Regs]
@@ -380,15 +379,14 @@ _11:	;@ ADDC/ADC WR16
 	getNextByteToReg r4
 	and r2,r4,#0x38
 	add r2,v30ptr,r2,lsr#1
-	ldrh r5,[r2,#v30Regs]
+	ldr r5,[r2,#v30Regs2]
 	cmp r4,#0xC0
 	bmi 1f
 	and r2,r4,#7
 	add v30ofs,v30ptr,r2,lsl#2
 	ldrh r0,[v30ofs,#v30Regs]
 0:
-	mov r0,r0,lsl#16
-	adc16 r5,r0
+	adc16 r0,r5
 
 	cmp r4,#0xC0
 	strhpl r1,[v30ofs,#v30Regs]
@@ -2426,7 +2424,7 @@ _98:	;@ CVTBW / CBW. Convert Byte to Word
 	fetch 1
 ;@----------------------------------------------------------------------------
 i_cwd:
-_99:	;@ CVTWL / CWD. Convert Word to Long Word/Double
+_99:	;@ CVTWL / CWD. Convert Word to Long/Double
 ;@----------------------------------------------------------------------------
 	ldrsb r0,[v30ptr,#v30RegAH]
 	mov r0,r0,asr#8
