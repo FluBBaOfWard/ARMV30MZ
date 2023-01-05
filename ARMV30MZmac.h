@@ -230,13 +230,21 @@
 	.endm
 
 ;@----------------------------------------------------------------------------
-	.macro popWord
+	.macro popWord8F
 	ldr v30ofs,[v30ptr,#v30RegSP]
 	ldr r0,[v30ptr,#v30SRegSS]
 	add r2,v30ofs,#0x20000
 	add r0,r0,v30ofs,lsr#4
 	str r2,[v30ptr,#v30RegSP]
 	bl cpuReadMem20W
+	.endm
+
+	.macro popWord
+	ldr v30ofs,[v30ptr,#v30RegSP]
+	ldr v30csr,[v30ptr,#v30SRegSS]
+	bl v30ReadSegOfsW
+	add v30ofs,v30ofs,#0x20000
+	str v30ofs,[v30ptr,#v30RegSP]
 	.endm
 
 	.macro popRegister reg
@@ -246,12 +254,8 @@
 	.endm
 
 	.macro pushRegister reg
-	ldr v30ofs,[v30ptr,#v30RegSP]
-	ldr v30csr,[v30ptr,#v30SRegSS]
-	sub v30ofs,v30ofs,#0x20000
-	str v30ofs,[v30ptr,#v30RegSP]
 	ldrh r1,[v30ptr,#\reg]
-	bl v30WriteSegOfsW
+	bl v30PushW
 	fetch 1
 	.endm
 ;@----------------------------------------------------------------------------

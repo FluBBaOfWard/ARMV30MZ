@@ -173,12 +173,8 @@ _05:	;@ ADD AXD16
 i_push_es:
 _06:	;@ PUSH ES
 ;@----------------------------------------------------------------------------
-	ldr v30ofs,[v30ptr,#v30RegSP]
-	ldr v30csr,[v30ptr,#v30SRegSS]
-	sub v30ofs,v30ofs,#0x20000
 	ldrh r1,[v30ptr,#v30SRegES+2]
-	str v30ofs,[v30ptr,#v30RegSP]
-	bl v30WriteSegOfsW
+	bl v30PushW
 	fetch 2
 ;@----------------------------------------------------------------------------
 i_pop_es:
@@ -295,12 +291,8 @@ _0D:	;@ OR AXD16
 i_push_cs:
 _0E:	;@ PUSH CS
 ;@----------------------------------------------------------------------------
-	ldr v30ofs,[v30ptr,#v30RegSP]
-	ldr v30csr,[v30ptr,#v30SRegSS]
-	sub v30ofs,v30ofs,#0x20000
 	ldrh r1,[v30ptr,#v30SRegCS+2]
-	str v30ofs,[v30ptr,#v30RegSP]
-	bl v30WriteSegOfsW
+	bl v30PushW
 	fetch 2
 ;@----------------------------------------------------------------------------
 i_adc_br8:
@@ -534,12 +526,8 @@ _1D:	;@ SUBC/SBB AXD16
 i_push_ds:
 _1E:	;@ PUSH DS
 ;@----------------------------------------------------------------------------
-	ldr v30ofs,[v30ptr,#v30RegSP]
-	ldr v30csr,[v30ptr,#v30SRegSS]
-	sub v30ofs,v30ofs,#0x20000
 	ldrh r1,[v30ptr,#v30SRegDS+2]
-	str v30ofs,[v30ptr,#v30RegSP]
-	bl v30WriteSegOfsW
+	bl v30PushW
 	fetch 2
 ;@----------------------------------------------------------------------------
 i_pop_ds:
@@ -1341,11 +1329,7 @@ i_push_d16:
 _68:	;@ PUSH D16
 ;@----------------------------------------------------------------------------
 	getNextWordTo r1, r0
-	ldr v30ofs,[v30ptr,#v30RegSP]
-	ldr v30csr,[v30ptr,#v30SRegSS]
-	sub v30ofs,v30ofs,#0x20000
-	str v30ofs,[v30ptr,#v30RegSP]
-	bl v30WriteSegOfsW
+	bl v30PushW
 	fetch 1
 ;@----------------------------------------------------------------------------
 i_imul_d16:
@@ -1379,11 +1363,7 @@ i_push_d8:
 _6A:	;@ PUSH D8
 ;@----------------------------------------------------------------------------
 	getNextSignedByteTo r1
-	ldr v30ofs,[v30ptr,#v30RegSP]
-	ldr v30csr,[v30ptr,#v30SRegSS]
-	sub v30ofs,v30ofs,#0x20000
-	str v30ofs,[v30ptr,#v30RegSP]
-	bl v30WriteSegOfsW
+	bl v30PushW
 	fetch 1
 ;@----------------------------------------------------------------------------
 i_imul_d8:
@@ -2060,7 +2040,7 @@ _8E:	;@ MOV SREGW
 i_popw:
 _8F:	;@ POPW
 ;@----------------------------------------------------------------------------
-	popWord
+	popWord8F
 	mov r1,r0
 	getNextByte
 	cmp r0,#0xC0
@@ -2193,11 +2173,7 @@ pushFlags:
 	orrcs r1,r1,#CF
 	orrvs r1,r1,#OF
 
-	ldr v30ofs,[v30ptr,#v30RegSP]
-	ldr v30csr,[v30ptr,#v30SRegSS]
-	sub v30ofs,v30ofs,#0x20000
-	str v30ofs,[v30ptr,#v30RegSP]
-	b v30WriteSegOfsW
+	b v30PushW
 	.pool
 ;@----------------------------------------------------------------------------
 i_popf:
@@ -3607,11 +3583,7 @@ _E8:	;@ CALL D16
 	v30DecodeFastPCToReg r1
 	mov r2,r1,lsl#16
 	add v30pc,r2,r0,lsl#16
-	ldr v30ofs,[v30ptr,#v30RegSP]
-	ldr v30csr,[v30ptr,#v30SRegSS]
-	sub v30ofs,v30ofs,#0x20000
-	str v30ofs,[v30ptr,#v30RegSP]
-	bl v30WriteSegOfsW
+	bl v30PushW
 	v30EncodeFastPC
 	fetch 5
 ;@----------------------------------------------------------------------------
@@ -4308,11 +4280,7 @@ writeBackFF:
 callFF:
 	v30DecodeFastPCToReg r1
 	mov v30pc,r0,lsl#16
-	ldr v30ofs,[v30ptr,#v30RegSP]
-	ldr v30csr,[v30ptr,#v30SRegSS]
-	sub v30ofs,v30ofs,#0x20000
-	str v30ofs,[v30ptr,#v30RegSP]
-	bl v30WriteSegOfsW
+	bl v30PushW
 	V30EncodeFastPC
 	fetch 5
 ;@----------------------------------------------------------------------------
@@ -4351,11 +4319,7 @@ braFarFF:
 ;@----------------------------------------------------------------------------
 pushFF:
 	mov r1,r0
-	ldr v30ofs,[v30ptr,#v30RegSP]
-	ldr v30csr,[v30ptr,#v30SRegSS]
-	sub v30ofs,v30ofs,#0x20000
-	str v30ofs,[v30ptr,#v30RegSP]
-	bl v30WriteSegOfsW
+	bl v30PushW
 	fetch 1
 
 ;@----------------------------------------------------------------------------
