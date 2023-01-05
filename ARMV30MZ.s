@@ -3,7 +3,7 @@
 //  V30MZ cpu emulator for arm32.
 //
 //  Created by Fredrik Ahlström on 2021-12-19.
-//  Copyright © 2021-2022 Fredrik Ahlström. All rights reserved.
+//  Copyright © 2021-2023 Fredrik Ahlström. All rights reserved.
 //
 
 #ifdef __arm__
@@ -1750,11 +1750,8 @@ _82:	;@ PRE 82
 	.long add80, or80, adc80, subc80, and80, sub80, xor80, cmp80
 1:
 	eatCycles 2
-	add r2,v30ptr,#v30EATable
-	mov r12,pc					;@ Return reg for EA
-	ldr pc,[r2,r4,lsl#2]
 	adr lr,0b
-	b v30ReadSegOfs
+	b v30ReadEAr4
 add80:
 	add8 r1,r0
 	b 2f
@@ -1805,10 +1802,7 @@ pre81Continue:
 	.long add81, or81, adc81, subc81, and81, sub81, xor81, cmp81
 1:
 	eatCycles 2
-	add r2,v30ptr,#v30EATable
-	mov r12,pc					;@ Return reg for EA
-	ldr pc,[r2,r4,lsl#2]
-	bl v30ReadSegOfsW
+	bl v30ReadEAWr4
 	mov r5,r0,lsl#16
 	b 0b
 add81:
@@ -1857,10 +1851,7 @@ _83:	;@ PRE 83
 	b pre81Continue
 1:
 	eatCycles 2
-	add r2,v30ptr,#v30EATable
-	mov r12,pc					;@ Return reg for EA
-	ldr pc,[r2,r4,lsl#2]
-	bl v30ReadSegOfsW
+	bl v30ReadEAWr4
 	mov r5,r0,lsl#16
 	b 0b
 ;@----------------------------------------------------------------------------
@@ -3037,11 +3028,8 @@ d2Continue:
 	.long rolC0, rorC0, rolcC0, rorcC0, shlC0, shrC0, undC0, shraC0
 1:
 	eatCycles 4
-	add r2,v30ptr,#v30EATable
-	mov r12,pc					;@ Return reg for EA
-	ldr pc,[r2,r4,lsl#2]
 	adr lr,0b
-	b v30ReadSegOfs
+	b v30ReadEAr4
 rolC0:
 	rol8 r0,r1
 	b 2f
@@ -3094,11 +3082,8 @@ d3Continue:
 	.long rolC1, rorC1, rolcC1, rorcC1, shlC1, shrC1, undC1, shraC1
 1:
 	eatCycles 4
-	add r2,v30ptr,#v30EATable
-	mov r12,pc					;@ Return reg for EA
-	ldr pc,[r2,r4,lsl#2]
 	adr lr,0b
-	b v30ReadSegOfsW
+	b v30ReadEAWr4
 rolC1:
 	rol16 r0,r1
 	b 2f
@@ -3388,10 +3373,7 @@ _D0:	;@ ROTSHFT B
 	b d2Continue
 0:
 	eatCycles 2
-	add r2,v30ptr,#v30EATable
-	mov r12,pc					;@ Return reg for EA
-	ldr pc,[r2,r4,lsl#2]
-	bl v30ReadSegOfs
+	bl v30ReadEAr4
 	mov r1,#1
 	b d2Continue
 ;@----------------------------------------------------------------------------
@@ -3409,10 +3391,7 @@ _D1:	;@ ROTSHFT W
 	b d3Continue
 0:
 	eatCycles 2
-	add r2,v30ptr,#v30EATable
-	mov r12,pc					;@ Return reg for EA
-	ldr pc,[r2,r4,lsl#2]
-	bl v30ReadSegOfsW
+	bl v30ReadEAWr4
 	mov r1,#1
 	b d3Continue
 ;@----------------------------------------------------------------------------
@@ -3431,10 +3410,7 @@ _D2:	;@ ROTSHFT BCL
 	b d2Continue
 0:
 	eatCycles 4
-	add r2,v30ptr,#v30EATable
-	mov r12,pc					;@ Return reg for EA
-	ldr pc,[r2,r4,lsl#2]
-	bl v30ReadSegOfs
+	bl v30ReadEAr4
 	ldrb r1,[v30ptr,#v30RegCL]
 	b d2Continue
 ;@----------------------------------------------------------------------------
@@ -3453,10 +3429,7 @@ _D3:	;@ ROTSHFT WCL
 	b d3Continue
 0:
 	eatCycles 4
-	add r2,v30ptr,#v30EATable
-	mov r12,pc					;@ Return reg for EA
-	ldr pc,[r2,r4,lsl#2]
-	bl v30ReadSegOfsW
+	bl v30ReadEAWr4
 	ldrb r1,[v30ptr,#v30RegCL]
 	b d3Continue
 ;@----------------------------------------------------------------------------
@@ -3947,11 +3920,8 @@ _F6:	;@ PRE F6
 	.long testF6, undefF6, notF6, negF6, muluF6, mulF6, divubF6, divbF6
 1:
 	eatCycles 1
-	add r2,v30ptr,#v30EATable
-	mov r12,pc					;@ Return reg for EA
-	ldr pc,[r2,r4,lsl#2]
 	adr lr,0b
-	b v30ReadSegOfs
+	b v30ReadEAr4
 ;@----------------------------------------------------------------------------
 testF6:
 	getNextByteTo r1
@@ -4082,11 +4052,8 @@ _F7:	;@ PRE F7
 	.long testF7, undefF7, notF7, negF7, muluF7, mulF7, divuwF7, divwF7
 1:
 	eatCycles 1
-	add r2,v30ptr,#v30EATable
-	mov r12,pc					;@ Return reg for EA
-	ldr pc,[r2,r4,lsl#2]
 	adr lr,0b
-	b v30ReadSegOfsW
+	b v30ReadEAWr4
 ;@----------------------------------------------------------------------------
 testF7:
 	mov r4,r0,lsl#16
@@ -4287,11 +4254,8 @@ writeBackFE:
 	fetch 1
 1:
 	eatCycles 2
-	add r2,v30ptr,#v30EATable
-	mov r12,pc					;@ Return reg for EA
-	ldr pc,[r2,r4,lsl#2]
 	adr lr,0b
-	b v30ReadSegOfs
+	b v30ReadEAr4
 
 ;@----------------------------------------------------------------------------
 i_ffpre:
@@ -4312,11 +4276,8 @@ contFF:
 	.long incFF, decFF, callFF, callFarFF, braFF, braFarFF, pushFF, undefFF
 1:
 	eatCycles 1
-	add r2,v30ptr,#v30EATable
-	mov r12,pc					;@ Return reg for EA
-	ldr pc,[r2,r4,lsl#2]
 	adr lr,0b
-	b v30ReadSegOfsW
+	b v30ReadEAWr4
 ;@----------------------------------------------------------------------------
 incFF:
 	bic v30f,v30f,#PSR_S+PSR_Z+PSR_V+PSR_A		;@ Clear S, Z, V & A.
@@ -4691,14 +4652,17 @@ V30ReEncodePC:
 ;@----------------------------------------------------------------------------
 V30EncodePC:
 ;@----------------------------------------------------------------------------
-	stmfd sp!,{lr}
 	ldr r0,[v30ptr,#v30SRegCS]
 	add r0,r0,v30pc,lsr#4
-	bl cpuReadMem20				;@ Returns phyAdr in r1
+
+	mvn r2,r0,lsr#28
+	ldr r1,[v30ptr,r2,lsl#2]
+	add r1,r1,r0,lsr#12
+
 	sub r0,r1,v30pc,lsr#16
 	str r0,[v30ptr,#v30LastBank]
 	mov v30pc,r1
-	ldmfd sp!,{pc}
+	bx lr
 ;@----------------------------------------------------------------------------
 V30SetIRQPin:			;@ r0=pin state
 ;@----------------------------------------------------------------------------

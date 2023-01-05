@@ -1,4 +1,4 @@
-# ARMV30MZ V0.8.3
+# ARMV30MZ V0.8.4
 NEC V30MZ emulator for ARM 32.
 
 All opcodes should behave pretty much like the real deal in a WonderSwan.

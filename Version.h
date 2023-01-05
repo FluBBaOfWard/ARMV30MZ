@@ -3,7 +3,7 @@
 //  ARMV30MZ
 //
 //  Created by Fredrik Ahlström on 2021-10-19.
-//  Copyright © 2021-2022 Fredrik Ahlström. All rights reserved.
+//  Copyright © 2021-2023 Fredrik Ahlström. All rights reserved.
 //
 
-#define ARMV30MZVERSION "V0.8.3"
+#define ARMV30MZVERSION "V0.8.4"

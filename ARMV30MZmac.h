@@ -3,7 +3,7 @@
 //  V30MZ cpu emulator for arm32.
 //
 //  Created by Fredrik Ahlström on 2021-10-19.
-//  Copyright © 2021-2022 Fredrik Ahlström. All rights reserved.
+//  Copyright © 2021-2023 Fredrik Ahlström. All rights reserved.
 //
 
 #include "ARMV30MZ.i"
