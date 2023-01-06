@@ -402,12 +402,10 @@ _15:	;@ ADDC/ADC AXD16
 i_push_ss:
 _16:	;@ PUSH SS
 ;@----------------------------------------------------------------------------
-	ldr v30ofs,[v30ptr,#v30RegSP]
 	ldr v30csr,[v30ptr,#v30SRegSS]
-	sub v30ofs,v30ofs,#0x20000
+	ldr v30ofs,[v30ptr,#v30RegSP]
 	mov r1,v30csr,lsr#16
-	str v30ofs,[v30ptr,#v30RegSP]
-	bl v30WriteSegOfsW
+	bl v30PushLastW
 	fetch 2
 ;@----------------------------------------------------------------------------
 i_pop_ss:
@@ -1212,9 +1210,7 @@ _5B:	;@ POP BW/BX
 i_pop_sp:
 _5C:	;@ POP SP
 ;@----------------------------------------------------------------------------
-	ldr v30ofs,[v30ptr,#v30RegSP]
-	ldr v30csr,[v30ptr,#v30SRegSS]
-	bl v30ReadSegOfsW
+	bl v30StackReadW
 	strh r0,[v30ptr,#v30RegSP+2]
 	fetch 1
 ;@----------------------------------------------------------------------------
@@ -1261,17 +1257,13 @@ _60:	;@ PUSHA
 	sub v30ofs,v30ofs,#0x20000
 	bl v30WriteSegOfsW
 	ldrh r1,[v30ptr,#v30RegIY+2]
-	sub v30ofs,v30ofs,#0x20000
-	bl v30WriteSegOfsW
-	str v30ofs,[v30ptr,#v30RegSP]
+	bl v30PushLastW
 	fetch 9
 ;@----------------------------------------------------------------------------
 i_popa:
 _61:	;@ POPA
 ;@----------------------------------------------------------------------------
-	ldr v30ofs,[v30ptr,#v30RegSP]
-	ldr v30csr,[v30ptr,#v30SRegSS]
-	bl v30ReadSegOfsW
+	bl v30StackReadW
 	add v30ofs,v30ofs,#0x20000
 	strh r0,[v30ptr,#v30RegIY+2]
 	bl v30ReadSegOfsW
@@ -1344,18 +1336,17 @@ _69:	;@ MUL/IMUL D16
 	ldrhpl r0,[r2,#v30Regs]
 	blmi v30ReadEAW1
 
-	mov r5,r0
-	getNextWord
+	getNextWordto r1, r2
 
 	mov v30f,#PSR_Z						;@ Set Z and clear others.
 	strb v30f,[v30ptr,#v30ParityVal]	;@ Clear parity
-	mul r0,r5,r0
-	movs r1,r0,asr#15
+	mul r2,r0,r1
+	movs r1,r2,asr#15
 	mvnsne r1,r1
 	orrne v30f,v30f,#PSR_C+PSR_V	;@ Set Carry & Overflow.
 	strb v30f,[v30ptr,#v30MulOverflow]
 
-	strh r0,[r4,#v30Regs]
+	strh r2,[r4,#v30Regs]
 	bic v30cyc,v30cyc,#SEG_PREFIX
 	fetch 3
 ;@----------------------------------------------------------------------------
@@ -1971,16 +1962,11 @@ _8B:	;@ MOV R16W
 	and r4,r0,#0x38
 	add r4,v30ptr,r4,lsr#1
 	cmp r0,#0xC0
-	bmi 0f
 Str_8B:
-	and r2,r0,#7
-	add r1,v30ptr,r2,lsl#2
-	ldrh r0,[r1,#v30Regs]
-	strh r0,[r4,#v30Regs]
-	bic v30cyc,v30cyc,#SEG_PREFIX
-	fetch 1
-0:
-	bl v30ReadEAW
+	andpl r2,r0,#7
+	addpl r1,v30ptr,r2,lsl#2
+	ldrhpl r0,[r1,#v30Regs]
+	blmi v30ReadEAW
 	strh r0,[r4,#v30Regs]
 	bic v30cyc,v30cyc,#SEG_PREFIX
 	fetch 1
@@ -2127,10 +2113,8 @@ _9A:	;@ CALL FAR
 	ldr v30csr,[v30ptr,#v30SRegSS]
 	sub v30ofs,v30ofs,#0x20000
 	bl v30WriteSegOfsW
-	sub v30ofs,v30ofs,#0x20000
-	str v30ofs,[v30ptr,#v30RegSP]
 	v30DecodeFastPCToReg r1
-	bl v30WriteSegOfsW
+	bl v30PushLastW
 	mov v30pc,r4,lsl#16
 	v30EncodeFastPC
 	fetch 10
@@ -3094,13 +3078,11 @@ shraC1:
 i_ret_d16:
 _C2:	;@ RET D16
 ;@----------------------------------------------------------------------------
-	getNextWord
-	ldr v30ofs,[v30ptr,#v30RegSP]
-	ldr v30csr,[v30ptr,#v30SRegSS]
-	add r2,v30ofs,#0x20000
-	add r2,r2,r0,lsl#16
-	str r2,[v30ptr,#v30RegSP]
-	bl v30ReadSegOfsW
+	bl v30StackReadW
+	add v30ofs,v30ofs,#0x20000
+	getNextWordTo r2, r1
+	add v30ofs,v30ofs,r2,lsl#16
+	str v30ofs,[v30ptr,#v30RegSP]
 	mov v30pc,r0,lsl#16
 	v30EncodeFastPC
 	fetch 6
@@ -3108,11 +3090,9 @@ _C2:	;@ RET D16
 i_ret:
 _C3:	;@ RET
 ;@----------------------------------------------------------------------------
-	ldr v30ofs,[v30ptr,#v30RegSP]
-	ldr v30csr,[v30ptr,#v30SRegSS]
-	add r2,v30ofs,#0x20000
-	str r2,[v30ptr,#v30RegSP]
-	bl v30ReadSegOfsW
+	bl v30StackReadW
+	add v30ofs,v30ofs,#0x20000
+	str v30ofs,[v30ptr,#v30RegSP]
 	mov v30pc,r0,lsl#16
 	v30EncodeFastPC
 	fetch 6
@@ -3266,26 +3246,22 @@ _C9:	;@ DISPOSE/LEAVE
 i_retf_d16:
 _CA:	;@ RETF D16
 ;@----------------------------------------------------------------------------
-	getNextWord
-	ldr v30ofs,[v30ptr,#v30RegSP]
-	ldr v30csr,[v30ptr,#v30SRegSS]
-	add r4,r0,#2
-	bl v30ReadSegOfsW
+	getNextWordTo r4, r0
+	bl v30StackReadW
 	add v30ofs,v30ofs,#0x20000
 	mov v30pc,r0,lsl#16
 	bl v30ReadSegOfsW
+	add v30ofs,v30ofs,#0x20000
 	add v30ofs,v30ofs,r4,lsl#16
-	str v30ofs,[v30ptr,#v30RegSP]
 	strh r0,[v30ptr,#v30SRegCS+2]
+	str v30ofs,[v30ptr,#v30RegSP]
 	v30EncodeFastPC
 	fetch 9
 ;@----------------------------------------------------------------------------
 i_retf:
 _CB:	;@ RETF
 ;@----------------------------------------------------------------------------
-	ldr v30ofs,[v30ptr,#v30RegSP]
-	ldr v30csr,[v30ptr,#v30SRegSS]
-	bl v30ReadSegOfsW
+	bl v30StackReadW
 	add v30ofs,v30ofs,#0x20000
 	mov v30pc,r0,lsl#16
 	bl v30ReadSegOfsW
@@ -3321,9 +3297,7 @@ _CE:	;@ BRKV					;@ Break if Overflow
 i_iret:
 _CF:	;@ IRET
 ;@----------------------------------------------------------------------------
-	ldr v30ofs,[v30ptr,#v30RegSP]
-	ldr v30csr,[v30ptr,#v30SRegSS]
-	bl v30ReadSegOfsW
+	bl v30StackReadW
 	add v30ofs,v30ofs,#0x20000
 	mov v30pc,r0,lsl#16
 	bl v30ReadSegOfsW
@@ -4297,11 +4271,9 @@ callFarFF:
 	sub v30ofs,v30ofs,#0x20000
 	bl v30WriteSegOfsW
 
-	V30EncodeFastPC
 	mov r1,r4
-	sub v30ofs,v30ofs,#0x20000
-	str v30ofs,[v30ptr,#v30RegSP]
-	bl v30WriteSegOfsW
+	bl v30PushLastW
+	V30EncodeFastPC
 	fetch 11
 ;@----------------------------------------------------------------------------
 braFF:
@@ -4643,27 +4615,23 @@ V30TakeIRQ:
 nec_interrupt:				;@ r0 = vector number
 ;@----------------------------------------------------------------------------
 	mov r4,r0,lsl#12+2
-	bl pushFlags
+	bl pushFlags				;@ This should setup v30ofs & v30csr for stack
 	strb r4,[v30ptr,#v30IF]		;@ Clear IF
 	strb r4,[v30ptr,#v30TF]		;@ Clear TF
-	mov r0,r4
-	bl cpuReadMem20W
-	mov r5,r0
-	add r0,r4,#0x2000
-	bl cpuReadMem20W
 
-	ldr v30ofs,[v30ptr,#v30RegSP]
-	ldr v30csr,[v30ptr,#v30SRegSS]
-	sub v30ofs,v30ofs,#0x20000
 	ldrh r1,[v30ptr,#v30SRegCS+2]
-	strh r0,[v30ptr,#v30SRegCS+2]
+	sub v30ofs,v30ofs,#0x20000
 	bl v30WriteSegOfsW
 	v30DecodeFastPCToReg r1
-	sub v30ofs,v30ofs,#0x20000
-	str v30ofs,[v30ptr,#v30RegSP]
-	bl v30WriteSegOfsW
+	bl v30PushLastW
 
-	mov v30pc,r5,lsl#16
+	mov r0,r4
+	bl cpuReadMem20W
+	mov v30pc,r0,lsl#16
+	add r0,r4,#0x2000
+	bl cpuReadMem20W
+	strh r0,[v30ptr,#v30SRegCS+2]
+
 	v30EncodeFastPC
 	fetch 32
 ;@----------------------------------------------------------------------------
