@@ -300,7 +300,7 @@ _10:	;@ ADDC/ADC BR8
 ;@----------------------------------------------------------------------------
 	getNextByte
 	add r2,v30ptr,r0,lsl#2
-	ldrb r1,[r2,#v30ModRmReg]
+	ldr r1,[r2,#v30ModRmReg]
 	ldrb r5,[v30ptr,-r1,lsr#24]
 	cmp r0,#0xC0
 	bmi 0f
