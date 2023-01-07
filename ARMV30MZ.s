@@ -71,8 +71,8 @@ _00:	;@ ADD BR8
 ;@----------------------------------------------------------------------------
 	getNextByte
 	add r2,v30ptr,r0,lsl#2
-	ldrb r1,[r2,#v30ModRmReg]
-	ldrb r5,[v30ptr,-r1]
+	ldr r1,[r2,#v30ModRmReg]
+	ldrb r5,[v30ptr,-r1,lsr#24]
 	cmp r0,#0xC0
 	bmi 0f
 
@@ -122,15 +122,15 @@ _02:	;@ ADD R8b
 ;@----------------------------------------------------------------------------
 	getNextByte
 	add r2,v30ptr,r0,lsl#2
-	ldrb r4,[r2,#v30ModRmReg]
+	ldr r4,[r2,#v30ModRmReg]
 	cmp r0,#0xC0
 	ldrbpl r1,[r2,#v30ModRmRm]
 	ldrbpl r0,[v30ptr,-r1]
 	blmi v30ReadEA1
 
-	ldrb r1,[v30ptr,-r4]
+	ldrb r1,[v30ptr,-r4,lsr#24]
 	add8 r0,r1
-	strb r1,[v30ptr,-r4]
+	strb r1,[v30ptr,-r4,lsr#24]
 	bic v30cyc,v30cyc,#SEG_PREFIX
 	fetch 1
 ;@----------------------------------------------------------------------------
@@ -189,8 +189,8 @@ _08:	;@ OR BR8
 ;@----------------------------------------------------------------------------
 	getNextByte
 	add r2,v30ptr,r0,lsl#2
-	ldrb r1,[r2,#v30ModRmReg]
-	ldrb r5,[v30ptr,-r1]
+	ldr r1,[r2,#v30ModRmReg]
+	ldrb r5,[v30ptr,-r1,lsr#24]
 	cmp r0,#0xC0
 	bmi 0f
 
@@ -240,15 +240,15 @@ _0A:	;@ OR R8b
 ;@----------------------------------------------------------------------------
 	getNextByte
 	add r2,v30ptr,r0,lsl#2
-	ldrb r4,[r2,#v30ModRmReg]
+	ldr r4,[r2,#v30ModRmReg]
 	cmp r0,#0xC0
 	ldrbpl r3,[r2,#v30ModRmRm]
 	ldrbpl r0,[v30ptr,-r3]
 	blmi v30ReadEA1
 
-	ldrb r1,[v30ptr,-r4]
+	ldrb r1,[v30ptr,-r4,lsr#24]
 	or8 r0,r1
-	strb r1,[v30ptr,-r4]
+	strb r1,[v30ptr,-r4,lsr#24]
 	bic v30cyc,v30cyc,#SEG_PREFIX
 	fetch 1
 ;@----------------------------------------------------------------------------
@@ -301,7 +301,7 @@ _10:	;@ ADDC/ADC BR8
 	getNextByte
 	add r2,v30ptr,r0,lsl#2
 	ldrb r1,[r2,#v30ModRmReg]
-	ldrb r5,[v30ptr,-r1]
+	ldrb r5,[v30ptr,-r1,lsr#24]
 	cmp r0,#0xC0
 	bmi 0f
 
@@ -351,15 +351,15 @@ _12:	;@ ADDC/ADC R8b
 ;@----------------------------------------------------------------------------
 	getNextByte
 	add r2,v30ptr,r0,lsl#2
-	ldrb r4,[r2,#v30ModRmReg]
+	ldr r4,[r2,#v30ModRmReg]
 	cmp r0,#0xC0
 	ldrbpl r1,[r2,#v30ModRmRm]
 	ldrbpl r0,[v30ptr,-r1]
 	blmi v30ReadEA1
 
-	ldrb r1,[v30ptr,-r4]
+	ldrb r1,[v30ptr,-r4,lsr#24]
 	adc8 r0,r1
-	strb r1,[v30ptr,-r4]
+	strb r1,[v30ptr,-r4,lsr#24]
 	bic v30cyc,v30cyc,#SEG_PREFIX
 	fetch 1
 ;@----------------------------------------------------------------------------
@@ -421,8 +421,8 @@ _18:	;@ SUBC/SBB BR8
 ;@----------------------------------------------------------------------------
 	getNextByte
 	add r2,v30ptr,r0,lsl#2
-	ldrb r1,[r2,#v30ModRmReg]
-	ldrb r5,[v30ptr,-r1]
+	ldr r1,[r2,#v30ModRmReg]
+	ldrb r5,[v30ptr,-r1,lsr#24]
 	cmp r0,#0xC0
 	bmi 0f
 
@@ -473,15 +473,15 @@ _1A:	;@ SUBC/SBB R8b
 ;@----------------------------------------------------------------------------
 	getNextByte
 	add r2,v30ptr,r0,lsl#2
-	ldrb r4,[r2,#v30ModRmReg]
+	ldr r4,[r2,#v30ModRmReg]
 	cmp r0,#0xC0
 	ldrbpl r1,[r2,#v30ModRmRm]
 	ldrbpl r0,[v30ptr,-r1]
 	blmi v30ReadEA1
 
-	ldrb r1,[v30ptr,-r4]
+	ldrb r1,[v30ptr,-r4,lsr#24]
 	subc8 r0,r1
-	strb r1,[v30ptr,-r4]
+	strb r1,[v30ptr,-r4,lsr#24]
 	bic v30cyc,v30cyc,#SEG_PREFIX
 	fetch 1
 ;@----------------------------------------------------------------------------
@@ -540,8 +540,8 @@ _20:	;@ AND BR8
 ;@----------------------------------------------------------------------------
 	getNextByte
 	add r2,v30ptr,r0,lsl#2
-	ldrb r1,[r2,#v30ModRmReg]
-	ldrb r5,[v30ptr,-r1]
+	ldr r1,[r2,#v30ModRmReg]
+	ldrb r5,[v30ptr,-r1,lsr#24]
 	cmp r0,#0xC0
 	bmi 0f
 
@@ -591,15 +591,15 @@ _22:	;@ AND R8b
 ;@----------------------------------------------------------------------------
 	getNextByte
 	add r2,v30ptr,r0,lsl#2
-	ldrb r4,[r2,#v30ModRmReg]
+	ldr r4,[r2,#v30ModRmReg]
 	cmp r0,#0xC0
 	ldrbpl r1,[r2,#v30ModRmRm]
 	ldrbpl r0,[v30ptr,-r1]
 	blmi v30ReadEA1
 
-	ldrb r1,[v30ptr,-r4]
+	ldrb r1,[v30ptr,-r4,lsr#24]
 	and8 r0,r1
-	strb r1,[v30ptr,-r4]
+	strb r1,[v30ptr,-r4,lsr#24]
 	bic v30cyc,v30cyc,#SEG_PREFIX
 	fetch 1
 ;@----------------------------------------------------------------------------
@@ -679,8 +679,8 @@ _28:	;@ SUB BR8
 ;@----------------------------------------------------------------------------
 	getNextByte
 	add r2,v30ptr,r0,lsl#2
-	ldrb r1,[r2,#v30ModRmReg]
-	ldrb r5,[v30ptr,-r1]
+	ldr r1,[r2,#v30ModRmReg]
+	ldrb r5,[v30ptr,-r1,lsr#24]
 	cmp r0,#0xC0
 	bmi 0f
 
@@ -731,15 +731,15 @@ _2A:	;@ SUB R8b
 ;@----------------------------------------------------------------------------
 	getNextByte
 	add r2,v30ptr,r0,lsl#2
-	ldrb r4,[r2,#v30ModRmReg]
+	ldr r4,[r2,#v30ModRmReg]
 	cmp r0,#0xC0
 	ldrbpl r1,[r2,#v30ModRmRm]
 	ldrbpl r0,[v30ptr,-r1]
 	blmi v30ReadEA1
 
-	ldrb r1,[v30ptr,-r4]
+	ldrb r1,[v30ptr,-r4,lsr#24]
 	sub8 r0,r1
-	strb r1,[v30ptr,-r4]
+	strb r1,[v30ptr,-r4,lsr#24]
 	bic v30cyc,v30cyc,#SEG_PREFIX
 	fetch 1
 ;@----------------------------------------------------------------------------
@@ -819,8 +819,8 @@ _30:	;@ XOR BR8
 ;@----------------------------------------------------------------------------
 	getNextByte
 	add r2,v30ptr,r0,lsl#2
-	ldrb r1,[r2,#v30ModRmReg]
-	ldrb r5,[v30ptr,-r1]
+	ldr r1,[r2,#v30ModRmReg]
+	ldrb r5,[v30ptr,-r1,lsr#24]
 	cmp r0,#0xC0
 	bmi 0f
 
@@ -870,15 +870,15 @@ _32:	;@ XOR R8b
 ;@----------------------------------------------------------------------------
 	getNextByte
 	add r2,v30ptr,r0,lsl#2
-	ldrb r4,[r2,#v30ModRmReg]
+	ldr r4,[r2,#v30ModRmReg]
 	cmp r0,#0xC0
 	ldrbpl r1,[r2,#v30ModRmRm]
 	ldrbpl r0,[v30ptr,-r1]
 	blmi v30ReadEA1
 
-	ldrb r1,[v30ptr,-r4]
+	ldrb r1,[v30ptr,-r4,lsr#24]
 	xor8 r0,r1
-	strb r1,[v30ptr,-r4]
+	strb r1,[v30ptr,-r4,lsr#24]
 	bic v30cyc,v30cyc,#SEG_PREFIX
 	fetch 1
 ;@----------------------------------------------------------------------------
@@ -952,8 +952,8 @@ _38:	;@ CMP BR8
 ;@----------------------------------------------------------------------------
 	getNextByte
 	add r2,v30ptr,r0,lsl#2
-	ldrb r1,[r2,#v30ModRmReg]
-	ldrb r4,[v30ptr,-r1]
+	ldr r1,[r2,#v30ModRmReg]
+	ldrb r4,[v30ptr,-r1,lsr#24]
 	cmp r0,#0xC0
 	ldrbpl r1,[r2,#v30ModRmRm]
 	ldrbpl r0,[v30ptr,-r1]
@@ -986,8 +986,8 @@ _3A:	;@ CMP R8b
 ;@----------------------------------------------------------------------------
 	getNextByte
 	add r2,v30ptr,r0,lsl#2
-	ldrb r1,[r2,#v30ModRmReg]
-	ldrb r4,[v30ptr,-r1]
+	ldr r1,[r2,#v30ModRmReg]
+	ldrb r4,[v30ptr,-r1,lsr#24]
 	cmp r0,#0xC0
 	ldrbpl r1,[r2,#v30ModRmRm]
 	ldrbpl r0,[v30ptr,-r1]
@@ -1831,8 +1831,8 @@ _84:	;@ TEST BR8
 ;@----------------------------------------------------------------------------
 	getNextByte
 	add r2,v30ptr,r0,lsl#2
-	ldrb r1,[r2,#v30ModRmReg]
-	ldrb r4,[v30ptr,-r1]
+	ldr r1,[r2,#v30ModRmReg]
+	ldrb r4,[v30ptr,-r1,lsr#24]
 	cmp r0,#0xC0
 	ldrbpl r1,[r2,#v30ModRmRm]
 	ldrbpl r0,[v30ptr,-r1]
@@ -1864,21 +1864,21 @@ _86:	;@ XCH/XCHG BR8
 ;@----------------------------------------------------------------------------
 	getNextByte
 	add r2,v30ptr,r0,lsl#2
-	ldrb r4,[r2,#v30ModRmReg]
+	ldr r4,[r2,#v30ModRmReg]
 	cmp r0,#0xC0
 	bmi 0f
 
 	ldrb r2,[r2,#v30ModRmRm]
 	ldrb r0,[v30ptr,-r2]
-	ldrb r1,[v30ptr,-r4]
-	strb r0,[v30ptr,-r4]
+	ldrb r1,[v30ptr,-r4,lsr#24]
+	strb r0,[v30ptr,-r4,lsr#24]
 	strb r1,[v30ptr,-r2]
 	bic v30cyc,v30cyc,#SEG_PREFIX
 	fetch 3
 0:
 	bl v30ReadEA
-	ldrb r1,[v30ptr,-r4]
-	strb r0,[v30ptr,-r4]
+	ldrb r1,[v30ptr,-r4,lsr#24]
+	strb r0,[v30ptr,-r4,lsr#24]
 	bl v30WriteSegOfs
 	bic v30cyc,v30cyc,#SEG_PREFIX
 	fetch 5
@@ -1914,8 +1914,8 @@ _88:	;@ MOV BR8
 ;@----------------------------------------------------------------------------
 	getNextByte
 	add r2,v30ptr,r0,lsl#2
-	ldrb r3,[r2,#v30ModRmReg]
-	ldrb r1,[v30ptr,-r3]
+	ldr r3,[r2,#v30ModRmReg]
+	ldrb r1,[v30ptr,-r3,lsr#24]
 	cmp r0,#0xC0
 
 	ldrbpl r3,[r2,#v30ModRmRm]
@@ -1945,13 +1945,13 @@ _8A:	;@ MOV R8B
 ;@----------------------------------------------------------------------------
 	getNextByte
 	add r2,v30ptr,r0,lsl#2
-	ldrb r4,[r2,#v30ModRmReg]
+	ldr r4,[r2,#v30ModRmReg]
 	cmp r0,#0xC0
 
 	ldrbpl r1,[r2,#v30ModRmRm]
 	ldrbpl r0,[v30ptr,-r1]
 	blmi v30ReadEA
-	strb r0,[v30ptr,-r4]
+	strb r0,[v30ptr,-r4,lsr#24]
 	bic v30cyc,v30cyc,#SEG_PREFIX
 	fetch 1
 ;@----------------------------------------------------------------------------
@@ -3116,7 +3116,7 @@ _C4:	;@ LES DW
 	bic v30cyc,v30cyc,#SEG_PREFIX
 	fetch 6
 1:
-	and r0,r0,#7
+	andpl r0,r0,#7
 	add r2,v30ptr,r0,lsl#2
 	ldrh r0,[r2,#v30Regs]
 	bl logUndefinedOpcode
@@ -3140,7 +3140,7 @@ _C5:	;@ LDS DW
 	bic v30cyc,v30cyc,#SEG_PREFIX
 	fetch 6
 1:
-	and r0,r0,#7
+	andpl r0,r0,#7
 	add r2,v30ptr,r0,lsl#2
 	ldrh r0,[r2,#v30Regs]
 	bl logUndefinedOpcode
@@ -3151,15 +3151,14 @@ _C6:	;@ MOV BD8
 ;@----------------------------------------------------------------------------
 	getNextByte
 	cmp r0,#0xC0
-	bmi 0f
 	add r2,v30ptr,r0,lsl#2
+	bmi 0f
 	ldrb r4,[r2,#v30ModRmRm]
 	getNextByteTo r1
 	strb r1,[v30ptr,-r4]
 	bic v30cyc,v30cyc,#SEG_PREFIX
 	fetch 1
 0:
-	add r2,v30ptr,r0,lsl#2
 	mov r12,pc					;@ Return reg for EA
 	ldr pc,[r2,#v30EATable]
 	getNextByteTo r1
@@ -4752,6 +4751,7 @@ regConvLoop:
 	bne regConvLoop
 
 	add r0,v30ptr,#v30ModRmReg
+	add r0,r0,#3
 	mov r2,#0
 regConv2Loop:
 	and r3,r2,#0x38
@@ -5163,7 +5163,7 @@ GetEA:
 	.long EA_200, EA_201, EA_202, EA_203, EA_204, EA_205, EA_206, EA_207
 Mod_RM:
 	.space 0x400
-	.space 0x400
+//	.space 0x400
 SegmentTable:
 	.byte 1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0
 	.byte 1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0
