@@ -1707,8 +1707,8 @@ _82:	;@ PRE 82
 ;@----------------------------------------------------------------------------
 	getNextByteTo r4
 	cmp r4,#0xC0
-	bmi 1f
 	add r2,v30ptr,r4,lsl#2
+	bmi 1f
 	ldrb v30ofs,[r2,#v30ModRmRm]
 	ldrb r0,[v30ptr,-v30ofs]
 0:
@@ -1722,7 +1722,7 @@ _82:	;@ PRE 82
 1:
 	eatCycles 2
 	adr lr,0b
-	b v30ReadEAr4
+	b v30ReadEA
 add80:
 	add8 r1,r0
 	b 2f
@@ -2973,8 +2973,8 @@ _C0:	;@ ROTSHFT BD8
 ;@----------------------------------------------------------------------------
 	getNextByteTo r4
 	cmp r4,#0xC0
-	bmi 1f
 	add r2,v30ptr,r4,lsl#2
+	bmi 1f
 	ldrb v30ofs,[r2,#v30ModRmRm]
 	ldrb r0,[v30ptr,-v30ofs]
 	eatCycles 2
@@ -2990,7 +2990,7 @@ d2Continue:
 1:
 	eatCycles 4
 	adr lr,0b
-	b v30ReadEAr4
+	b v30ReadEA
 rolC0:
 	rol8 r0,r1
 	b 2f
@@ -3315,16 +3315,15 @@ _D0:	;@ ROTSHFT B
 ;@----------------------------------------------------------------------------
 	getNextByteTo r4
 	cmp r4,#0xC0
-	bmi 0f
-
 	add r2,v30ptr,r4,lsl#2
+	bmi 0f
 	ldrb v30ofs,[r2,#v30ModRmRm]
 	ldrb r0,[v30ptr,-v30ofs]
 	mov r1,#1
 	b d2Continue
 0:
 	eatCycles 2
-	bl v30ReadEAr4
+	bl v30ReadEA
 	mov r1,#1
 	b d2Continue
 ;@----------------------------------------------------------------------------
@@ -3351,17 +3350,16 @@ _D2:	;@ ROTSHFT BCL
 ;@----------------------------------------------------------------------------
 	getNextByteTo r4
 	cmp r4,#0xC0
-	bmi 0f
-
-	eatCycles 2
 	add r2,v30ptr,r4,lsl#2
+	bmi 0f
+	eatCycles 2
 	ldrb v30ofs,[r2,#v30ModRmRm]
 	ldrb r0,[v30ptr,-v30ofs]
 	ldrb r1,[v30ptr,#v30RegCL]
 	b d2Continue
 0:
 	eatCycles 4
-	bl v30ReadEAr4
+	bl v30ReadEA
 	ldrb r1,[v30ptr,#v30RegCL]
 	b d2Continue
 ;@----------------------------------------------------------------------------
@@ -3855,8 +3853,8 @@ _F6:	;@ PRE F6
 ;@----------------------------------------------------------------------------
 	getNextByteTo r4
 	cmp r4,#0xC0
-	bmi 1f
 	add r2,v30ptr,r4,lsl#2
+	bmi 1f
 	ldrb v30ofs,[r2,#v30ModRmRm]
 	ldrb r0,[v30ptr,-v30ofs]
 0:
@@ -3868,7 +3866,7 @@ _F6:	;@ PRE F6
 1:
 	eatCycles 1
 	adr lr,0b
-	b v30ReadEAr4
+	b v30ReadEA
 ;@----------------------------------------------------------------------------
 testF6:
 	getNextByteTo r1
@@ -4168,8 +4166,8 @@ _FE:	;@ PRE FE
 	tst r4,#0x30
 	bne contFF
 	cmp r4,#0xC0
-	bmi 1f
 	add r2,v30ptr,r4,lsl#2
+	bmi 1f
 	ldrb v30ofs,[r2,#v30ModRmRm]
 	ldrb r0,[v30ptr,-v30ofs]
 0:
@@ -4202,7 +4200,7 @@ writeBackFE:
 1:
 	eatCycles 2
 	adr lr,0b
-	b v30ReadEAr4
+	b v30ReadEA
 
 ;@----------------------------------------------------------------------------
 i_ffpre:
