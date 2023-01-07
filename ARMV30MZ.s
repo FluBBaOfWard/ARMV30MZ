@@ -61,22 +61,22 @@
 	.global i_bgt
 
 //
-// All opcodes are free to also use r4-r6 without pushing to stack.
+// All opcodes are free to also use r4-r5 without pushing to stack.
 // If an opcode calls another opcode, the caller is responsible for
-// saving r4-r6 before the call if needed.
+// saving r4-r5 before the call if needed.
 //
 ;@----------------------------------------------------------------------------
 i_add_br8:
 _00:	;@ ADD BR8
 ;@----------------------------------------------------------------------------
 	getNextByte
-	add r1,v30ptr,r0
-	ldrb r2,[r1,#v30ModRmReg]
-	ldrb r5,[v30ptr,-r2]
+	add r2,v30ptr,r0
+	ldrb r1,[r2,#v30ModRmReg]
+	ldrb r5,[v30ptr,-r1]
 	cmp r0,#0xC0
 	bmi 0f
 
-	ldrb v30ofs,[r1,#v30ModRmRm]
+	ldrb v30ofs,[r2,#v30ModRmRm]
 	ldrb r0,[v30ptr,-v30ofs]
 	add8 r5,r0
 
@@ -101,8 +101,8 @@ _01:	;@ ADD WR16
 	cmp r0,#0xC0
 	bmi 0f
 
-	and r2,r0,#7
-	add v30ofs,v30ptr,r2,lsl#2
+	andpl r0,r0,#7
+	add v30ofs,v30ptr,r0,lsl#2
 	ldrh r0,[v30ofs,#v30Regs]
 	add16 r0,r5
 
@@ -121,11 +121,11 @@ i_add_r8b:
 _02:	;@ ADD R8b
 ;@----------------------------------------------------------------------------
 	getNextByte
-	add r1,v30ptr,r0
-	ldrb r4,[r1,#v30ModRmReg]
+	add r2,v30ptr,r0
+	ldrb r4,[r2,#v30ModRmReg]
 	cmp r0,#0xC0
-	ldrbpl r2,[r1,#v30ModRmRm]
-	ldrbpl r0,[v30ptr,-r2]
+	ldrbpl r1,[r2,#v30ModRmRm]
+	ldrbpl r0,[v30ptr,-r1]
 	blmi v30ReadEA1
 
 	ldrb r1,[v30ptr,-r4]
@@ -188,13 +188,13 @@ i_or_br8:
 _08:	;@ OR BR8
 ;@----------------------------------------------------------------------------
 	getNextByte
-	add r1,v30ptr,r0
-	ldrb r2,[r1,#v30ModRmReg]
-	ldrb r5,[v30ptr,-r2]
+	add r2,v30ptr,r0
+	ldrb r1,[r2,#v30ModRmReg]
+	ldrb r5,[v30ptr,-r1]
 	cmp r0,#0xC0
 	bmi 0f
 
-	ldrb v30ofs,[r1,#v30ModRmRm]
+	ldrb v30ofs,[r2,#v30ModRmRm]
 	ldrb r0,[v30ptr,-v30ofs]
 	or8 r5,r0
 
@@ -219,8 +219,8 @@ _09:	;@ OR WR16
 	cmp r0,#0xC0
 	bmi 0f
 
-	and r2,r0,#7
-	add v30ofs,v30ptr,r2,lsl#2
+	andpl r0,r0,#7
+	add v30ofs,v30ptr,r0,lsl#2
 	ldrh r0,[v30ofs,#v30Regs]
 	or16 r0,r5
 
@@ -239,11 +239,11 @@ i_or_r8b:
 _0A:	;@ OR R8b
 ;@----------------------------------------------------------------------------
 	getNextByte
-	add r1,v30ptr,r0
-	ldrb r4,[r1,#v30ModRmReg]
+	add r2,v30ptr,r0
+	ldrb r4,[r2,#v30ModRmReg]
 	cmp r0,#0xC0
-	ldrbpl r2,[r1,#v30ModRmRm]
-	ldrbpl r0,[v30ptr,-r2]
+	ldrbpl r3,[r2,#v30ModRmRm]
+	ldrbpl r0,[v30ptr,-r3]
 	blmi v30ReadEA1
 
 	ldrb r1,[v30ptr,-r4]
@@ -299,13 +299,13 @@ i_adc_br8:
 _10:	;@ ADDC/ADC BR8
 ;@----------------------------------------------------------------------------
 	getNextByte
-	add r1,v30ptr,r0
-	ldrb r2,[r1,#v30ModRmReg]
-	ldrb r5,[v30ptr,-r2]
+	add r2,v30ptr,r0
+	ldrb r1,[r2,#v30ModRmReg]
+	ldrb r5,[v30ptr,-r1]
 	cmp r0,#0xC0
 	bmi 0f
 
-	ldrb v30ofs,[r1,#v30ModRmRm]
+	ldrb v30ofs,[r2,#v30ModRmRm]
 	ldrb r0,[v30ptr,-v30ofs]
 	adc8 r5,r0
 
@@ -330,8 +330,8 @@ _11:	;@ ADDC/ADC WR16
 	cmp r0,#0xC0
 	bmi 0f
 
-	and r2,r0,#7
-	add v30ofs,v30ptr,r2,lsl#2
+	andpl r0,r0,#7
+	add v30ofs,v30ptr,r0,lsl#2
 	ldrh r0,[v30ofs,#v30Regs]
 	adc16 r0,r5
 
@@ -350,11 +350,11 @@ i_adc_r8b:
 _12:	;@ ADDC/ADC R8b
 ;@----------------------------------------------------------------------------
 	getNextByte
-	add r1,v30ptr,r0
-	ldrb r4,[r1,#v30ModRmReg]
+	add r2,v30ptr,r0
+	ldrb r4,[r2,#v30ModRmReg]
 	cmp r0,#0xC0
-	ldrbpl r2,[r1,#v30ModRmRm]
-	ldrbpl r0,[v30ptr,-r2]
+	ldrbpl r1,[r2,#v30ModRmRm]
+	ldrbpl r0,[v30ptr,-r1]
 	blmi v30ReadEA1
 
 	ldrb r1,[v30ptr,-r4]
@@ -420,13 +420,13 @@ i_sbb_br8:
 _18:	;@ SUBC/SBB BR8
 ;@----------------------------------------------------------------------------
 	getNextByte
-	add r1,v30ptr,r0
-	ldrb r2,[r1,#v30ModRmReg]
-	ldrb r5,[v30ptr,-r2]
+	add r2,v30ptr,r0
+	ldrb r1,[r2,#v30ModRmReg]
+	ldrb r5,[v30ptr,-r1]
 	cmp r0,#0xC0
 	bmi 0f
 
-	ldrb v30ofs,[r1,#v30ModRmRm]
+	ldrb v30ofs,[r2,#v30ModRmRm]
 	ldrb r0,[v30ptr,-v30ofs]
 	subc8 r5,r0
 
@@ -451,8 +451,8 @@ _19:	;@ SUBC/SBB WR16
 	cmp r0,#0xC0
 	bmi 0f
 
-	and r2,r0,#7
-	add v30ofs,v30ptr,r2,lsl#2
+	andpl r0,r0,#7
+	add v30ofs,v30ptr,r0,lsl#2
 	ldr r0,[v30ofs,#v30Regs2]
 	subc16 r5,r0
 
@@ -472,11 +472,11 @@ i_sbb_r8b:
 _1A:	;@ SUBC/SBB R8b
 ;@----------------------------------------------------------------------------
 	getNextByte
-	add r1,v30ptr,r0
-	ldrb r4,[r1,#v30ModRmReg]
+	add r2,v30ptr,r0
+	ldrb r4,[r2,#v30ModRmReg]
 	cmp r0,#0xC0
-	ldrbpl r2,[r1,#v30ModRmRm]
-	ldrbpl r0,[v30ptr,-r2]
+	ldrbpl r1,[r2,#v30ModRmRm]
+	ldrbpl r0,[v30ptr,-r1]
 	blmi v30ReadEA1
 
 	ldrb r1,[v30ptr,-r4]
@@ -539,13 +539,13 @@ i_and_br8:
 _20:	;@ AND BR8
 ;@----------------------------------------------------------------------------
 	getNextByte
-	add r1,v30ptr,r0
-	ldrb r2,[r1,#v30ModRmReg]
-	ldrb r5,[v30ptr,-r2]
+	add r2,v30ptr,r0
+	ldrb r1,[r2,#v30ModRmReg]
+	ldrb r5,[v30ptr,-r1]
 	cmp r0,#0xC0
 	bmi 0f
 
-	ldrb v30ofs,[r1,#v30ModRmRm]
+	ldrb v30ofs,[r2,#v30ModRmRm]
 	ldrb r0,[v30ptr,-v30ofs]
 	and8 r5,r0
 
@@ -570,8 +570,8 @@ _21:	;@ AND WR16
 	cmp r0,#0xC0
 	bmi 0f
 
-	and r2,r0,#7
-	add v30ofs,v30ptr,r2,lsl#2
+	andpl r0,r0,#7
+	add v30ofs,v30ptr,r0,lsl#2
 	ldrh r0,[v30ofs,#v30Regs]
 	and16 r0,r5
 
@@ -590,11 +590,11 @@ i_and_r8b:
 _22:	;@ AND R8b
 ;@----------------------------------------------------------------------------
 	getNextByte
-	add r1,v30ptr,r0
-	ldrb r4,[r1,#v30ModRmReg]
+	add r2,v30ptr,r0
+	ldrb r4,[r2,#v30ModRmReg]
 	cmp r0,#0xC0
-	ldrbpl r2,[r1,#v30ModRmRm]
-	ldrbpl r0,[v30ptr,-r2]
+	ldrbpl r1,[r2,#v30ModRmRm]
+	ldrbpl r0,[v30ptr,-r1]
 	blmi v30ReadEA1
 
 	ldrb r1,[v30ptr,-r4]
@@ -678,13 +678,13 @@ i_sub_br8:
 _28:	;@ SUB BR8
 ;@----------------------------------------------------------------------------
 	getNextByte
-	add r1,v30ptr,r0
-	ldrb r2,[r1,#v30ModRmReg]
-	ldrb r5,[v30ptr,-r2]
+	add r2,v30ptr,r0
+	ldrb r1,[r2,#v30ModRmReg]
+	ldrb r5,[v30ptr,-r1]
 	cmp r0,#0xC0
 	bmi 0f
 
-	ldrb v30ofs,[r1,#v30ModRmRm]
+	ldrb v30ofs,[r2,#v30ModRmRm]
 	ldrb r0,[v30ptr,-v30ofs]
 	sub8 r5,r0
 
@@ -709,8 +709,8 @@ _29:	;@ SUB WR16
 	cmp r0,#0xC0
 	bmi 0f
 
-	and r2,r0,#7
-	add v30ofs,v30ptr,r2,lsl#2
+	andpl r0,r0,#7
+	add v30ofs,v30ptr,r0,lsl#2
 	ldr r0,[v30ofs,#v30Regs2]
 	sub16 r5,r0
 
@@ -730,11 +730,11 @@ i_sub_r8b:
 _2A:	;@ SUB R8b
 ;@----------------------------------------------------------------------------
 	getNextByte
-	add r1,v30ptr,r0
-	ldrb r4,[r1,#v30ModRmReg]
+	add r2,v30ptr,r0
+	ldrb r4,[r2,#v30ModRmReg]
 	cmp r0,#0xC0
-	ldrbpl r2,[r1,#v30ModRmRm]
-	ldrbpl r0,[v30ptr,-r2]
+	ldrbpl r1,[r2,#v30ModRmRm]
+	ldrbpl r0,[v30ptr,-r1]
 	blmi v30ReadEA1
 
 	ldrb r1,[v30ptr,-r4]
@@ -818,13 +818,13 @@ i_xor_br8:
 _30:	;@ XOR BR8
 ;@----------------------------------------------------------------------------
 	getNextByte
-	add r1,v30ptr,r0
-	ldrb r2,[r1,#v30ModRmReg]
-	ldrb r5,[v30ptr,-r2]
+	add r2,v30ptr,r0
+	ldrb r1,[r2,#v30ModRmReg]
+	ldrb r5,[v30ptr,-r1]
 	cmp r0,#0xC0
 	bmi 0f
 
-	ldrb v30ofs,[r1,#v30ModRmRm]
+	ldrb v30ofs,[r2,#v30ModRmRm]
 	ldrb r0,[v30ptr,-v30ofs]
 	xor8 r5,r0
 
@@ -849,8 +849,8 @@ _31:	;@ XOR WR16
 	cmp r0,#0xC0
 	bmi 0f
 
-	and r2,r0,#7
-	add v30ofs,v30ptr,r2,lsl#2
+	andpl r0,r0,#7
+	add v30ofs,v30ptr,r0,lsl#2
 	ldrh r0,[v30ofs,#v30Regs]
 	xor16 r0,r5
 
@@ -869,11 +869,11 @@ i_xor_r8b:
 _32:	;@ XOR R8b
 ;@----------------------------------------------------------------------------
 	getNextByte
-	add r1,v30ptr,r0
-	ldrb r4,[r1,#v30ModRmReg]
+	add r2,v30ptr,r0
+	ldrb r4,[r2,#v30ModRmReg]
 	cmp r0,#0xC0
-	ldrbpl r2,[r1,#v30ModRmRm]
-	ldrbpl r0,[v30ptr,-r2]
+	ldrbpl r1,[r2,#v30ModRmRm]
+	ldrbpl r0,[v30ptr,-r1]
 	blmi v30ReadEA1
 
 	ldrb r1,[v30ptr,-r4]
@@ -951,12 +951,12 @@ i_cmp_br8:
 _38:	;@ CMP BR8
 ;@----------------------------------------------------------------------------
 	getNextByte
-	add r1,v30ptr,r0
-	ldrb r2,[r1,#v30ModRmReg]
-	ldrb r4,[v30ptr,-r2]
+	add r2,v30ptr,r0
+	ldrb r1,[r2,#v30ModRmReg]
+	ldrb r4,[v30ptr,-r1]
 	cmp r0,#0xC0
-	ldrbpl r2,[r1,#v30ModRmRm]
-	ldrbpl r0,[v30ptr,-r2]
+	ldrbpl r1,[r2,#v30ModRmRm]
+	ldrbpl r0,[v30ptr,-r1]
 	blmi v30ReadEA1
 
 	sub8 r4,r0
@@ -985,12 +985,12 @@ i_cmp_r8b:
 _3A:	;@ CMP R8b
 ;@----------------------------------------------------------------------------
 	getNextByte
-	add r1,v30ptr,r0
-	ldrb r2,[r1,#v30ModRmReg]
-	ldrb r4,[v30ptr,-r2]
+	add r2,v30ptr,r0
+	ldrb r1,[r2,#v30ModRmReg]
+	ldrb r4,[v30ptr,-r1]
 	cmp r0,#0xC0
-	ldrbpl r2,[r1,#v30ModRmRm]
-	ldrbpl r0,[v30ptr,-r2]
+	ldrbpl r1,[r2,#v30ModRmRm]
+	ldrbpl r0,[v30ptr,-r1]
 	blmi v30ReadEA1
 
 	sub8 r0,r4
@@ -1310,7 +1310,7 @@ _62:	;@ CHKIND/BOUND
 	bmi nec_interrupt
 	fetch 14
 1:
-	and r0,r0,#7
+	andpl r0,r0,#7
 	add r2,v30ptr,r0,lsl#2
 	ldrh r0,[r2,#v30Regs]
 	bl logUndefinedOpcode
@@ -1708,8 +1708,8 @@ _82:	;@ PRE 82
 	getNextByteTo r4
 	cmp r4,#0xC0
 	bmi 1f
-	add r1,v30ptr,r4
-	ldrb v30ofs,[r1,#v30ModRmRm]
+	add r2,v30ptr,r4
+	ldrb v30ofs,[r2,#v30ModRmRm]
 	ldrb r0,[v30ptr,-v30ofs]
 0:
 	bic v30cyc,v30cyc,#SEG_PREFIX
@@ -1830,12 +1830,12 @@ i_test_br8:
 _84:	;@ TEST BR8
 ;@----------------------------------------------------------------------------
 	getNextByte
-	add r1,v30ptr,r0
-	ldrb r2,[r1,#v30ModRmReg]
-	ldrb r4,[v30ptr,-r2]
+	add r2,v30ptr,r0
+	ldrb r1,[r2,#v30ModRmReg]
+	ldrb r4,[v30ptr,-r1]
 	cmp r0,#0xC0
-	ldrbpl r2,[r1,#v30ModRmRm]
-	ldrbpl r0,[v30ptr,-r2]
+	ldrbpl r1,[r2,#v30ModRmRm]
+	ldrbpl r0,[v30ptr,-r1]
 	blmi v30ReadEA1
 
 	and8 r4,r0
@@ -1863,12 +1863,12 @@ i_xchg_br8:
 _86:	;@ XCH/XCHG BR8
 ;@----------------------------------------------------------------------------
 	getNextByte
-	add r1,v30ptr,r0
-	ldrb r4,[r1,#v30ModRmReg]
+	add r2,v30ptr,r0
+	ldrb r4,[r2,#v30ModRmReg]
 	cmp r0,#0xC0
 	bmi 0f
 
-	ldrb r2,[r1,#v30ModRmRm]
+	ldrb r2,[r2,#v30ModRmRm]
 	ldrb r0,[v30ptr,-r2]
 	ldrb r1,[v30ptr,-r4]
 	strb r0,[v30ptr,-r4]
@@ -1893,7 +1893,7 @@ _87:	;@ XCH/XCHG WR16
 	cmp r0,#0xC0
 	bmi 0f
 
-	and r0,r0,#7
+	andpl r0,r0,#7
 	add r2,v30ptr,r0,lsl#2
 	ldrh r0,[r2,#v30Regs]
 	ldrh r1,[r4,#v30Regs]
@@ -1913,13 +1913,13 @@ i_mov_br8:
 _88:	;@ MOV BR8
 ;@----------------------------------------------------------------------------
 	getNextByte
-	add r4,v30ptr,r0
-	ldrb r2,[r4,#v30ModRmReg]
-	ldrb r1,[v30ptr,-r2]
+	add r2,v30ptr,r0
+	ldrb r3,[r2,#v30ModRmReg]
+	ldrb r1,[v30ptr,-r3]
 	cmp r0,#0xC0
 
-	ldrbpl r2,[r4,#v30ModRmRm]
-	strbpl r1,[v30ptr,-r2]
+	ldrbpl r3,[r2,#v30ModRmRm]
+	strbpl r1,[v30ptr,-r3]
 	blmi v30WriteEA
 	bic v30cyc,v30cyc,#SEG_PREFIX
 	fetch 1
@@ -1944,12 +1944,12 @@ i_mov_r8b:
 _8A:	;@ MOV R8B
 ;@----------------------------------------------------------------------------
 	getNextByte
-	add r1,v30ptr,r0
-	ldrb r4,[r1,#v30ModRmReg]
+	add r2,v30ptr,r0
+	ldrb r4,[r2,#v30ModRmReg]
 	cmp r0,#0xC0
 
-	ldrbpl r2,[r1,#v30ModRmRm]
-	ldrbpl r0,[v30ptr,-r2]
+	ldrbpl r1,[r2,#v30ModRmRm]
+	ldrbpl r0,[v30ptr,-r1]
 	blmi v30ReadEA
 	strb r0,[v30ptr,-r4]
 	bic v30cyc,v30cyc,#SEG_PREFIX
@@ -1966,7 +1966,7 @@ Str_8B:
 	andpl r0,r0,#7
 	add r2,v30ptr,r0,lsl#2
 	ldrhpl r0,[r2,#v30Regs]
-	blmi v30ReadEAW
+	blmi v30ReadEAW_noAdd
 	strh r0,[r4,#v30Regs]
 	bic v30cyc,v30cyc,#SEG_PREFIX
 	fetch 1
@@ -2038,6 +2038,7 @@ _8F:	;@ POPW
 	bic v30cyc,v30cyc,#SEG_PREFIX
 	fetch 1
 0:
+	add r2,v30ptr,r0,lsl#2
 	bl v30WriteEAW
 	bic v30cyc,v30cyc,#SEG_PREFIX
 	fetch 3
@@ -2973,8 +2974,8 @@ _C0:	;@ ROTSHFT BD8
 	getNextByteTo r4
 	cmp r4,#0xC0
 	bmi 1f
-	add r1,v30ptr,r4
-	ldrb v30ofs,[r1,#v30ModRmRm]
+	add r2,v30ptr,r4
+	ldrb v30ofs,[r2,#v30ModRmRm]
 	ldrb r0,[v30ptr,-v30ofs]
 	eatCycles 2
 0:
@@ -3151,10 +3152,10 @@ _C6:	;@ MOV BD8
 	getNextByte
 	cmp r0,#0xC0
 	bmi 0f
-	add r1,v30ptr,r0
-	ldrb r4,[r1,#v30ModRmRm]
-	getNextByte
-	strb r0,[v30ptr,-r4]
+	add r2,v30ptr,r0
+	ldrb r4,[r2,#v30ModRmRm]
+	getNextByteTo r1
+	strb r1,[v30ptr,-r4]
 	bic v30cyc,v30cyc,#SEG_PREFIX
 	fetch 1
 0:
@@ -3316,8 +3317,8 @@ _D0:	;@ ROTSHFT B
 	cmp r4,#0xC0
 	bmi 0f
 
-	add r1,v30ptr,r4
-	ldrb v30ofs,[r1,#v30ModRmRm]
+	add r2,v30ptr,r4
+	ldrb v30ofs,[r2,#v30ModRmRm]
 	ldrb r0,[v30ptr,-v30ofs]
 	mov r1,#1
 	b d2Continue
@@ -3353,8 +3354,8 @@ _D2:	;@ ROTSHFT BCL
 	bmi 0f
 
 	eatCycles 2
-	add r1,v30ptr,r4
-	ldrb v30ofs,[r1,#v30ModRmRm]
+	add r2,v30ptr,r4
+	ldrb v30ofs,[r2,#v30ModRmRm]
 	ldrb r0,[v30ptr,-v30ofs]
 	ldrb r1,[v30ptr,#v30RegCL]
 	b d2Continue
@@ -3855,8 +3856,8 @@ _F6:	;@ PRE F6
 	getNextByteTo r4
 	cmp r4,#0xC0
 	bmi 1f
-	add r1,v30ptr,r4
-	ldrb v30ofs,[r1,#v30ModRmRm]
+	add r2,v30ptr,r4
+	ldrb v30ofs,[r2,#v30ModRmRm]
 	ldrb r0,[v30ptr,-v30ofs]
 0:
 	bic v30cyc,v30cyc,#SEG_PREFIX
@@ -4168,8 +4169,8 @@ _FE:	;@ PRE FE
 	bne contFF
 	cmp r4,#0xC0
 	bmi 1f
-	add r1,v30ptr,r4
-	ldrb v30ofs,[r1,#v30ModRmRm]
+	add r2,v30ptr,r4
+	ldrb v30ofs,[r2,#v30ModRmRm]
 	ldrb r0,[v30ptr,-v30ofs]
 0:
 	bic v30cyc,v30cyc,#SEG_PREFIX
