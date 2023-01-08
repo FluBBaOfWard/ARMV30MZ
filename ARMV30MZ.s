@@ -72,8 +72,8 @@ _00:	;@ ADD BR8
 	getNextByte
 	add r2,v30ptr,r0,lsl#2
 	ldr r1,[r2,#v30ModRmReg]
-	ldrb r4,[v30ptr,-r1,lsr#24]
 	cmp r0,#0xC0
+	ldrb r4,[v30ptr,-r1,lsr#24]
 	bmi 0f
 
 	and v30ofs,r1,#0xff
@@ -190,8 +190,8 @@ _08:	;@ OR BR8
 	getNextByte
 	add r2,v30ptr,r0,lsl#2
 	ldr r1,[r2,#v30ModRmReg]
-	ldrb r4,[v30ptr,-r1,lsr#24]
 	cmp r0,#0xC0
+	ldrb r4,[v30ptr,-r1,lsr#24]
 	bmi 0f
 
 	andpl v30ofs,r1,#0xff
@@ -301,8 +301,8 @@ _10:	;@ ADDC/ADC BR8
 	getNextByte
 	add r2,v30ptr,r0,lsl#2
 	ldr r1,[r2,#v30ModRmReg]
-	ldrb r4,[v30ptr,-r1,lsr#24]
 	cmp r0,#0xC0
+	ldrb r4,[v30ptr,-r1,lsr#24]
 	bmi 0f
 
 	and v30ofs,r1,#0xff
@@ -422,8 +422,8 @@ _18:	;@ SUBC/SBB BR8
 	getNextByte
 	add r2,v30ptr,r0,lsl#2
 	ldr r1,[r2,#v30ModRmReg]
-	ldrb r4,[v30ptr,-r1,lsr#24]
 	cmp r0,#0xC0
+	ldrb r4,[v30ptr,-r1,lsr#24]
 	bmi 0f
 
 	and v30ofs,r1,#0xff
@@ -541,8 +541,8 @@ _20:	;@ AND BR8
 	getNextByte
 	add r2,v30ptr,r0,lsl#2
 	ldr r1,[r2,#v30ModRmReg]
-	ldrb r4,[v30ptr,-r1,lsr#24]
 	cmp r0,#0xC0
+	ldrb r4,[v30ptr,-r1,lsr#24]
 	bmi 0f
 
 	and v30ofs,r1,#0xff
@@ -680,8 +680,8 @@ _28:	;@ SUB BR8
 	getNextByte
 	add r2,v30ptr,r0,lsl#2
 	ldr r1,[r2,#v30ModRmReg]
-	ldrb r4,[v30ptr,-r1,lsr#24]
 	cmp r0,#0xC0
+	ldrb r4,[v30ptr,-r1,lsr#24]
 	bmi 0f
 
 	and v30ofs,r1,#0xff
@@ -820,8 +820,8 @@ _30:	;@ XOR BR8
 	getNextByte
 	add r2,v30ptr,r0,lsl#2
 	ldr r1,[r2,#v30ModRmReg]
-	ldrb r4,[v30ptr,-r1,lsr#24]
 	cmp r0,#0xC0
+	ldrb r4,[v30ptr,-r1,lsr#24]
 	bmi 0f
 
 	and v30ofs,r1,#0xff
@@ -953,8 +953,8 @@ _38:	;@ CMP BR8
 	getNextByte
 	add r2,v30ptr,r0,lsl#2
 	ldr r1,[r2,#v30ModRmReg]
-	ldrb r4,[v30ptr,-r1,lsr#24]
 	cmp r0,#0xC0
+	ldrb r4,[v30ptr,-r1,lsr#24]
 	andpl r1,r1,#0xff
 	ldrbpl r0,[v30ptr,-r1]
 	blmi v30ReadEA1
@@ -987,8 +987,8 @@ _3A:	;@ CMP R8b
 	getNextByte
 	add r2,v30ptr,r0,lsl#2
 	ldr r1,[r2,#v30ModRmReg]
-	ldrb r4,[v30ptr,-r1,lsr#24]
 	cmp r0,#0xC0
+	ldrb r4,[v30ptr,-r1,lsr#24]
 	andpl r1,r1,#0xff
 	ldrbpl r0,[v30ptr,-r1]
 	blmi v30ReadEA1
@@ -1832,8 +1832,8 @@ _84:	;@ TEST BR8
 	getNextByte
 	add r2,v30ptr,r0,lsl#2
 	ldr r1,[r2,#v30ModRmReg]
-	ldrb r4,[v30ptr,-r1,lsr#24]
 	cmp r0,#0xC0
+	ldrb r4,[v30ptr,-r1,lsr#24]
 	andpl r1,r1,#0xff
 	ldrbpl r0,[v30ptr,-r1]
 	blmi v30ReadEA1
@@ -1915,8 +1915,8 @@ _88:	;@ MOV BR8
 	getNextByte
 	add r2,v30ptr,r0,lsl#2
 	ldr r3,[r2,#v30ModRmReg]
-	ldrb r1,[v30ptr,-r3,lsr#24]
 	cmp r0,#0xC0
+	ldrb r1,[v30ptr,-r3,lsr#24]
 
 	andpl r3,r3,#0xff
 	strbpl r1,[v30ptr,-r3]
