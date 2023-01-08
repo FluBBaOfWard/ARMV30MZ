@@ -22,8 +22,9 @@
 ;@ v30cyc flags in lower bits
 	.equ SEG_PREFIX, 1<<0		;@ Bit 0
 	.equ REP_PREFIX, 1<<1		;@ Bit 1
-	.equ LOCK_PREFIX, 1<<2		;@ Bit 2
-	.equ HALT_FLAG, 1<<3		;@ Bit 3
+	.equ REPN_PREFIX, 1<<2		;@ Bit 2
+	.equ LOCK_PREFIX, 1<<3		;@ Bit 3
+	.equ HALT_FLAG, 1<<4		;@ Bit 4
 ;@----------------------------------------------------------------------------
 
 	.struct -(37*4)			;@ Changes section so make sure it is set before real code.
