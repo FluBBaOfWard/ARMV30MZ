@@ -76,7 +76,7 @@ _00:	;@ ADD BR8
 	cmp r0,#0xC0
 	bmi 0f
 
-	ldrb v30ofs,[r2,#v30ModRmRm]
+	and v30ofs,r1,#0xff
 	ldrb r0,[v30ptr,-v30ofs]
 	add8 r5,r0
 
@@ -124,7 +124,7 @@ _02:	;@ ADD R8b
 	add r2,v30ptr,r0,lsl#2
 	ldr r4,[r2,#v30ModRmReg]
 	cmp r0,#0xC0
-	ldrbpl r1,[r2,#v30ModRmRm]
+	andpl r1,r4,#0xff
 	ldrbpl r0,[v30ptr,-r1]
 	blmi v30ReadEA1
 
@@ -194,7 +194,7 @@ _08:	;@ OR BR8
 	cmp r0,#0xC0
 	bmi 0f
 
-	ldrb v30ofs,[r2,#v30ModRmRm]
+	andpl v30ofs,r1,#0xff
 	ldrb r0,[v30ptr,-v30ofs]
 	or8 r5,r0
 
@@ -242,7 +242,7 @@ _0A:	;@ OR R8b
 	add r2,v30ptr,r0,lsl#2
 	ldr r4,[r2,#v30ModRmReg]
 	cmp r0,#0xC0
-	ldrbpl r3,[r2,#v30ModRmRm]
+	andpl r3,r4,#0xff
 	ldrbpl r0,[v30ptr,-r3]
 	blmi v30ReadEA1
 
@@ -305,7 +305,7 @@ _10:	;@ ADDC/ADC BR8
 	cmp r0,#0xC0
 	bmi 0f
 
-	ldrb v30ofs,[r2,#v30ModRmRm]
+	and v30ofs,r1,#0xff
 	ldrb r0,[v30ptr,-v30ofs]
 	adc8 r5,r0
 
@@ -353,7 +353,7 @@ _12:	;@ ADDC/ADC R8b
 	add r2,v30ptr,r0,lsl#2
 	ldr r4,[r2,#v30ModRmReg]
 	cmp r0,#0xC0
-	ldrbpl r1,[r2,#v30ModRmRm]
+	andpl r1,r4,#0xff
 	ldrbpl r0,[v30ptr,-r1]
 	blmi v30ReadEA1
 
@@ -426,7 +426,7 @@ _18:	;@ SUBC/SBB BR8
 	cmp r0,#0xC0
 	bmi 0f
 
-	ldrb v30ofs,[r2,#v30ModRmRm]
+	and v30ofs,r1,#0xff
 	ldrb r0,[v30ptr,-v30ofs]
 	subc8 r5,r0
 
@@ -475,7 +475,7 @@ _1A:	;@ SUBC/SBB R8b
 	add r2,v30ptr,r0,lsl#2
 	ldr r4,[r2,#v30ModRmReg]
 	cmp r0,#0xC0
-	ldrbpl r1,[r2,#v30ModRmRm]
+	andpl r1,r4,#0xff
 	ldrbpl r0,[v30ptr,-r1]
 	blmi v30ReadEA1
 
@@ -545,7 +545,7 @@ _20:	;@ AND BR8
 	cmp r0,#0xC0
 	bmi 0f
 
-	ldrb v30ofs,[r2,#v30ModRmRm]
+	and v30ofs,r1,#0xff
 	ldrb r0,[v30ptr,-v30ofs]
 	and8 r5,r0
 
@@ -593,7 +593,7 @@ _22:	;@ AND R8b
 	add r2,v30ptr,r0,lsl#2
 	ldr r4,[r2,#v30ModRmReg]
 	cmp r0,#0xC0
-	ldrbpl r1,[r2,#v30ModRmRm]
+	andpl r1,r4,#0xff
 	ldrbpl r0,[v30ptr,-r1]
 	blmi v30ReadEA1
 
@@ -684,7 +684,7 @@ _28:	;@ SUB BR8
 	cmp r0,#0xC0
 	bmi 0f
 
-	ldrb v30ofs,[r2,#v30ModRmRm]
+	and v30ofs,r1,#0xff
 	ldrb r0,[v30ptr,-v30ofs]
 	sub8 r5,r0
 
@@ -733,7 +733,7 @@ _2A:	;@ SUB R8b
 	add r2,v30ptr,r0,lsl#2
 	ldr r4,[r2,#v30ModRmReg]
 	cmp r0,#0xC0
-	ldrbpl r1,[r2,#v30ModRmRm]
+	andpl r1,r4,#0xff
 	ldrbpl r0,[v30ptr,-r1]
 	blmi v30ReadEA1
 
@@ -824,7 +824,7 @@ _30:	;@ XOR BR8
 	cmp r0,#0xC0
 	bmi 0f
 
-	ldrb v30ofs,[r2,#v30ModRmRm]
+	and v30ofs,r1,#0xff
 	ldrb r0,[v30ptr,-v30ofs]
 	xor8 r5,r0
 
@@ -872,7 +872,7 @@ _32:	;@ XOR R8b
 	add r2,v30ptr,r0,lsl#2
 	ldr r4,[r2,#v30ModRmReg]
 	cmp r0,#0xC0
-	ldrbpl r1,[r2,#v30ModRmRm]
+	andpl r1,r4,#0xff
 	ldrbpl r0,[v30ptr,-r1]
 	blmi v30ReadEA1
 
@@ -955,7 +955,7 @@ _38:	;@ CMP BR8
 	ldr r1,[r2,#v30ModRmReg]
 	ldrb r4,[v30ptr,-r1,lsr#24]
 	cmp r0,#0xC0
-	ldrbpl r1,[r2,#v30ModRmRm]
+	andpl r1,r1,#0xff
 	ldrbpl r0,[v30ptr,-r1]
 	blmi v30ReadEA1
 
@@ -989,7 +989,7 @@ _3A:	;@ CMP R8b
 	ldr r1,[r2,#v30ModRmReg]
 	ldrb r4,[v30ptr,-r1,lsr#24]
 	cmp r0,#0xC0
-	ldrbpl r1,[r2,#v30ModRmRm]
+	andpl r1,r1,#0xff
 	ldrbpl r0,[v30ptr,-r1]
 	blmi v30ReadEA1
 
@@ -1834,7 +1834,7 @@ _84:	;@ TEST BR8
 	ldr r1,[r2,#v30ModRmReg]
 	ldrb r4,[v30ptr,-r1,lsr#24]
 	cmp r0,#0xC0
-	ldrbpl r1,[r2,#v30ModRmRm]
+	andpl r1,r1,#0xff
 	ldrbpl r0,[v30ptr,-r1]
 	blmi v30ReadEA1
 
@@ -1868,7 +1868,7 @@ _86:	;@ XCH/XCHG BR8
 	cmp r0,#0xC0
 	bmi 0f
 
-	ldrb r2,[r2,#v30ModRmRm]
+	and r2,r4,#0xff
 	ldrb r0,[v30ptr,-r2]
 	ldrb r1,[v30ptr,-r4,lsr#24]
 	strb r0,[v30ptr,-r4,lsr#24]
@@ -1918,7 +1918,7 @@ _88:	;@ MOV BR8
 	ldrb r1,[v30ptr,-r3,lsr#24]
 	cmp r0,#0xC0
 
-	ldrbpl r3,[r2,#v30ModRmRm]
+	andpl r3,r3,#0xff
 	strbpl r1,[v30ptr,-r3]
 	blmi v30WriteEA
 	bic v30cyc,v30cyc,#SEG_PREFIX
@@ -1948,7 +1948,7 @@ _8A:	;@ MOV R8B
 	ldr r4,[r2,#v30ModRmReg]
 	cmp r0,#0xC0
 
-	ldrbpl r1,[r2,#v30ModRmRm]
+	andpl r1,r4,#0xff
 	ldrbpl r0,[v30ptr,-r1]
 	blmi v30ReadEA
 	strb r0,[v30ptr,-r4,lsr#24]
@@ -5163,7 +5163,6 @@ GetEA:
 	.long EA_200, EA_201, EA_202, EA_203, EA_204, EA_205, EA_206, EA_207
 Mod_RM:
 	.space 0x400
-//	.space 0x400
 SegmentTable:
 	.byte 1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0
 	.byte 1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0

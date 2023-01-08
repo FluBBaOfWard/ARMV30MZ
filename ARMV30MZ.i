@@ -96,7 +96,6 @@ v30PZST:			.space 256
 v30EATable:			.space 192*4
 v30ModRm:
 v30ModRmRm:
-//	.space 256*4
 v30ModRmReg:		.space 256*4
 v30SegTbl:			.space 256
 v30Size:
