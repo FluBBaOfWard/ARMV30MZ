@@ -3384,7 +3384,6 @@ _D3:	;@ ROTSHFT WCL
 i_aam:
 _D4:	;@ CVTBD/AAM	;@ Convert Binary to Decimal / Adjust After Multiply
 ;@----------------------------------------------------------------------------
-	eatCycles 16
 	getNextByte
 
 	movs r1,r0,lsl#8
@@ -3402,8 +3401,9 @@ _D4:	;@ CVTBD/AAM	;@ Convert Binary to Decimal / Adjust After Multiply
 	movs v30f,r0,lsl#24					;@ Clear S, Z, C, V & A.
 	movmi v30f,#PSR_S
 	moveq v30f,#PSR_Z
-	fetch 0
+	fetch 16
 d4DivideError:
+	eatCycles 16
 	ldrb v30f,[v30ptr,#v30MulOverflow]	;@ C & V from last mul, Z always set.
 	strb v30f,[v30ptr,#v30ParityVal]	;@ Clear parity
 	tst r0,#0xC0
@@ -3853,19 +3853,15 @@ _F6:	;@ PRE F6
 	getNextByteTo r4
 	cmp r4,#0xC0
 	add r2,v30ptr,r4,lsl#2
-	bmi 1f
-	ldrb v30ofs,[r2,#v30ModRmRm]
-	ldrb r0,[v30ptr,-v30ofs]
-0:
+	ldrbpl v30ofs,[r2,#v30ModRmRm]
+	ldrbpl r0,[v30ptr,-v30ofs]
+	blmi v30ReadEA1
+
 	bic v30cyc,v30cyc,#SEG_PREFIX
 	and r2,r4,#0x38
 	ldr pc,[pc,r2,lsr#1]
 	nop
 	.long testF6, undefF6, notF6, negF6, muluF6, mulF6, divubF6, divbF6
-1:
-	eatCycles 1
-	adr lr,0b
-	b v30ReadEA
 ;@----------------------------------------------------------------------------
 testF6:
 	getNextByteTo r1
@@ -3939,7 +3935,7 @@ divubF6:		;@ DIVU/DIV
 	bicne v30f,v30f,#PSR_Z
 	fetch 15
 divubF6Error:
-	eatCycles 17
+	eatCycles 16
 	b divideError
 ;@----------------------------------------------------------------------------
 divbF6:			;@ DIV/IDIV
@@ -3957,9 +3953,8 @@ divbF6:			;@ DIV/IDIV
 	bl division8
 
 	mov r1,r0,lsr#24
-	tst r3,#0x8000
-	rsbne r1,r1,#0
-	cmp r3,#0
+	movs r3,r3,asr#16
+	rsbcs r1,r1,#0
 	rsbmi r0,r0,#0
 1:
 	movs v30f,r0,lsl#24					;@ Test S, Z.
@@ -3976,7 +3971,7 @@ divbF6Error:
 divbF6Error2:
 	ldrb v30f,[v30ptr,#v30MulOverflow]	;@ C & V from last mul, Z always set.
 	strb v30f,[v30ptr,#v30ParityVal]	;@ Clear parity
-	eatCycles 20
+	eatCycles 19
 	b divideError
 ;@----------------------------------------------------------------------------
 i_f7pre:
@@ -4075,7 +4070,7 @@ divuwF7:		;@ DIVU/DIV
 	strh r1,[v30ptr,#v30RegDW]
 	fetch 23
 divuwF7Error:
-	eatCycles 17
+	eatCycles 16
 	b divideError
 ;@----------------------------------------------------------------------------
 divwF7:			;@ DIV/IDIV
@@ -4095,9 +4090,8 @@ divwF7:			;@ DIV/IDIV
 	bl division16
 
 	mov r1,r0,lsr#16
-	tst r3,#0x8000
-	rsbne r1,r1,#0
-	cmp r3,#0
+	movs r3,r3,asr#16
+	rsbcs r1,r1,#0
 	rsbmi r0,r0,#0
 1:
 	movs v30f,r0,lsl#16					;@ Test S, Z.
@@ -4114,7 +4108,7 @@ divwF7Error:
 divwF7Error2:
 	ldrb v30f,[v30ptr,#v30MulOverflow]	;@ C & V from last mul, Z always set.
 	strb v30f,[v30ptr,#v30ParityVal]	;@ Clear parity
-	eatCycles 20
+	eatCycles 19
 	b divideError
 ;@----------------------------------------------------------------------------
 i_clc:
@@ -4336,40 +4330,40 @@ division8:
 EA_000:	;@
 ;@----------------------------------------------------------------------------
 	ldr v30ofs,[v30ptr,#v30RegBW-2]
-	ldr r2,[v30ptr,#v30RegIX]
+	ldr r0,[v30ptr,#v30RegIX]
 	tst v30cyc,#SEG_PREFIX
 	ldreq v30csr,[v30ptr,#v30SRegDS]
-	add v30ofs,v30ofs,r2
+	add v30ofs,v30ofs,r0
 	eatCycles 2
 	bx r12
 ;@----------------------------------------------------------------------------
 EA_001:	;@
 ;@----------------------------------------------------------------------------
 	ldr v30ofs,[v30ptr,#v30RegBW-2]
-	ldr r2,[v30ptr,#v30RegIY]
+	ldr r0,[v30ptr,#v30RegIY]
 	tst v30cyc,#SEG_PREFIX
 	ldreq v30csr,[v30ptr,#v30SRegDS]
-	add v30ofs,v30ofs,r2
+	add v30ofs,v30ofs,r0
 	eatCycles 2
 	bx r12
 ;@----------------------------------------------------------------------------
 EA_002:	;@
 ;@----------------------------------------------------------------------------
 	ldr v30ofs,[v30ptr,#v30RegBP]
-	ldr r2,[v30ptr,#v30RegIX]
+	ldr r0,[v30ptr,#v30RegIX]
 	tst v30cyc,#SEG_PREFIX
 	ldreq v30csr,[v30ptr,#v30SRegSS]
-	add v30ofs,v30ofs,r2
+	add v30ofs,v30ofs,r0
 	eatCycles 2
 	bx r12
 ;@----------------------------------------------------------------------------
 EA_003:	;@
 ;@----------------------------------------------------------------------------
 	ldr v30ofs,[v30ptr,#v30RegBP]
-	ldr r2,[v30ptr,#v30RegIY]
+	ldr r0,[v30ptr,#v30RegIY]
 	tst v30cyc,#SEG_PREFIX
 	ldreq v30csr,[v30ptr,#v30SRegSS]
-	add v30ofs,v30ofs,r2
+	add v30ofs,v30ofs,r0
 	eatCycles 2
 	bx r12
 ;@----------------------------------------------------------------------------
@@ -4409,8 +4403,8 @@ EA_100:	;@
 	ldr r2,[v30ptr,#v30RegIX]
 	tst v30cyc,#SEG_PREFIX
 	ldreq v30csr,[v30ptr,#v30SRegDS]
-	add v30ofs,v30ofs,r2
 	add v30ofs,v30ofs,r0,lsl#16
+	add v30ofs,v30ofs,r2
 	eatCycles 2
 	bx r12
 ;@----------------------------------------------------------------------------
@@ -4421,8 +4415,8 @@ EA_101:	;@
 	ldr r2,[v30ptr,#v30RegIY]
 	tst v30cyc,#SEG_PREFIX
 	ldreq v30csr,[v30ptr,#v30SRegDS]
-	add v30ofs,v30ofs,r2
 	add v30ofs,v30ofs,r0,lsl#16
+	add v30ofs,v30ofs,r2
 	eatCycles 2
 	bx r12
 ;@----------------------------------------------------------------------------
@@ -4433,8 +4427,8 @@ EA_102:	;@
 	ldr r2,[v30ptr,#v30RegIX]
 	tst v30cyc,#SEG_PREFIX
 	ldreq v30csr,[v30ptr,#v30SRegSS]
-	add v30ofs,v30ofs,r2
 	add v30ofs,v30ofs,r0,lsl#16
+	add v30ofs,v30ofs,r2
 	eatCycles 2
 	bx r12
 ;@----------------------------------------------------------------------------
@@ -4445,8 +4439,8 @@ EA_103:	;@
 	ldr r2,[v30ptr,#v30RegIY]
 	tst v30cyc,#SEG_PREFIX
 	ldreq v30csr,[v30ptr,#v30SRegSS]
-	add v30ofs,v30ofs,r2
 	add v30ofs,v30ofs,r0,lsl#16
+	add v30ofs,v30ofs,r2
 	eatCycles 2
 	bx r12
 ;@----------------------------------------------------------------------------
@@ -4493,8 +4487,8 @@ EA_200:	;@
 	ldr r2,[v30ptr,#v30RegIX]
 	tst v30cyc,#SEG_PREFIX
 	ldreq v30csr,[v30ptr,#v30SRegDS]
-	add v30ofs,v30ofs,r2
 	add v30ofs,v30ofs,r0,lsl#16
+	add v30ofs,v30ofs,r2
 	eatCycles 2
 	bx r12
 ;@----------------------------------------------------------------------------
@@ -4505,8 +4499,8 @@ EA_201:	;@
 	ldr r2,[v30ptr,#v30RegIY]
 	tst v30cyc,#SEG_PREFIX
 	ldreq v30csr,[v30ptr,#v30SRegDS]
-	add v30ofs,v30ofs,r2
 	add v30ofs,v30ofs,r0,lsl#16
+	add v30ofs,v30ofs,r2
 	eatCycles 2
 	bx r12
 ;@----------------------------------------------------------------------------
@@ -4517,8 +4511,8 @@ EA_202:	;@
 	ldr r2,[v30ptr,#v30RegIX]
 	tst v30cyc,#SEG_PREFIX
 	ldreq v30csr,[v30ptr,#v30SRegSS]
-	add v30ofs,v30ofs,r2
 	add v30ofs,v30ofs,r0,lsl#16
+	add v30ofs,v30ofs,r2
 	eatCycles 2
 	bx r12
 ;@----------------------------------------------------------------------------
@@ -4529,8 +4523,8 @@ EA_203:	;@
 	ldr r2,[v30ptr,#v30RegIY]
 	tst v30cyc,#SEG_PREFIX
 	ldreq v30csr,[v30ptr,#v30SRegSS]
-	add v30ofs,v30ofs,r2
 	add v30ofs,v30ofs,r0,lsl#16
+	add v30ofs,v30ofs,r2
 	eatCycles 2
 	bx r12
 ;@----------------------------------------------------------------------------
