@@ -93,6 +93,8 @@
 	.endm
 
 	.macro v30ReEncodeFastPC
+//	tst v30pc,#1
+//	subne v30cyc,v30cyc,#1*CYCLE
 //	bl V30ReEncodePC
 	.endm
 

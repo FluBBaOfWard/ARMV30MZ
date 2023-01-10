@@ -95,8 +95,8 @@ i_add_wr16:
 _01:	;@ ADD WR16
 ;@----------------------------------------------------------------------------
 	getNextByte
-	and r2,r0,#0x38
-	add r2,v30ptr,r2,lsr#1
+	and r1,r0,#0x38
+	add r2,v30ptr,r1,lsr#1
 	ldr r4,[r2,#v30Regs2]
 	cmp r0,#0xC0
 	bmi 0f
@@ -213,8 +213,8 @@ i_or_wr16:
 _09:	;@ OR WR16
 ;@----------------------------------------------------------------------------
 	getNextByte
-	and r2,r0,#0x38
-	add r2,v30ptr,r2,lsr#1
+	and r1,r0,#0x38
+	add r2,v30ptr,r1,lsr#1
 	ldr r4,[r2,#v30Regs2]
 	cmp r0,#0xC0
 	bmi 0f
@@ -324,8 +324,8 @@ i_adc_wr16:
 _11:	;@ ADDC/ADC WR16
 ;@----------------------------------------------------------------------------
 	getNextByte
-	and r2,r0,#0x38
-	add r2,v30ptr,r2,lsr#1
+	and r1,r0,#0x38
+	add r2,v30ptr,r1,lsr#1
 	ldr r4,[r2,#v30Regs2]
 	cmp r0,#0xC0
 	bmi 0f
@@ -445,8 +445,8 @@ i_sbb_wr16:
 _19:	;@ SUBC/SBB WR16
 ;@----------------------------------------------------------------------------
 	getNextByte
-	and r2,r0,#0x38
-	add r2,v30ptr,r2,lsr#1
+	and r1,r0,#0x38
+	add r2,v30ptr,r1,lsr#1
 	ldrh r4,[r2,#v30Regs]
 	cmp r0,#0xC0
 	bmi 0f
@@ -564,8 +564,8 @@ i_and_wr16:
 _21:	;@ AND WR16
 ;@----------------------------------------------------------------------------
 	getNextByte
-	and r2,r0,#0x38
-	add r2,v30ptr,r2,lsr#1
+	and r1,r0,#0x38
+	add r2,v30ptr,r1,lsr#1
 	ldr r4,[r2,#v30Regs2]
 	cmp r0,#0xC0
 	bmi 0f
@@ -703,8 +703,8 @@ i_sub_wr16:
 _29:	;@ SUB WR16
 ;@----------------------------------------------------------------------------
 	getNextByte
-	and r2,r0,#0x38
-	add r2,v30ptr,r2,lsr#1
+	and r1,r0,#0x38
+	add r2,v30ptr,r1,lsr#1
 	ldrh r4,[r2,#v30Regs]
 	cmp r0,#0xC0
 	bmi 0f
@@ -843,8 +843,8 @@ i_xor_wr16:
 _31:	;@ XOR WR16
 ;@----------------------------------------------------------------------------
 	getNextByte
-	and r2,r0,#0x38
-	add r2,v30ptr,r2,lsr#1
+	and r1,r0,#0x38
+	add r2,v30ptr,r1,lsr#1
 	ldr r4,[r2,#v30Regs2]
 	cmp r0,#0xC0
 	bmi 0f
@@ -1048,13 +1048,12 @@ _3F:	;@ ADJBS / AAS
 	ldrh r0,[v30ptr,#v30RegAW]
 	mov r1,r0,lsl#28
 	cmp r1,#0xA0000000
-	orrcs v30f,v30f,#PSR_A			;@ Set Aux.
-	tst v30f,#PSR_A
-	moveq v30f,#PSR_S
-	movne v30f,#PSR_Z+PSR_A+PSR_C
+	tstcc v30f,v30f,lsr#5			;@ Shift out PSR_A
+	movcs v30f,#PSR_Z+PSR_A+PSR_C
+	movcc v30f,#PSR_S
 	strb r1,[v30ptr,#v30ParityVal]	;@ Parity allways set
 	bic r0,r0,#0x00F0
-	subne r0,r0,#0x16
+	subcs r0,r0,#0x16
 	bic r0,r0,#0x00F0
 	strh r0,[v30ptr,#v30RegAW]
 	fetch 9
@@ -1888,8 +1887,8 @@ i_xchg_wr16:
 _87:	;@ XCH/XCHG WR16
 ;@----------------------------------------------------------------------------
 	getNextByte
-	and r4,r0,#0x38
-	add r4,v30ptr,r4,lsr#1
+	and r1,r0,#0x38
+	add r4,v30ptr,r1,lsr#1
 	cmp r0,#0xC0
 	bmi 0f
 
@@ -1959,8 +1958,8 @@ i_mov_r16w:
 _8B:	;@ MOV R16W
 ;@----------------------------------------------------------------------------
 	getNextByte
-	and r4,r0,#0x38
-	add r4,v30ptr,r4,lsr#1
+	and r1,r0,#0x38
+	add r4,v30ptr,r1,lsr#1
 	cmp r0,#0xC0
 Str_8B:
 	andpl r0,r0,#7
@@ -1975,8 +1974,8 @@ i_mov_wsreg:
 _8C:	;@ MOV WSREG
 ;@----------------------------------------------------------------------------
 	getNextByte
-	and r2,r0,#0x38				;@ Mask with 0x18?
-	add r4,v30ptr,r2,lsr#1
+	and r1,r0,#0x38				;@ Mask with 0x18?
+	add r4,v30ptr,r1,lsr#1
 	ldrh r1,[r4,#v30SRegs+2]
 	cmp r0,#0xC0
 
@@ -1991,8 +1990,8 @@ i_lea:
 _8D:	;@ LDEA/LEA
 ;@----------------------------------------------------------------------------
 	getNextByte
-	and r4,r0,#0x38
-	add r4,v30ptr,r4,lsr#1
+	and r1,r0,#0x38
+	add r4,v30ptr,r1,lsr#1
 	cmp r0,#0xC0
 	bpl Str_8B
 
@@ -3102,14 +3101,14 @@ i_les_dw:
 _C4:	;@ LES DW
 ;@----------------------------------------------------------------------------
 	getNextByte
-	and r4,r0,#0x38
+	and r1,r0,#0x38
+	add r4,v30ptr,r1,lsr#1
 	cmp r0,#0xC0
 	bpl 1f
 	bl v30ReadEAW
 	add v30ofs,v30ofs,#0x20000
 0:
-	add r1,v30ptr,r4,lsr#1
-	strh r0,[r1,#v30Regs]
+	strh r0,[r4,#v30Regs]
 	bl v30ReadSegOfsW
 	strh r0,[v30ptr,#v30SRegES+2]
 
@@ -3126,14 +3125,14 @@ i_lds_dw:
 _C5:	;@ LDS DW
 ;@----------------------------------------------------------------------------
 	getNextByte
-	and r4,r0,#0x38
+	and r1,r0,#0x38
+	add r4,v30ptr,r1,lsr#1
 	cmp r0,#0xC0
 	bpl 1f
 	bl v30ReadEAW
 	add v30ofs,v30ofs,#0x20000
 0:
-	add r1,v30ptr,r4,lsr#1
-	strh r0,[r1,#v30Regs]
+	strh r0,[r4,#v30Regs]
 	bl v30ReadSegOfsW
 	strh r0,[v30ptr,#v30SRegDS+2]
 
@@ -3176,7 +3175,7 @@ _C7:	;@ MOV WD16
 	andpl r0,r0,#7
 	add r2,v30ptr,r0,lsl#2
 	getNextWordTo r1, r0
-	strh r0,[r2,#v30Regs]
+	strh r1,[r2,#v30Regs]
 	bic v30cyc,v30cyc,#SEG_PREFIX
 	fetch 1
 0:
@@ -3553,9 +3552,9 @@ _E8:	;@ CALL D16
 ;@----------------------------------------------------------------------------
 	getNextWord
 	v30DecodeFastPCToReg r1
-	mov r2,r1,lsl#16
-	add v30pc,r2,r0,lsl#16
+	add v30pc,r0,r1
 	bl v30PushW
+	mov v30pc,v30pc,lsl#16
 	v30EncodeFastPC
 	fetch 5
 ;@----------------------------------------------------------------------------
@@ -3564,8 +3563,8 @@ _E9:	;@ BR/JMP D16
 ;@----------------------------------------------------------------------------
 	getNextWord
 	v30DecodeFastPCToReg r1
-	mov r1,r1,lsl#16
-	add v30pc,r1,r0,lsl#16
+	add v30pc,r0,r1
+	mov v30pc,v30pc,lsl#16
 	v30EncodeFastPC
 	fetch 4
 ;@----------------------------------------------------------------------------
@@ -3653,7 +3652,7 @@ _F2:	;@ REPNE
 	add r1,v30ptr,r1,lsr#1
 	ldr v30csr,[r1,#v30SRegs]
 
-	eatCycles 1
+//	eatCycles 1
 	getNextByte
 noF2Prefix:
 	add r2,v30ptr,#v30SegTbl
@@ -3746,7 +3745,7 @@ _F3:	;@ REPE
 	add r1,v30ptr,r1,lsr#1
 	ldr v30csr,[r1,#v30SRegs]
 
-	eatCycles 1
+//	eatCycles 1
 	getNextByte
 noF3Prefix:
 	add r2,v30ptr,#v30SegTbl
@@ -4587,6 +4586,8 @@ V30EncodePC:
 	sub r0,r1,v30pc,lsr#16
 	str r0,[v30ptr,#v30LastBank]
 	mov v30pc,r1
+//	tst v30pc,#1
+//	subne v30cyc,v30cyc,#1*CYCLE
 	ldmfd sp!,{pc}
 ;@----------------------------------------------------------------------------
 V30SetIRQPin:			;@ r0=pin state
