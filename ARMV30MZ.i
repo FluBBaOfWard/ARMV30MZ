@@ -76,10 +76,10 @@ v30IP:				.long 0
 v30ICount:			.long 0
 v30IrqPin:			.byte 0		;@ IrqPin & IF needs to be together in the same Word.
 v30IF:				.byte 0
-v30NmiPin:			.byte 0
+v30TF:				.byte 0
 v30NmiPending:		.byte 0
 v30ParityVal:		.short 0
-v30TF:				.byte 0
+v30NmiPin:			.byte 0
 v30DF:				.byte 0		;@ Direction flag, this is either 1 or -1.
 v30MulOverflow:		.byte 0
 					.space 3

@@ -1,6 +1,8 @@
 ARMV30MZ To do
 --------------
 
+	Add support for TRAP/BRK exception (int 1).
+	Segment wrapping eats extra cycles? At least for LDS.
 	Log opcode for undefined instructions.
 	Make SRegs access different code paths for each reg.
 	Prepare (C8) uses r4-r8, (r8 = SP).

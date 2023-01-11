@@ -1309,11 +1309,12 @@ _62:	;@ CHKIND/BOUND
 	bmi nec_interrupt
 	fetch 14
 1:
-	andpl r0,r0,#7
-	add r2,v30ptr,r0,lsl#2
-	ldrh r0,[r2,#v30Regs]
+//	andpl r0,r0,#7
+//	add r2,v30ptr,r0,lsl#2
+//	ldrh r0,[r2,#v30Regs]
 	bl logUndefinedOpcode
-	b 0b
+	fetch 16
+//	b 0b
 
 ;@----------------------------------------------------------------------------
 i_push_d16:
@@ -1914,6 +1915,10 @@ _88:	;@ MOV BR8
 	getNextByte
 	add r2,v30ptr,r0,lsl#2
 	ldr r3,[r2,#v30ModRmReg]
+//	cmp r0,#0xDB				;@ mov bl,bl
+//	bne noBreak
+//	mov r11,r11
+//noBreak:
 	cmp r0,#0xC0
 	ldrb r1,[v30ptr,-r3,lsr#24]
 
@@ -1995,6 +2000,8 @@ _8D:	;@ LDEA/LEA
 	cmp r0,#0xC0
 	bpl Str_8B
 
+//	tst r0,#4					;@ 2 reg ModRm? LEA, LES & LDS don't take 2 extra cycles, just one.
+//	addeq v30cyc,v30cyc,#1*CYCLE
 	add r2,v30ptr,r0,lsl#2
 	mov r12,pc					;@ Return reg for EA
 	ldr pc,[r2,#v30EATable]		;@ EATable return EO in v30ofs
@@ -2179,7 +2186,7 @@ _9D:	;@ POP F
 	tst r0,#AF
 	orrne v30f,v30f,#PSR_A
 	ands r1,r0,#TF
-	movne r1,#1
+	movne r1,#4
 	strb r1,[v30ptr,#v30TF]
 	ands r1,r0,#IF
 	movne r1,#1
@@ -2261,8 +2268,8 @@ _A2:	;@ MOV DISPAL
 	getNextWord
 	tst v30cyc,#SEG_PREFIX
 	ldreq v30csr,[v30ptr,#v30SRegDS]
-	add r0,v30csr,r0,lsl#12
 	ldrb r1,[v30ptr,#v30RegAL]
+	add r0,v30csr,r0,lsl#12
 	bl cpuWriteMem20
 	bic v30cyc,v30cyc,#SEG_PREFIX
 	fetch 1
@@ -2273,8 +2280,8 @@ _A3:	;@ MOV DISPAX
 	getNextWord
 	tst v30cyc,#SEG_PREFIX
 	ldreq v30csr,[v30ptr,#v30SRegDS]
-	add r0,v30csr,r0,lsl#12
 	ldrh r1,[v30ptr,#v30RegAW]
+	add r0,v30csr,r0,lsl#12
 	bl cpuWriteMem20W
 	bic v30cyc,v30cyc,#SEG_PREFIX
 	fetch 1
@@ -3105,6 +3112,8 @@ _C4:	;@ LES DW
 	add r4,v30ptr,r1,lsr#1
 	cmp r0,#0xC0
 	bpl 1f
+//	tst r0,#4					;@ 2 reg ModRm? LEA, LES & LDS don't take 2 extra cycles, just one.
+//	addeq v30cyc,v30cyc,#1*CYCLE
 	bl v30ReadEAW
 	add v30ofs,v30ofs,#0x20000
 0:
@@ -3115,6 +3124,7 @@ _C4:	;@ LES DW
 	bic v30cyc,v30cyc,#SEG_PREFIX
 	fetch 6
 1:
+	eatCycles 2
 	andpl r0,r0,#7
 	add r2,v30ptr,r0,lsl#2
 	ldrh r0,[r2,#v30Regs]
@@ -3129,6 +3139,8 @@ _C5:	;@ LDS DW
 	add r4,v30ptr,r1,lsr#1
 	cmp r0,#0xC0
 	bpl 1f
+//	tst r0,#4					;@ 2 reg ModRm? LEA, LES & LDS don't take 2 extra cycles, just one.
+//	addeq v30cyc,v30cyc,#1*CYCLE
 	bl v30ReadEAW
 	add v30ofs,v30ofs,#0x20000
 0:
@@ -3139,6 +3151,7 @@ _C5:	;@ LDS DW
 	bic v30cyc,v30cyc,#SEG_PREFIX
 	fetch 6
 1:
+	eatCycles 2
 	andpl r0,r0,#7
 	add r2,v30ptr,r0,lsl#2
 	ldrh r0,[r2,#v30Regs]
@@ -3285,7 +3298,7 @@ _CD:	;@ INT
 	b nec_interrupt
 ;@----------------------------------------------------------------------------
 i_into:
-_CE:	;@ BRKV					;@ Break if Overflow
+_CE:	;@ BRKV				;@ Break if Overflow
 ;@----------------------------------------------------------------------------
 	tst v30f,#PSR_V
 	subne v30cyc,v30cyc,#13*CYCLE
@@ -3304,7 +3317,7 @@ _CF:	;@ IRET
 	strh r0,[v30ptr,#v30SRegCS+2]
 	str v30ofs,[v30ptr,#v30RegSP]
 	v30EncodeFastPC
-	eatCycles 10-3					;@ i_popf eats 3 cycles
+	eatCycles 10-3				;@ i_popf eats 3 cycles
 	b i_popf
 
 ;@----------------------------------------------------------------------------
@@ -4123,14 +4136,14 @@ _F9:	;@ SET1 CY/STC		;@ Set Carry.
 	fetch 4
 ;@----------------------------------------------------------------------------
 i_di:
-_FA:	;@ DI/CLI		;@ Disable/Clear Interrupt
+_FA:	;@ DI/CLI			;@ Disable/Clear Interrupt
 ;@----------------------------------------------------------------------------
 	mov r0,#0
 	strb r0,[v30ptr,#v30IF]
 	fetch 4
 ;@----------------------------------------------------------------------------
 i_ei:
-_FB:	;@ EI/STI		;@ Enable/Set Interrupt
+_FB:	;@ EI/STI			;@ Enable/Set Interrupt
 ;@----------------------------------------------------------------------------
 	mov r0,#1
 	strb r0,[v30ptr,#v30IF]
@@ -4138,14 +4151,14 @@ _FB:	;@ EI/STI		;@ Enable/Set Interrupt
 	b v30ChkIrqInternal
 ;@----------------------------------------------------------------------------
 i_cld:
-_FC:	;@ CLR1 DIR/CLD			;@ Clear Direction
+_FC:	;@ CLR1 DIR/CLD		;@ Clear Direction
 ;@----------------------------------------------------------------------------
 	mov r0,#1
 	strb r0,[v30ptr,#v30DF]
 	fetch 4
 ;@----------------------------------------------------------------------------
 i_std:
-_FD:	;@ SET1 DIR/STD			;@ Set Direction
+_FD:	;@ SET1 DIR/STD		;@ Set Direction
 ;@----------------------------------------------------------------------------
 	mov r0,#-1
 	strb r0,[v30ptr,#v30DF]
