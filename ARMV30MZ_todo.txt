@@ -1,7 +1,8 @@
 ARMV30MZ To do
 --------------
 
-	Add support for TRAP/BRK exception (int 1).
+	Add fetchforce for ops setting SS (POP SS, MOV SREGW).
+	Add support for TRAP/BRK exception (int 1, prio 4).
 	Segment wrapping eats extra cycles? At least for LDS.
 	Log opcode for undefined instructions.
 	Make SRegs access different code paths for each reg.

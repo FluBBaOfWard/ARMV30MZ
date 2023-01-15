@@ -414,7 +414,7 @@ _17:	;@ POP SS
 	popWord
 	strh r0,[v30ptr,#v30SRegSS+2]
 //	orr v30cyc,v30cyc,#LOCK_PREFIX
-	fetch 3
+	fetchForce 3
 ;@----------------------------------------------------------------------------
 i_sbb_br8:
 _18:	;@ SUBC/SBB BR8
@@ -1297,10 +1297,9 @@ _62:	;@ CHKIND/BOUND
 	bpl 1f
 	bl v30ReadEAW
 	add v30ofs,v30ofs,#0x20000
-0:
 	mov r5,r0
 	bl v30ReadSegOfsW
-
+0:
 	bic v30cyc,v30cyc,#SEG_PREFIX
 	cmp r4,r5
 	cmppl r0,r4
@@ -1309,12 +1308,13 @@ _62:	;@ CHKIND/BOUND
 	bmi nec_interrupt
 	fetch 14
 1:
-//	andpl r0,r0,#7
-//	add r2,v30ptr,r0,lsl#2
-//	ldrh r0,[r2,#v30Regs]
+	eatCycles 2
+	andpl r0,r0,#7
+	add v30ofs,v30ptr,r0,lsl#2
 	bl logUndefinedOpcode
-	fetch 16
-//	b 0b
+	ldrh r5,[v30ofs,#v30Regs]
+	ldrh r0,[v30ofs,#v30Regs+4]
+	b 0b
 
 ;@----------------------------------------------------------------------------
 i_push_d16:
@@ -1979,7 +1979,7 @@ i_mov_wsreg:
 _8C:	;@ MOV WSREG
 ;@----------------------------------------------------------------------------
 	getNextByte
-	and r1,r0,#0x38				;@ Mask with 0x18?
+	and r1,r0,#0x18				;@ This is correct.
 	add r4,v30ptr,r1,lsr#1
 	ldrh r1,[r4,#v30SRegs+2]
 	cmp r0,#0xC0
@@ -2013,16 +2013,15 @@ i_mov_sregw:
 _8E:	;@ MOV SREGW
 ;@----------------------------------------------------------------------------
 	getNextByte
-	and r4,r0,#0x38
+	and r4,r0,#0x18				;@ This is correct.
 	cmp r0,#0xC0
 	andpl r0,r0,#7
 	add r2,v30ptr,r0,lsl#2
 	ldrhpl r0,[r2,#v30Regs]
 	blmi v30ReadEAW1
 
-	tst r4,#0x20
-	addeq r1,v30ptr,r4,lsr#1
-	strheq r0,[r1,#v30SRegs+2]
+	add r1,v30ptr,r4,lsr#1
+	strh r0,[r1,#v30SRegs+2]
 //	orr v30cyc,v30cyc,#LOCK_PREFIX
 	bic v30cyc,v30cyc,#SEG_PREFIX
 	cmp r4,#0x08			;@ CS?
@@ -4608,12 +4607,11 @@ V30SetIRQPin:			;@ r0=pin state
 	cmp r0,#0
 	movne r0,#0x01
 	strb r0,[v30ptr,#v30IrqPin]
-	bicne v30cyc,v30cyc,#HALT_FLAG
 	bx lr
 ;@----------------------------------------------------------------------------
 V30FetchIRQ:
 ;@----------------------------------------------------------------------------
-	eatCycles 7
+	eatCycles 8
 	mov lr,pc
 	ldr pc,[v30ptr,#v30IrqVectorFunc]
 ;@----------------------------------------------------------------------------
@@ -4624,6 +4622,7 @@ nec_interrupt:				;@ r0 = vector number
 	bl pushFlags				;@ This should setup v30ofs & v30csr for stack
 	strb r4,[v30ptr,#v30IF]		;@ Clear IF
 	strb r4,[v30ptr,#v30TF]		;@ Clear TF
+	bic v30cyc,v30cyc,#HALT_FLAG
 
 	ldrh r1,[v30ptr,#v30SRegCS+2]
 	sub v30ofs,v30ofs,#0x20000
@@ -4666,6 +4665,9 @@ V30Go:						;@ Continue running
 ;@----------------------------------------------------------------------------
 	fetch 0
 v30InHalt:
+	tst r0,#1					;@ IRQ Pin ?
+	bicne v30cyc,v30cyc,#HALT_FLAG
+	bne V30Go
 	mvns r0,v30cyc,asr#CYC_SHIFT			;@
 	addmi v30cyc,v30cyc,r0,lsl#CYC_SHIFT	;@ Consume all remaining cycles in steps of 1.
 outOfCycles:

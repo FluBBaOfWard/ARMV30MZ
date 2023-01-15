@@ -79,6 +79,12 @@
 	b outOfCycles
 	.endm
 
+	.macro fetchForce count
+	sub v30cyc,v30cyc,#(\count)*CYCLE
+	ldrb r0,[v30pc],#1
+	ldr pc,[v30ptr,r0,lsl#2]
+	.endm
+
 	.macro v30DecodeFastPC
 	bl V30DecodePC
 	.endm
