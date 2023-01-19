@@ -2,8 +2,8 @@ ARMV30MZ revision history
 -=-=-=-=-=-=-=-=-=-=-=-=-
 
 
-V0.8.4 - 2023-01-18 (FluBBa)
-	Fixed LDS/LES opcodes.
+V0.8.4 - 2023-01-19 (FluBBa)
+	Fixed LEA/LDS/LES opcodes.
 	Fixed CHKIND/BOUND opcode.
 	Fixed MOV SREG opcodes.
 	Optimized memory access.

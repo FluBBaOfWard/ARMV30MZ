@@ -1955,7 +1955,7 @@ _8B:	;@ MOV R16W
 	and r1,r0,#0x38
 	add r4,v30ptr,r1,lsr#1
 	cmp r0,#0xC0
-Str_8B:
+
 	andpl r0,r0,#7
 	add r2,v30ptr,r0,lsl#2
 	ldrhpl r0,[r2,#v30Regs]
@@ -1986,9 +1986,6 @@ _8D:	;@ LDEA/LEA
 	getNextByte
 	and r1,r0,#0x38
 	add r4,v30ptr,r1,lsr#1
-	cmp r0,#0xC0
-	bpl Str_8B
-
 //	tst r0,#4					;@ 2 reg ModRm? LEA, LES & LDS don't take 2 extra cycles, just one.
 //	addeq v30cyc,v30cyc,#1*CYCLE
 	add r2,v30ptr,r0,lsl#2
@@ -4551,7 +4548,6 @@ EA_300:	;@
 	tst v30cyc,#SEG_PREFIX
 	ldreq v30csr,[v30ptr,#v30SRegDS]
 	add v30ofs,v30ofs,r0
-	eatCycles 2
 	bx r12
 ;@----------------------------------------------------------------------------
 EA_301:	;@
@@ -4561,7 +4557,6 @@ EA_301:	;@
 	tst v30cyc,#SEG_PREFIX
 	ldreq v30csr,[v30ptr,#v30SRegDS]
 	add v30ofs,v30ofs,r0
-	eatCycles 2
 	bx r12
 ;@----------------------------------------------------------------------------
 EA_302:	;@
@@ -4571,7 +4566,6 @@ EA_302:	;@
 	tst v30cyc,#SEG_PREFIX
 	ldreq v30csr,[v30ptr,#v30SRegSS]
 	add v30ofs,v30ofs,r0
-	eatCycles 2
 	bx r12
 ;@----------------------------------------------------------------------------
 EA_303:	;@
@@ -4581,7 +4575,6 @@ EA_303:	;@
 	tst v30cyc,#SEG_PREFIX
 	ldreq v30csr,[v30ptr,#v30SRegSS]
 	add v30ofs,v30ofs,r0
-	eatCycles 2
 	bx r12
 ;@----------------------------------------------------------------------------
 EA_304:	;@
@@ -4591,7 +4584,6 @@ EA_304:	;@
 	tst v30cyc,#SEG_PREFIX
 	ldreq v30csr,[v30ptr,#v30SRegDS]
 	add v30ofs,v30ofs,r0
-	eatCycles 2
 	bx r12
 ;@----------------------------------------------------------------------------
 EA_305:	;@
@@ -4601,7 +4593,24 @@ EA_305:	;@
 	tst v30cyc,#SEG_PREFIX
 	ldreq v30csr,[v30ptr,#v30SRegDS]
 	add v30ofs,v30ofs,r0
-	eatCycles 2
+	bx r12
+;@----------------------------------------------------------------------------
+EA_306:	;@
+;@----------------------------------------------------------------------------
+	ldr v30ofs,[v30ptr,#v30RegBP]
+	ldr r0,[v30ptr,#v30RegIX]
+	tst v30cyc,#SEG_PREFIX
+	ldreq v30csr,[v30ptr,#v30SRegSS]
+	add v30ofs,v30ofs,r0
+	bx r12
+;@----------------------------------------------------------------------------
+EA_307:	;@
+;@----------------------------------------------------------------------------
+	ldr v30ofs,[v30ptr,#v30RegBW-2]
+	ldr r0,[v30ptr,#v30RegIY]
+	tst v30cyc,#SEG_PREFIX
+	ldreq v30csr,[v30ptr,#v30SRegDS]
+	add v30ofs,v30ofs,r0
 	bx r12
 
 ;@----------------------------------------------------------------------------
@@ -5201,14 +5210,14 @@ GetEA:
 	.long EA_200, EA_201, EA_202, EA_203, EA_204, EA_205, EA_206, EA_207
 	.long EA_200, EA_201, EA_202, EA_203, EA_204, EA_205, EA_206, EA_207
 
-	.long EA_300, EA_301, EA_302, EA_303, EA_304, EA_305, EA_002, EA_001
-	.long EA_300, EA_301, EA_302, EA_303, EA_304, EA_305, EA_002, EA_001
-	.long EA_300, EA_301, EA_302, EA_303, EA_304, EA_305, EA_002, EA_001
-	.long EA_300, EA_301, EA_302, EA_303, EA_304, EA_305, EA_002, EA_001
-	.long EA_300, EA_301, EA_302, EA_303, EA_304, EA_305, EA_002, EA_001
-	.long EA_300, EA_301, EA_302, EA_303, EA_304, EA_305, EA_002, EA_001
-	.long EA_300, EA_301, EA_302, EA_303, EA_304, EA_305, EA_002, EA_001
-	.long EA_300, EA_301, EA_302, EA_303, EA_304, EA_305, EA_002, EA_001
+	.long EA_300, EA_301, EA_302, EA_303, EA_304, EA_305, EA_306, EA_307
+	.long EA_300, EA_301, EA_302, EA_303, EA_304, EA_305, EA_306, EA_307
+	.long EA_300, EA_301, EA_302, EA_303, EA_304, EA_305, EA_306, EA_307
+	.long EA_300, EA_301, EA_302, EA_303, EA_304, EA_305, EA_306, EA_307
+	.long EA_300, EA_301, EA_302, EA_303, EA_304, EA_305, EA_306, EA_307
+	.long EA_300, EA_301, EA_302, EA_303, EA_304, EA_305, EA_306, EA_307
+	.long EA_300, EA_301, EA_302, EA_303, EA_304, EA_305, EA_306, EA_307
+	.long EA_300, EA_301, EA_302, EA_303, EA_304, EA_305, EA_306, EA_307
 Mod_RM:
 	.space 0x400
 SegmentTable:
