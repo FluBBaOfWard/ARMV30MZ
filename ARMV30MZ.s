@@ -1697,10 +1697,10 @@ _82:	;@ PRE 82
 	getNextByteTo r4
 	cmp r4,#0xC0
 	add r2,v30ptr,r4,lsl#2
-	bmi 1f
-	ldrb v30ofs,[r2,#v30ModRmRm]
-	ldrb r0,[v30ptr,-v30ofs]
-0:
+	ldrbpl v30ofs,[r2,#v30ModRmRm]
+	ldrbpl r0,[v30ptr,-v30ofs]
+	blmi v30ReadEA2
+
 	bic v30cyc,v30cyc,#SEG_PREFIX
 	getNextByteTo r1
 
@@ -1708,10 +1708,7 @@ _82:	;@ PRE 82
 	ldr pc,[pc,r2,lsr#1]
 	b 2f
 	.long add80, or80, adc80, subc80, and80, sub80, xor80, cmp80
-1:
-	eatCycles 2
-	adr lr,0b
-	b v30ReadEA
+
 add80:
 	add8 r1,r0
 	b 2f
@@ -2965,11 +2962,11 @@ _C0:	;@ ROTSHFT BD8
 	getNextByteTo r4
 	cmp r4,#0xC0
 	add r2,v30ptr,r4,lsl#2
-	bmi 1f
-	ldrb v30ofs,[r2,#v30ModRmRm]
-	ldrb r0,[v30ptr,-v30ofs]
+	ldrbpl v30ofs,[r2,#v30ModRmRm]
+	ldrbpl r0,[v30ptr,-v30ofs]
+	blmi v30ReadEA2
 	eatCycles 2
-0:
+
 	getNextByteTo r1
 d2Continue:
 	ands r1,r1,#0x1F
@@ -2978,10 +2975,7 @@ d2Continue:
 	ldr pc,[pc,r2,lsr#1]
 	b 2f
 	.long rolC0, rorC0, rolcC0, rorcC0, shlC0, shrC0, undC0, shraC0
-1:
-	eatCycles 4
-	adr lr,0b
-	b v30ReadEA
+
 rolC0:
 	rol8 r0,r1
 	b 2f
@@ -3292,14 +3286,9 @@ _D0:	;@ ROTSHFT B
 	getNextByteTo r4
 	cmp r4,#0xC0
 	add r2,v30ptr,r4,lsl#2
-	bmi 0f
-	ldrb v30ofs,[r2,#v30ModRmRm]
-	ldrb r0,[v30ptr,-v30ofs]
-	mov r1,#1
-	b d2Continue
-0:
-	eatCycles 2
-	bl v30ReadEA
+	ldrbpl v30ofs,[r2,#v30ModRmRm]
+	ldrbpl r0,[v30ptr,-v30ofs]
+	blmi v30ReadEA2
 	mov r1,#1
 	b d2Continue
 ;@----------------------------------------------------------------------------
@@ -3327,16 +3316,11 @@ _D2:	;@ ROTSHFT BCL
 	getNextByteTo r4
 	cmp r4,#0xC0
 	add r2,v30ptr,r4,lsl#2
-	bmi 0f
+	ldrbpl v30ofs,[r2,#v30ModRmRm]
+	ldrbpl r0,[v30ptr,-v30ofs]
+	blmi v30ReadEA2
+	ldrb r1,[v30ptr,#v30RegCL]
 	eatCycles 2
-	ldrb v30ofs,[r2,#v30ModRmRm]
-	ldrb r0,[v30ptr,-v30ofs]
-	ldrb r1,[v30ptr,#v30RegCL]
-	b d2Continue
-0:
-	eatCycles 4
-	bl v30ReadEA
-	ldrb r1,[v30ptr,#v30RegCL]
 	b d2Continue
 ;@----------------------------------------------------------------------------
 i_rotshft_wcl:
@@ -3956,20 +3940,16 @@ _F7:	;@ PRE F7
 ;@----------------------------------------------------------------------------
 	getNextByteTo r4
 	cmp r4,#0xC0
-	bmi 1f
-	and r2,r4,#7
-	add v30ofs,v30ptr,r2,lsl#2
-	ldrh r0,[v30ofs,#v30Regs]
-0:
+	andpl r2,r4,#7
+	addpl v30ofs,v30ptr,r2,lsl#2
+	ldrhpl r0,[v30ofs,#v30Regs]
+	blmi v30ReadEAWr41
+
 	bic v30cyc,v30cyc,#SEG_PREFIX
 	and r2,r4,#0x38
 	ldr pc,[pc,r2,lsr#1]
 	nop
 	.long testF7, undefF7, notF7, negF7, muluF7, mulF7, divuwF7, divwF7
-1:
-	eatCycles 1
-	adr lr,0b
-	b v30ReadEAWr4
 ;@----------------------------------------------------------------------------
 testF7:
 	mov r4,r0,lsl#16
@@ -4137,10 +4117,10 @@ _FE:	;@ PRE FE
 	bne contFF
 	cmp r4,#0xC0
 	add r2,v30ptr,r4,lsl#2
-	bmi 1f
-	ldrb v30ofs,[r2,#v30ModRmRm]
-	ldrb r0,[v30ptr,-v30ofs]
-0:
+	ldrbpl v30ofs,[r2,#v30ModRmRm]
+	ldrbpl r0,[v30ptr,-v30ofs]
+	blmi v30ReadEA2
+
 	bic v30cyc,v30cyc,#SEG_PREFIX
 	mov r1,r0,lsl#24
 	tst r4,#0x08
@@ -4167,10 +4147,6 @@ writeBackFE:
 	strbpl r1,[v30ptr,-v30ofs]
 	blmi v30WriteSegOfs
 	fetch 1
-1:
-	eatCycles 2
-	adr lr,0b
-	b v30ReadEA
 
 ;@----------------------------------------------------------------------------
 i_ffpre:
@@ -4179,20 +4155,16 @@ _FF:	;@ PRE FF
 	getNextByteTo r4
 contFF:
 	cmp r4,#0xC0
-	bmi 1f
-	and r2,r4,#7
-	add v30ofs,v30ptr,r2,lsl#2
-	ldrh r0,[v30ofs,#v30Regs]
-0:
+	andpl r2,r4,#7
+	addpl v30ofs,v30ptr,r2,lsl#2
+	ldrhpl r0,[v30ofs,#v30Regs]
+	blmi v30ReadEAWr41
+
 	bic v30cyc,v30cyc,#SEG_PREFIX
 	and r2,r4,#0x38
 	ldr pc,[pc,r2,lsr#1]
 	nop
 	.long incFF, decFF, callFF, callFarFF, braFF, braFarFF, pushFF, undefFF
-1:
-	eatCycles 1
-	adr lr,0b
-	b v30ReadEAWr4
 ;@----------------------------------------------------------------------------
 incFF:
 	bic v30f,v30f,#PSR_S+PSR_Z+PSR_V+PSR_A		;@ Clear S, Z, V & A.
@@ -4228,6 +4200,8 @@ callFF:
 	fetch 5
 ;@----------------------------------------------------------------------------
 callFarFF:
+	cmp r4,#0xC0
+	blpl v30ReadEAWr4
 	v30DecodeFastPCToReg r4
 	mov v30pc,r0,lsl#16
 	add v30ofs,v30ofs,#0x20000
@@ -4251,6 +4225,8 @@ braFF:
 	fetch 5
 ;@----------------------------------------------------------------------------
 braFarFF:
+	cmp r4,#0xC0
+	blpl v30ReadEAWr4
 	mov v30pc,r0,lsl#16
 	add v30ofs,v30ofs,#0x20000
 	bl v30ReadSegOfsW
