@@ -7,7 +7,7 @@ V0.8.4 - 2023-01-22 (FluBBa)
 	Fixed CHKIND/BOUND opcode.
 	Fixed MOV SREG opcodes.
 	Fixed CALL/JMP FAR opcodes.
-	Optimized 0xC0/0xC2 opcodes.
+	Optimized 0x80/0x81/0x82/0x83 opcodes.
 	Optimized memory access.
 	Optimized AAS/ADJBS opcode.
 

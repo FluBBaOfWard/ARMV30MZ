@@ -102,7 +102,7 @@ _01:	;@ ADD WR16
 	ldr r4,[r2,#v30Regs2]
 	cmp r0,#0xC0
 	bmi 0f
-
+add81Reg:
 	andpl r0,r0,#7
 	add v30ofs,v30ptr,r0,lsl#2
 	ldrh r0,[v30ofs,#v30Regs]
@@ -113,7 +113,7 @@ _01:	;@ ADD WR16
 	fetch 1
 0:
 	bl v30ReadEAW
-
+add81EA:
 	add16 r0,r4
 	bl v30WriteSegOfsW
 	bic v30cyc,v30cyc,#SEG_PREFIX
@@ -222,19 +222,19 @@ _09:	;@ OR WR16
 	ldr r4,[r2,#v30Regs2]
 	cmp r0,#0xC0
 	bmi 0f
-
+or81Reg:
 	andpl r0,r0,#7
 	add v30ofs,v30ptr,r0,lsl#2
 	ldrh r0,[v30ofs,#v30Regs]
-	or16 r0,r4
 
+	or16 r0,r4
 	strh r1,[v30ofs,#v30Regs]
 	bic v30cyc,v30cyc,#SEG_PREFIX
 	fetch 1
 0:
 	bl v30ReadEAW
+or81EA:
 	or16 r0,r4
-
 	bl v30WriteSegOfsW
 	bic v30cyc,v30cyc,#SEG_PREFIX
 	fetch 3
@@ -335,19 +335,19 @@ _11:	;@ ADDC/ADC WR16
 	ldr r4,[r2,#v30Regs2]
 	cmp r0,#0xC0
 	bmi 0f
-
+adc81Reg:
 	andpl r0,r0,#7
 	add v30ofs,v30ptr,r0,lsl#2
 	ldrh r0,[v30ofs,#v30Regs]
-	adc16 r0,r4
 
+	adc16 r0,r4
 	strh r1,[v30ofs,#v30Regs]
 	bic v30cyc,v30cyc,#SEG_PREFIX
 	fetch 1
 0:
 	bl v30ReadEAW
+adc81EA:
 	adc16 r0,r4
-
 	bl v30WriteSegOfsW
 	bic v30cyc,v30cyc,#SEG_PREFIX
 	fetch 3
@@ -455,23 +455,22 @@ _19:	;@ SUBC/SBB WR16
 	getNextByte
 	and r1,r0,#0x38
 	add r2,v30ptr,r1,lsr#1
-	ldrh r4,[r2,#v30Regs]
+	ldr r4,[r2,#v30Regs2]
 	cmp r0,#0xC0
 	bmi 0f
-
+subc81Reg:
 	andpl r0,r0,#7
 	add v30ofs,v30ptr,r0,lsl#2
-	ldr r0,[v30ofs,#v30Regs2]
-	subc16 r4,r0
+	ldrh r0,[v30ofs,#v30Regs]
 
+	rsbc16 r0,r4
 	strh r1,[v30ofs,#v30Regs]
 	bic v30cyc,v30cyc,#SEG_PREFIX
 	fetch 1
 0:
 	bl v30ReadEAW
-	mov r0,r0,lsl#16
-	subc16 r4,r0
-
+subc81EA:
+	rsbc16 r0,r4
 	bl v30WriteSegOfsW
 	bic v30cyc,v30cyc,#SEG_PREFIX
 	fetch 3
@@ -579,19 +578,19 @@ _21:	;@ AND WR16
 	ldr r4,[r2,#v30Regs2]
 	cmp r0,#0xC0
 	bmi 0f
-
+and81Reg:
 	andpl r0,r0,#7
 	add v30ofs,v30ptr,r0,lsl#2
 	ldrh r0,[v30ofs,#v30Regs]
-	and16 r0,r4
 
+	and16 r0,r4
 	strh r1,[v30ofs,#v30Regs]
 	bic v30cyc,v30cyc,#SEG_PREFIX
 	fetch 1
 0:
 	bl v30ReadEAW
+and81EA:
 	and16 r0,r4
-
 	bl v30WriteSegOfsW
 	bic v30cyc,v30cyc,#SEG_PREFIX
 	fetch 3
@@ -717,23 +716,22 @@ _29:	;@ SUB WR16
 	getNextByte
 	and r1,r0,#0x38
 	add r2,v30ptr,r1,lsr#1
-	ldrh r4,[r2,#v30Regs]
+	ldr r4,[r2,#v30Regs2]
 	cmp r0,#0xC0
 	bmi 0f
-
+sub81Reg:
 	andpl r0,r0,#7
 	add v30ofs,v30ptr,r0,lsl#2
-	ldr r0,[v30ofs,#v30Regs2]
-	sub16 r4,r0
+	ldrh r0,[v30ofs,#v30Regs]
 
+	rsb16 r0,r4
 	strh r1,[v30ofs,#v30Regs]
 	bic v30cyc,v30cyc,#SEG_PREFIX
 	fetch 1
 0:
 	bl v30ReadEAW
-	mov r0,r0,lsl#16
-	sub16 r4,r0
-
+sub81EA:
+	rsb16 r0,r4
 	bl v30WriteSegOfsW
 	bic v30cyc,v30cyc,#SEG_PREFIX
 	fetch 3
@@ -862,19 +860,19 @@ _31:	;@ XOR WR16
 	ldr r4,[r2,#v30Regs2]
 	cmp r0,#0xC0
 	bmi 0f
-
+xor81Reg:
 	andpl r0,r0,#7
 	add v30ofs,v30ptr,r0,lsl#2
 	ldrh r0,[v30ofs,#v30Regs]
-	xor16 r0,r4
 
+	xor16 r0,r4
 	strh r1,[v30ofs,#v30Regs]
 	bic v30cyc,v30cyc,#SEG_PREFIX
 	fetch 1
 0:
 	bl v30ReadEAW
+xor81EA:
 	xor16 r0,r4
-
 	bl v30WriteSegOfsW
 	bic v30cyc,v30cyc,#SEG_PREFIX
 	fetch 3
@@ -973,10 +971,14 @@ _38:	;@ CMP BR8
 cmp80Reg:
 	ldrbpl r0,[v30ptr,-v30ofs]
 	blmi v30ReadEA1
-cmp80EA:
+
 	sub8 r4,r0
 	bic v30cyc,v30cyc,#SEG_PREFIX
 	fetch 1
+cmp80EA:
+	sub8 r4,r0
+	bic v30cyc,v30cyc,#SEG_PREFIX
+	fetch 2
 ;@----------------------------------------------------------------------------
 i_cmp_wr16:
 _39:	;@ CMP WR16
@@ -984,17 +986,21 @@ _39:	;@ CMP WR16
 	getNextByte
 	and r1,r0,#0x38
 	add r2,v30ptr,r1,lsr#1
-	ldrh r4,[r2,#v30Regs]
+	ldr r4,[r2,#v30Regs2]
 	cmp r0,#0xC0
+cmp81Reg:
 	andpl r0,r0,#7
 	add r2,v30ptr,r0,lsl#2
 	ldrhpl r0,[r2,#v30Regs]
 	blmi v30ReadEAW1
 
-	mov r0,r0,lsl#16
-	sub16 r4,r0
+	rsb16 r0,r4
 	bic v30cyc,v30cyc,#SEG_PREFIX
 	fetch 1
+cmp81EA:
+	rsb16 r0,r4
+	bic v30cyc,v30cyc,#SEG_PREFIX
+	fetch 2
 ;@----------------------------------------------------------------------------
 i_cmp_r8b:
 _3A:	;@ CMP R8b
@@ -1729,75 +1735,33 @@ _82:	;@ PRE 82
 i_81pre:
 _81:	;@ PRE 81
 ;@----------------------------------------------------------------------------
-	getNextByteTo r4
-	cmp r4,#0xC0
-	bmi 1f
-	and r2,r4,#7
-	add v30ofs,v30ptr,r2,lsl#2
-	ldr r5,[v30ofs,#v30Regs2]
-0:
-	getNextWord
-pre81Continue:
+	getNextByte
+	cmp r0,#0xC0
+	and r5,r0,#0xF8
+	blmi v30ReadEAW
 
-	bic v30cyc,v30cyc,#SEG_PREFIX
-	and r2,r4,#0x38
-	ldr pc,[pc,r2,lsr#1]
-	b 2f
-	.long add81, or81, adc81, subc81, and81, sub81, xor81, cmp81
-1:
-	eatCycles 2
-	bl v30ReadEAWr4
-	mov r5,r0,lsl#16
-	b 0b
-add81:
-	add16 r0,r5
-	b 2f
-or81:
-	or16 r0,r5
-	b 2f
-adc81:
-	adc16 r0,r5
-	b 2f
-subc81:
-	subc16 r0,r5
-	b 2f
-and81:
-	and16 r0,r5
-	b 2f
-sub81:
-	sub16 r0,r5
-	b 2f
-xor81:
-	xor16 r0,r5
-	b 2f
-cmp81:
-	sub16 r0,r5
-	fetch 1
-2:
-	cmp r4,#0xC0
-	strhpl r1,[v30ofs,#v30Regs]
-	blmi v30WriteSegOfsW
-	fetch 1
+	getNextWordTo r4, r1
+pre81Continue:
+	mov r4,r4,lsl#16
+
+	ldr pc,[pc,r5,lsr#1]
+	nop
+	.long add81EA,  or81EA,  adc81EA,  subc81EA,  and81EA,  sub81EA,  xor81EA,  cmp81EA
+	.long add81EA,  or81EA,  adc81EA,  subc81EA,  and81EA,  sub81EA,  xor81EA,  cmp81EA
+	.long add81EA,  or81EA,  adc81EA,  subc81EA,  and81EA,  sub81EA,  xor81EA,  cmp81EA
+	.long add81Reg, or81Reg, adc81Reg, subc81Reg, and81Reg, sub81Reg, xor81Reg, cmp81Reg
+
 ;@----------------------------------------------------------------------------
 i_83pre:
 _83:	;@ PRE 83
 ;@----------------------------------------------------------------------------
-	getNextByteTo r4
-	cmp r4,#0xC0
-	bmi 1f
-	and r2,r4,#7
-	add v30ofs,v30ptr,r2,lsl#2
-	ldr r5,[v30ofs,#v30Regs2]
-0:
 	getNextByte
-	tst r0,#0x80
-	orrne r0,r0,#0xFF00
+	cmp r0,#0xC0
+	and r5,r0,#0xF8
+	blmi v30ReadEAW
+
+	getNextSignedByteTo r4
 	b pre81Continue
-1:
-	eatCycles 2
-	bl v30ReadEAWr4
-	mov r5,r0,lsl#16
-	b 0b
 ;@----------------------------------------------------------------------------
 i_test_br8:
 _84:	;@ TEST BR8

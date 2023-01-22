@@ -482,6 +482,18 @@
 	mov r1,\src,lsr#16
 	strb r1,[v30ptr,#v30ParityVal]
 	.endm
+
+	.macro rsb16 src dst
+	eor r2,\src,\dst,lsr#16
+	rsbs \src,\dst,\src,lsl#16
+	eor r2,r2,\src,lsr#16
+	and r2,r2,#PSR_A
+	mrs v30f,cpsr				;@ S, Z, V & C.
+	orr v30f,r2,v30f,lsr#28
+	eor v30f,v30f,#PSR_C		;@ Invert C
+	mov r1,\src,lsr#16
+	strb r1,[v30ptr,#v30ParityVal]
+	.endm
 ;@----------------------------------------------------------------------------
 	.macro subc8 src dst
 	and v30f,v30f,#PSR_C
@@ -499,6 +511,20 @@
 	.endm
 
 	.macro subc16 src dst
+	and v30f,v30f,#PSR_C
+	subs \src,\src,v30f,lsl#15	;@ Fix up src and set correct C.
+	eor r2,\src,\dst,lsr#16
+	sbcs \src,\dst,\src,ror#16
+	eor r2,r2,\src,lsr#16
+	and r2,r2,#PSR_A
+	mrs v30f,cpsr				;@ S, Z, V & C.
+	orr v30f,r2,v30f,lsr#28
+	eor v30f,v30f,#PSR_C		;@ Invert C
+	mov r1,\src,lsr#16
+	strb r1,[v30ptr,#v30ParityVal]
+	.endm
+
+	.macro rsbc16 src dst
 	and v30f,v30f,#PSR_C
 	subs \src,\src,v30f,lsl#15	;@ Fix up src and set correct C.
 	eor r2,\src,\dst,lsr#16
