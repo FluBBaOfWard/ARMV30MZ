@@ -77,6 +77,7 @@ _00:	;@ ADD BR8
 	bmi 0f
 
 	and v30ofs,r1,#0xff
+add80Reg:
 	ldrb r0,[v30ptr,-v30ofs]
 	add8 r4,r0
 
@@ -85,6 +86,7 @@ _00:	;@ ADD BR8
 	fetch 1
 0:
 	bl v30ReadEA
+add80EA:
 	add8 r4,r0
 
 	bl v30WriteSegOfs
@@ -104,15 +106,15 @@ _01:	;@ ADD WR16
 	andpl r0,r0,#7
 	add v30ofs,v30ptr,r0,lsl#2
 	ldrh r0,[v30ofs,#v30Regs]
-	add16 r0,r4
 
+	add16 r0,r4
 	strh r1,[v30ofs,#v30Regs]
 	bic v30cyc,v30cyc,#SEG_PREFIX
 	fetch 1
 0:
 	bl v30ReadEAW
-	add16 r0,r4
 
+	add16 r0,r4
 	bl v30WriteSegOfsW
 	bic v30cyc,v30cyc,#SEG_PREFIX
 	fetch 3
@@ -194,7 +196,8 @@ _08:	;@ OR BR8
 	ldrb r4,[v30ptr,-r1,lsr#24]
 	bmi 0f
 
-	andpl v30ofs,r1,#0xff
+	and v30ofs,r1,#0xff
+or80Reg:
 	ldrb r0,[v30ptr,-v30ofs]
 	or8 r4,r0
 
@@ -203,6 +206,7 @@ _08:	;@ OR BR8
 	fetch 1
 0:
 	bl v30ReadEA
+or80EA:
 	or8 r4,r0
 
 	bl v30WriteSegOfs
@@ -306,6 +310,7 @@ _10:	;@ ADDC/ADC BR8
 	bmi 0f
 
 	and v30ofs,r1,#0xff
+adc80Reg:
 	ldrb r0,[v30ptr,-v30ofs]
 	adc8 r4,r0
 
@@ -314,6 +319,7 @@ _10:	;@ ADDC/ADC BR8
 	fetch 1
 0:
 	bl v30ReadEA
+adc80EA:
 	adc8 r4,r0
 
 	bl v30WriteSegOfs
@@ -427,6 +433,7 @@ _18:	;@ SUBC/SBB BR8
 	bmi 0f
 
 	and v30ofs,r1,#0xff
+subc80Reg:
 	ldrb r0,[v30ptr,-v30ofs]
 	subc8 r4,r0
 
@@ -435,6 +442,7 @@ _18:	;@ SUBC/SBB BR8
 	fetch 1
 0:
 	bl v30ReadEA
+subc80EA:
 	subc8 r4,r0
 
 	bl v30WriteSegOfs
@@ -546,6 +554,7 @@ _20:	;@ AND BR8
 	bmi 0f
 
 	and v30ofs,r1,#0xff
+and80Reg:
 	ldrb r0,[v30ptr,-v30ofs]
 	and8 r4,r0
 
@@ -554,6 +563,7 @@ _20:	;@ AND BR8
 	fetch 1
 0:
 	bl v30ReadEA
+and80EA:
 	and8 r4,r0
 
 	bl v30WriteSegOfs
@@ -685,6 +695,7 @@ _28:	;@ SUB BR8
 	bmi 0f
 
 	and v30ofs,r1,#0xff
+sub80Reg:
 	ldrb r0,[v30ptr,-v30ofs]
 	sub8 r4,r0
 
@@ -693,6 +704,7 @@ _28:	;@ SUB BR8
 	fetch 1
 0:
 	bl v30ReadEA
+sub80EA:
 	sub8 r4,r0
 
 	bl v30WriteSegOfs
@@ -825,6 +837,7 @@ _30:	;@ XOR BR8
 	bmi 0f
 
 	and v30ofs,r1,#0xff
+xor80Reg:
 	ldrb r0,[v30ptr,-v30ofs]
 	xor8 r4,r0
 
@@ -833,6 +846,7 @@ _30:	;@ XOR BR8
 	fetch 1
 0:
 	bl v30ReadEA
+xor80EA:
 	xor8 r4,r0
 
 	bl v30WriteSegOfs
@@ -955,10 +969,11 @@ _38:	;@ CMP BR8
 	ldr r1,[r2,#v30ModRmReg]
 	cmp r0,#0xC0
 	ldrb r4,[v30ptr,-r1,lsr#24]
-	andpl r1,r1,#0xff
-	ldrbpl r0,[v30ptr,-r1]
+	andpl v30ofs,r1,#0xff
+cmp80Reg:
+	ldrbpl r0,[v30ptr,-v30ofs]
 	blmi v30ReadEA1
-
+cmp80EA:
 	sub8 r4,r0
 	bic v30cyc,v30cyc,#SEG_PREFIX
 	fetch 1
@@ -1694,50 +1709,22 @@ _80:	;@ PRE 80
 i_82pre:
 _82:	;@ PRE 82
 ;@----------------------------------------------------------------------------
-	getNextByteTo r4
-	cmp r4,#0xC0
-	add r2,v30ptr,r4,lsl#2
+	getNextByte
+	cmp r0,#0xC0
+	add r2,v30ptr,r0,lsl#2
+	and r5,r0,#0xF8
 	ldrbpl v30ofs,[r2,#v30ModRmRm]
-	ldrbpl r0,[v30ptr,-v30ofs]
-	blmi v30ReadEA2
+	blmi v30ReadEA
 
-	bic v30cyc,v30cyc,#SEG_PREFIX
-	getNextByteTo r1
+	getNextByteTo r4
 
-	and r2,r4,#0x38
-	ldr pc,[pc,r2,lsr#1]
-	b 2f
-	.long add80, or80, adc80, subc80, and80, sub80, xor80, cmp80
+	ldr pc,[pc,r5,lsr#1]
+	nop
+	.long add80EA,  or80EA,  adc80EA,  subc80EA,  and80EA,  sub80EA,  xor80EA,  cmp80EA
+	.long add80EA,  or80EA,  adc80EA,  subc80EA,  and80EA,  sub80EA,  xor80EA,  cmp80EA
+	.long add80EA,  or80EA,  adc80EA,  subc80EA,  and80EA,  sub80EA,  xor80EA,  cmp80EA
+	.long add80Reg, or80Reg, adc80Reg, subc80Reg, and80Reg, sub80Reg, xor80Reg, cmp80Reg
 
-add80:
-	add8 r1,r0
-	b 2f
-or80:
-	or8 r1,r0
-	b 2f
-adc80:
-	adc8 r1,r0
-	b 2f
-subc80:
-	subc8 r1,r0
-	b 2f
-and80:
-	and8 r1,r0
-	b 2f
-sub80:
-	sub8 r1,r0
-	b 2f
-xor80:
-	xor8 r1,r0
-	b 2f
-cmp80:
-	sub8 r1,r0
-	fetch 1
-2:
-	cmp r4,#0xC0
-	strbpl r1,[v30ptr,-v30ofs]
-	blmi v30WriteSegOfs
-	fetch 1
 ;@----------------------------------------------------------------------------
 i_81pre:
 _81:	;@ PRE 81
@@ -2018,18 +2005,13 @@ _8F:	;@ POPW
 	mov r1,r0
 	getNextByte
 	cmp r0,#0xC0
-	bmi 0f
 
 	andpl r0,r0,#7
 	add r2,v30ptr,r0,lsl#2
 	strhpl r1,[r2,#v30Regs]
+	blmi v30WriteEAW2
 	bic v30cyc,v30cyc,#SEG_PREFIX
 	fetch 1
-0:
-	add r2,v30ptr,r0,lsl#2
-	bl v30WriteEAW
-	bic v30cyc,v30cyc,#SEG_PREFIX
-	fetch 3
 ;@----------------------------------------------------------------------------
 i_nop:
 _90:	;@ NOP (XCH AXAX)
@@ -4122,17 +4104,16 @@ _FE:	;@ PRE FE
 	blmi v30ReadEA2
 
 	bic v30cyc,v30cyc,#SEG_PREFIX
+	bic v30f,v30f,#PSR_S+PSR_Z+PSR_V+PSR_A		;@ Clear S, Z, V & A.
 	mov r1,r0,lsl#24
 	tst r4,#0x08
 	bne decFE
 incFE:
-	bic v30f,v30f,#PSR_S+PSR_Z+PSR_V+PSR_A		;@ Clear S, Z, V & A.
 	adds r1,r1,#0x1000000
 	orrvs v30f,v30f,#PSR_V						;@ Set Overflow.
 	tst r1,#0xF000000
 	b writeBackFE
 decFE:
-	bic v30f,v30f,#PSR_S+PSR_Z+PSR_V+PSR_A		;@ Clear S, Z, V & A.
 	subs r1,r1,#0x1000000
 	orrvs v30f,v30f,#PSR_V						;@ Set Overflow.
 	tst r0,#0xF
