@@ -2905,12 +2905,13 @@ _BF:	;@ MOV DID16
 i_rotshft_bd8:
 _C0:	;@ ROTSHFT BD8
 ;@----------------------------------------------------------------------------
-	getNextByteTo r4
-	cmp r4,#0xC0
-	add v30ofs,v30ptr,r4,lsl#2
+	getNextByte
+	cmp r0,#0xC0
+	and r5,r0,#0xF8
+	add v30ofs,v30ptr,r0,lsl#2
 	ldrbpl v30ofs,[v30ofs,#v30ModRmRm]
 	ldrbpl r0,[v30ptr,-v30ofs]
-	blmi v30ReadEA2
+	blmi v30ReadEA
 
 	getNextByteTo r1
 d2Continue:
@@ -2919,40 +2920,80 @@ d2Continue:
 d0Continue:
 
 	bic v30cyc,v30cyc,#SEG_PREFIX
-	and r2,r4,#0x38
-	ldr pc,[pc,r2,lsr#1]
+	ldr pc,[pc,r5,lsr#1]
 	nop
-	.long rolC0, rorC0, rolcC0, rorcC0, shlC0, shrC0, undC0, shraC0
+	.long rolC0EA,  rorC0EA,  rolcC0EA,  rorcC0EA,  shlC0EA,  shrC0EA,  undC0EA,  shraC0EA
+	.long rolC0EA,  rorC0EA,  rolcC0EA,  rorcC0EA,  shlC0EA,  shrC0EA,  undC0EA,  shraC0EA
+	.long rolC0EA,  rorC0EA,  rolcC0EA,  rorcC0EA,  shlC0EA,  shrC0EA,  undC0EA,  shraC0EA
+	.long rolC0Reg, rorC0Reg, rolcC0Reg, rorcC0Reg, shlC0Reg, shrC0Reg, undC0Reg, shraC0Reg
 
-rolC0:
+rolC0Reg:
 	rol8 r0,r1
-	b 2f
-rorC0:
+	strb r1,[v30ptr,-v30ofs]
+	fetch 1
+rorC0Reg:
 	ror8 r0,r1
-	b 2f
-rolcC0:
+	strb r1,[v30ptr,-v30ofs]
+	fetch 1
+rolcC0Reg:
 	rolc8 r0,r1
-	b 2f
-rorcC0:
+	strb r1,[v30ptr,-v30ofs]
+	fetch 1
+rorcC0Reg:
 	rorc8 r0,r1
-	b 2f
-shlC0:
+	strb r1,[v30ptr,-v30ofs]
+	fetch 1
+shlC0Reg:
 	shl8 r0,r1
-	b 2f
-shrC0:
+	strb r1,[v30ptr,-v30ofs]
+	fetch 1
+shrC0Reg:
 	shr8 r0,r1
-	b 2f
-undC0:
+	strb r1,[v30ptr,-v30ofs]
+	fetch 1
+undC0Reg:
 	bl logUndefinedOpcode
 	mov r1,#0
-	b 2f
-shraC0:
-	shra8 r0,r1
-2:
-	cmp r4,#0xC0
-	strbpl r1,[v30ptr,-v30ofs]
-	blmi v30WriteSegOfs
+	strb r1,[v30ptr,-v30ofs]
 	fetch 1
+shraC0Reg:
+	shra8 r0,r1
+	strb r1,[v30ptr,-v30ofs]
+	fetch 1
+
+rolC0EA:
+	rol8 r0,r1
+	bl v30WriteSegOfs
+	fetch 3
+rorC0EA:
+	ror8 r0,r1
+	bl v30WriteSegOfs
+	fetch 3
+rolcC0EA:
+	rolc8 r0,r1
+	bl v30WriteSegOfs
+	fetch 3
+rorcC0EA:
+	rorc8 r0,r1
+	bl v30WriteSegOfs
+	fetch 3
+shlC0EA:
+	shl8 r0,r1
+	bl v30WriteSegOfs
+	fetch 3
+shrC0EA:
+	shr8 r0,r1
+	bl v30WriteSegOfs
+	fetch 3
+undC0EA:
+	bl logUndefinedOpcode
+	mov r1,#0
+	bl v30WriteSegOfs
+	fetch 3
+shraC0EA:
+	shra8 r0,r1
+	bl v30WriteSegOfs
+	fetch 3
 ;@----------------------------------------------------------------------------
 i_rotshft_wd8:
 _C1:	;@ ROTSHFT WD8
@@ -3269,12 +3310,13 @@ _CF:	;@ IRET
 i_rotshft_b:
 _D0:	;@ ROTSHFT B
 ;@----------------------------------------------------------------------------
-	getNextByteTo r4
-	cmp r4,#0xC0
-	add v30ofs,v30ptr,r4,lsl#2
+	getNextByte
+	cmp r0,#0xC0
+	and r5,r0,#0xF8
+	add v30ofs,v30ptr,r0,lsl#2
 	ldrbpl v30ofs,[v30ofs,#v30ModRmRm]
 	ldrbpl r0,[v30ptr,-v30ofs]
-	blmi v30ReadEA2
+	blmi v30ReadEA
 	mov r1,#1
 	b d0Continue
 ;@----------------------------------------------------------------------------
@@ -3294,12 +3336,13 @@ _D1:	;@ ROTSHFT W
 i_rotshft_bcl:
 _D2:	;@ ROTSHFT BCL
 ;@----------------------------------------------------------------------------
-	getNextByteTo r4
-	cmp r4,#0xC0
-	add v30ofs,v30ptr,r4,lsl#2
+	getNextByte
+	cmp r0,#0xC0
+	and r5,r0,#0xF8
+	add v30ofs,v30ptr,r0,lsl#2
 	ldrbpl v30ofs,[v30ofs,#v30ModRmRm]
 	ldrbpl r0,[v30ptr,-v30ofs]
-	blmi v30ReadEA2
+	blmi v30ReadEA
 	ldrb r1,[v30ptr,#v30RegCL]
 	b d2Continue
 ;@----------------------------------------------------------------------------

@@ -524,7 +524,9 @@
 	strb r1,[v30ptr,#v30ParityVal]
 	.endm
 
-	.macro rsbc16 src dst
+	.macro rsbc16 dst src
+	mov \src,\src,lsr#16
+	mov \dst,\dst,lsl#16
 	and v30f,v30f,#PSR_C
 	subs \src,\src,v30f,lsl#15	;@ Fix up src and set correct C.
 	eor r2,\src,\dst,lsr#16
