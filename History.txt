@@ -2,7 +2,7 @@ ARMV30MZ revision history
 -=-=-=-=-=-=-=-=-=-=-=-=-
 
 
-V0.8.4 - 2023-01-23 (FluBBa)
+V0.8.4 - 2023-01-24 (FluBBa)
 	Fixed LEA/LDS/LES opcodes.
 	Fixed CHKIND/BOUND opcode.
 	Fixed MOV SREG opcodes.
@@ -10,6 +10,7 @@ V0.8.4 - 2023-01-23 (FluBBa)
 	Optimized 0x80/0x81/0x82/0x83 opcodes.
 	Optimized 0xC0/0xD0/0xD2 opcodes.
 	Optimized 0xC1/0xD1/0xD3 opcodes.
+	Optimized 0xF6/0xF7 opcodes.
 	Optimized memory access.
 	Optimized AAS/ADJBS opcode.
 

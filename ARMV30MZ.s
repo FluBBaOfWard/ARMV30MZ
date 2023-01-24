@@ -1717,8 +1717,8 @@ _82:	;@ PRE 82
 ;@----------------------------------------------------------------------------
 	getNextByte
 	cmp r0,#0xC0
-	add v30ofs,v30ptr,r0,lsl#2
 	and r5,r0,#0xF8
+	add v30ofs,v30ptr,r0,lsl#2
 	ldrbpl v30ofs,[v30ofs,#v30ModRmRm]
 	blmi v30ReadEA
 
@@ -3828,33 +3828,38 @@ _F5:	;@ NOT1 CY/CMC		;@ Not Carry/Complement Carry
 i_f6pre:
 _F6:	;@ PRE F6
 ;@----------------------------------------------------------------------------
-	getNextByteTo r4
-	cmp r4,#0xC0
-	add v30ofs,v30ptr,r4,lsl#2
+	getNextByte
+	cmp r0,#0xC0
+	and r5,r0,#0xF8
+	add v30ofs,v30ptr,r0,lsl#2
 	ldrbpl v30ofs,[v30ofs,#v30ModRmRm]
 	ldrbpl r0,[v30ptr,-v30ofs]
 	blmi v30ReadEA1
 
 	bic v30cyc,v30cyc,#SEG_PREFIX
-	and r2,r4,#0x38
-	ldr pc,[pc,r2,lsr#1]
+	ldr pc,[pc,r5,lsr#1]
 	nop
-	.long testF6, undefF6, notF6, negF6, muluF6, mulF6, divubF6, divbF6
+	.long testF6, undefF6, notF6EA,  negF6EA,  muluF6, mulF6, divubF6, divbF6
+	.long testF6, undefF6, notF6EA,  negF6EA,  muluF6, mulF6, divubF6, divbF6
+	.long testF6, undefF6, notF6EA,  negF6EA,  muluF6, mulF6, divubF6, divbF6
+	.long testF6, undefF6, notF6Reg, negF6Reg, muluF6, mulF6, divubF6, divbF6
 ;@----------------------------------------------------------------------------
 testF6:
 	getNextByteTo r1
 	and8 r1,r0
 	fetch 1
 ;@----------------------------------------------------------------------------
-notF6:
+notF6Reg:
 	mvn r1,r0
-	cmp r4,#0xC0
-	strbpl r1,[v30ptr,-v30ofs]
-	submi v30cyc,v30cyc,#1*CYCLE
-	blmi v30WriteSegOfs
+	strb r1,[v30ptr,-v30ofs]
 	fetch 1
 ;@----------------------------------------------------------------------------
-negF6:
+notF6EA:
+	mvn r1,r0
+	bl v30WriteSegOfs
+	fetch 2
+;@----------------------------------------------------------------------------
+negF6Reg:
 	mov r1,r0,lsl#24
 	rsbs r1,r1,#0
 	mrs v30f,cpsr				;@ S, Z, V & C.
@@ -3865,11 +3870,22 @@ negF6:
 	mov r1,r1,lsr#24
 	strb r1,[v30ptr,#v30ParityVal]
 
-	cmp r4,#0xC0
-	strbpl r1,[v30ptr,-v30ofs]
-	submi v30cyc,v30cyc,#1*CYCLE
-	blmi v30WriteSegOfs
+	strb r1,[v30ptr,-v30ofs]
 	fetch 1
+;@----------------------------------------------------------------------------
+negF6EA:
+	mov r1,r0,lsl#24
+	rsbs r1,r1,#0
+	mrs v30f,cpsr				;@ S, Z, V & C.
+	eor r0,r0,r1,lsr#24
+	and r0,r0,#PSR_A
+	orr v30f,r0,v30f,lsr#28
+	eor v30f,v30f,#PSR_C		;@ Invert C
+	mov r1,r1,lsr#24
+	strb r1,[v30ptr,#v30ParityVal]
+
+	bl v30WriteSegOfs
+	fetch 2
 ;@----------------------------------------------------------------------------
 muluF6:			;@ MULU/MUL
 	mov v30f,#PSR_Z						;@ Set Z and clear others.
@@ -3955,18 +3971,21 @@ divbF6Error2:
 i_f7pre:
 _F7:	;@ PRE F7
 ;@----------------------------------------------------------------------------
-	getNextByteTo r4
-	cmp r4,#0xC0
-	andpl r2,r4,#7
-	addpl v30ofs,v30ptr,r2,lsl#2
+	getNextByte
+	cmp r0,#0xC0
+	and r5,r0,#0xF8
+	andpl r0,r0,#7
+	add v30ofs,v30ptr,r0,lsl#2
 	ldrhpl r0,[v30ofs,#v30Regs]
-	blmi v30ReadEAWr41
+	blmi v30ReadEAW_noAdd
 
 	bic v30cyc,v30cyc,#SEG_PREFIX
-	and r2,r4,#0x38
-	ldr pc,[pc,r2,lsr#1]
+	ldr pc,[pc,r5,lsr#1]
 	nop
-	.long testF7, undefF7, notF7, negF7, muluF7, mulF7, divuwF7, divwF7
+	.long testF7, undefF7, notF7EA,  negF7EA,  muluF7, mulF7, divuwF7, divwF7
+	.long testF7, undefF7, notF7EA,  negF7EA,  muluF7, mulF7, divuwF7, divwF7
+	.long testF7, undefF7, notF7EA,  negF7EA,  muluF7, mulF7, divuwF7, divwF7
+	.long testF7, undefF7, notF7Reg, negF7Reg, muluF7, mulF7, divuwF7, divwF7
 ;@----------------------------------------------------------------------------
 testF7:
 	mov r4,r0,lsl#16
@@ -3974,15 +3993,17 @@ testF7:
 	and16 r0,r4
 	fetch 1
 ;@----------------------------------------------------------------------------
-notF7:
+notF7Reg:
 	mvn r1,r0
-	cmp r4,#0xC0
-	strhpl r1,[v30ofs,#v30Regs]
-	submi v30cyc,v30cyc,#1*CYCLE
-	blmi v30WriteSegOfsW
+	strh r1,[v30ofs,#v30Regs]
 	fetch 1
 ;@----------------------------------------------------------------------------
-negF7:
+notF7EA:
+	mvn r1,r0
+	bl v30WriteSegOfsW
+	fetch 2
+;@----------------------------------------------------------------------------
+negF7Reg:
 	mov r1,r0,lsl#16
 	rsbs r1,r1,#0
 	mrs v30f,cpsr				;@ S, Z, V & C.
@@ -3992,11 +4013,21 @@ negF7:
 	eor v30f,v30f,#PSR_C		;@ Invert C
 	mov r1,r1,lsr#16
 	strb r1,[v30ptr,#v30ParityVal]
-	cmp r4,#0xC0
-	strhpl r1,[v30ofs,#v30Regs]
-	submi v30cyc,v30cyc,#1*CYCLE
-	blmi v30WriteSegOfsW
+	strh r1,[v30ofs,#v30Regs]
 	fetch 1
+;@----------------------------------------------------------------------------
+negF7EA:
+	mov r1,r0,lsl#16
+	rsbs r1,r1,#0
+	mrs v30f,cpsr				;@ S, Z, V & C.
+	eor r0,r0,r1,lsr#16
+	and r0,r0,#PSR_A
+	orr v30f,r0,v30f,lsr#28
+	eor v30f,v30f,#PSR_C		;@ Invert C
+	mov r1,r1,lsr#16
+	strb r1,[v30ptr,#v30ParityVal]
+	bl v30WriteSegOfsW
+	fetch 2
 ;@----------------------------------------------------------------------------
 muluF7:			;@ MULU/MUL
 	mov v30f,#PSR_Z						;@ Set Z and clear others.
