@@ -3977,7 +3977,7 @@ _F7:	;@ PRE F7
 	andpl r0,r0,#7
 	add v30ofs,v30ptr,r0,lsl#2
 	ldrhpl r0,[v30ofs,#v30Regs]
-	blmi v30ReadEAW_noAdd
+	blmi v30ReadEAW1
 
 	bic v30cyc,v30cyc,#SEG_PREFIX
 	ldr pc,[pc,r5,lsr#1]
@@ -4160,9 +4160,9 @@ _FD:	;@ SET1 DIR/STD		;@ Set Direction
 i_fepre:
 _FE:	;@ PRE FE
 ;@----------------------------------------------------------------------------
-	getNextByteTo r4
-	add v30ofs,v30ptr,r4,lsl#2
-	and r5,r4,#0xF8
+	getNextByte
+	add v30ofs,v30ptr,r0,lsl#2
+	and r5,r0,#0xF8
 	ldr pc,[pc,r5,lsr#1]
 	nop
 	.long incFEEA,  decFEEA,  contFF, contFF, contFF, contFF, contFF, undefFF
@@ -4244,56 +4244,94 @@ decFEEA:
 i_ffpre:
 _FF:	;@ PRE FF
 ;@----------------------------------------------------------------------------
-	getNextByteTo r4
+	getNextByte
 contFF:
-	cmp r4,#0xC0
-	andpl r2,r4,#7
-	addpl v30ofs,v30ptr,r2,lsl#2
+	cmp r0,#0xC0
+	and r5,r0,#0xF8
+	andpl r0,r0,#7
+	add v30ofs,v30ptr,r0,lsl#2
 	ldrhpl r0,[v30ofs,#v30Regs]
-	blmi v30ReadEAWr41
 
-	bic v30cyc,v30cyc,#SEG_PREFIX
-	and r2,r4,#0x38
-	ldr pc,[pc,r2,lsr#1]
+	ldr pc,[pc,r5,lsr#1]
 	nop
-	.long incFF, decFF, callFF, callFarFF, braFF, braFarFF, pushFF, undefFF
+	.long incFFEA,  decFFEA,  callFF, callFarFF, braFF, braFarFF, pushFF, undefFF
+	.long incFFEA,  decFFEA,  callFF, callFarFF, braFF, braFarFF, pushFF, undefFF
+	.long incFFEA,  decFFEA,  callFF, callFarFF, braFF, braFarFF, pushFF, undefFF
+	.long incFFReg, decFFReg, callFF, callFarFF, braFF, braFarFF, pushFF, undefFF
 ;@----------------------------------------------------------------------------
-incFF:
+incFFReg:
 	bic v30f,v30f,#PSR_S+PSR_Z+PSR_V+PSR_A		;@ Clear S, Z, V & A.
 	mov r1,r0,lsl#16
 	adds r1,r1,#0x10000
-	orrvs v30f,v30f,#PSR_V						;@ Set Overflow.
+	orrmi v30f,v30f,#PSR_S
+	orreq v30f,v30f,#PSR_Z
+	orrvs v30f,v30f,#PSR_V
 	tst r1,#0xF0000
-	b writeBackFF
+	orreq v30f,v30f,#PSR_A
+	mov r1,r1,lsr#16
+	strb r1,[v30ptr,#v30ParityVal]
+	strh r1,[v30ofs,#v30Regs]
+	bic v30cyc,v30cyc,#SEG_PREFIX
+	fetch 1
 ;@----------------------------------------------------------------------------
-decFF:
+incFFEA:
+	bl v30ReadEAW_noAdd
+	bic v30f,v30f,#PSR_S+PSR_Z+PSR_V+PSR_A		;@ Clear S, Z, V & A.
+	mov r1,r0,lsl#16
+	adds r1,r1,#0x10000
+	orrmi v30f,v30f,#PSR_S
+	orreq v30f,v30f,#PSR_Z
+	orrvs v30f,v30f,#PSR_V
+	tst r1,#0xF0000
+	orreq v30f,v30f,#PSR_A
+	movs r1,r1,asr#16
+	strb r1,[v30ptr,#v30ParityVal]
+	bl v30WriteSegOfsW
+	bic v30cyc,v30cyc,#SEG_PREFIX
+	fetch 3
+;@----------------------------------------------------------------------------
+decFFReg:
 	bic v30f,v30f,#PSR_S+PSR_Z+PSR_V+PSR_A		;@ Clear S, Z, V & A.
 	mov r1,r0,lsl#16
 	subs r1,r1,#0x10000
-	orrvs v30f,v30f,#PSR_V						;@ Set Overflow.
-	tst r0,#0xF
-writeBackFF:
-	orreq v30f,v30f,#PSR_A
-	movs r1,r1,asr#16
 	orrmi v30f,v30f,#PSR_S
 	orreq v30f,v30f,#PSR_Z
+	orrvs v30f,v30f,#PSR_V
+	tst r0,#0xF
+	orreq v30f,v30f,#PSR_A
+	mov r1,r1,lsr#16
 	strb r1,[v30ptr,#v30ParityVal]
-	cmp r4,#0xC0
-	strhpl r1,[v30ofs,#v30Regs]
-	submi v30cyc,v30cyc,#1*CYCLE
-	blmi v30WriteSegOfsW
+	strh r1,[v30ofs,#v30Regs]
+	bic v30cyc,v30cyc,#SEG_PREFIX
 	fetch 1
 ;@----------------------------------------------------------------------------
+decFFEA:
+	bl v30ReadEAW_noAdd
+	bic v30f,v30f,#PSR_S+PSR_Z+PSR_V+PSR_A		;@ Clear S, Z, V & A.
+	mov r1,r0,lsl#16
+	subs r1,r1,#0x10000
+	orrmi v30f,v30f,#PSR_S
+	orreq v30f,v30f,#PSR_Z
+	orrvs v30f,v30f,#PSR_V
+	tst r0,#0xF
+	orreq v30f,v30f,#PSR_A
+	movs r1,r1,asr#16
+	strb r1,[v30ptr,#v30ParityVal]
+	bl v30WriteSegOfsW
+	bic v30cyc,v30cyc,#SEG_PREFIX
+	fetch 3
+;@----------------------------------------------------------------------------
 callFF:
+	blmi v30ReadEAW1
 	v30DecodeFastPCToReg r1
 	mov v30pc,r0,lsl#16
 	bl v30PushW
 	V30EncodeFastPC
+	bic v30cyc,v30cyc,#SEG_PREFIX
 	fetch 5
 ;@----------------------------------------------------------------------------
 callFarFF:
-	cmp r4,#0xC0
-	blpl v30ReadEAWr4
+	bl v30ReadEAW_noAdd
 	v30DecodeFastPCToReg r4
 	mov v30pc,r0,lsl#16
 	add v30ofs,v30ofs,#0x20000
@@ -4309,26 +4347,31 @@ callFarFF:
 	mov r1,r4
 	bl v30PushLastW
 	V30EncodeFastPC
-	fetch 11
+	bic v30cyc,v30cyc,#SEG_PREFIX
+	fetch 12
 ;@----------------------------------------------------------------------------
 braFF:
+	blmi v30ReadEAW1
 	mov v30pc,r0,lsl#16
 	v30EncodeFastPC
+	bic v30cyc,v30cyc,#SEG_PREFIX
 	fetch 5
 ;@----------------------------------------------------------------------------
 braFarFF:
-	cmp r4,#0xC0
-	blpl v30ReadEAWr4
+	bl v30ReadEAW_noAdd
 	mov v30pc,r0,lsl#16
 	add v30ofs,v30ofs,#0x20000
 	bl v30ReadSegOfsW
 	strh r0,[v30ptr,#v30SRegCS+2]
 	v30EncodeFastPC
-	fetch 9
+	bic v30cyc,v30cyc,#SEG_PREFIX
+	fetch 10
 ;@----------------------------------------------------------------------------
 pushFF:
+	blmi v30ReadEAW1
 	mov r1,r0
 	bl v30PushW
+	bic v30cyc,v30cyc,#SEG_PREFIX
 	fetch 1
 
 ;@----------------------------------------------------------------------------
