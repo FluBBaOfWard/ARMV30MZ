@@ -4161,39 +4161,84 @@ i_fepre:
 _FE:	;@ PRE FE
 ;@----------------------------------------------------------------------------
 	getNextByteTo r4
-	tst r4,#0x30
-	bne contFF
-	cmp r4,#0xC0
 	add v30ofs,v30ptr,r4,lsl#2
-	ldrbpl v30ofs,[v30ofs,#v30ModRmRm]
-	ldrbpl r0,[v30ptr,-v30ofs]
-	blmi v30ReadEA2
+	and r5,r4,#0xF8
+	ldr pc,[pc,r5,lsr#1]
+	nop
+	.long incFEEA,  decFEEA,  contFF, contFF, contFF, contFF, contFF, undefFF
+	.long incFEEA,  decFEEA,  contFF, contFF, contFF, contFF, contFF, undefFF
+	.long incFEEA,  decFEEA,  contFF, contFF, contFF, contFF, contFF, undefFF
+	.long incFEReg, decFEReg, contFF, contFF, contFF, contFF, contFF, undefFF
 
-	bic v30cyc,v30cyc,#SEG_PREFIX
-	bic v30f,v30f,#PSR_S+PSR_Z+PSR_V+PSR_A		;@ Clear S, Z, V & A.
+incFEReg:
+	ldrb v30ofs,[v30ofs,#v30ModRmRm]
+	ldrb r0,[v30ptr,-v30ofs]
 	mov r1,r0,lsl#24
-	tst r4,#0x08
-	bne decFE
-incFE:
+	bic v30f,v30f,#PSR_S+PSR_Z+PSR_V+PSR_A		;@ Clear S, Z, V & A.
 	adds r1,r1,#0x1000000
-	orrvs v30f,v30f,#PSR_V						;@ Set Overflow.
-	tst r1,#0xF000000
-	b writeBackFE
-decFE:
-	subs r1,r1,#0x1000000
-	orrvs v30f,v30f,#PSR_V						;@ Set Overflow.
-	tst r0,#0xF
-writeBackFE:
-	orreq v30f,v30f,#PSR_A
-	movs r1,r1,asr#24
 	orrmi v30f,v30f,#PSR_S
 	orreq v30f,v30f,#PSR_Z
+	orrvs v30f,v30f,#PSR_V
+	tst r1,#0xF000000
+	orreq v30f,v30f,#PSR_A
+	mov r1,r1,lsr#24
 	strb r1,[v30ptr,#v30ParityVal]
 
-	cmp r4,#0xC0
-	strbpl r1,[v30ptr,-v30ofs]
-	blmi v30WriteSegOfs
+	strb r1,[v30ptr,-v30ofs]
+	bic v30cyc,v30cyc,#SEG_PREFIX
 	fetch 1
+
+decFEReg:
+	ldrb v30ofs,[v30ofs,#v30ModRmRm]
+	ldrb r0,[v30ptr,-v30ofs]
+	mov r1,r0,lsl#24
+	bic v30f,v30f,#PSR_S+PSR_Z+PSR_V+PSR_A		;@ Clear S, Z, V & A.
+	subs r1,r1,#0x1000000
+	orrmi v30f,v30f,#PSR_S
+	orreq v30f,v30f,#PSR_Z
+	orrvs v30f,v30f,#PSR_V
+	tst r0,#0xF
+	orreq v30f,v30f,#PSR_A
+	mov r1,r1,lsr#24
+	strb r1,[v30ptr,#v30ParityVal]
+
+	strb r1,[v30ptr,-v30ofs]
+	bic v30cyc,v30cyc,#SEG_PREFIX
+	fetch 1
+
+incFEEA:
+	bl v30ReadEA
+	mov r1,r0,lsl#24
+	bic v30f,v30f,#PSR_S+PSR_Z+PSR_V+PSR_A		;@ Clear S, Z, V & A.
+	adds r1,r1,#0x1000000
+	orrmi v30f,v30f,#PSR_S
+	orreq v30f,v30f,#PSR_Z
+	orrvs v30f,v30f,#PSR_V
+	tst r1,#0xF000000
+	orreq v30f,v30f,#PSR_A
+	mov r1,r1,lsr#24
+	strb r1,[v30ptr,#v30ParityVal]
+
+	bl v30WriteSegOfs
+	bic v30cyc,v30cyc,#SEG_PREFIX
+	fetch 3
+
+decFEEA:
+	bl v30ReadEA
+	mov r1,r0,lsl#24
+	bic v30f,v30f,#PSR_S+PSR_Z+PSR_V+PSR_A		;@ Clear S, Z, V & A.
+	subs r1,r1,#0x1000000
+	orrmi v30f,v30f,#PSR_S
+	orreq v30f,v30f,#PSR_Z
+	orrvs v30f,v30f,#PSR_V
+	tst r0,#0xF
+	orreq v30f,v30f,#PSR_A
+	mov r1,r1,lsr#24
+	strb r1,[v30ptr,#v30ParityVal]
+
+	bl v30WriteSegOfs
+	bic v30cyc,v30cyc,#SEG_PREFIX
+	fetch 3
 
 ;@----------------------------------------------------------------------------
 i_ffpre:

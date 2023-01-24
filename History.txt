@@ -11,6 +11,7 @@ V0.8.4 - 2023-01-24 (FluBBa)
 	Optimized 0xC0/0xD0/0xD2 opcodes.
 	Optimized 0xC1/0xD1/0xD3 opcodes.
 	Optimized 0xF6/0xF7 opcodes.
+	Optimized 0xFE opcodes.
 	Optimized memory access.
 	Optimized AAS/ADJBS opcode.
 

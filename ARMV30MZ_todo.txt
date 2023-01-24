@@ -1,6 +1,7 @@
 ARMV30MZ To do
 --------------
 
+	move SEG_PREFIX flag from v30cyc to v30f?
 	Add fetchforce for ops setting SS (POP SS, MOV SREGW).
 	Add support for TRAP/BRK exception (int 1, prio 4).
 	Segment wrapping eats extra cycles? At least for LDS.
@@ -15,6 +16,3 @@ ARMV30MZ To do
 	Buslock is used with REP and hinders interrupts until finished.
 	* Break in REPE/REPNE (0xF2/0xF3) to see if any games use BUSLOCK.
 	Make 26, 2E, 36 & 3E share code?
-
-	* All SEG_PREFIX opcodes need its own jumptable?
-	* REPNE/REPE prefix opcodes need their own jumptable?
