@@ -15,7 +15,8 @@
 
 	.equ PSR_P, 0x00000020		;@ Parity
 	.equ PSR_A, 0x00000010		;@ Aux/Half carry
-	.equ SEG_PF, 1<<0			;@ Segment prefix
+	.equ SEG_PF, 1<<7			;@ Segment prefix
+	.equ REP_PF, 1<<6			;@ Repeat prefix
 
 
 							;@ V30 flags
@@ -105,15 +106,15 @@
 	.endm
 
 	.macro TestSegmentPrefix
-	tst v30cyc,#SEG_PREFIX
+	tst v30f,#SEG_PF
 	.endm
 
 	.macro ClearSegmentPrefix
-	bic v30cyc,v30cyc,#SEG_PREFIX
+	bic v30f,v30f,#SEG_PF
 	.endm
 
 	.macro ClearPrefixes
-	bic v30cyc,v30cyc,#SEG_PREFIX+REP_PREFIX+LOCK_PREFIX
+	bic v30f,v30f,#SEG_PF+REP_PF	//+LOCK_PREFIX
 	.endm
 
 

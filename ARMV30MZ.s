@@ -656,7 +656,7 @@ _26:	;@ ES prefix
 	getNextByte
 	add r2,v30ptr,#v30SegTbl
 	ldrb r1,[r2,r0]
-	orr v30cyc,v30cyc,r1		;@ SEG_PREFIX
+	orr v30f,v30f,r1		;@ SEG_PF
 //	eatCycles 1
 	ldr pc,[v30ptr,r0,lsl#2]
 
@@ -797,7 +797,7 @@ _2E:	;@ CS prefix
 	getNextByte
 	add r2,v30ptr,#v30SegTbl
 	ldrb r1,[r2,r0]
-	orr v30cyc,v30cyc,r1		;@ SEG_PREFIX
+	orr v30f,v30f,r1		;@ SEG_PF
 //	eatCycles 1
 	ldr pc,[v30ptr,r0,lsl#2]
 ;@----------------------------------------------------------------------------
@@ -938,7 +938,7 @@ _36:	;@ SS prefix
 	getNextByte
 	add r2,v30ptr,#v30SegTbl
 	ldrb r1,[r2,r0]
-	orr v30cyc,v30cyc,r1		;@ SEG_PREFIX
+	orr v30f,v30f,r1		;@ SEG_PF
 //	eatCycles 1
 	ldr pc,[v30ptr,r0,lsl#2]
 ;@----------------------------------------------------------------------------
@@ -1059,7 +1059,7 @@ _3E:	;@ DS prefix
 	getNextByte
 	add r2,v30ptr,#v30SegTbl
 	ldrb r1,[r2,r0]
-	orr v30cyc,v30cyc,r1		;@ SEG_PREFIX
+	orr v30f,v30f,r1		;@ SEG_PF
 //	eatCycles 1
 	ldr pc,[v30ptr,r0,lsl#2]
 ;@----------------------------------------------------------------------------
@@ -1414,7 +1414,7 @@ f36c:	;@ REP INMB/INSB
 	str v30ofs,[v30ptr,#v30RegIY]
 1:
 	strh r5,[v30ptr,#v30RegCW]
-	bic v30cyc,v30cyc,#REP_PREFIX+LOCK_PREFIX
+//	bic v30cyc,v30cyc,#REP_PREFIX+LOCK_PREFIX
 	fetch 5
 ;@----------------------------------------------------------------------------
 i_inmb:
@@ -1456,7 +1456,7 @@ f36d:	;@ REP INMW/INSW
 	bne 0b
 1:
 	strh r5,[v30ptr,#v30RegCW]
-	bic v30cyc,v30cyc,#REP_PREFIX+LOCK_PREFIX
+//	bic v30cyc,v30cyc,#REP_PREFIX+LOCK_PREFIX
 	fetch 5
 ;@----------------------------------------------------------------------------
 i_inmw:
@@ -2527,7 +2527,7 @@ f3aa:	;@ REP STMB/STOSB
 	str v30ofs,[v30ptr,#v30RegIY]
 1:
 	strh r5,[v30ptr,#v30RegCW]
-	bic v30cyc,v30cyc,#REP_PREFIX+LOCK_PREFIX
+//	bic v30cyc,v30cyc,#REP_PREFIX+LOCK_PREFIX
 	fetch 5
 ;@----------------------------------------------------------------------------
 i_stosb:
@@ -2561,7 +2561,7 @@ f3ab:	;@ REP STMW/STOSW
 	str v30ofs,[v30ptr,#v30RegIY]
 1:
 	strh r5,[v30ptr,#v30RegCW]
-	bic v30cyc,v30cyc,#REP_PREFIX+LOCK_PREFIX
+//	bic v30cyc,v30cyc,#REP_PREFIX+LOCK_PREFIX
 	fetch 5
 ;@----------------------------------------------------------------------------
 i_stosw:
@@ -2674,7 +2674,7 @@ f2ae:	;@ REPNE CMPMB/SCASB
 	str v30ofs,[v30ptr,#v30RegIY]
 1:
 	strh r5,[v30ptr,#v30RegCW]
-	bic v30cyc,v30cyc,#REP_PREFIX+LOCK_PREFIX
+//	bic v30cyc,v30cyc,#REP_PREFIX+LOCK_PREFIX
 	fetch 5
 ;@----------------------------------------------------------------------------
 f3ae:	;@ REPE CMPMB/SCASB
@@ -2699,7 +2699,7 @@ f3ae:	;@ REPE CMPMB/SCASB
 	str v30ofs,[v30ptr,#v30RegIY]
 1:
 	strh r5,[v30ptr,#v30RegCW]
-	bic v30cyc,v30cyc,#REP_PREFIX+LOCK_PREFIX
+//	bic v30cyc,v30cyc,#REP_PREFIX+LOCK_PREFIX
 	fetch 5
 ;@----------------------------------------------------------------------------
 i_scasb:
@@ -2741,7 +2741,7 @@ f2af:	;@ REPNE CMPMW/SCASW
 	str v30ofs,[v30ptr,#v30RegIY]
 1:
 	strh r5,[v30ptr,#v30RegCW]
-	bic v30cyc,v30cyc,#REP_PREFIX+LOCK_PREFIX
+//	bic v30cyc,v30cyc,#REP_PREFIX+LOCK_PREFIX
 	fetch 5
 ;@----------------------------------------------------------------------------
 f3af:	;@ REPE CMPMW/SCASW
@@ -2766,7 +2766,7 @@ f3af:	;@ REPE CMPMW/SCASW
 	str v30ofs,[v30ptr,#v30RegIY]
 1:
 	strh r5,[v30ptr,#v30RegCW]
-	bic v30cyc,v30cyc,#REP_PREFIX+LOCK_PREFIX
+//	bic v30cyc,v30cyc,#REP_PREFIX+LOCK_PREFIX
 	fetch 5
 ;@----------------------------------------------------------------------------
 i_scasw:
@@ -3622,7 +3622,7 @@ _F2:	;@ REPNE
 	and r1,r0,#0xE7
 	cmp r1,#0x26
 	bne noF2Prefix
-	orr v30cyc,v30cyc,#SEG_PREFIX
+	orr v30f,v30f,#SEG_PF
 	and r1,r0,#0x18
 	add r1,v30ptr,r1,lsr#1
 	ldr v30csr,[r1,#v30SRegs]
@@ -3633,7 +3633,7 @@ noF2Prefix:
 	add r2,v30ptr,#v30SegTbl
 	ldrb r1,[r2,r0]
 	tst r1,#1
-	biceq v30cyc,v30cyc,#SEG_PREFIX
+	biceq v30f,v30f,#SEG_PF
 	sub r3,r0,#0x6C
 	cmp r3,#0x43
 	ldrls pc,[pc,r3,lsl#2]
@@ -3715,7 +3715,7 @@ _F3:	;@ REPE
 	and r1,r0,#0xE7
 	cmp r1,#0x26
 	bne noF3Prefix
-	orr v30cyc,v30cyc,#SEG_PREFIX
+	orr v30f,v30f,#SEG_PF
 	and r1,r0,#0x18
 	add r1,v30ptr,r1,lsr#1
 	ldr v30csr,[r1,#v30SRegs]
@@ -3726,7 +3726,7 @@ noF3Prefix:
 	add r2,v30ptr,#v30SegTbl
 	ldrb r1,[r2,r0]
 	tst r1,#1
-	biceq v30cyc,v30cyc,#SEG_PREFIX
+	biceq v30f,v30f,#SEG_PF
 	sub r3,r0,#0x6C
 	cmp r3,#0x43
 	ldrls pc,[pc,r3,lsl#2]
