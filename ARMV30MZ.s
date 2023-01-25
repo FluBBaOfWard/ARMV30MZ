@@ -1666,9 +1666,9 @@ i_82pre:
 _82:	;@ PRE 82
 ;@----------------------------------------------------------------------------
 	getNextByte
+	add v30ofs,v30ptr,r0,lsl#2
 	cmp r0,#0xC0
 	and r5,r0,#0xF8
-	add v30ofs,v30ptr,r0,lsl#2
 	ldrbpl v30ofs,[v30ofs,#v30ModRmRm]
 	blmi v30ReadEA
 
@@ -2850,9 +2850,9 @@ i_rotshft_bd8:
 _C0:	;@ ROTSHFT BD8
 ;@----------------------------------------------------------------------------
 	getNextByte
+	add v30ofs,v30ptr,r0,lsl#2
 	cmp r0,#0xC0
 	and r5,r0,#0xF8
-	add v30ofs,v30ptr,r0,lsl#2
 	ldrbpl v30ofs,[v30ofs,#v30ModRmRm]
 	ldrbpl r0,[v30ptr,-v30ofs]
 	blmi v30ReadEA
@@ -3094,8 +3094,8 @@ i_mov_bd8:
 _C6:	;@ MOV BD8
 ;@----------------------------------------------------------------------------
 	getNextByte
-	cmp r0,#0xC0
 	add v30ofs,v30ptr,r0,lsl#2
+	cmp r0,#0xC0
 	bmi 0f
 	ldrb r4,[v30ofs,#v30ModRmRm]
 	getNextByteTo r1
@@ -3257,9 +3257,9 @@ i_rotshft_b:
 _D0:	;@ ROTSHFT B
 ;@----------------------------------------------------------------------------
 	getNextByte
+	add v30ofs,v30ptr,r0,lsl#2
 	cmp r0,#0xC0
 	and r5,r0,#0xF8
-	add v30ofs,v30ptr,r0,lsl#2
 	ldrbpl v30ofs,[v30ofs,#v30ModRmRm]
 	ldrbpl r0,[v30ptr,-v30ofs]
 	blmi v30ReadEA
@@ -3283,9 +3283,9 @@ i_rotshft_bcl:
 _D2:	;@ ROTSHFT BCL
 ;@----------------------------------------------------------------------------
 	getNextByte
+	add v30ofs,v30ptr,r0,lsl#2
 	cmp r0,#0xC0
 	and r5,r0,#0xF8
-	add v30ofs,v30ptr,r0,lsl#2
 	ldrbpl v30ofs,[v30ofs,#v30ModRmRm]
 	ldrbpl r0,[v30ptr,-v30ofs]
 	blmi v30ReadEA
@@ -3775,9 +3775,9 @@ i_f6pre:
 _F6:	;@ PRE F6
 ;@----------------------------------------------------------------------------
 	getNextByte
+	add v30ofs,v30ptr,r0,lsl#2
 	cmp r0,#0xC0
 	and r5,r0,#0xF8
-	add v30ofs,v30ptr,r0,lsl#2
 	ldrbpl v30ofs,[v30ofs,#v30ModRmRm]
 	ldrbpl r0,[v30ptr,-v30ofs]
 	blmi v30ReadEA1
