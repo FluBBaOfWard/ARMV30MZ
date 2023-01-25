@@ -16,6 +16,7 @@ V0.8.4 - 2023-01-25 (FluBBa)
 	Optimized 0xF6/0xF7 opcodes.
 	Optimized 0xFE/0xFF opcodes.
 	Optimized memory access.
+	Optimized handling of segment prefix.
 
 V0.8.3 - 2023-01-04 (FluBBa)
 	Fixed timing of segment prefix.

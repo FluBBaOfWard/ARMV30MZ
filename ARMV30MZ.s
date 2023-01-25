@@ -82,7 +82,6 @@ add80Reg:
 	add8 r4,r0
 
 	strb r1,[v30ptr,-v30ofs]
-	ClearSegmentPrefix
 	fetch 1
 0:
 	bl v30ReadEA
@@ -90,7 +89,6 @@ add80EA:
 	add8 r4,r0
 
 	bl v30WriteSegOfs
-	ClearSegmentPrefix
 	fetch 3
 ;@----------------------------------------------------------------------------
 i_add_wr16:
@@ -109,14 +107,12 @@ add81Reg:
 
 	add16 r0,r4
 	strh r1,[v30ofs,#v30Regs]
-	ClearSegmentPrefix
 	fetch 1
 0:
 	bl v30ReadEAW
 add81EA:
 	add16 r0,r4
 	bl v30WriteSegOfsW
-	ClearSegmentPrefix
 	fetch 3
 ;@----------------------------------------------------------------------------
 i_add_r8b:
@@ -133,7 +129,6 @@ _02:	;@ ADD R8b
 	ldrb r1,[v30ptr,-r4,lsr#24]
 	add8 r0,r1
 	strb r1,[v30ptr,-r4,lsr#24]
-	ClearSegmentPrefix
 	fetch 1
 ;@----------------------------------------------------------------------------
 i_add_r16w:
@@ -151,7 +146,6 @@ _03:	;@ ADD R16W
 	ldr r1,[r4,#v30Regs2]
 	add16 r0,r1
 	strh r1,[r4,#v30Regs]
-	ClearSegmentPrefix
 	fetch 1
 ;@----------------------------------------------------------------------------
 i_add_ald8:
@@ -202,7 +196,6 @@ or80Reg:
 	or8 r4,r0
 
 	strb r1,[v30ptr,-v30ofs]
-	ClearSegmentPrefix
 	fetch 1
 0:
 	bl v30ReadEA
@@ -210,7 +203,6 @@ or80EA:
 	or8 r4,r0
 
 	bl v30WriteSegOfs
-	ClearSegmentPrefix
 	fetch 3
 ;@----------------------------------------------------------------------------
 i_or_wr16:
@@ -229,14 +221,12 @@ or81Reg:
 
 	or16 r0,r4
 	strh r1,[v30ofs,#v30Regs]
-	ClearSegmentPrefix
 	fetch 1
 0:
 	bl v30ReadEAW
 or81EA:
 	or16 r0,r4
 	bl v30WriteSegOfsW
-	ClearSegmentPrefix
 	fetch 3
 ;@----------------------------------------------------------------------------
 i_or_r8b:
@@ -253,7 +243,6 @@ _0A:	;@ OR R8b
 	ldrb r1,[v30ptr,-r4,lsr#24]
 	or8 r0,r1
 	strb r1,[v30ptr,-r4,lsr#24]
-	ClearSegmentPrefix
 	fetch 1
 ;@----------------------------------------------------------------------------
 i_or_r16w:
@@ -271,7 +260,6 @@ _0B:	;@ OR R16W
 	ldr r1,[r4,#v30Regs2]
 	or16 r0,r1
 	strh r1,[r4,#v30Regs]
-	ClearSegmentPrefix
 	fetch 1
 ;@----------------------------------------------------------------------------
 i_or_ald8:
@@ -315,7 +303,6 @@ adc80Reg:
 	adc8 r4,r0
 
 	strb r1,[v30ptr,-v30ofs]
-	ClearSegmentPrefix
 	fetch 1
 0:
 	bl v30ReadEA
@@ -323,7 +310,6 @@ adc80EA:
 	adc8 r4,r0
 
 	bl v30WriteSegOfs
-	ClearSegmentPrefix
 	fetch 3
 ;@----------------------------------------------------------------------------
 i_adc_wr16:
@@ -342,14 +328,12 @@ adc81Reg:
 
 	adc16 r0,r4
 	strh r1,[v30ofs,#v30Regs]
-	ClearSegmentPrefix
 	fetch 1
 0:
 	bl v30ReadEAW
 adc81EA:
 	adc16 r0,r4
 	bl v30WriteSegOfsW
-	ClearSegmentPrefix
 	fetch 3
 ;@----------------------------------------------------------------------------
 i_adc_r8b:
@@ -366,7 +350,6 @@ _12:	;@ ADDC/ADC R8b
 	ldrb r1,[v30ptr,-r4,lsr#24]
 	adc8 r0,r1
 	strb r1,[v30ptr,-r4,lsr#24]
-	ClearSegmentPrefix
 	fetch 1
 ;@----------------------------------------------------------------------------
 i_adc_r16w:
@@ -384,7 +367,6 @@ _13:	;@ ADDC/ADC R16W
 	ldr r1,[r4,#v30Regs2]
 	adc16 r0,r1
 	strh r1,[r4,#v30Regs]
-	ClearSegmentPrefix
 	fetch 1
 ;@----------------------------------------------------------------------------
 i_adc_ald8:
@@ -438,7 +420,6 @@ subc80Reg:
 	subc8 r4,r0
 
 	strb r1,[v30ptr,-v30ofs]
-	ClearSegmentPrefix
 	fetch 1
 0:
 	bl v30ReadEA
@@ -446,7 +427,6 @@ subc80EA:
 	subc8 r4,r0
 
 	bl v30WriteSegOfs
-	ClearSegmentPrefix
 	fetch 3
 ;@----------------------------------------------------------------------------
 i_sbb_wr16:
@@ -465,14 +445,12 @@ subc81Reg:
 
 	rsbc16 r0,r4
 	strh r1,[v30ofs,#v30Regs]
-	ClearSegmentPrefix
 	fetch 1
 0:
 	bl v30ReadEAW
 subc81EA:
 	rsbc16 r0,r4
 	bl v30WriteSegOfsW
-	ClearSegmentPrefix
 	fetch 3
 ;@----------------------------------------------------------------------------
 i_sbb_r8b:
@@ -489,7 +467,6 @@ _1A:	;@ SUBC/SBB R8b
 	ldrb r1,[v30ptr,-r4,lsr#24]
 	subc8 r0,r1
 	strb r1,[v30ptr,-r4,lsr#24]
-	ClearSegmentPrefix
 	fetch 1
 ;@----------------------------------------------------------------------------
 i_sbb_r16w:
@@ -507,7 +484,6 @@ _1B:	;@ SUBC/SBB R16W
 	ldr r1,[r4,#v30Regs2]
 	subc16 r0,r1
 	strh r1,[r4,#v30Regs]
-	ClearSegmentPrefix
 	fetch 1
 ;@----------------------------------------------------------------------------
 i_sbb_ald8:
@@ -558,7 +534,6 @@ and80Reg:
 	and8 r4,r0
 
 	strb r1,[v30ptr,-v30ofs]
-	ClearSegmentPrefix
 	fetch 1
 0:
 	bl v30ReadEA
@@ -566,7 +541,6 @@ and80EA:
 	and8 r4,r0
 
 	bl v30WriteSegOfs
-	ClearSegmentPrefix
 	fetch 3
 ;@----------------------------------------------------------------------------
 i_and_wr16:
@@ -585,14 +559,12 @@ and81Reg:
 
 	and16 r0,r4
 	strh r1,[v30ofs,#v30Regs]
-	ClearSegmentPrefix
 	fetch 1
 0:
 	bl v30ReadEAW
 and81EA:
 	and16 r0,r4
 	bl v30WriteSegOfsW
-	ClearSegmentPrefix
 	fetch 3
 ;@----------------------------------------------------------------------------
 i_and_r8b:
@@ -609,7 +581,6 @@ _22:	;@ AND R8b
 	ldrb r1,[v30ptr,-r4,lsr#24]
 	and8 r0,r1
 	strb r1,[v30ptr,-r4,lsr#24]
-	ClearSegmentPrefix
 	fetch 1
 ;@----------------------------------------------------------------------------
 i_and_r16w:
@@ -627,7 +598,6 @@ _23:	;@ AND R16W
 	ldr r1,[r4,#v30Regs2]
 	and16 r0,r1
 	strh r1,[r4,#v30Regs]
-	ClearSegmentPrefix
 	fetch 1
 ;@----------------------------------------------------------------------------
 i_and_ald8:
@@ -699,7 +669,6 @@ sub80Reg:
 	sub8 r4,r0
 
 	strb r1,[v30ptr,-v30ofs]
-	ClearSegmentPrefix
 	fetch 1
 0:
 	bl v30ReadEA
@@ -707,7 +676,6 @@ sub80EA:
 	sub8 r4,r0
 
 	bl v30WriteSegOfs
-	ClearSegmentPrefix
 	fetch 3
 ;@----------------------------------------------------------------------------
 i_sub_wr16:
@@ -726,14 +694,12 @@ sub81Reg:
 
 	rsb16 r0,r4
 	strh r1,[v30ofs,#v30Regs]
-	ClearSegmentPrefix
 	fetch 1
 0:
 	bl v30ReadEAW
 sub81EA:
 	rsb16 r0,r4
 	bl v30WriteSegOfsW
-	ClearSegmentPrefix
 	fetch 3
 ;@----------------------------------------------------------------------------
 i_sub_r8b:
@@ -750,7 +716,6 @@ _2A:	;@ SUB R8b
 	ldrb r1,[v30ptr,-r4,lsr#24]
 	sub8 r0,r1
 	strb r1,[v30ptr,-r4,lsr#24]
-	ClearSegmentPrefix
 	fetch 1
 ;@----------------------------------------------------------------------------
 i_sub_r16w:
@@ -768,7 +733,6 @@ _2B:	;@ SUB R16W
 	ldr r1,[r4,#v30Regs2]
 	sub16 r0,r1
 	strh r1,[r4,#v30Regs]
-	ClearSegmentPrefix
 	fetch 1
 ;@----------------------------------------------------------------------------
 i_sub_ald8:
@@ -840,7 +804,6 @@ xor80Reg:
 	xor8 r4,r0
 
 	strb r1,[v30ptr,-v30ofs]
-	ClearSegmentPrefix
 	fetch 1
 0:
 	bl v30ReadEA
@@ -848,7 +811,6 @@ xor80EA:
 	xor8 r4,r0
 
 	bl v30WriteSegOfs
-	ClearSegmentPrefix
 	fetch 3
 ;@----------------------------------------------------------------------------
 i_xor_wr16:
@@ -867,14 +829,12 @@ xor81Reg:
 
 	xor16 r0,r4
 	strh r1,[v30ofs,#v30Regs]
-	ClearSegmentPrefix
 	fetch 1
 0:
 	bl v30ReadEAW
 xor81EA:
 	xor16 r0,r4
 	bl v30WriteSegOfsW
-	ClearSegmentPrefix
 	fetch 3
 ;@----------------------------------------------------------------------------
 i_xor_r8b:
@@ -891,7 +851,6 @@ _32:	;@ XOR R8b
 	ldrb r1,[v30ptr,-r4,lsr#24]
 	xor8 r0,r1
 	strb r1,[v30ptr,-r4,lsr#24]
-	ClearSegmentPrefix
 	fetch 1
 ;@----------------------------------------------------------------------------
 i_xor_r16w:
@@ -909,7 +868,6 @@ _33:	;@ XOR R16W
 	ldr r1,[r4,#v30Regs2]
 	xor16 r0,r1
 	strh r1,[r4,#v30Regs]
-	ClearSegmentPrefix
 	fetch 1
 ;@----------------------------------------------------------------------------
 i_xor_ald8:
@@ -973,11 +931,9 @@ cmp80Reg:
 	blmi v30ReadEA1
 
 	sub8 r4,r0
-	ClearSegmentPrefix
 	fetch 1
 cmp80EA:
 	sub8 r4,r0
-	ClearSegmentPrefix
 	fetch 2
 ;@----------------------------------------------------------------------------
 i_cmp_wr16:
@@ -995,11 +951,9 @@ cmp81Reg:
 	blmi v30ReadEAW1
 
 	rsb16 r0,r4
-	ClearSegmentPrefix
 	fetch 1
 cmp81EA:
 	rsb16 r0,r4
-	ClearSegmentPrefix
 	fetch 2
 ;@----------------------------------------------------------------------------
 i_cmp_r8b:
@@ -1015,7 +969,6 @@ _3A:	;@ CMP R8b
 	blmi v30ReadEA1
 
 	sub8 r0,r4
-	ClearSegmentPrefix
 	fetch 1
 ;@----------------------------------------------------------------------------
 i_cmp_r16w:
@@ -1032,7 +985,6 @@ _3B:	;@ CMP R16W
 	blmi v30ReadEAW1
 
 	sub16 r0,r4
-	ClearSegmentPrefix
 	fetch 1
 ;@----------------------------------------------------------------------------
 i_cmp_ald8:
@@ -1357,7 +1309,6 @@ _69:	;@ MUL/IMUL D16
 	strb v30f,[v30ptr,#v30MulOverflow]
 
 	strh r2,[r4,#v30Regs]
-	ClearSegmentPrefix
 	fetch 3
 ;@----------------------------------------------------------------------------
 i_push_d8:
@@ -1390,7 +1341,6 @@ _6B:	;@ MUL/IMUL D8
 	strb v30f,[v30ptr,#v30MulOverflow]
 
 	strh r2,[r4,#v30Regs]
-	ClearSegmentPrefix
 	fetch 3
 
 ;@----------------------------------------------------------------------------
@@ -1776,7 +1726,6 @@ _84:	;@ TEST BR8
 	blmi v30ReadEA1
 
 	and8 r4,r0
-	ClearSegmentPrefix
 	fetch 1
 ;@----------------------------------------------------------------------------
 i_test_wr16:
@@ -1793,7 +1742,6 @@ _85:	;@ TEST WR16
 	blmi v30ReadEAW1
 
 	and16 r0,r4
-	ClearSegmentPrefix
 	fetch 1
 ;@----------------------------------------------------------------------------
 i_xchg_br8:
@@ -2397,7 +2345,7 @@ _A6:	;@ CMPBKB/CMPSB
 
 	sub8 r0,r4
 
-	ClearSegmentPrefix
+//	ClearSegmentPrefix
 	fetch 6
 
 ;@----------------------------------------------------------------------------
@@ -2489,7 +2437,7 @@ _A7:	;@ CMPBKW/CMPSW
 
 	sub16 r0,r4
 
-	ClearSegmentPrefix
+//	ClearSegmentPrefix
 	fetch 6
 ;@----------------------------------------------------------------------------
 i_test_ald8:
@@ -2915,7 +2863,6 @@ d2Continue:
 	and r1,r1,#0x1F
 d0Continue:
 
-	ClearSegmentPrefix
 	ldr pc,[pc,r5,lsr#1]
 	nop
 	.long rolC0EA,  rorC0EA,  rolcC0EA,  rorcC0EA,  shlC0EA,  shrC0EA,  undC0EA,  shraC0EA
@@ -2951,6 +2898,7 @@ undC0Reg:
 	bl logUndefinedOpcode
 	mov r1,#0
 	strb r1,[v30ptr,-v30ofs]
+	ClearSegmentPrefix
 	fetch 1
 shraC0Reg:
 	shra8 r0,r1
@@ -2985,6 +2933,7 @@ undC0EA:
 	bl logUndefinedOpcode
 	mov r1,#0
 	bl v30WriteSegOfs
+	ClearSegmentPrefix
 	fetch 3
 shraC0EA:
 	shra8 r0,r1
@@ -3008,7 +2957,6 @@ d3Continue:
 	and r1,r1,#0x1F
 d1Continue:
 
-	ClearSegmentPrefix
 	ldr pc,[pc,r5,lsr#1]
 	nop
 	.long rolC1EA,  rorC1EA,  rolcC1EA,  rorcC1EA,  shlC1EA,  shrC1EA,  undC1EA,  shraC1EA
@@ -3044,6 +2992,7 @@ undC1Reg:
 	bl logUndefinedOpcode
 	mov r1,#0
 	strh r1,[v30ofs,#v30Regs]
+	ClearSegmentPrefix
 	fetch 1
 shraC1Reg:
 	shra16 r0,r1
@@ -3078,6 +3027,7 @@ undC1EA:
 	bl logUndefinedOpcode
 	mov r1,#0
 	bl v30WriteSegOfsW
+	ClearSegmentPrefix
 	fetch 3
 shraC1EA:
 	shra16 r0,r1
@@ -3832,7 +3782,6 @@ _F6:	;@ PRE F6
 	ldrbpl r0,[v30ptr,-v30ofs]
 	blmi v30ReadEA1
 
-	ClearSegmentPrefix
 	ldr pc,[pc,r5,lsr#1]
 	nop
 	.long testF6, undefF6, notF6EA,  negF6EA,  muluF6, mulF6, divubF6, divbF6
@@ -3848,11 +3797,13 @@ testF6:
 notF6Reg:
 	mvn r1,r0
 	strb r1,[v30ptr,-v30ofs]
+	ClearSegmentPrefix
 	fetch 1
 ;@----------------------------------------------------------------------------
 notF6EA:
 	mvn r1,r0
 	bl v30WriteSegOfs
+	ClearSegmentPrefix
 	fetch 2
 ;@----------------------------------------------------------------------------
 negF6Reg:
@@ -3975,7 +3926,6 @@ _F7:	;@ PRE F7
 	ldrhpl r0,[v30ofs,#v30Regs]
 	blmi v30ReadEAW1
 
-	ClearSegmentPrefix
 	ldr pc,[pc,r5,lsr#1]
 	nop
 	.long testF7, undefF7, notF7EA,  negF7EA,  muluF7, mulF7, divuwF7, divwF7
@@ -3992,11 +3942,13 @@ testF7:
 notF7Reg:
 	mvn r1,r0
 	strh r1,[v30ofs,#v30Regs]
+	ClearSegmentPrefix
 	fetch 1
 ;@----------------------------------------------------------------------------
 notF7EA:
 	mvn r1,r0
 	bl v30WriteSegOfsW
+	ClearSegmentPrefix
 	fetch 2
 ;@----------------------------------------------------------------------------
 negF7Reg:
@@ -4170,7 +4122,7 @@ incFEReg:
 	ldrb v30ofs,[v30ofs,#v30ModRmRm]
 	ldrb r0,[v30ptr,-v30ofs]
 	mov r1,r0,lsl#24
-	bic v30f,v30f,#PSR_S+PSR_Z+PSR_V+PSR_A		;@ Clear S, Z, V & A.
+	and v30f,v30f,#PSR_C		;@ Only keep C
 	adds r1,r1,#0x1000000
 	orrmi v30f,v30f,#PSR_S
 	orreq v30f,v30f,#PSR_Z
@@ -4181,14 +4133,13 @@ incFEReg:
 	strb r1,[v30ptr,#v30ParityVal]
 
 	strb r1,[v30ptr,-v30ofs]
-	ClearSegmentPrefix
 	fetch 1
 
 decFEReg:
 	ldrb v30ofs,[v30ofs,#v30ModRmRm]
 	ldrb r0,[v30ptr,-v30ofs]
 	mov r1,r0,lsl#24
-	bic v30f,v30f,#PSR_S+PSR_Z+PSR_V+PSR_A		;@ Clear S, Z, V & A.
+	and v30f,v30f,#PSR_C		;@ Only keep C
 	subs r1,r1,#0x1000000
 	orrmi v30f,v30f,#PSR_S
 	orreq v30f,v30f,#PSR_Z
@@ -4199,13 +4150,12 @@ decFEReg:
 	strb r1,[v30ptr,#v30ParityVal]
 
 	strb r1,[v30ptr,-v30ofs]
-	ClearSegmentPrefix
 	fetch 1
 
 incFEEA:
 	bl v30ReadEA
 	mov r1,r0,lsl#24
-	bic v30f,v30f,#PSR_S+PSR_Z+PSR_V+PSR_A		;@ Clear S, Z, V & A.
+	and v30f,v30f,#PSR_C		;@ Only keep C
 	adds r1,r1,#0x1000000
 	orrmi v30f,v30f,#PSR_S
 	orreq v30f,v30f,#PSR_Z
@@ -4216,13 +4166,12 @@ incFEEA:
 	strb r1,[v30ptr,#v30ParityVal]
 
 	bl v30WriteSegOfs
-	ClearSegmentPrefix
 	fetch 3
 
 decFEEA:
 	bl v30ReadEA
 	mov r1,r0,lsl#24
-	bic v30f,v30f,#PSR_S+PSR_Z+PSR_V+PSR_A		;@ Clear S, Z, V & A.
+	and v30f,v30f,#PSR_C		;@ Only keep C
 	subs r1,r1,#0x1000000
 	orrmi v30f,v30f,#PSR_S
 	orreq v30f,v30f,#PSR_Z
@@ -4233,7 +4182,6 @@ decFEEA:
 	strb r1,[v30ptr,#v30ParityVal]
 
 	bl v30WriteSegOfs
-	ClearSegmentPrefix
 	fetch 3
 
 ;@----------------------------------------------------------------------------
@@ -4256,7 +4204,7 @@ contFF:
 	.long incFFReg, decFFReg, callFF, callFarFF, braFF, braFarFF, pushFF, undefFF
 ;@----------------------------------------------------------------------------
 incFFReg:
-	bic v30f,v30f,#PSR_S+PSR_Z+PSR_V+PSR_A		;@ Clear S, Z, V & A.
+	and v30f,v30f,#PSR_C		;@ Only keep C
 	mov r1,r0,lsl#16
 	adds r1,r1,#0x10000
 	orrmi v30f,v30f,#PSR_S
@@ -4267,12 +4215,11 @@ incFFReg:
 	mov r1,r1,lsr#16
 	strb r1,[v30ptr,#v30ParityVal]
 	strh r1,[v30ofs,#v30Regs]
-	ClearSegmentPrefix
 	fetch 1
 ;@----------------------------------------------------------------------------
 incFFEA:
 	bl v30ReadEAW_noAdd
-	bic v30f,v30f,#PSR_S+PSR_Z+PSR_V+PSR_A		;@ Clear S, Z, V & A.
+	and v30f,v30f,#PSR_C		;@ Only keep C
 	mov r1,r0,lsl#16
 	adds r1,r1,#0x10000
 	orrmi v30f,v30f,#PSR_S
@@ -4283,11 +4230,10 @@ incFFEA:
 	movs r1,r1,asr#16
 	strb r1,[v30ptr,#v30ParityVal]
 	bl v30WriteSegOfsW
-	ClearSegmentPrefix
 	fetch 3
 ;@----------------------------------------------------------------------------
 decFFReg:
-	bic v30f,v30f,#PSR_S+PSR_Z+PSR_V+PSR_A		;@ Clear S, Z, V & A.
+	and v30f,v30f,#PSR_C		;@ Only keep C
 	mov r1,r0,lsl#16
 	subs r1,r1,#0x10000
 	orrmi v30f,v30f,#PSR_S
@@ -4298,12 +4244,11 @@ decFFReg:
 	mov r1,r1,lsr#16
 	strb r1,[v30ptr,#v30ParityVal]
 	strh r1,[v30ofs,#v30Regs]
-	ClearSegmentPrefix
 	fetch 1
 ;@----------------------------------------------------------------------------
 decFFEA:
 	bl v30ReadEAW_noAdd
-	bic v30f,v30f,#PSR_S+PSR_Z+PSR_V+PSR_A		;@ Clear S, Z, V & A.
+	and v30f,v30f,#PSR_C		;@ Only keep C
 	mov r1,r0,lsl#16
 	subs r1,r1,#0x10000
 	orrmi v30f,v30f,#PSR_S
@@ -4314,7 +4259,6 @@ decFFEA:
 	movs r1,r1,asr#16
 	strb r1,[v30ptr,#v30ParityVal]
 	bl v30WriteSegOfsW
-	ClearSegmentPrefix
 	fetch 3
 ;@----------------------------------------------------------------------------
 callFF:
@@ -4869,6 +4813,7 @@ undefF7:
 undefFF:
 ;@----------------------------------------------------------------------------
 	bl logUndefinedOpcode
+	ClearSegmentPrefix
 	fetch 1
 ;@----------------------------------------------------------------------------
 i_crash:

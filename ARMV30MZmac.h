@@ -173,7 +173,7 @@
 ;@----------------------------------------------------------------------------
 	.macro and8 src dst
 	and r1,\dst,\src
-	movs v30f,r1,lsl#24			;@ Clear S, Z, C, V & A.
+	movs v30f,r1,lsl#24			;@ Clear flags.
 	movmi v30f,#PSR_S
 	moveq v30f,#PSR_Z
 	strb r1,[v30ptr,#v30ParityVal]
@@ -181,7 +181,7 @@
 
 	.macro and16 src dst
 	and r1,\src,\dst,lsr#16
-	movs v30f,r1,lsl#16			;@ Clear S, Z, C, V & A.
+	movs v30f,r1,lsl#16			;@ Clear flags.
 	movmi v30f,#PSR_S
 	moveq v30f,#PSR_Z
 	strb r1,[v30ptr,#v30ParityVal]
@@ -237,7 +237,7 @@
 ;@----------------------------------------------------------------------------
 	.macro or8 src dst
 	orr r1,\dst,\src
-	movs v30f,r1,lsl#24			;@ Clear S, Z, C, V & A.
+	movs v30f,r1,lsl#24			;@ Clear flags.
 	movmi v30f,#PSR_S
 	moveq v30f,#PSR_Z
 	strb r1,[v30ptr,#v30ParityVal]
@@ -245,7 +245,7 @@
 
 	.macro or16 src dst
 	orr r1,\src,\dst,lsr#16
-	movs v30f,r1,lsl#16			;@ Clear S, Z, C, V & A.
+	movs v30f,r1,lsl#16			;@ Clear flags.
 	movmi v30f,#PSR_S
 	moveq v30f,#PSR_Z
 	strb r1,[v30ptr,#v30ParityVal]
@@ -282,8 +282,8 @@
 	.macro rol8 dst src
 	cmp \src,#0x10
 	andne \src,\src,#0x0F
-	tst v30f,v30f,lsr#2			;@ Move PSR_C to Carry
-	bic v30f,v30f,#PSR_C+PSR_V	;@ Clear C & V.
+	tst v30f,v30f,lsr#2					;@ Move PSR_C to Carry
+	and v30f,v30f,#PSR_S+PSR_Z+PSR_A	;@ Keep S, Z & A
 	orr \dst,\dst,\dst,lsl#8
 	orr \dst,\dst,\dst,lsl#16
 	movs \dst,\dst,lsl \src
@@ -295,8 +295,8 @@
 	.macro rol16 dst src
 	cmp \src,#0x10
 	andne \src,\src,#0x0F
-	tst v30f,v30f,lsr#2			;@ Move PSR_C to Carry
-	bic v30f,v30f,#PSR_C+PSR_V	;@ Clear C & V.
+	tst v30f,v30f,lsr#2					;@ Move PSR_C to Carry
+	and v30f,v30f,#PSR_S+PSR_Z+PSR_A	;@ Keep S, Z & A
 	orr \dst,\dst,\dst,lsl#16
 	movs \dst,\dst,lsl \src
 	orrcs v30f,v30f,#PSR_C+PSR_V
@@ -306,7 +306,7 @@
 ;@----------------------------------------------------------------------------
 	.macro rolc8 dst src
 	tst v30f,#PSR_C
-	bic v30f,v30f,#PSR_C+PSR_V	;@ Clear C & V.
+	and v30f,v30f,#PSR_S+PSR_Z+PSR_A	;@ Keep S, Z & A
 	orrne \dst,\dst,#0x100
 	cmp \src,#0
 	beq 10f
@@ -324,7 +324,7 @@
 
 	.macro rolc16 dst src
 	tst v30f,#PSR_C
-	bic v30f,v30f,#PSR_C+PSR_V	;@ Clear C & V.
+	and v30f,v30f,#PSR_S+PSR_Z+PSR_A	;@ Keep S, Z & A
 	orrne \dst,\dst,#0x10000
 	cmp \src,#0
 	beq 12f
@@ -341,8 +341,8 @@
 	.endm
 ;@----------------------------------------------------------------------------
 	.macro ror8 dst src
-	tst v30f,v30f,lsr#2			;@ Move PSR_C to Carry
-	bic v30f,v30f,#PSR_C+PSR_V	;@ Clear C & V.
+	tst v30f,v30f,lsr#2					;@ Move PSR_C to Carry
+	and v30f,v30f,#PSR_S+PSR_Z+PSR_A	;@ Keep S, Z & A
 	orr \dst,\dst,\dst,lsl#8
 	orr \dst,\dst,\dst,lsl#16
 	movs \dst,\dst,ror \src
@@ -353,8 +353,8 @@
 	.endm
 
 	.macro ror16 dst src
-	tst v30f,v30f,lsr#2			;@ Move PSR_C to Carry
-	bic v30f,v30f,#PSR_C+PSR_V	;@ Clear C & V.
+	tst v30f,v30f,lsr#2					;@ Move PSR_C to Carry
+	and v30f,v30f,#PSR_S+PSR_Z+PSR_A	;@ Keep S, Z & A
 	orr \dst,\dst,\dst,lsl#16
 	movs \dst,\dst,ror \src
 	orrcs v30f,v30f,#PSR_C
@@ -366,7 +366,7 @@
 	.macro rorc8 dst src
 	mov \dst,\dst,lsl#24
 	tst v30f,#PSR_C
-	bic v30f,v30f,#PSR_C+PSR_V	;@ Clear C & V.
+	and v30f,v30f,#PSR_S+PSR_Z+PSR_A	;@ Keep S, Z & A
 	orrne \dst,\dst,#0x00800000
 	cmp \src,#0
 	beq 14f
@@ -384,7 +384,7 @@
 
 	.macro rorc16 dst src
 	tst v30f,#PSR_C
-	bic v30f,v30f,#PSR_C+PSR_V	;@ Clear C & V.
+	and v30f,v30f,#PSR_S+PSR_Z+PSR_A	;@ Keep S, Z & A
 	mov \dst,\dst,lsl#16
 	orrne \dst,\dst,#0x00008000
 	cmp \src,#0
@@ -402,7 +402,7 @@
 	.endm
 ;@----------------------------------------------------------------------------
 	.macro shl8 dst src
-	movs v30f,v30f,lsl#31		;@ Move PSR_C to Carry
+	movs v30f,v30f,lsl#31		;@ Move PSR_C to Carry, clear flags
 	mov \dst,\dst,lsl#24
 	movs \dst,\dst,lsl \src
 	mov r1,\dst,lsr#24
@@ -413,7 +413,7 @@
 	.endm
 
 	.macro shl16 dst src
-	movs v30f,v30f,lsl#31		;@ Move PSR_C to Carry
+	movs v30f,v30f,lsl#31		;@ Move PSR_C to Carry, clear flags
 	mov \dst,\dst,lsl#16
 	movs \dst,\dst,lsl \src
 	mov r1,\dst,asr#16
@@ -424,7 +424,7 @@
 	.endm
 ;@----------------------------------------------------------------------------
 	.macro shr8 dst src
-	movs v30f,v30f,lsl#31		;@ Move PSR_C to Carry
+	movs v30f,v30f,lsl#31		;@ Move PSR_C to Carry, clear flags
 	movs r1,\dst,lsr \src
 	orrcs v30f,v30f,#PSR_C
 	orreq v30f,v30f,#PSR_Z
@@ -435,7 +435,7 @@
 	.endm
 
 	.macro shr16 dst src
-	movs v30f,v30f,lsl#31		;@ Move PSR_C to Carry
+	movs v30f,v30f,lsl#31		;@ Move PSR_C to Carry, clear flags
 	movs r1,\dst,lsr \src
 	orrcs v30f,v30f,#PSR_C
 	orreq v30f,v30f,#PSR_Z
@@ -448,7 +448,7 @@
 	.macro shra8 dst src
 	mov \dst,\dst,lsl#24
 	mov \dst,\dst,asr#24
-	movs v30f,v30f,lsl#31		;@ Move PSR_C to Carry
+	movs v30f,v30f,lsl#31		;@ Move PSR_C to Carry, clear flags
 	movs r1,\dst,asr \src
 	orrcs v30f,v30f,#PSR_C
 	orreq v30f,v30f,#PSR_Z
@@ -461,7 +461,7 @@
 	.macro shra16 dst src
 	mov \dst,\dst,lsl#16
 	mov \dst,\dst,asr#16
-	movs v30f,v30f,lsl#31		;@ Move PSR_C to Carry
+	movs v30f,v30f,lsl#31		;@ Move PSR_C to Carry, clear flags
 	movs r1,\dst,asr \src
 	orrcs v30f,v30f,#PSR_C
 	orreq v30f,v30f,#PSR_Z
@@ -557,7 +557,7 @@
 ;@----------------------------------------------------------------------------
 	.macro xor8 src dst
 	eor r1,\dst,\src
-	movs v30f,r1,lsl#24			;@ Clear S, Z, C, V & A.
+	movs v30f,r1,lsl#24			;@ Clear flags.
 	movmi v30f,#PSR_S
 	moveq v30f,#PSR_Z
 	strb r1,[v30ptr,#v30ParityVal]
@@ -565,7 +565,7 @@
 
 	.macro xor16 src dst
 	eor r1,\src,\dst,lsr#16
-	movs v30f,r1,lsl#16			;@ Clear S, Z, C, V & A.
+	movs v30f,r1,lsl#16			;@ Clear flags.
 	movmi v30f,#PSR_S
 	moveq v30f,#PSR_Z
 	strb r1,[v30ptr,#v30ParityVal]
