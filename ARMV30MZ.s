@@ -82,7 +82,7 @@ add80Reg:
 	add8 r4,r0
 
 	strb r1,[v30ptr,-v30ofs]
-	bic v30cyc,v30cyc,#SEG_PREFIX
+	ClearSegmentPrefix
 	fetch 1
 0:
 	bl v30ReadEA
@@ -90,7 +90,7 @@ add80EA:
 	add8 r4,r0
 
 	bl v30WriteSegOfs
-	bic v30cyc,v30cyc,#SEG_PREFIX
+	ClearSegmentPrefix
 	fetch 3
 ;@----------------------------------------------------------------------------
 i_add_wr16:
@@ -109,14 +109,14 @@ add81Reg:
 
 	add16 r0,r4
 	strh r1,[v30ofs,#v30Regs]
-	bic v30cyc,v30cyc,#SEG_PREFIX
+	ClearSegmentPrefix
 	fetch 1
 0:
 	bl v30ReadEAW
 add81EA:
 	add16 r0,r4
 	bl v30WriteSegOfsW
-	bic v30cyc,v30cyc,#SEG_PREFIX
+	ClearSegmentPrefix
 	fetch 3
 ;@----------------------------------------------------------------------------
 i_add_r8b:
@@ -133,7 +133,7 @@ _02:	;@ ADD R8b
 	ldrb r1,[v30ptr,-r4,lsr#24]
 	add8 r0,r1
 	strb r1,[v30ptr,-r4,lsr#24]
-	bic v30cyc,v30cyc,#SEG_PREFIX
+	ClearSegmentPrefix
 	fetch 1
 ;@----------------------------------------------------------------------------
 i_add_r16w:
@@ -151,7 +151,7 @@ _03:	;@ ADD R16W
 	ldr r1,[r4,#v30Regs2]
 	add16 r0,r1
 	strh r1,[r4,#v30Regs]
-	bic v30cyc,v30cyc,#SEG_PREFIX
+	ClearSegmentPrefix
 	fetch 1
 ;@----------------------------------------------------------------------------
 i_add_ald8:
@@ -202,7 +202,7 @@ or80Reg:
 	or8 r4,r0
 
 	strb r1,[v30ptr,-v30ofs]
-	bic v30cyc,v30cyc,#SEG_PREFIX
+	ClearSegmentPrefix
 	fetch 1
 0:
 	bl v30ReadEA
@@ -210,7 +210,7 @@ or80EA:
 	or8 r4,r0
 
 	bl v30WriteSegOfs
-	bic v30cyc,v30cyc,#SEG_PREFIX
+	ClearSegmentPrefix
 	fetch 3
 ;@----------------------------------------------------------------------------
 i_or_wr16:
@@ -229,14 +229,14 @@ or81Reg:
 
 	or16 r0,r4
 	strh r1,[v30ofs,#v30Regs]
-	bic v30cyc,v30cyc,#SEG_PREFIX
+	ClearSegmentPrefix
 	fetch 1
 0:
 	bl v30ReadEAW
 or81EA:
 	or16 r0,r4
 	bl v30WriteSegOfsW
-	bic v30cyc,v30cyc,#SEG_PREFIX
+	ClearSegmentPrefix
 	fetch 3
 ;@----------------------------------------------------------------------------
 i_or_r8b:
@@ -253,7 +253,7 @@ _0A:	;@ OR R8b
 	ldrb r1,[v30ptr,-r4,lsr#24]
 	or8 r0,r1
 	strb r1,[v30ptr,-r4,lsr#24]
-	bic v30cyc,v30cyc,#SEG_PREFIX
+	ClearSegmentPrefix
 	fetch 1
 ;@----------------------------------------------------------------------------
 i_or_r16w:
@@ -271,7 +271,7 @@ _0B:	;@ OR R16W
 	ldr r1,[r4,#v30Regs2]
 	or16 r0,r1
 	strh r1,[r4,#v30Regs]
-	bic v30cyc,v30cyc,#SEG_PREFIX
+	ClearSegmentPrefix
 	fetch 1
 ;@----------------------------------------------------------------------------
 i_or_ald8:
@@ -315,7 +315,7 @@ adc80Reg:
 	adc8 r4,r0
 
 	strb r1,[v30ptr,-v30ofs]
-	bic v30cyc,v30cyc,#SEG_PREFIX
+	ClearSegmentPrefix
 	fetch 1
 0:
 	bl v30ReadEA
@@ -323,7 +323,7 @@ adc80EA:
 	adc8 r4,r0
 
 	bl v30WriteSegOfs
-	bic v30cyc,v30cyc,#SEG_PREFIX
+	ClearSegmentPrefix
 	fetch 3
 ;@----------------------------------------------------------------------------
 i_adc_wr16:
@@ -342,14 +342,14 @@ adc81Reg:
 
 	adc16 r0,r4
 	strh r1,[v30ofs,#v30Regs]
-	bic v30cyc,v30cyc,#SEG_PREFIX
+	ClearSegmentPrefix
 	fetch 1
 0:
 	bl v30ReadEAW
 adc81EA:
 	adc16 r0,r4
 	bl v30WriteSegOfsW
-	bic v30cyc,v30cyc,#SEG_PREFIX
+	ClearSegmentPrefix
 	fetch 3
 ;@----------------------------------------------------------------------------
 i_adc_r8b:
@@ -366,7 +366,7 @@ _12:	;@ ADDC/ADC R8b
 	ldrb r1,[v30ptr,-r4,lsr#24]
 	adc8 r0,r1
 	strb r1,[v30ptr,-r4,lsr#24]
-	bic v30cyc,v30cyc,#SEG_PREFIX
+	ClearSegmentPrefix
 	fetch 1
 ;@----------------------------------------------------------------------------
 i_adc_r16w:
@@ -384,7 +384,7 @@ _13:	;@ ADDC/ADC R16W
 	ldr r1,[r4,#v30Regs2]
 	adc16 r0,r1
 	strh r1,[r4,#v30Regs]
-	bic v30cyc,v30cyc,#SEG_PREFIX
+	ClearSegmentPrefix
 	fetch 1
 ;@----------------------------------------------------------------------------
 i_adc_ald8:
@@ -438,7 +438,7 @@ subc80Reg:
 	subc8 r4,r0
 
 	strb r1,[v30ptr,-v30ofs]
-	bic v30cyc,v30cyc,#SEG_PREFIX
+	ClearSegmentPrefix
 	fetch 1
 0:
 	bl v30ReadEA
@@ -446,7 +446,7 @@ subc80EA:
 	subc8 r4,r0
 
 	bl v30WriteSegOfs
-	bic v30cyc,v30cyc,#SEG_PREFIX
+	ClearSegmentPrefix
 	fetch 3
 ;@----------------------------------------------------------------------------
 i_sbb_wr16:
@@ -465,14 +465,14 @@ subc81Reg:
 
 	rsbc16 r0,r4
 	strh r1,[v30ofs,#v30Regs]
-	bic v30cyc,v30cyc,#SEG_PREFIX
+	ClearSegmentPrefix
 	fetch 1
 0:
 	bl v30ReadEAW
 subc81EA:
 	rsbc16 r0,r4
 	bl v30WriteSegOfsW
-	bic v30cyc,v30cyc,#SEG_PREFIX
+	ClearSegmentPrefix
 	fetch 3
 ;@----------------------------------------------------------------------------
 i_sbb_r8b:
@@ -489,7 +489,7 @@ _1A:	;@ SUBC/SBB R8b
 	ldrb r1,[v30ptr,-r4,lsr#24]
 	subc8 r0,r1
 	strb r1,[v30ptr,-r4,lsr#24]
-	bic v30cyc,v30cyc,#SEG_PREFIX
+	ClearSegmentPrefix
 	fetch 1
 ;@----------------------------------------------------------------------------
 i_sbb_r16w:
@@ -507,7 +507,7 @@ _1B:	;@ SUBC/SBB R16W
 	ldr r1,[r4,#v30Regs2]
 	subc16 r0,r1
 	strh r1,[r4,#v30Regs]
-	bic v30cyc,v30cyc,#SEG_PREFIX
+	ClearSegmentPrefix
 	fetch 1
 ;@----------------------------------------------------------------------------
 i_sbb_ald8:
@@ -558,7 +558,7 @@ and80Reg:
 	and8 r4,r0
 
 	strb r1,[v30ptr,-v30ofs]
-	bic v30cyc,v30cyc,#SEG_PREFIX
+	ClearSegmentPrefix
 	fetch 1
 0:
 	bl v30ReadEA
@@ -566,7 +566,7 @@ and80EA:
 	and8 r4,r0
 
 	bl v30WriteSegOfs
-	bic v30cyc,v30cyc,#SEG_PREFIX
+	ClearSegmentPrefix
 	fetch 3
 ;@----------------------------------------------------------------------------
 i_and_wr16:
@@ -585,14 +585,14 @@ and81Reg:
 
 	and16 r0,r4
 	strh r1,[v30ofs,#v30Regs]
-	bic v30cyc,v30cyc,#SEG_PREFIX
+	ClearSegmentPrefix
 	fetch 1
 0:
 	bl v30ReadEAW
 and81EA:
 	and16 r0,r4
 	bl v30WriteSegOfsW
-	bic v30cyc,v30cyc,#SEG_PREFIX
+	ClearSegmentPrefix
 	fetch 3
 ;@----------------------------------------------------------------------------
 i_and_r8b:
@@ -609,7 +609,7 @@ _22:	;@ AND R8b
 	ldrb r1,[v30ptr,-r4,lsr#24]
 	and8 r0,r1
 	strb r1,[v30ptr,-r4,lsr#24]
-	bic v30cyc,v30cyc,#SEG_PREFIX
+	ClearSegmentPrefix
 	fetch 1
 ;@----------------------------------------------------------------------------
 i_and_r16w:
@@ -627,7 +627,7 @@ _23:	;@ AND R16W
 	ldr r1,[r4,#v30Regs2]
 	and16 r0,r1
 	strh r1,[r4,#v30Regs]
-	bic v30cyc,v30cyc,#SEG_PREFIX
+	ClearSegmentPrefix
 	fetch 1
 ;@----------------------------------------------------------------------------
 i_and_ald8:
@@ -699,7 +699,7 @@ sub80Reg:
 	sub8 r4,r0
 
 	strb r1,[v30ptr,-v30ofs]
-	bic v30cyc,v30cyc,#SEG_PREFIX
+	ClearSegmentPrefix
 	fetch 1
 0:
 	bl v30ReadEA
@@ -707,7 +707,7 @@ sub80EA:
 	sub8 r4,r0
 
 	bl v30WriteSegOfs
-	bic v30cyc,v30cyc,#SEG_PREFIX
+	ClearSegmentPrefix
 	fetch 3
 ;@----------------------------------------------------------------------------
 i_sub_wr16:
@@ -726,14 +726,14 @@ sub81Reg:
 
 	rsb16 r0,r4
 	strh r1,[v30ofs,#v30Regs]
-	bic v30cyc,v30cyc,#SEG_PREFIX
+	ClearSegmentPrefix
 	fetch 1
 0:
 	bl v30ReadEAW
 sub81EA:
 	rsb16 r0,r4
 	bl v30WriteSegOfsW
-	bic v30cyc,v30cyc,#SEG_PREFIX
+	ClearSegmentPrefix
 	fetch 3
 ;@----------------------------------------------------------------------------
 i_sub_r8b:
@@ -750,7 +750,7 @@ _2A:	;@ SUB R8b
 	ldrb r1,[v30ptr,-r4,lsr#24]
 	sub8 r0,r1
 	strb r1,[v30ptr,-r4,lsr#24]
-	bic v30cyc,v30cyc,#SEG_PREFIX
+	ClearSegmentPrefix
 	fetch 1
 ;@----------------------------------------------------------------------------
 i_sub_r16w:
@@ -768,7 +768,7 @@ _2B:	;@ SUB R16W
 	ldr r1,[r4,#v30Regs2]
 	sub16 r0,r1
 	strh r1,[r4,#v30Regs]
-	bic v30cyc,v30cyc,#SEG_PREFIX
+	ClearSegmentPrefix
 	fetch 1
 ;@----------------------------------------------------------------------------
 i_sub_ald8:
@@ -840,7 +840,7 @@ xor80Reg:
 	xor8 r4,r0
 
 	strb r1,[v30ptr,-v30ofs]
-	bic v30cyc,v30cyc,#SEG_PREFIX
+	ClearSegmentPrefix
 	fetch 1
 0:
 	bl v30ReadEA
@@ -848,7 +848,7 @@ xor80EA:
 	xor8 r4,r0
 
 	bl v30WriteSegOfs
-	bic v30cyc,v30cyc,#SEG_PREFIX
+	ClearSegmentPrefix
 	fetch 3
 ;@----------------------------------------------------------------------------
 i_xor_wr16:
@@ -867,14 +867,14 @@ xor81Reg:
 
 	xor16 r0,r4
 	strh r1,[v30ofs,#v30Regs]
-	bic v30cyc,v30cyc,#SEG_PREFIX
+	ClearSegmentPrefix
 	fetch 1
 0:
 	bl v30ReadEAW
 xor81EA:
 	xor16 r0,r4
 	bl v30WriteSegOfsW
-	bic v30cyc,v30cyc,#SEG_PREFIX
+	ClearSegmentPrefix
 	fetch 3
 ;@----------------------------------------------------------------------------
 i_xor_r8b:
@@ -891,7 +891,7 @@ _32:	;@ XOR R8b
 	ldrb r1,[v30ptr,-r4,lsr#24]
 	xor8 r0,r1
 	strb r1,[v30ptr,-r4,lsr#24]
-	bic v30cyc,v30cyc,#SEG_PREFIX
+	ClearSegmentPrefix
 	fetch 1
 ;@----------------------------------------------------------------------------
 i_xor_r16w:
@@ -909,7 +909,7 @@ _33:	;@ XOR R16W
 	ldr r1,[r4,#v30Regs2]
 	xor16 r0,r1
 	strh r1,[r4,#v30Regs]
-	bic v30cyc,v30cyc,#SEG_PREFIX
+	ClearSegmentPrefix
 	fetch 1
 ;@----------------------------------------------------------------------------
 i_xor_ald8:
@@ -973,11 +973,11 @@ cmp80Reg:
 	blmi v30ReadEA1
 
 	sub8 r4,r0
-	bic v30cyc,v30cyc,#SEG_PREFIX
+	ClearSegmentPrefix
 	fetch 1
 cmp80EA:
 	sub8 r4,r0
-	bic v30cyc,v30cyc,#SEG_PREFIX
+	ClearSegmentPrefix
 	fetch 2
 ;@----------------------------------------------------------------------------
 i_cmp_wr16:
@@ -995,11 +995,11 @@ cmp81Reg:
 	blmi v30ReadEAW1
 
 	rsb16 r0,r4
-	bic v30cyc,v30cyc,#SEG_PREFIX
+	ClearSegmentPrefix
 	fetch 1
 cmp81EA:
 	rsb16 r0,r4
-	bic v30cyc,v30cyc,#SEG_PREFIX
+	ClearSegmentPrefix
 	fetch 2
 ;@----------------------------------------------------------------------------
 i_cmp_r8b:
@@ -1015,7 +1015,7 @@ _3A:	;@ CMP R8b
 	blmi v30ReadEA1
 
 	sub8 r0,r4
-	bic v30cyc,v30cyc,#SEG_PREFIX
+	ClearSegmentPrefix
 	fetch 1
 ;@----------------------------------------------------------------------------
 i_cmp_r16w:
@@ -1032,7 +1032,7 @@ _3B:	;@ CMP R16W
 	blmi v30ReadEAW1
 
 	sub16 r0,r4
-	bic v30cyc,v30cyc,#SEG_PREFIX
+	ClearSegmentPrefix
 	fetch 1
 ;@----------------------------------------------------------------------------
 i_cmp_ald8:
@@ -1318,7 +1318,7 @@ _62:	;@ CHKIND/BOUND
 	add v30ofs,v30ofs,#0x20000
 	mov r5,r0
 	bl v30ReadSegOfsW
-	bic v30cyc,v30cyc,#SEG_PREFIX
+	ClearSegmentPrefix
 	cmp r4,r5
 	cmppl r0,r4
 	submi v30cyc,v30cyc,#21*CYCLE
@@ -1357,7 +1357,7 @@ _69:	;@ MUL/IMUL D16
 	strb v30f,[v30ptr,#v30MulOverflow]
 
 	strh r2,[r4,#v30Regs]
-	bic v30cyc,v30cyc,#SEG_PREFIX
+	ClearSegmentPrefix
 	fetch 3
 ;@----------------------------------------------------------------------------
 i_push_d8:
@@ -1390,7 +1390,7 @@ _6B:	;@ MUL/IMUL D8
 	strb v30f,[v30ptr,#v30MulOverflow]
 
 	strh r2,[r4,#v30Regs]
-	bic v30cyc,v30cyc,#SEG_PREFIX
+	ClearSegmentPrefix
 	fetch 3
 
 ;@----------------------------------------------------------------------------
@@ -1414,7 +1414,7 @@ f36c:	;@ REP INMB/INSB
 	str v30ofs,[v30ptr,#v30RegIY]
 1:
 	strh r5,[v30ptr,#v30RegCW]
-	bic v30cyc,v30cyc,#SEG_PREFIX+REP_PREFIX+LOCK_PREFIX
+	bic v30cyc,v30cyc,#REP_PREFIX+LOCK_PREFIX
 	fetch 5
 ;@----------------------------------------------------------------------------
 i_inmb:
@@ -1456,7 +1456,7 @@ f36d:	;@ REP INMW/INSW
 	bne 0b
 1:
 	strh r5,[v30ptr,#v30RegCW]
-	bic v30cyc,v30cyc,#SEG_PREFIX+REP_PREFIX+LOCK_PREFIX
+	bic v30cyc,v30cyc,#REP_PREFIX+LOCK_PREFIX
 	fetch 5
 ;@----------------------------------------------------------------------------
 i_inmw:
@@ -1483,7 +1483,7 @@ f36e:	;@ REP OUTMB/OUTSB
 	ldrh r5,[v30ptr,#v30RegCW]
 	cmp r5,#1
 	bmi 1f
-	tst v30cyc,#SEG_PREFIX
+	TestSegmentPrefix
 	ldreq v30csr,[v30ptr,#v30SRegDS]
 	ldr v30ofs,[v30ptr,#v30RegIX]
 	ldrsb r4,[v30ptr,#v30DF]
@@ -1499,13 +1499,13 @@ f36e:	;@ REP OUTMB/OUTSB
 	str v30ofs,[v30ptr,#v30RegIX]
 1:
 	strh r5,[v30ptr,#v30RegCW]
-	bic v30cyc,v30cyc,#SEG_PREFIX+REP_PREFIX+LOCK_PREFIX
+	ClearPrefixes
 	fetch 5
 ;@----------------------------------------------------------------------------
 i_outmb:
 _6E:	;@ OUTMB/OUTSB
 ;@----------------------------------------------------------------------------
-	tst v30cyc,#SEG_PREFIX
+	TestSegmentPrefix
 	ldreq v30csr,[v30ptr,#v30SRegDS]
 	ldr v30ofs,[v30ptr,#v30RegIX]
 	ldrsb r4,[v30ptr,#v30DF]
@@ -1515,7 +1515,7 @@ _6E:	;@ OUTMB/OUTSB
 	mov r1,r0
 	ldrh r0,[v30ptr,#v30RegDW]
 	bl v30WritePort
-	bic v30cyc,v30cyc,#SEG_PREFIX
+	ClearSegmentPrefix
 	fetch 5
 
 ;@----------------------------------------------------------------------------
@@ -1524,7 +1524,7 @@ f36f:	;@ REP OUTMW/OUTSW
 	ldrh r5,[v30ptr,#v30RegCW]
 	cmp r5,#1
 	bmi 1f
-	tst v30cyc,#SEG_PREFIX
+	TestSegmentPrefix
 	ldreq v30csr,[v30ptr,#v30SRegDS]
 0:
 	ldr v30ofs,[v30ptr,#v30RegIX]
@@ -1545,13 +1545,13 @@ f36f:	;@ REP OUTMW/OUTSW
 	bne 0b
 1:
 	strh r5,[v30ptr,#v30RegCW]
-	bic v30cyc,v30cyc,#SEG_PREFIX+REP_PREFIX+LOCK_PREFIX
+	ClearPrefixes
 	fetch 5
 ;@----------------------------------------------------------------------------
 i_outmw:
 _6F:	;@ OUTMW/OUTSW
 ;@----------------------------------------------------------------------------
-	tst v30cyc,#SEG_PREFIX
+	TestSegmentPrefix
 	ldreq v30csr,[v30ptr,#v30SRegDS]
 	ldr v30ofs,[v30ptr,#v30RegIX]
 	ldrsb r4,[v30ptr,#v30DF]
@@ -1566,7 +1566,7 @@ _6F:	;@ OUTMW/OUTSW
 	mov r1,r4,lsr#8
 	add r0,r5,#1
 	bl v30WritePort
-	bic v30cyc,v30cyc,#SEG_PREFIX
+	ClearSegmentPrefix
 	fetch 5
 
 ;@----------------------------------------------------------------------------
@@ -1776,7 +1776,7 @@ _84:	;@ TEST BR8
 	blmi v30ReadEA1
 
 	and8 r4,r0
-	bic v30cyc,v30cyc,#SEG_PREFIX
+	ClearSegmentPrefix
 	fetch 1
 ;@----------------------------------------------------------------------------
 i_test_wr16:
@@ -1793,7 +1793,7 @@ _85:	;@ TEST WR16
 	blmi v30ReadEAW1
 
 	and16 r0,r4
-	bic v30cyc,v30cyc,#SEG_PREFIX
+	ClearSegmentPrefix
 	fetch 1
 ;@----------------------------------------------------------------------------
 i_xchg_br8:
@@ -1810,14 +1810,14 @@ _86:	;@ XCH/XCHG BR8
 	ldrb r1,[v30ptr,-r4,lsr#24]
 	strb r0,[v30ptr,-r4,lsr#24]
 	strb r1,[v30ptr,-r2]
-	bic v30cyc,v30cyc,#SEG_PREFIX
+	ClearSegmentPrefix
 	fetch 3
 0:
 	bl v30ReadEA
 	ldrb r1,[v30ptr,-r4,lsr#24]
 	strb r0,[v30ptr,-r4,lsr#24]
 	bl v30WriteSegOfs
-	bic v30cyc,v30cyc,#SEG_PREFIX
+	ClearSegmentPrefix
 	fetch 5
 
 ;@----------------------------------------------------------------------------
@@ -1836,14 +1836,14 @@ _87:	;@ XCH/XCHG WR16
 	ldrh r1,[r4,#v30Regs]
 	strh r0,[r4,#v30Regs]
 	strh r1,[r2,#v30Regs]
-	bic v30cyc,v30cyc,#SEG_PREFIX
+	ClearSegmentPrefix
 	fetch 3
 0:
 	bl v30ReadEAW
 	ldrh r1,[r4,#v30Regs]
 	strh r0,[r4,#v30Regs]
 	bl v30WriteSegOfsW
-	bic v30cyc,v30cyc,#SEG_PREFIX
+	ClearSegmentPrefix
 	fetch 5
 ;@----------------------------------------------------------------------------
 i_mov_br8:
@@ -1862,7 +1862,7 @@ _88:	;@ MOV BR8
 	andpl r3,r3,#0xff
 	strbpl r1,[v30ptr,-r3]
 	blmi v30WriteEA
-	bic v30cyc,v30cyc,#SEG_PREFIX
+	ClearSegmentPrefix
 	fetch 1
 ;@----------------------------------------------------------------------------
 i_mov_wr16:
@@ -1878,7 +1878,7 @@ _89:	;@ MOV WR16
 	add v30ofs,v30ptr,r0,lsl#2
 	strhpl r1,[v30ofs,#v30Regs]
 	blmi v30WriteEAW
-	bic v30cyc,v30cyc,#SEG_PREFIX
+	ClearSegmentPrefix
 	fetch 1
 ;@----------------------------------------------------------------------------
 i_mov_r8b:
@@ -1893,7 +1893,7 @@ _8A:	;@ MOV R8B
 	ldrbpl r0,[v30ptr,-r1]
 	blmi v30ReadEA
 	strb r0,[v30ptr,-r4,lsr#24]
-	bic v30cyc,v30cyc,#SEG_PREFIX
+	ClearSegmentPrefix
 	fetch 1
 ;@----------------------------------------------------------------------------
 i_mov_r16w:
@@ -1909,7 +1909,7 @@ _8B:	;@ MOV R16W
 	ldrhpl r0,[v30ofs,#v30Regs]
 	blmi v30ReadEAW_noAdd
 	strh r0,[r4,#v30Regs]
-	bic v30cyc,v30cyc,#SEG_PREFIX
+	ClearSegmentPrefix
 	fetch 1
 ;@----------------------------------------------------------------------------
 i_mov_wsreg:
@@ -1925,7 +1925,7 @@ _8C:	;@ MOV WSREG
 	add v30ofs,v30ptr,r0,lsl#2
 	strhpl r1,[v30ofs,#v30Regs]
 	blmi v30WriteEAW
-	bic v30cyc,v30cyc,#SEG_PREFIX
+	ClearSegmentPrefix
 	fetch 1
 ;@----------------------------------------------------------------------------
 i_lea:
@@ -1956,7 +1956,7 @@ _8E:	;@ MOV SREGW
 	add r1,v30ptr,r4,lsr#1
 	strh r0,[r1,#v30SRegs+2]
 //	orr v30cyc,v30cyc,#LOCK_PREFIX
-	bic v30cyc,v30cyc,#SEG_PREFIX
+	ClearSegmentPrefix
 	cmp r4,#0x08			;@ CS?
 	bleq V30ReEncodePC
 	fetch 2
@@ -1973,7 +1973,7 @@ _8F:	;@ POPW
 	add v30ofs,v30ptr,r0,lsl#2
 	strhpl r1,[v30ofs,#v30Regs]
 	blmi v30WriteEAW2
-	bic v30cyc,v30cyc,#SEG_PREFIX
+	ClearSegmentPrefix
 	fetch 1
 ;@----------------------------------------------------------------------------
 i_nop:
@@ -2166,48 +2166,48 @@ i_mov_aldisp:
 _A0:	;@ MOV ALDISP
 ;@----------------------------------------------------------------------------
 	getNextWord
-	tst v30cyc,#SEG_PREFIX
+	TestSegmentPrefix
 	ldreq v30csr,[v30ptr,#v30SRegDS]
 	add r0,v30csr,r0,lsl#12
 	bl cpuReadMem20
 	strb r0,[v30ptr,#v30RegAL]
-	bic v30cyc,v30cyc,#SEG_PREFIX
+	ClearSegmentPrefix
 	fetch 1
 ;@----------------------------------------------------------------------------
 i_mov_axdisp:
 _A1:	;@ MOV AXDISP
 ;@----------------------------------------------------------------------------
 	getNextWord
-	tst v30cyc,#SEG_PREFIX
+	TestSegmentPrefix
 	ldreq v30csr,[v30ptr,#v30SRegDS]
 	add r0,v30csr,r0,lsl#12
 	bl cpuReadMem20W
 	strh r0,[v30ptr,#v30RegAW]
-	bic v30cyc,v30cyc,#SEG_PREFIX
+	ClearSegmentPrefix
 	fetch 1
 ;@----------------------------------------------------------------------------
 i_mov_dispal:
 _A2:	;@ MOV DISPAL
 ;@----------------------------------------------------------------------------
 	getNextWord
-	tst v30cyc,#SEG_PREFIX
+	TestSegmentPrefix
 	ldreq v30csr,[v30ptr,#v30SRegDS]
 	ldrb r1,[v30ptr,#v30RegAL]
 	add r0,v30csr,r0,lsl#12
 	bl cpuWriteMem20
-	bic v30cyc,v30cyc,#SEG_PREFIX
+	ClearSegmentPrefix
 	fetch 1
 ;@----------------------------------------------------------------------------
 i_mov_dispax:
 _A3:	;@ MOV DISPAX
 ;@----------------------------------------------------------------------------
 	getNextWord
-	tst v30cyc,#SEG_PREFIX
+	TestSegmentPrefix
 	ldreq v30csr,[v30ptr,#v30SRegDS]
 	ldrh r1,[v30ptr,#v30RegAW]
 	add r0,v30csr,r0,lsl#12
 	bl cpuWriteMem20W
-	bic v30cyc,v30cyc,#SEG_PREFIX
+	ClearSegmentPrefix
 	fetch 1
 
 ;@----------------------------------------------------------------------------
@@ -2216,7 +2216,7 @@ f3a4:	;@ REP MOVMB/MOVSB
 	ldrh r5,[v30ptr,#v30RegCW]
 	cmp r5,#1
 	bmi 1f
-	tst v30cyc,#SEG_PREFIX
+	TestSegmentPrefix
 	ldreq v30csr,[v30ptr,#v30SRegDS]
 	ldr v30ofs,[v30ptr,#v30RegIX]
 	ldrsb r4,[v30ptr,#v30DF]
@@ -2236,13 +2236,13 @@ f3a4:	;@ REP MOVMB/MOVSB
 	str v30ofs,[v30ptr,#v30RegIX]
 1:
 	strh r5,[v30ptr,#v30RegCW]
-	bic v30cyc,v30cyc,#SEG_PREFIX+REP_PREFIX+LOCK_PREFIX
+	ClearPrefixes
 	fetch 5
 ;@----------------------------------------------------------------------------
 i_movsb:
 _A4:	;@ MOVMB/MOVSB
 ;@----------------------------------------------------------------------------
-	tst v30cyc,#SEG_PREFIX
+	TestSegmentPrefix
 	ldreq v30csr,[v30ptr,#v30SRegDS]
 	ldr v30ofs,[v30ptr,#v30RegIX]
 	ldrsb r4,[v30ptr,#v30DF]
@@ -2256,7 +2256,7 @@ _A4:	;@ MOVMB/MOVSB
 	add r0,r0,r3,lsr#4
 	str r2,[v30ptr,#v30RegIY]
 	bl cpuWriteMem20
-	bic v30cyc,v30cyc,#SEG_PREFIX
+	ClearSegmentPrefix
 	fetch 5
 
 ;@----------------------------------------------------------------------------
@@ -2265,7 +2265,7 @@ f3a5:	;@ REP MOVMW/MOVSW
 	ldrh r5,[v30ptr,#v30RegCW]
 	cmp r5,#1
 	bmi 1f
-	tst v30cyc,#SEG_PREFIX
+	TestSegmentPrefix
 	ldreq v30csr,[v30ptr,#v30SRegDS]
 	ldr v30ofs,[v30ptr,#v30RegIX]
 	ldrsb r4,[v30ptr,#v30DF]
@@ -2285,13 +2285,13 @@ f3a5:	;@ REP MOVMW/MOVSW
 	str v30ofs,[v30ptr,#v30RegIX]
 1:
 	strh r5,[v30ptr,#v30RegCW]
-	bic v30cyc,v30cyc,#SEG_PREFIX+REP_PREFIX+LOCK_PREFIX
+	ClearPrefixes
 	fetch 5
 ;@----------------------------------------------------------------------------
 i_movsw:
 _A5:	;@ MOVMW/MOVSW
 ;@----------------------------------------------------------------------------
-	tst v30cyc,#SEG_PREFIX
+	TestSegmentPrefix
 	ldreq v30csr,[v30ptr,#v30SRegDS]
 	ldr v30ofs,[v30ptr,#v30RegIX]
 	ldrsb r4,[v30ptr,#v30DF]
@@ -2305,7 +2305,7 @@ _A5:	;@ MOVMW/MOVSW
 	add r0,r0,r3,lsr#4
 	str r2,[v30ptr,#v30RegIY]
 	bl cpuWriteMem20W
-	bic v30cyc,v30cyc,#SEG_PREFIX
+	ClearSegmentPrefix
 	fetch 5
 
 ;@----------------------------------------------------------------------------
@@ -2314,7 +2314,7 @@ f2a6:	;@ REPNZ CMPBKB/CMPSB
 	ldrh r5,[v30ptr,#v30RegCW]
 	cmp r5,#1
 	bmi 1f
-	tst v30cyc,#SEG_PREFIX
+	TestSegmentPrefix
 	ldreq v30csr,[v30ptr,#v30SRegDS]
 	ldr v30ofs,[v30ptr,#v30RegIX]
 0:
@@ -2340,7 +2340,7 @@ f2a6:	;@ REPNZ CMPBKB/CMPSB
 	str v30ofs,[v30ptr,#v30RegIX]
 1:
 	strh r5,[v30ptr,#v30RegCW]
-	bic v30cyc,v30cyc,#SEG_PREFIX+REP_PREFIX+LOCK_PREFIX
+	ClearPrefixes
 	fetch 5
 ;@----------------------------------------------------------------------------
 f3a6:	;@ REPZ CMPBKB/CMPSB
@@ -2348,7 +2348,7 @@ f3a6:	;@ REPZ CMPBKB/CMPSB
 	ldrh r5,[v30ptr,#v30RegCW]
 	cmp r5,#1
 	bmi 1f
-	tst v30cyc,#SEG_PREFIX
+	TestSegmentPrefix
 	ldreq v30csr,[v30ptr,#v30SRegDS]
 	ldr v30ofs,[v30ptr,#v30RegIX]
 0:
@@ -2373,13 +2373,13 @@ f3a6:	;@ REPZ CMPBKB/CMPSB
 	str v30ofs,[v30ptr,#v30RegIX]
 1:
 	strh r5,[v30ptr,#v30RegCW]
-	bic v30cyc,v30cyc,#SEG_PREFIX+REP_PREFIX+LOCK_PREFIX
+	ClearPrefixes
 	fetch 5
 ;@----------------------------------------------------------------------------
 i_cmpsb:
 _A6:	;@ CMPBKB/CMPSB
 ;@----------------------------------------------------------------------------
-	tst v30cyc,#SEG_PREFIX
+	TestSegmentPrefix
 	ldreq v30csr,[v30ptr,#v30SRegDS]
 	ldr v30ofs,[v30ptr,#v30RegIX]
 	ldrsb r4,[v30ptr,#v30DF]
@@ -2397,7 +2397,7 @@ _A6:	;@ CMPBKB/CMPSB
 
 	sub8 r0,r4
 
-	bic v30cyc,v30cyc,#SEG_PREFIX
+	ClearSegmentPrefix
 	fetch 6
 
 ;@----------------------------------------------------------------------------
@@ -2406,7 +2406,7 @@ f2a7:	;@ REPNZ CMPBKW/CMPSW
 	ldrh r5,[v30ptr,#v30RegCW]
 	cmp r5,#1
 	bmi 1f
-	tst v30cyc,#SEG_PREFIX
+	TestSegmentPrefix
 	ldreq v30csr,[v30ptr,#v30SRegDS]
 	ldr v30ofs,[v30ptr,#v30RegIX]
 0:
@@ -2432,7 +2432,7 @@ f2a7:	;@ REPNZ CMPBKW/CMPSW
 	str v30ofs,[v30ptr,#v30RegIX]
 1:
 	strh r5,[v30ptr,#v30RegCW]
-	bic v30cyc,v30cyc,#SEG_PREFIX+REP_PREFIX+LOCK_PREFIX
+	ClearPrefixes
 	fetch 5
 ;@----------------------------------------------------------------------------
 f3a7:	;@ REPZ CMPBKW/CMPSW
@@ -2440,7 +2440,7 @@ f3a7:	;@ REPZ CMPBKW/CMPSW
 	ldrh r5,[v30ptr,#v30RegCW]
 	cmp r5,#1
 	bmi 1f
-	tst v30cyc,#SEG_PREFIX
+	TestSegmentPrefix
 	ldreq v30csr,[v30ptr,#v30SRegDS]
 	ldr v30ofs,[v30ptr,#v30RegIX]
 0:
@@ -2465,13 +2465,13 @@ f3a7:	;@ REPZ CMPBKW/CMPSW
 	str v30ofs,[v30ptr,#v30RegIX]
 1:
 	strh r5,[v30ptr,#v30RegCW]
-	bic v30cyc,v30cyc,#SEG_PREFIX+REP_PREFIX+LOCK_PREFIX
+	ClearPrefixes
 	fetch 5
 ;@----------------------------------------------------------------------------
 i_cmpsw:
 _A7:	;@ CMPBKW/CMPSW
 ;@----------------------------------------------------------------------------
-	tst v30cyc,#SEG_PREFIX
+	TestSegmentPrefix
 	ldreq v30csr,[v30ptr,#v30SRegDS]
 	ldr v30ofs,[v30ptr,#v30RegIX]
 	ldrsb r4,[v30ptr,#v30DF]
@@ -2489,7 +2489,7 @@ _A7:	;@ CMPBKW/CMPSW
 
 	sub16 r0,r4
 
-	bic v30cyc,v30cyc,#SEG_PREFIX
+	ClearSegmentPrefix
 	fetch 6
 ;@----------------------------------------------------------------------------
 i_test_ald8:
@@ -2582,7 +2582,7 @@ f3ac:	;@ REP LDMB/LODSB
 	ldrh r5,[v30ptr,#v30RegCW]
 	cmp r5,#1
 	bmi 1f
-	tst v30cyc,#SEG_PREFIX
+	TestSegmentPrefix
 	ldreq v30csr,[v30ptr,#v30SRegDS]
 	ldr v30ofs,[v30ptr,#v30RegIX]
 	ldrsb r4,[v30ptr,#v30DF]
@@ -2596,13 +2596,13 @@ f3ac:	;@ REP LDMB/LODSB
 	str v30ofs,[v30ptr,#v30RegIX]
 1:
 	strh r5,[v30ptr,#v30RegCW]
-	bic v30cyc,v30cyc,#SEG_PREFIX+REP_PREFIX+LOCK_PREFIX
+	ClearPrefixes
 	fetch 5
 ;@----------------------------------------------------------------------------
 i_lodsb:
 _AC:	;@ LDMB/LODSB
 ;@----------------------------------------------------------------------------
-	tst v30cyc,#SEG_PREFIX
+	TestSegmentPrefix
 	ldreq v30csr,[v30ptr,#v30SRegDS]
 	ldr v30ofs,[v30ptr,#v30RegIX]
 	ldrsb r4,[v30ptr,#v30DF]
@@ -2610,7 +2610,7 @@ _AC:	;@ LDMB/LODSB
 	add v30ofs,v30ofs,r4,lsl#16
 	str v30ofs,[v30ptr,#v30RegIX]
 	strb r0,[v30ptr,#v30RegAL]
-	bic v30cyc,v30cyc,#SEG_PREFIX
+	ClearSegmentPrefix
 	fetch 3
 
 ;@----------------------------------------------------------------------------
@@ -2619,7 +2619,7 @@ f3ad:	;@ REP LDMW/LODSW
 	ldrh r5,[v30ptr,#v30RegCW]
 	cmp r5,#1
 	bmi 1f
-	tst v30cyc,#SEG_PREFIX
+	TestSegmentPrefix
 	ldreq v30csr,[v30ptr,#v30SRegDS]
 	ldr v30ofs,[v30ptr,#v30RegIX]
 	ldrsb r4,[v30ptr,#v30DF]
@@ -2633,13 +2633,13 @@ f3ad:	;@ REP LDMW/LODSW
 	str v30ofs,[v30ptr,#v30RegIX]
 1:
 	strh r5,[v30ptr,#v30RegCW]
-	bic v30cyc,v30cyc,#SEG_PREFIX+REP_PREFIX+LOCK_PREFIX
+	ClearPrefixes
 	fetch 5
 ;@----------------------------------------------------------------------------
 i_lodsw:
 _AD:	;@ LDMW/LODSW
 ;@----------------------------------------------------------------------------
-	tst v30cyc,#SEG_PREFIX
+	TestSegmentPrefix
 	ldreq v30csr,[v30ptr,#v30SRegDS]
 	ldr v30ofs,[v30ptr,#v30RegIX]
 	ldrsb r4,[v30ptr,#v30DF]
@@ -2647,7 +2647,7 @@ _AD:	;@ LDMW/LODSW
 	add v30ofs,v30ofs,r4,lsl#17
 	str v30ofs,[v30ptr,#v30RegIX]
 	strh r0,[v30ptr,#v30RegAW]
-	bic v30cyc,v30cyc,#SEG_PREFIX
+	ClearSegmentPrefix
 	fetch 3
 
 ;@----------------------------------------------------------------------------
@@ -2915,7 +2915,7 @@ d2Continue:
 	and r1,r1,#0x1F
 d0Continue:
 
-	bic v30cyc,v30cyc,#SEG_PREFIX
+	ClearSegmentPrefix
 	ldr pc,[pc,r5,lsr#1]
 	nop
 	.long rolC0EA,  rorC0EA,  rolcC0EA,  rorcC0EA,  shlC0EA,  shrC0EA,  undC0EA,  shraC0EA
@@ -3008,7 +3008,7 @@ d3Continue:
 	and r1,r1,#0x1F
 d1Continue:
 
-	bic v30cyc,v30cyc,#SEG_PREFIX
+	ClearSegmentPrefix
 	ldr pc,[pc,r5,lsr#1]
 	nop
 	.long rolC1EA,  rorC1EA,  rolcC1EA,  rorcC1EA,  shlC1EA,  shrC1EA,  undC1EA,  shraC1EA
@@ -3120,7 +3120,7 @@ _C4:	;@ LES DW
 	bl v30ReadSegOfsW
 	strh r0,[v30ptr,#v30SRegES+2]
 
-	bic v30cyc,v30cyc,#SEG_PREFIX
+	ClearSegmentPrefix
 	fetch 6
 ;@----------------------------------------------------------------------------
 i_lds_dw:
@@ -3137,7 +3137,7 @@ _C5:	;@ LDS DW
 	bl v30ReadSegOfsW
 	strh r0,[v30ptr,#v30SRegDS+2]
 
-	bic v30cyc,v30cyc,#SEG_PREFIX
+	ClearSegmentPrefix
 	fetch 6
 ;@----------------------------------------------------------------------------
 i_mov_bd8:
@@ -3150,14 +3150,14 @@ _C6:	;@ MOV BD8
 	ldrb r4,[v30ofs,#v30ModRmRm]
 	getNextByteTo r1
 	strb r1,[v30ptr,-r4]
-	bic v30cyc,v30cyc,#SEG_PREFIX
+	ClearSegmentPrefix
 	fetch 1
 0:
 	mov r12,pc					;@ Return reg for EA
 	ldr pc,[v30ofs,#v30EATable]
 	getNextByteTo r1
 	bl v30WriteSegOfs
-	bic v30cyc,v30cyc,#SEG_PREFIX
+	ClearSegmentPrefix
 	fetch 1
 
 ;@----------------------------------------------------------------------------
@@ -3171,7 +3171,7 @@ _C7:	;@ MOV WD16
 	add v30ofs,v30ptr,r0,lsl#2
 	getNextWordTo r1, r0
 	strh r1,[v30ofs,#v30Regs]
-	bic v30cyc,v30cyc,#SEG_PREFIX
+	ClearSegmentPrefix
 	fetch 1
 0:
 	add v30ofs,v30ptr,r0,lsl#2
@@ -3179,7 +3179,7 @@ _C7:	;@ MOV WD16
 	ldr pc,[v30ofs,#v30EATable]
 	getNextWordTo r1, r0
 	bl v30WriteSegOfsW
-	bic v30cyc,v30cyc,#SEG_PREFIX
+	ClearSegmentPrefix
 	fetch 1
 ;@----------------------------------------------------------------------------
 i_prepare:
@@ -3201,7 +3201,7 @@ _C8:	;@ PREPARE/ENTER
 	subs r5,r5,#1
 	bmi 2f
 	beq 1f
-	tst v30cyc,#SEG_PREFIX
+	TestSegmentPrefix
 	moveq v30csr,r8
 0:
 	sub v30ofs,v30ofs,#0x20000
@@ -3223,7 +3223,7 @@ _C8:	;@ PREPARE/ENTER
 	ldmfd sp!,{r0, r8}
 	sub r4,r4,r0,lsl#16
 	str r4,[v30ptr,#v30RegSP]
-	bic v30cyc,v30cyc,#SEG_PREFIX
+	ClearSegmentPrefix
 	fetch 8
 ;@----------------------------------------------------------------------------
 i_dispose:
@@ -3414,14 +3414,14 @@ _D6:	;@ SALC			;@ Set AL on Carry
 i_trans:
 _D7:	;@ TRANS/XLAT	;@ Translate al via LUT.
 ;@----------------------------------------------------------------------------
-	tst v30cyc,#SEG_PREFIX
+	TestSegmentPrefix
 	ldreq v30csr,[v30ptr,#v30SRegDS]
 	ldrb r0,[v30ptr,#v30RegAL]
 	ldr v30ofs,[v30ptr,#v30RegBW-2]
 	add v30ofs,v30ofs,r0,lsl#16
 	bl v30ReadSegOfs
 	strb r0,[v30ptr,#v30RegAL]
-	bic v30cyc,v30cyc,#SEG_PREFIX
+	ClearSegmentPrefix
 	fetch 5
 ;@----------------------------------------------------------------------------
 i_fpo1:
@@ -3832,7 +3832,7 @@ _F6:	;@ PRE F6
 	ldrbpl r0,[v30ptr,-v30ofs]
 	blmi v30ReadEA1
 
-	bic v30cyc,v30cyc,#SEG_PREFIX
+	ClearSegmentPrefix
 	ldr pc,[pc,r5,lsr#1]
 	nop
 	.long testF6, undefF6, notF6EA,  negF6EA,  muluF6, mulF6, divubF6, divbF6
@@ -3975,7 +3975,7 @@ _F7:	;@ PRE F7
 	ldrhpl r0,[v30ofs,#v30Regs]
 	blmi v30ReadEAW1
 
-	bic v30cyc,v30cyc,#SEG_PREFIX
+	ClearSegmentPrefix
 	ldr pc,[pc,r5,lsr#1]
 	nop
 	.long testF7, undefF7, notF7EA,  negF7EA,  muluF7, mulF7, divuwF7, divwF7
@@ -4181,7 +4181,7 @@ incFEReg:
 	strb r1,[v30ptr,#v30ParityVal]
 
 	strb r1,[v30ptr,-v30ofs]
-	bic v30cyc,v30cyc,#SEG_PREFIX
+	ClearSegmentPrefix
 	fetch 1
 
 decFEReg:
@@ -4199,7 +4199,7 @@ decFEReg:
 	strb r1,[v30ptr,#v30ParityVal]
 
 	strb r1,[v30ptr,-v30ofs]
-	bic v30cyc,v30cyc,#SEG_PREFIX
+	ClearSegmentPrefix
 	fetch 1
 
 incFEEA:
@@ -4216,7 +4216,7 @@ incFEEA:
 	strb r1,[v30ptr,#v30ParityVal]
 
 	bl v30WriteSegOfs
-	bic v30cyc,v30cyc,#SEG_PREFIX
+	ClearSegmentPrefix
 	fetch 3
 
 decFEEA:
@@ -4233,7 +4233,7 @@ decFEEA:
 	strb r1,[v30ptr,#v30ParityVal]
 
 	bl v30WriteSegOfs
-	bic v30cyc,v30cyc,#SEG_PREFIX
+	ClearSegmentPrefix
 	fetch 3
 
 ;@----------------------------------------------------------------------------
@@ -4267,7 +4267,7 @@ incFFReg:
 	mov r1,r1,lsr#16
 	strb r1,[v30ptr,#v30ParityVal]
 	strh r1,[v30ofs,#v30Regs]
-	bic v30cyc,v30cyc,#SEG_PREFIX
+	ClearSegmentPrefix
 	fetch 1
 ;@----------------------------------------------------------------------------
 incFFEA:
@@ -4283,7 +4283,7 @@ incFFEA:
 	movs r1,r1,asr#16
 	strb r1,[v30ptr,#v30ParityVal]
 	bl v30WriteSegOfsW
-	bic v30cyc,v30cyc,#SEG_PREFIX
+	ClearSegmentPrefix
 	fetch 3
 ;@----------------------------------------------------------------------------
 decFFReg:
@@ -4298,7 +4298,7 @@ decFFReg:
 	mov r1,r1,lsr#16
 	strb r1,[v30ptr,#v30ParityVal]
 	strh r1,[v30ofs,#v30Regs]
-	bic v30cyc,v30cyc,#SEG_PREFIX
+	ClearSegmentPrefix
 	fetch 1
 ;@----------------------------------------------------------------------------
 decFFEA:
@@ -4314,7 +4314,7 @@ decFFEA:
 	movs r1,r1,asr#16
 	strb r1,[v30ptr,#v30ParityVal]
 	bl v30WriteSegOfsW
-	bic v30cyc,v30cyc,#SEG_PREFIX
+	ClearSegmentPrefix
 	fetch 3
 ;@----------------------------------------------------------------------------
 callFF:
@@ -4323,7 +4323,7 @@ callFF:
 	mov v30pc,r0,lsl#16
 	bl v30PushW
 	V30EncodeFastPC
-	bic v30cyc,v30cyc,#SEG_PREFIX
+	ClearSegmentPrefix
 	fetch 5
 ;@----------------------------------------------------------------------------
 callFarFF:
@@ -4343,14 +4343,14 @@ callFarFF:
 	mov r1,r4
 	bl v30PushLastW
 	V30EncodeFastPC
-	bic v30cyc,v30cyc,#SEG_PREFIX
+	ClearSegmentPrefix
 	fetch 12
 ;@----------------------------------------------------------------------------
 braFF:
 	blmi v30ReadEAW1
 	mov v30pc,r0,lsl#16
 	v30EncodeFastPC
-	bic v30cyc,v30cyc,#SEG_PREFIX
+	ClearSegmentPrefix
 	fetch 5
 ;@----------------------------------------------------------------------------
 braFarFF:
@@ -4360,14 +4360,14 @@ braFarFF:
 	bl v30ReadSegOfsW
 	strh r0,[v30ptr,#v30SRegCS+2]
 	v30EncodeFastPC
-	bic v30cyc,v30cyc,#SEG_PREFIX
+	ClearSegmentPrefix
 	fetch 10
 ;@----------------------------------------------------------------------------
 pushFF:
 	blmi v30ReadEAW1
 	mov r1,r0
 	bl v30PushW
-	bic v30cyc,v30cyc,#SEG_PREFIX
+	ClearSegmentPrefix
 	fetch 1
 
 ;@----------------------------------------------------------------------------
@@ -4415,7 +4415,7 @@ EA_000:	;@
 ;@----------------------------------------------------------------------------
 	ldr v30ofs,[v30ptr,#v30RegBW-2]
 	ldr r0,[v30ptr,#v30RegIX]
-	tst v30cyc,#SEG_PREFIX
+	TestSegmentPrefix
 	ldreq v30csr,[v30ptr,#v30SRegDS]
 	add v30ofs,v30ofs,r0
 	eatCycles 2
@@ -4425,7 +4425,7 @@ EA_001:	;@
 ;@----------------------------------------------------------------------------
 	ldr v30ofs,[v30ptr,#v30RegBW-2]
 	ldr r0,[v30ptr,#v30RegIY]
-	tst v30cyc,#SEG_PREFIX
+	TestSegmentPrefix
 	ldreq v30csr,[v30ptr,#v30SRegDS]
 	add v30ofs,v30ofs,r0
 	eatCycles 2
@@ -4435,7 +4435,7 @@ EA_002:	;@
 ;@----------------------------------------------------------------------------
 	ldr v30ofs,[v30ptr,#v30RegBP]
 	ldr r0,[v30ptr,#v30RegIX]
-	tst v30cyc,#SEG_PREFIX
+	TestSegmentPrefix
 	ldreq v30csr,[v30ptr,#v30SRegSS]
 	add v30ofs,v30ofs,r0
 	eatCycles 2
@@ -4445,7 +4445,7 @@ EA_003:	;@
 ;@----------------------------------------------------------------------------
 	ldr v30ofs,[v30ptr,#v30RegBP]
 	ldr r0,[v30ptr,#v30RegIY]
-	tst v30cyc,#SEG_PREFIX
+	TestSegmentPrefix
 	ldreq v30csr,[v30ptr,#v30SRegSS]
 	add v30ofs,v30ofs,r0
 	eatCycles 2
@@ -4454,21 +4454,21 @@ EA_003:	;@
 EA_004:	;@
 ;@----------------------------------------------------------------------------
 	ldr v30ofs,[v30ptr,#v30RegIX]
-	tst v30cyc,#SEG_PREFIX
+	TestSegmentPrefix
 	ldreq v30csr,[v30ptr,#v30SRegDS]
 	bx r12
 ;@----------------------------------------------------------------------------
 EA_005:	;@
 ;@----------------------------------------------------------------------------
 	ldr v30ofs,[v30ptr,#v30RegIY]
-	tst v30cyc,#SEG_PREFIX
+	TestSegmentPrefix
 	ldreq v30csr,[v30ptr,#v30SRegDS]
 	bx r12
 ;@----------------------------------------------------------------------------
 EA_006:	;@
 ;@----------------------------------------------------------------------------
 	getNextWordTo r0, r2
-	tst v30cyc,#SEG_PREFIX
+	TestSegmentPrefix
 	ldreq v30csr,[v30ptr,#v30SRegDS]
 	mov v30ofs,r0,lsl#16
 	bx r12
@@ -4476,7 +4476,7 @@ EA_006:	;@
 EA_007:	;@
 ;@----------------------------------------------------------------------------
 	ldr v30ofs,[v30ptr,#v30RegBW-2]
-	tst v30cyc,#SEG_PREFIX
+	TestSegmentPrefix
 	ldreq v30csr,[v30ptr,#v30SRegDS]
 	bx r12
 ;@----------------------------------------------------------------------------
@@ -4485,7 +4485,7 @@ EA_100:	;@
 	getNextSignedByte
 	ldr v30ofs,[v30ptr,#v30RegBW-2]
 	ldr r2,[v30ptr,#v30RegIX]
-	tst v30cyc,#SEG_PREFIX
+	TestSegmentPrefix
 	ldreq v30csr,[v30ptr,#v30SRegDS]
 	add v30ofs,v30ofs,r0,lsl#16
 	add v30ofs,v30ofs,r2
@@ -4497,7 +4497,7 @@ EA_101:	;@
 	getNextSignedByte
 	ldr v30ofs,[v30ptr,#v30RegBW-2]
 	ldr r2,[v30ptr,#v30RegIY]
-	tst v30cyc,#SEG_PREFIX
+	TestSegmentPrefix
 	ldreq v30csr,[v30ptr,#v30SRegDS]
 	add v30ofs,v30ofs,r0,lsl#16
 	add v30ofs,v30ofs,r2
@@ -4509,7 +4509,7 @@ EA_102:	;@
 	getNextSignedByte
 	ldr v30ofs,[v30ptr,#v30RegBP]
 	ldr r2,[v30ptr,#v30RegIX]
-	tst v30cyc,#SEG_PREFIX
+	TestSegmentPrefix
 	ldreq v30csr,[v30ptr,#v30SRegSS]
 	add v30ofs,v30ofs,r0,lsl#16
 	add v30ofs,v30ofs,r2
@@ -4521,7 +4521,7 @@ EA_103:	;@
 	getNextSignedByte
 	ldr v30ofs,[v30ptr,#v30RegBP]
 	ldr r2,[v30ptr,#v30RegIY]
-	tst v30cyc,#SEG_PREFIX
+	TestSegmentPrefix
 	ldreq v30csr,[v30ptr,#v30SRegSS]
 	add v30ofs,v30ofs,r0,lsl#16
 	add v30ofs,v30ofs,r2
@@ -4532,7 +4532,7 @@ EA_104:	;@
 ;@----------------------------------------------------------------------------
 	getNextSignedByte
 	ldr v30ofs,[v30ptr,#v30RegIX]
-	tst v30cyc,#SEG_PREFIX
+	TestSegmentPrefix
 	ldreq v30csr,[v30ptr,#v30SRegDS]
 	add v30ofs,v30ofs,r0,lsl#16
 	bx r12
@@ -4541,7 +4541,7 @@ EA_105:	;@
 ;@----------------------------------------------------------------------------
 	getNextSignedByte
 	ldr v30ofs,[v30ptr,#v30RegIY]
-	tst v30cyc,#SEG_PREFIX
+	TestSegmentPrefix
 	ldreq v30csr,[v30ptr,#v30SRegDS]
 	add v30ofs,v30ofs,r0,lsl#16
 	bx r12
@@ -4550,7 +4550,7 @@ EA_106:	;@
 ;@----------------------------------------------------------------------------
 	getNextSignedByte
 	ldr v30ofs,[v30ptr,#v30RegBP]
-	tst v30cyc,#SEG_PREFIX
+	TestSegmentPrefix
 	ldreq v30csr,[v30ptr,#v30SRegSS]
 	add v30ofs,v30ofs,r0,lsl#16
 	bx r12
@@ -4559,7 +4559,7 @@ EA_107:	;@
 ;@----------------------------------------------------------------------------
 	getNextSignedByte
 	ldr v30ofs,[v30ptr,#v30RegBW-2]
-	tst v30cyc,#SEG_PREFIX
+	TestSegmentPrefix
 	ldreq v30csr,[v30ptr,#v30SRegDS]
 	add v30ofs,v30ofs,r0,lsl#16
 	bx r12
@@ -4569,7 +4569,7 @@ EA_200:	;@
 	getNextWordTo r0, r2
 	ldr v30ofs,[v30ptr,#v30RegBW-2]
 	ldr r2,[v30ptr,#v30RegIX]
-	tst v30cyc,#SEG_PREFIX
+	TestSegmentPrefix
 	ldreq v30csr,[v30ptr,#v30SRegDS]
 	add v30ofs,v30ofs,r0,lsl#16
 	add v30ofs,v30ofs,r2
@@ -4581,7 +4581,7 @@ EA_201:	;@
 	getNextWordTo r0, r2
 	ldr v30ofs,[v30ptr,#v30RegBW-2]
 	ldr r2,[v30ptr,#v30RegIY]
-	tst v30cyc,#SEG_PREFIX
+	TestSegmentPrefix
 	ldreq v30csr,[v30ptr,#v30SRegDS]
 	add v30ofs,v30ofs,r0,lsl#16
 	add v30ofs,v30ofs,r2
@@ -4593,7 +4593,7 @@ EA_202:	;@
 	getNextWordTo r0, r2
 	ldr v30ofs,[v30ptr,#v30RegBP]
 	ldr r2,[v30ptr,#v30RegIX]
-	tst v30cyc,#SEG_PREFIX
+	TestSegmentPrefix
 	ldreq v30csr,[v30ptr,#v30SRegSS]
 	add v30ofs,v30ofs,r0,lsl#16
 	add v30ofs,v30ofs,r2
@@ -4605,7 +4605,7 @@ EA_203:	;@
 	getNextWordTo r0, r2
 	ldr v30ofs,[v30ptr,#v30RegBP]
 	ldr r2,[v30ptr,#v30RegIY]
-	tst v30cyc,#SEG_PREFIX
+	TestSegmentPrefix
 	ldreq v30csr,[v30ptr,#v30SRegSS]
 	add v30ofs,v30ofs,r0,lsl#16
 	add v30ofs,v30ofs,r2
@@ -4616,7 +4616,7 @@ EA_204:	;@
 ;@----------------------------------------------------------------------------
 	getNextWordTo r0, r2
 	ldr v30ofs,[v30ptr,#v30RegIX]
-	tst v30cyc,#SEG_PREFIX
+	TestSegmentPrefix
 	ldreq v30csr,[v30ptr,#v30SRegDS]
 	add v30ofs,v30ofs,r0,lsl#16
 	bx r12
@@ -4625,7 +4625,7 @@ EA_205:	;@
 ;@----------------------------------------------------------------------------
 	getNextWordTo r0, r2
 	ldr v30ofs,[v30ptr,#v30RegIY]
-	tst v30cyc,#SEG_PREFIX
+	TestSegmentPrefix
 	ldreq v30csr,[v30ptr,#v30SRegDS]
 	add v30ofs,v30ofs,r0,lsl#16
 	bx r12
@@ -4634,7 +4634,7 @@ EA_206:	;@
 ;@----------------------------------------------------------------------------
 	getNextWordTo r0, r2
 	ldr v30ofs,[v30ptr,#v30RegBP]
-	tst v30cyc,#SEG_PREFIX
+	TestSegmentPrefix
 	ldreq v30csr,[v30ptr,#v30SRegSS]
 	add v30ofs,v30ofs,r0,lsl#16
 	bx r12
@@ -4643,7 +4643,7 @@ EA_207:	;@
 ;@----------------------------------------------------------------------------
 	getNextWordTo r0, r2
 	ldr v30ofs,[v30ptr,#v30RegBW-2]
-	tst v30cyc,#SEG_PREFIX
+	TestSegmentPrefix
 	ldreq v30csr,[v30ptr,#v30SRegDS]
 	add v30ofs,v30ofs,r0,lsl#16
 	bx r12
@@ -4652,7 +4652,7 @@ EA_300:	;@
 ;@----------------------------------------------------------------------------
 	ldr v30ofs,[v30ptr,#v30RegBW-2]
 	ldr r0,[v30ptr,#v30RegAW-2]
-	tst v30cyc,#SEG_PREFIX
+	TestSegmentPrefix
 	ldreq v30csr,[v30ptr,#v30SRegDS]
 	add v30ofs,v30ofs,r0
 	bx r12
@@ -4661,7 +4661,7 @@ EA_301:	;@
 ;@----------------------------------------------------------------------------
 	ldr v30ofs,[v30ptr,#v30RegBW-2]
 	ldr r0,[v30ptr,#v30RegCW-2]
-	tst v30cyc,#SEG_PREFIX
+	TestSegmentPrefix
 	ldreq v30csr,[v30ptr,#v30SRegDS]
 	add v30ofs,v30ofs,r0
 	bx r12
@@ -4670,7 +4670,7 @@ EA_302:	;@
 ;@----------------------------------------------------------------------------
 	ldr v30ofs,[v30ptr,#v30RegBP]
 	ldr r0,[v30ptr,#v30RegDW-2]
-	tst v30cyc,#SEG_PREFIX
+	TestSegmentPrefix
 	ldreq v30csr,[v30ptr,#v30SRegSS]
 	add v30ofs,v30ofs,r0
 	bx r12
@@ -4679,7 +4679,7 @@ EA_303:	;@
 ;@----------------------------------------------------------------------------
 	ldr v30ofs,[v30ptr,#v30RegBP]
 	ldr r0,[v30ptr,#v30RegBW-2]
-	tst v30cyc,#SEG_PREFIX
+	TestSegmentPrefix
 	ldreq v30csr,[v30ptr,#v30SRegSS]
 	add v30ofs,v30ofs,r0
 	bx r12
@@ -4688,7 +4688,7 @@ EA_304:	;@
 ;@----------------------------------------------------------------------------
 	ldr v30ofs,[v30ptr,#v30RegIX]
 	ldr r0,[v30ptr,#v30RegSP]
-	tst v30cyc,#SEG_PREFIX
+	TestSegmentPrefix
 	ldreq v30csr,[v30ptr,#v30SRegDS]
 	add v30ofs,v30ofs,r0
 	bx r12
@@ -4697,7 +4697,7 @@ EA_305:	;@
 ;@----------------------------------------------------------------------------
 	ldr v30ofs,[v30ptr,#v30RegIY]
 	ldr r0,[v30ptr,#v30RegBP]
-	tst v30cyc,#SEG_PREFIX
+	TestSegmentPrefix
 	ldreq v30csr,[v30ptr,#v30SRegDS]
 	add v30ofs,v30ofs,r0
 	bx r12
@@ -4706,7 +4706,7 @@ EA_306:	;@
 ;@----------------------------------------------------------------------------
 	ldr v30ofs,[v30ptr,#v30RegBP]
 	ldr r0,[v30ptr,#v30RegIX]
-	tst v30cyc,#SEG_PREFIX
+	TestSegmentPrefix
 	ldreq v30csr,[v30ptr,#v30SRegSS]
 	add v30ofs,v30ofs,r0
 	bx r12
@@ -4715,7 +4715,7 @@ EA_307:	;@
 ;@----------------------------------------------------------------------------
 	ldr v30ofs,[v30ptr,#v30RegBW-2]
 	ldr r0,[v30ptr,#v30RegIY]
-	tst v30cyc,#SEG_PREFIX
+	TestSegmentPrefix
 	ldreq v30csr,[v30ptr,#v30SRegDS]
 	add v30ofs,v30ofs,r0
 	bx r12

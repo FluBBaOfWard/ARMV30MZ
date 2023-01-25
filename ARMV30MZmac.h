@@ -104,9 +104,18 @@
 //	bl V30ReEncodePC
 	.endm
 
+	.macro TestSegmentPrefix
+	tst v30cyc,#SEG_PREFIX
+	.endm
+
 	.macro ClearSegmentPrefix
 	bic v30cyc,v30cyc,#SEG_PREFIX
 	.endm
+
+	.macro ClearPrefixes
+	bic v30cyc,v30cyc,#SEG_PREFIX+REP_PREFIX+LOCK_PREFIX
+	.endm
+
 
 ;@ Opcode macros always return result in r1
 ;@ Any register except r2 can be used for src & dst.
