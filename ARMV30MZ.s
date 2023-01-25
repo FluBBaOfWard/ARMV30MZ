@@ -3582,7 +3582,7 @@ _F2:	;@ REPNE
 noF2Prefix:
 	add r2,v30ptr,#v30SegTbl
 	ldrb r1,[r2,r0]
-	tst r1,#1
+	tst r1,#SEG_PF
 	biceq v30f,v30f,#SEG_PF
 	sub r3,r0,#0x6C
 	cmp r3,#0x43
@@ -3675,7 +3675,7 @@ _F3:	;@ REPE
 noF3Prefix:
 	add r2,v30ptr,#v30SegTbl
 	ldrb r1,[r2,r0]
-	tst r1,#1
+	tst r1,#SEG_PF
 	biceq v30f,v30f,#SEG_PF
 	sub r3,r0,#0x6C
 	cmp r3,#0x43
