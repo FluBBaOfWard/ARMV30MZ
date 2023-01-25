@@ -4834,7 +4834,6 @@ V30SetNMIPin:			;@ r0=pin state
 	strb r0,[v30ptr,#v30NmiPin]
 	bics r0,r0,r1
 	strbne r0,[v30ptr,#v30NmiPending]
-	bicne v30cyc,v30cyc,#HALT_FLAG
 	bx lr
 ;@----------------------------------------------------------------------------
 doV30NMI:
@@ -5328,22 +5327,22 @@ GetEA:
 Mod_RM:
 	.space 0x400
 SegmentTable:
-	.byte 1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0
-	.byte 1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0
-	.byte 1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0
-	.byte 1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0
-	.byte 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-	.byte 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-	.byte 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 1, 1
-	.byte 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-	.byte 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1
-	.byte 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-	.byte 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 0, 0
-	.byte 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-	.byte 1, 1, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0
-	.byte 1, 1, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0
-	.byte 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-	.byte 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1
+	.byte SEG_PF, SEG_PF, SEG_PF, SEG_PF,      0,      0,      0,      0, SEG_PF, SEG_PF, SEG_PF, SEG_PF,      0,      0,      0,      0
+	.byte SEG_PF, SEG_PF, SEG_PF, SEG_PF,      0,      0,      0,      0, SEG_PF, SEG_PF, SEG_PF, SEG_PF,      0,      0,      0,      0
+	.byte SEG_PF, SEG_PF, SEG_PF, SEG_PF,      0,      0,      0,      0, SEG_PF, SEG_PF, SEG_PF, SEG_PF,      0,      0,      0,      0
+	.byte SEG_PF, SEG_PF, SEG_PF, SEG_PF,      0,      0,      0,      0, SEG_PF, SEG_PF, SEG_PF, SEG_PF,      0,      0,      0,      0
+	.byte      0,      0,      0,      0,      0,      0,      0,      0,      0,      0,      0,      0,      0,      0,      0,      0
+	.byte      0,      0,      0,      0,      0,      0,      0,      0,      0,      0,      0,      0,      0,      0,      0,      0
+	.byte      0,      0, SEG_PF,      0,      0,      0,      0,      0,      0, SEG_PF,      0, SEG_PF,      0,      0, SEG_PF, SEG_PF
+	.byte      0,      0,      0,      0,      0,      0,      0,      0,      0,      0,      0,      0,      0,      0,      0,      0
+	.byte SEG_PF, SEG_PF, SEG_PF, SEG_PF, SEG_PF, SEG_PF, SEG_PF, SEG_PF, SEG_PF, SEG_PF, SEG_PF, SEG_PF, SEG_PF,      0, SEG_PF, SEG_PF
+	.byte      0,      0,      0,      0,      0,      0,      0,      0,      0,      0,      0,      0,      0,      0,      0,      0
+	.byte SEG_PF, SEG_PF, SEG_PF, SEG_PF, SEG_PF, SEG_PF, SEG_PF, SEG_PF,      0,      0,      0,      0, SEG_PF, SEG_PF,      0,      0
+	.byte      0,      0,      0,      0,      0,      0,      0,      0,      0,      0,      0,      0,      0,      0,      0,      0
+	.byte SEG_PF, SEG_PF,      0,      0, SEG_PF, SEG_PF, SEG_PF, SEG_PF, SEG_PF,      0,      0,      0,      0,      0,      0,      0
+	.byte SEG_PF, SEG_PF, SEG_PF, SEG_PF,      0,      0,      0, SEG_PF,      0,      0,      0,      0,      0,      0,      0,      0
+	.byte      0,      0,      0,      0,      0,      0,      0,      0,      0,      0,      0,      0,      0,      0,      0,      0
+	.byte      0,      0, SEG_PF, SEG_PF,      0,      0, SEG_PF, SEG_PF,      0,      0,      0,      0,      0,      0, SEG_PF, SEG_PF
 ;@----------------------------------------------------------------------------
 
 #endif // #ifdef __arm__

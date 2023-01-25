@@ -15,7 +15,7 @@
 
 	.equ PSR_P, 0x00000020		;@ Parity
 	.equ PSR_A, 0x00000010		;@ Aux/Half carry
-	.equ SEG_PF, 1<<7			;@ Segment prefix
+	.equ SEG_PF, 1<<0			;@ Segment prefix
 
 
 							;@ V30 flags

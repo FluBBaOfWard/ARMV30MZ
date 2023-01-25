@@ -9,7 +9,7 @@
 				;@ r0,r1,r2=temp regs.
 	v30ofs		.req r6			;@ Effective Offset 
 	v30csr		.req r7			;@ Current Segment Register
-	v30f		.req r8
+	v30f		.req r8			;@ CPU flags A, S, Z, C & V
 	v30pc		.req r9
 	v30cyc		.req r10		;@ Bit 0-7 = Misc flags, see below.
 	v30ptr		.req r11
@@ -70,10 +70,10 @@ v30SRegCS:			.long 0
 v30SRegSS:			.long 0
 v30SRegDS:			.long 0
 
-v30PrefixBase:		.long 0
-v30Flags:			.long 0
-v30IP:				.long 0
-v30ICount:			.long 0
+v30PrefixBase:		.long 0		;@ Mapped to r7
+v30Flags:			.long 0		;@ Mapped to r8
+v30IP:				.long 0		;@ Mapped to r9
+v30ICount:			.long 0		;@ Mapped to r10
 v30IrqPin:			.byte 0		;@ IrqPin & IF needs to be together in the same Word.
 v30IF:				.byte 0
 v30TF:				.byte 0
