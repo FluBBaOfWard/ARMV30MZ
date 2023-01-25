@@ -15,7 +15,7 @@
 
 	.equ PSR_P, 0x00000020		;@ Parity
 	.equ PSR_A, 0x00000010		;@ Aux/Half carry
-	.equ PSR_ALL, 0x0000001F	;@ All flags
+	.equ SEG_PF, 1<<7			;@ Segment prefix
 
 
 							;@ V30 flags
@@ -104,6 +104,10 @@
 //	bl V30ReEncodePC
 	.endm
 
+	.macro ClearSegmentPrefix
+	bic v30cyc,v30cyc,#SEG_PREFIX
+	.endm
+
 ;@ Opcode macros always return result in r1
 ;@ Any register except r2 can be used for src & dst.
 ;@----------------------------------------------------------------------------
@@ -175,7 +179,7 @@
 ;@----------------------------------------------------------------------------
 	.macro decWord reg
 	ldr r0,[v30ptr,#\reg -2]
-	bic v30f,v30f,#PSR_S+PSR_Z+PSR_V+PSR_A	;@ Clear S, Z, V & A.
+	and v30f,v30f,#PSR_C		;@ Only keep C
 	subs r1,r0,#0x10000
 	orrmi v30f,v30f,#PSR_S
 	orreq v30f,v30f,#PSR_Z
@@ -190,7 +194,7 @@
 ;@----------------------------------------------------------------------------
 	.macro incWord reg
 	ldr r0,[v30ptr,#\reg -2]
-	bic v30f,v30f,#PSR_S+PSR_Z+PSR_V+PSR_A	;@ Clear S, Z, V & A.
+	and v30f,v30f,#PSR_C		;@ Only keep C
 	adds r1,r0,#0x10000
 	orrmi v30f,v30f,#PSR_S
 	orreq v30f,v30f,#PSR_Z

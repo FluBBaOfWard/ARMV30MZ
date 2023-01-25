@@ -1940,7 +1940,6 @@ _8D:	;@ LDEA/LEA
 	mov r12,pc					;@ Return reg for EA
 	ldr pc,[v30ofs,#v30EATable]	;@ EATable return EO in v30ofs
 	str v30ofs,[r4,#v30Regs2]
-	bic v30cyc,v30cyc,#SEG_PREFIX
 	fetch 1
 ;@----------------------------------------------------------------------------
 i_mov_sregw:
@@ -2099,10 +2098,10 @@ i_popf:
 _9D:	;@ POP F
 ;@----------------------------------------------------------------------------
 	popWord
-	bic v30f,v30f,#PSR_ALL	;@ Clear S, Z, C, V & A.
 	and r1,r0,#PF
 	eor r1,r1,#PF
 	strb r1,[v30ptr,#v30ParityVal]
+	and v30f,r0,#AF			;@ PSR_A is in the same place as AF
 	tst r0,#SF
 	orrne v30f,v30f,#PSR_S
 	tst r0,#ZF
@@ -2111,8 +2110,6 @@ _9D:	;@ POP F
 	orrne v30f,v30f,#PSR_C
 	tst r0,#OF
 	orrne v30f,v30f,#PSR_V
-	tst r0,#AF
-	orrne v30f,v30f,#PSR_A
 	ands r1,r0,#TF
 	movne r1,#4
 	strb r1,[v30ptr,#v30TF]
@@ -2132,7 +2129,7 @@ _9E:	;@ SAHF
 ;@----------------------------------------------------------------------------
 	ldrb r0,[v30ptr,#v30RegAH]
 
-	bic v30f,v30f,#PSR_S+PSR_Z+PSR_C+PSR_A	;@ Clear S, Z, C & A.
+	and v30f,v30f,#PSR_V	;@ Keep V.
 	and r1,r0,#PF
 	eor r1,r1,#PF
 	strb r1,[v30ptr,#v30ParityVal]
@@ -2150,18 +2147,17 @@ _9E:	;@ SAHF
 i_lahf:
 _9F:	;@ LAHF
 ;@----------------------------------------------------------------------------
-	mov r1,#0x02
 	ldrh r2,[v30ptr,#v30ParityVal]	;@ Top of ParityVal is pointer to v30PZST
 	mov r0,v30f,lsl#28
 	ldrb r2,[v30ptr,r2]
+	and r1,v30f,#PSR_A
+	orr r1,r1,#0x02
 	msr cpsr_flg,r0
 	orrmi r1,r1,#SF
 	orreq r1,r1,#ZF
 	orrcs r1,r1,#CF
 	tst r2,#PSR_P
 	orrne r1,r1,#PF
-	tst v30f,#PSR_A
-	orrne r1,r1,#AF
 
 	strb r1,[v30ptr,#v30RegAH]
 	fetch 2
@@ -2531,7 +2527,7 @@ f3aa:	;@ REP STMB/STOSB
 	str v30ofs,[v30ptr,#v30RegIY]
 1:
 	strh r5,[v30ptr,#v30RegCW]
-	bic v30cyc,v30cyc,#SEG_PREFIX+REP_PREFIX+LOCK_PREFIX
+	bic v30cyc,v30cyc,#REP_PREFIX+LOCK_PREFIX
 	fetch 5
 ;@----------------------------------------------------------------------------
 i_stosb:
@@ -2565,7 +2561,7 @@ f3ab:	;@ REP STMW/STOSW
 	str v30ofs,[v30ptr,#v30RegIY]
 1:
 	strh r5,[v30ptr,#v30RegCW]
-	bic v30cyc,v30cyc,#SEG_PREFIX+REP_PREFIX+LOCK_PREFIX
+	bic v30cyc,v30cyc,#REP_PREFIX+LOCK_PREFIX
 	fetch 5
 ;@----------------------------------------------------------------------------
 i_stosw:
@@ -2678,7 +2674,7 @@ f2ae:	;@ REPNE CMPMB/SCASB
 	str v30ofs,[v30ptr,#v30RegIY]
 1:
 	strh r5,[v30ptr,#v30RegCW]
-	bic v30cyc,v30cyc,#SEG_PREFIX+REP_PREFIX+LOCK_PREFIX
+	bic v30cyc,v30cyc,#REP_PREFIX+LOCK_PREFIX
 	fetch 5
 ;@----------------------------------------------------------------------------
 f3ae:	;@ REPE CMPMB/SCASB
@@ -2703,7 +2699,7 @@ f3ae:	;@ REPE CMPMB/SCASB
 	str v30ofs,[v30ptr,#v30RegIY]
 1:
 	strh r5,[v30ptr,#v30RegCW]
-	bic v30cyc,v30cyc,#SEG_PREFIX+REP_PREFIX+LOCK_PREFIX
+	bic v30cyc,v30cyc,#REP_PREFIX+LOCK_PREFIX
 	fetch 5
 ;@----------------------------------------------------------------------------
 i_scasb:
@@ -2745,7 +2741,7 @@ f2af:	;@ REPNE CMPMW/SCASW
 	str v30ofs,[v30ptr,#v30RegIY]
 1:
 	strh r5,[v30ptr,#v30RegCW]
-	bic v30cyc,v30cyc,#SEG_PREFIX+REP_PREFIX+LOCK_PREFIX
+	bic v30cyc,v30cyc,#REP_PREFIX+LOCK_PREFIX
 	fetch 5
 ;@----------------------------------------------------------------------------
 f3af:	;@ REPE CMPMW/SCASW
@@ -2770,7 +2766,7 @@ f3af:	;@ REPE CMPMW/SCASW
 	str v30ofs,[v30ptr,#v30RegIY]
 1:
 	strh r5,[v30ptr,#v30RegCW]
-	bic v30cyc,v30cyc,#SEG_PREFIX+REP_PREFIX+LOCK_PREFIX
+	bic v30cyc,v30cyc,#REP_PREFIX+LOCK_PREFIX
 	fetch 5
 ;@----------------------------------------------------------------------------
 i_scasw:
@@ -5340,7 +5336,7 @@ SegmentTable:
 	.byte 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 	.byte 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 1, 1
 	.byte 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-	.byte 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1
+	.byte 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1
 	.byte 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 	.byte 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 0, 0
 	.byte 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
