@@ -961,14 +961,14 @@ _3A:	;@ CMP R8b
 ;@----------------------------------------------------------------------------
 	getNextByte
 	add v30ofs,v30ptr,r0,lsl#2
-	ldr r1,[v30ofs,#v30ModRmReg]
+	ldr r4,[v30ofs,#v30ModRmReg]
 	cmp r0,#0xC0
-	ldrb r4,[v30ptr,-r1,lsr#24]
-	andpl r1,r1,#0xff
+	andpl r1,r4,#0xff
 	ldrbpl r0,[v30ptr,-r1]
 	blmi v30ReadEA1
 
-	sub8 r0,r4
+	ldrb r1,[v30ptr,-r4,lsr#24]
+	sub8 r0,r1
 	fetch 1
 ;@----------------------------------------------------------------------------
 i_cmp_r16w:
@@ -976,15 +976,15 @@ _3B:	;@ CMP R16W
 ;@----------------------------------------------------------------------------
 	getNextByte
 	and r1,r0,#0x38
-	add r2,v30ptr,r1,lsr#1
-	ldr r4,[r2,#v30Regs2]
+	add r4,v30ptr,r1,lsr#1
 	cmp r0,#0xC0
 	andpl r0,r0,#7
 	add v30ofs,v30ptr,r0,lsl#2
 	ldrhpl r0,[v30ofs,#v30Regs]
 	blmi v30ReadEAW1
 
-	sub16 r0,r4
+	ldr r1,[r4,#v30Regs2]
+	sub16 r0,r1
 	fetch 1
 ;@----------------------------------------------------------------------------
 i_cmp_ald8:
@@ -1721,8 +1721,8 @@ _84:	;@ TEST BR8
 	ldr r1,[v30ofs,#v30ModRmReg]
 	cmp r0,#0xC0
 	ldrb r4,[v30ptr,-r1,lsr#24]
-	andpl r1,r1,#0xff
-	ldrbpl r0,[v30ptr,-r1]
+	andpl v30ofs,r1,#0xff
+	ldrbpl r0,[v30ptr,-v30ofs]
 	blmi v30ReadEA1
 
 	and8 r4,r0
