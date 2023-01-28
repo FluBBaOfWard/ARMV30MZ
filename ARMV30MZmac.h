@@ -77,7 +77,7 @@
 	subs v30cyc,v30cyc,#(\count)*CYCLE
 	ldrbgt r0,[v30pc],#1
 	ldrgt pc,[v30ptr,r0,lsl#2]
-	b outOfCycles
+	b v30OutOfCycles
 	.endm
 
 	.macro fetchForce count

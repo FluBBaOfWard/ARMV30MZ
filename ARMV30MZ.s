@@ -37,6 +37,7 @@
 	.global V30RedirectOpcode
 	.global V30DecodePC
 	.global V30EncodePC
+	.global v30OutOfCycles
 
 	.global defaultV30
 
@@ -4759,7 +4760,7 @@ v30InHalt:
 	bne V30Go
 	mvns r0,v30cyc,asr#CYC_SHIFT			;@
 	addmi v30cyc,v30cyc,r0,lsl#CYC_SHIFT	;@ Consume all remaining cycles in steps of 1.
-outOfCycles:
+v30OutOfCycles:
 	ldmfd sp!,{pc}
 ;@----------------------------------------------------------------------------
 #if GBA
