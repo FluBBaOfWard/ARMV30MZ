@@ -1348,8 +1348,8 @@ _6B:	;@ MUL/IMUL D8
 f36c:	;@ REP INMB/INSB
 ;@----------------------------------------------------------------------------
 	ldrh r5,[v30ptr,#v30RegCW]
-	cmp r5,#1
-	bmi 1f
+	cmp r5,#0
+	beq 1f
 	ldr v30csr,[v30ptr,#v30SRegES]
 	ldr v30ofs,[v30ptr,#v30RegIY]
 	ldrsb r4,[v30ptr,#v30DF]
@@ -1386,8 +1386,8 @@ _6C:	;@ INMB/INSB
 f36d:	;@ REP INMW/INSW
 ;@----------------------------------------------------------------------------
 	ldrh r5,[v30ptr,#v30RegCW]
-	cmp r5,#1
-	bmi 1f
+	cmp r5,#0
+	beq 1f
 	ldr v30csr,[v30ptr,#v30SRegES]
 	ldrh r4,[v30ptr,#v30RegDW]
 0:
@@ -1432,8 +1432,8 @@ _6D:	;@ INMW/INSW
 f36e:	;@ REP OUTMB/OUTSB
 ;@----------------------------------------------------------------------------
 	ldrh r5,[v30ptr,#v30RegCW]
-	cmp r5,#1
-	bmi 1f
+	cmp r5,#0
+	beq 1f
 	TestSegmentPrefix
 	ldreq v30csr,[v30ptr,#v30SRegDS]
 	ldr v30ofs,[v30ptr,#v30RegIX]
@@ -1473,8 +1473,8 @@ _6E:	;@ OUTMB/OUTSB
 f36f:	;@ REP OUTMW/OUTSW
 ;@----------------------------------------------------------------------------
 	ldrh r5,[v30ptr,#v30RegCW]
-	cmp r5,#1
-	bmi 1f
+	cmp r5,#0
+	beq 1f
 	TestSegmentPrefix
 	ldreq v30csr,[v30ptr,#v30SRegDS]
 0:
@@ -2163,8 +2163,8 @@ _A3:	;@ MOV DISPAX
 f3a4:	;@ REP MOVMB/MOVSB
 ;@----------------------------------------------------------------------------
 	ldrh r5,[v30ptr,#v30RegCW]
-	cmp r5,#1
-	bmi 1f
+	cmp r5,#0
+	beq 1f
 	TestSegmentPrefix
 	ldreq v30csr,[v30ptr,#v30SRegDS]
 	ldr v30ofs,[v30ptr,#v30RegIX]
@@ -2212,8 +2212,8 @@ _A4:	;@ MOVMB/MOVSB
 f3a5:	;@ REP MOVMW/MOVSW
 ;@----------------------------------------------------------------------------
 	ldrh r5,[v30ptr,#v30RegCW]
-	cmp r5,#1
-	bmi 1f
+	cmp r5,#0
+	beq 1f
 	TestSegmentPrefix
 	ldreq v30csr,[v30ptr,#v30SRegDS]
 	ldr v30ofs,[v30ptr,#v30RegIX]
@@ -2261,8 +2261,8 @@ _A5:	;@ MOVMW/MOVSW
 f2a6:	;@ REPNZ CMPBKB/CMPSB
 ;@----------------------------------------------------------------------------
 	ldrh r5,[v30ptr,#v30RegCW]
-	cmp r5,#1
-	bmi 1f
+	cmp r5,#0
+	beq 1f
 	TestSegmentPrefix
 	ldreq v30csr,[v30ptr,#v30SRegDS]
 	ldr v30ofs,[v30ptr,#v30RegIX]
@@ -2295,8 +2295,8 @@ f2a6:	;@ REPNZ CMPBKB/CMPSB
 f3a6:	;@ REPZ CMPBKB/CMPSB
 ;@----------------------------------------------------------------------------
 	ldrh r5,[v30ptr,#v30RegCW]
-	cmp r5,#1
-	bmi 1f
+	cmp r5,#0
+	beq 1f
 	TestSegmentPrefix
 	ldreq v30csr,[v30ptr,#v30SRegDS]
 	ldr v30ofs,[v30ptr,#v30RegIX]
@@ -2353,8 +2353,8 @@ _A6:	;@ CMPBKB/CMPSB
 f2a7:	;@ REPNZ CMPBKW/CMPSW
 ;@----------------------------------------------------------------------------
 	ldrh r5,[v30ptr,#v30RegCW]
-	cmp r5,#1
-	bmi 1f
+	cmp r5,#0
+	beq 1f
 	TestSegmentPrefix
 	ldreq v30csr,[v30ptr,#v30SRegDS]
 	ldr v30ofs,[v30ptr,#v30RegIX]
@@ -2387,8 +2387,8 @@ f2a7:	;@ REPNZ CMPBKW/CMPSW
 f3a7:	;@ REPZ CMPBKW/CMPSW
 ;@----------------------------------------------------------------------------
 	ldrh r5,[v30ptr,#v30RegCW]
-	cmp r5,#1
-	bmi 1f
+	cmp r5,#0
+	beq 1f
 	TestSegmentPrefix
 	ldreq v30csr,[v30ptr,#v30SRegDS]
 	ldr v30ofs,[v30ptr,#v30RegIX]
@@ -2461,8 +2461,8 @@ _A9:	;@ TEST AXD16
 f3aa:	;@ REP STMB/STOSB
 ;@----------------------------------------------------------------------------
 	ldrh r5,[v30ptr,#v30RegCW]
-	cmp r5,#1
-	bmi 1f
+	cmp r5,#0
+	beq 1f
 	ldr v30csr,[v30ptr,#v30SRegES]
 	ldr v30ofs,[v30ptr,#v30RegIY]
 	ldrsb r4,[v30ptr,#v30DF]
@@ -2495,8 +2495,8 @@ _AA:	;@ STMB/STOSB
 f3ab:	;@ REP STMW/STOSW
 ;@----------------------------------------------------------------------------
 	ldrh r5,[v30ptr,#v30RegCW]
-	cmp r5,#1
-	bmi 1f
+	cmp r5,#0
+	beq 1f
 	ldr v30csr,[v30ptr,#v30SRegES]
 	ldr v30ofs,[v30ptr,#v30RegIY]
 	ldrsb r4,[v30ptr,#v30DF]
@@ -2529,8 +2529,8 @@ _AB:	;@ STMW/STOSW
 f3ac:	;@ REP LDMB/LODSB
 ;@----------------------------------------------------------------------------
 	ldrh r5,[v30ptr,#v30RegCW]
-	cmp r5,#1
-	bmi 1f
+	cmp r5,#0
+	beq 1f
 	TestSegmentPrefix
 	ldreq v30csr,[v30ptr,#v30SRegDS]
 	ldr v30ofs,[v30ptr,#v30RegIX]
@@ -2566,8 +2566,8 @@ _AC:	;@ LDMB/LODSB
 f3ad:	;@ REP LDMW/LODSW
 ;@----------------------------------------------------------------------------
 	ldrh r5,[v30ptr,#v30RegCW]
-	cmp r5,#1
-	bmi 1f
+	cmp r5,#0
+	beq 1f
 	TestSegmentPrefix
 	ldreq v30csr,[v30ptr,#v30SRegDS]
 	ldr v30ofs,[v30ptr,#v30RegIX]
@@ -2603,8 +2603,8 @@ _AD:	;@ LDMW/LODSW
 f2ae:	;@ REPNE CMPMB/SCASB
 ;@----------------------------------------------------------------------------
 	ldrh r5,[v30ptr,#v30RegCW]
-	cmp r5,#1
-	bmi 1f
+	cmp r5,#0
+	beq 1f
 	ldr v30csr,[v30ptr,#v30SRegES]
 	ldr v30ofs,[v30ptr,#v30RegIY]
 	ldrsb r4,[v30ptr,#v30DF]
@@ -2629,8 +2629,8 @@ f2ae:	;@ REPNE CMPMB/SCASB
 f3ae:	;@ REPE CMPMB/SCASB
 ;@----------------------------------------------------------------------------
 	ldrh r5,[v30ptr,#v30RegCW]
-	cmp r5,#1
-	bmi 1f
+	cmp r5,#0
+	beq 1f
 	ldr v30csr,[v30ptr,#v30SRegES]
 	ldr v30ofs,[v30ptr,#v30RegIY]
 	ldrsb r4,[v30ptr,#v30DF]
@@ -2670,8 +2670,8 @@ _AE:	;@ CMPMB/SCASB
 f2af:	;@ REPNE CMPMW/SCASW
 ;@----------------------------------------------------------------------------
 	ldrh r5,[v30ptr,#v30RegCW]
-	cmp r5,#1
-	bmi 1f
+	cmp r5,#0
+	beq 1f
 	ldr v30csr,[v30ptr,#v30SRegES]
 	ldr v30ofs,[v30ptr,#v30RegIY]
 	ldrsb r4,[v30ptr,#v30DF]
@@ -2696,8 +2696,8 @@ f2af:	;@ REPNE CMPMW/SCASW
 f3af:	;@ REPE CMPMW/SCASW
 ;@----------------------------------------------------------------------------
 	ldrh r5,[v30ptr,#v30RegCW]
-	cmp r5,#1
-	bmi 1f
+	cmp r5,#0
+	beq 1f
 	ldr v30csr,[v30ptr,#v30SRegES]
 	ldr v30ofs,[v30ptr,#v30RegIY]
 	ldrsb r4,[v30ptr,#v30DF]
