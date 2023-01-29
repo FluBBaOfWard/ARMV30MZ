@@ -262,7 +262,7 @@
 	.endm
 
 	.macro popWord
-	bl v30StackReadW
+	bl v30ReadStack
 	add v30ofs,v30ofs,#0x20000
 	str v30ofs,[v30ptr,#v30RegSP]
 	.endm
