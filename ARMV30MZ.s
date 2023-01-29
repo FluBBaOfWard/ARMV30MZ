@@ -1266,17 +1266,17 @@ _62:	;@ CHKIND/BOUND
 	getNextByte
 	and r1,r0,#0x38
 	add r2,v30ptr,r1,lsr#1
-	ldrh r4,[r2,#v30Regs]
+	ldr r4,[r2,#v30Regs-2]
 	bl v30ReadEAW
 	add v30ofs,v30ofs,#0x20000
-	mov r5,r0
+	mov r5,r0,lsl#16
 	bl v30ReadSegOfsW
 	ClearSegmentPrefix
-	cmp r4,r5
-	cmppl r0,r4
-	submi v30cyc,v30cyc,#21*CYCLE
-	movmi r0,#5
-	bmi nec_interrupt
+	cmp r5,r4
+	cmplt r4,r0,lsl#16
+	subge v30cyc,v30cyc,#21*CYCLE
+	movge r0,#5
+	bge nec_interrupt
 	fetch 14
 
 ;@----------------------------------------------------------------------------
@@ -1371,12 +1371,12 @@ f36c:	;@ REP INMB/INSB
 i_inmb:
 _6C:	;@ INMB/INSB
 ;@----------------------------------------------------------------------------
-	ldr v30csr,[v30ptr,#v30SRegES]
-	ldr v30ofs,[v30ptr,#v30RegIY]
 	ldrsb r4,[v30ptr,#v30DF]
 	ldrh r0,[v30ptr,#v30RegDW]
 	bl v30ReadPort
 	mov r1,r0
+	ldr v30csr,[v30ptr,#v30SRegES]
+	ldr v30ofs,[v30ptr,#v30RegIY]
 	bl v30WriteSegOfs
 	add v30ofs,v30ofs,r4,lsl#16
 	str v30ofs,[v30ptr,#v30RegIY]

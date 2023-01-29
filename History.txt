@@ -2,11 +2,11 @@ ARMV30MZ revision history
 -=-=-=-=-=-=-=-=-=-=-=-=-
 
 
-V0.8.4 - 2023-01-28 (FluBBa)
+V0.8.4 - 2023-01-29 (FluBBa)
 	Fixed LEA/LDS/LES opcodes.
 	Fixed CHKIND/BOUND opcode.
 	Fixed MOV SREG opcodes.
-	Fixed CALL/JMP FAR opcodes.
+	Fixed CALL/JMP far opcodes.
 	Optimized AAS/ADJBS opcode.
 	Optimized POPF opcode.
 	Optimized LAHF opcode.
@@ -19,19 +19,19 @@ V0.8.4 - 2023-01-28 (FluBBa)
 	Optimized handling of segment prefix.
 
 V0.8.3 - 2023-01-04 (FluBBa)
-	Fixed timing of segment prefix.
-	Fixed timing of in/out opcodes.
-	Fixed timing of div opcodes.
-	Fixed timing of mul opcodes.
-	Fixed timing of chkind/bound opcode.
-	Fixed timing of inm/ins opcodes.
-	Fixed timing of outm/outs opcodes.
-	Fixed timing of call far opcode.
-	Fixed timing of br/jmp memptr16 opcode.
-	Fixed timing of retf16 opcode.
-	Fixed timing of dispose/leave opcode.
+	Fixed timing of IN/OUT opcodes.
+	Fixed timing of DIV opcodes.
+	Fixed timing of MUL opcodes.
+	Fixed timing of CHKIND/BOUND opcode.
+	Fixed timing of INM/INS opcodes.
+	Fixed timing of OUTM/OUTS opcodes.
+	Fixed timing of CALL far opcode.
+	Fixed timing of BR/JMP memptr16 opcode.
+	Fixed timing of RETF16 opcode.
+	Fixed timing of DISPOSE/LEAVE opcode.
 	Fixed timing of repnz cmpbkb/cmpsb & repnz cmpbkw/cmpsw opcodes.
 	Fixed timing of halt opcode.
+	Fixed timing of segment prefix.
 	Fixed timing of address calculations (EA).
 	Fixed timing of exceptions.
 	Fixed timing of interrupts.
