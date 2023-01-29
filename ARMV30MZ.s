@@ -1273,10 +1273,10 @@ _62:	;@ CHKIND/BOUND
 	bl v30ReadSegOfsW
 	ClearSegmentPrefix
 	cmp r5,r4
-	cmplt r4,r0,lsl#16
-	subge v30cyc,v30cyc,#21*CYCLE
-	movge r0,#5
-	bge nec_interrupt
+	cmple r4,r0,lsl#16
+	subgt v30cyc,v30cyc,#21*CYCLE
+	movgt r0,#5
+	bgt nec_interrupt
 	fetch 14
 
 ;@----------------------------------------------------------------------------
@@ -2482,10 +2482,10 @@ f3aa:	;@ REP STMB/STOSB
 i_stosb:
 _AA:	;@ STMB/STOSB
 ;@----------------------------------------------------------------------------
-	ldr v30csr,[v30ptr,#v30SRegES]
-	ldr v30ofs,[v30ptr,#v30RegIY]
 	ldrsb r4,[v30ptr,#v30DF]
 	ldrb r1,[v30ptr,#v30RegAL]
+	ldr v30csr,[v30ptr,#v30SRegES]
+	ldr v30ofs,[v30ptr,#v30RegIY]
 	bl v30WriteSegOfs
 	add v30ofs,v30ofs,r4,lsl#16
 	str v30ofs,[v30ptr,#v30RegIY]
