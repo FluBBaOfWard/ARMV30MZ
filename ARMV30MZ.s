@@ -1183,7 +1183,7 @@ _5B:	;@ POP BW/BX
 i_pop_sp:
 _5C:	;@ POP SP
 ;@----------------------------------------------------------------------------
-	bl v30StackReadW
+	bl v30ReadStack
 	strh r0,[v30ptr,#v30RegSP+2]
 	fetch 1
 ;@----------------------------------------------------------------------------
@@ -1236,7 +1236,7 @@ _60:	;@ PUSHA
 i_popa:
 _61:	;@ POPA
 ;@----------------------------------------------------------------------------
-	bl v30StackReadW
+	bl v30ReadStack
 	add v30ofs,v30ofs,#0x20000
 	strh r0,[v30ptr,#v30RegIY+2]
 	bl v30ReadSegOfsW
@@ -1456,11 +1456,8 @@ f36e:	;@ REP OUTMB/OUTSB
 i_outmb:
 _6E:	;@ OUTMB/OUTSB
 ;@----------------------------------------------------------------------------
-	TestSegmentPrefix
-	ldreq v30csr,[v30ptr,#v30SRegDS]
-	ldr v30ofs,[v30ptr,#v30RegIX]
 	ldrsb r4,[v30ptr,#v30DF]
-	bl v30ReadSegOfs
+	bl v30ReadDsIx
 	add v30ofs,v30ofs,r4,lsl#16
 	str v30ofs,[v30ptr,#v30RegIX]
 	mov r1,r0
@@ -2191,11 +2188,8 @@ f3a4:	;@ REP MOVMB/MOVSB
 i_movsb:
 _A4:	;@ MOVMB/MOVSB
 ;@----------------------------------------------------------------------------
-	TestSegmentPrefix
-	ldreq v30csr,[v30ptr,#v30SRegDS]
-	ldr v30ofs,[v30ptr,#v30RegIX]
 	ldrsb r4,[v30ptr,#v30DF]
-	bl v30ReadSegOfs
+	bl v30ReadDsIx
 	add v30ofs,v30ofs,r4,lsl#16
 	str v30ofs,[v30ptr,#v30RegIX]
 	mov r1,r0
@@ -2328,11 +2322,8 @@ f3a6:	;@ REPZ CMPBKB/CMPSB
 i_cmpsb:
 _A6:	;@ CMPBKB/CMPSB
 ;@----------------------------------------------------------------------------
-	TestSegmentPrefix
-	ldreq v30csr,[v30ptr,#v30SRegDS]
-	ldr v30ofs,[v30ptr,#v30RegIX]
 	ldrsb r4,[v30ptr,#v30DF]
-	bl v30ReadSegOfs
+	bl v30ReadDsIx
 	add v30ofs,v30ofs,r4,lsl#16
 	str v30ofs,[v30ptr,#v30RegIX]
 
@@ -2551,11 +2542,8 @@ f3ac:	;@ REP LDMB/LODSB
 i_lodsb:
 _AC:	;@ LDMB/LODSB
 ;@----------------------------------------------------------------------------
-	TestSegmentPrefix
-	ldreq v30csr,[v30ptr,#v30SRegDS]
-	ldr v30ofs,[v30ptr,#v30RegIX]
 	ldrsb r4,[v30ptr,#v30DF]
-	bl v30ReadSegOfs
+	bl v30ReadDsIx
 	add v30ofs,v30ofs,r4,lsl#16
 	str v30ofs,[v30ptr,#v30RegIX]
 	strb r0,[v30ptr,#v30RegAL]
@@ -3038,7 +3026,7 @@ shraC1EA:
 i_ret_d16:
 _C2:	;@ RET D16
 ;@----------------------------------------------------------------------------
-	bl v30StackReadW
+	bl v30ReadStack
 	add v30ofs,v30ofs,#0x20000
 	getNextWordTo r2, r1
 	add v30ofs,v30ofs,r2,lsl#16
@@ -3050,7 +3038,7 @@ _C2:	;@ RET D16
 i_ret:
 _C3:	;@ RET
 ;@----------------------------------------------------------------------------
-	bl v30StackReadW
+	bl v30ReadStack
 	add v30ofs,v30ofs,#0x20000
 	str v30ofs,[v30ptr,#v30RegSP]
 	mov v30pc,r0,lsl#16
@@ -3192,7 +3180,7 @@ i_retf_d16:
 _CA:	;@ RETF D16
 ;@----------------------------------------------------------------------------
 	getNextWordTo r4, r0
-	bl v30StackReadW
+	bl v30ReadStack
 	add v30ofs,v30ofs,#0x20000
 	mov v30pc,r0,lsl#16
 	bl v30ReadSegOfsW
@@ -3206,7 +3194,7 @@ _CA:	;@ RETF D16
 i_retf:
 _CB:	;@ RETF
 ;@----------------------------------------------------------------------------
-	bl v30StackReadW
+	bl v30ReadStack
 	add v30ofs,v30ofs,#0x20000
 	mov v30pc,r0,lsl#16
 	bl v30ReadSegOfsW
@@ -3242,7 +3230,7 @@ _CE:	;@ BRKV				;@ Break if Overflow
 i_iret:
 _CF:	;@ IRET
 ;@----------------------------------------------------------------------------
-	bl v30StackReadW
+	bl v30ReadStack
 	add v30ofs,v30ofs,#0x20000
 	mov v30pc,r0,lsl#16
 	bl v30ReadSegOfsW
