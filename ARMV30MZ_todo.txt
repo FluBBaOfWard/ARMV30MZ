@@ -1,7 +1,7 @@
 ARMV30MZ To do
 --------------
 
-	move SEG_PREFIX flag from v30cyc to v30f?
+	Make all rep instructions able to recognize interrupts.
 	Add fetchforce for ops setting SS (POP SS, MOV SREGW).
 	Add support for TRAP/BRK exception (int 1, prio 4).
 	Segment wrapping eats extra cycles? At least for LDS.
@@ -9,7 +9,6 @@ ARMV30MZ To do
 	Make SRegs access different code paths for each reg.
 	Prepare (C8) uses r4-r8, (r8 = SP).
 	Interrupt uses r4-r6, (r6 = SP).
-	Hard to use a dedicated register for v30Regs since they can be accessed by index.
 	Make define for combining PC + CS + Rom offset.
 	Rename more opcodes.
 

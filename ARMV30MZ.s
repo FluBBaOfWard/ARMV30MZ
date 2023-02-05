@@ -1363,9 +1363,9 @@ f36c:	;@ REP INMB/INSB
 	subs r5,r5,#1
 	bne 0b
 	str v30ofs,[v30ptr,#v30RegIY]
-1:
 	strh r5,[v30ptr,#v30RegCW]
-//	bic v30cyc,v30cyc,#REP_PREFIX+LOCK_PREFIX
+1:
+//	ClearPrefixes
 	fetch 5
 ;@----------------------------------------------------------------------------
 i_inmb:
@@ -1405,9 +1405,9 @@ f36d:	;@ REP INMW/INSW
 	eatCycles 6
 	subs r5,r5,#1
 	bne 0b
-1:
 	strh r5,[v30ptr,#v30RegCW]
-//	bic v30cyc,v30cyc,#REP_PREFIX+LOCK_PREFIX
+1:
+//	ClearPrefixes
 	fetch 5
 ;@----------------------------------------------------------------------------
 i_inmw:
@@ -1448,8 +1448,8 @@ f36e:	;@ REP OUTMB/OUTSB
 	subs r5,r5,#1
 	bne 0b
 	str v30ofs,[v30ptr,#v30RegIX]
-1:
 	strh r5,[v30ptr,#v30RegCW]
+1:
 	ClearPrefixes
 	fetch 5
 ;@----------------------------------------------------------------------------
@@ -1491,8 +1491,8 @@ f36f:	;@ REP OUTMW/OUTSW
 	eatCycles 6
 	subs r5,r5,#1
 	bne 0b
-1:
 	strh r5,[v30ptr,#v30RegCW]
+1:
 	ClearPrefixes
 	fetch 5
 ;@----------------------------------------------------------------------------
@@ -2180,8 +2180,8 @@ f3a4:	;@ REP MOVMB/MOVSB
 	subs r5,r5,#1
 	bne 0b
 	str v30ofs,[v30ptr,#v30RegIX]
-1:
 	strh r5,[v30ptr,#v30RegCW]
+1:
 	ClearPrefixes
 	fetch 5
 ;@----------------------------------------------------------------------------
@@ -2226,8 +2226,8 @@ f3a5:	;@ REP MOVMW/MOVSW
 	subs r5,r5,#1
 	bne 0b
 	str v30ofs,[v30ptr,#v30RegIX]
-1:
 	strh r5,[v30ptr,#v30RegCW]
+1:
 	ClearPrefixes
 	fetch 5
 ;@----------------------------------------------------------------------------
@@ -2281,8 +2281,8 @@ f2a6:	;@ REPNZ CMPBKB/CMPSB
 	cmpne r0,#PSR_Z
 	bne 0b
 	str v30ofs,[v30ptr,#v30RegIX]
-1:
 	strh r5,[v30ptr,#v30RegCW]
+1:
 	ClearPrefixes
 	fetch 5
 ;@----------------------------------------------------------------------------
@@ -2314,8 +2314,8 @@ f3a6:	;@ REPZ CMPBKB/CMPSB
 	tstne v30f,#PSR_Z
 	bne 0b
 	str v30ofs,[v30ptr,#v30RegIX]
-1:
 	strh r5,[v30ptr,#v30RegCW]
+1:
 	ClearPrefixes
 	fetch 5
 ;@----------------------------------------------------------------------------
@@ -2370,8 +2370,8 @@ f2a7:	;@ REPNZ CMPBKW/CMPSW
 	cmpne r0,#PSR_Z
 	bne 0b
 	str v30ofs,[v30ptr,#v30RegIX]
-1:
 	strh r5,[v30ptr,#v30RegCW]
+1:
 	ClearPrefixes
 	fetch 5
 ;@----------------------------------------------------------------------------
@@ -2403,8 +2403,8 @@ f3a7:	;@ REPZ CMPBKW/CMPSW
 	tstne v30f,#PSR_Z
 	bne 0b
 	str v30ofs,[v30ptr,#v30RegIX]
-1:
 	strh r5,[v30ptr,#v30RegCW]
+1:
 	ClearPrefixes
 	fetch 5
 ;@----------------------------------------------------------------------------
@@ -2465,9 +2465,9 @@ f3aa:	;@ REP STMB/STOSB
 	subs r5,r5,#1
 	bne 0b
 	str v30ofs,[v30ptr,#v30RegIY]
-1:
 	strh r5,[v30ptr,#v30RegCW]
-//	bic v30cyc,v30cyc,#REP_PREFIX+LOCK_PREFIX
+1:
+//	ClearPrefixes
 	fetch 5
 ;@----------------------------------------------------------------------------
 i_stosb:
@@ -2495,14 +2495,23 @@ f3ab:	;@ REP STMW/STOSW
 	ldrh r1,[v30ptr,#v30RegAW]
 	bl v30WriteSegOfsW
 	add v30ofs,v30ofs,r4,lsl#17
-	eatCycles 6
+//	eatCycles 6
+	subs v30cyc,v30cyc,#6*CYCLE
+	bmi breakRep
 	subs r5,r5,#1
 	bne 0b
 	str v30ofs,[v30ptr,#v30RegIY]
-1:
 	strh r5,[v30ptr,#v30RegCW]
-//	bic v30cyc,v30cyc,#REP_PREFIX+LOCK_PREFIX
+1:
+//	ClearPrefixes
 	fetch 5
+breakRep:
+	sub r5,r5,#1
+	str v30ofs,[v30ptr,#v30RegIY]
+	strh r5,[v30ptr,#v30RegCW]
+	sub v30pc,v30pc,#2
+//	ClearPrefixes
+	b v30OutOfCycles
 ;@----------------------------------------------------------------------------
 i_stosw:
 _AB:	;@ STMW/STOSW
@@ -2534,8 +2543,8 @@ f3ac:	;@ REP LDMB/LODSB
 	subs r5,r5,#1
 	bne 0b
 	str v30ofs,[v30ptr,#v30RegIX]
-1:
 	strh r5,[v30ptr,#v30RegCW]
+1:
 	ClearPrefixes
 	fetch 5
 ;@----------------------------------------------------------------------------
@@ -2568,8 +2577,8 @@ f3ad:	;@ REP LDMW/LODSW
 	subs r5,r5,#1
 	bne 0b
 	str v30ofs,[v30ptr,#v30RegIX]
-1:
 	strh r5,[v30ptr,#v30RegCW]
+1:
 	ClearPrefixes
 	fetch 5
 ;@----------------------------------------------------------------------------
@@ -2609,9 +2618,9 @@ f2ae:	;@ REPNE CMPMB/SCASB
 	cmpne r0,#PSR_Z
 	bne 0b
 	str v30ofs,[v30ptr,#v30RegIY]
-1:
 	strh r5,[v30ptr,#v30RegCW]
-//	bic v30cyc,v30cyc,#REP_PREFIX+LOCK_PREFIX
+1:
+//	ClearPrefixes
 	fetch 5
 ;@----------------------------------------------------------------------------
 f3ae:	;@ REPE CMPMB/SCASB
@@ -2634,9 +2643,9 @@ f3ae:	;@ REPE CMPMB/SCASB
 	tstne v30f,#PSR_Z
 	bne 0b
 	str v30ofs,[v30ptr,#v30RegIY]
-1:
 	strh r5,[v30ptr,#v30RegCW]
-//	bic v30cyc,v30cyc,#REP_PREFIX+LOCK_PREFIX
+1:
+//	ClearPrefixes
 	fetch 5
 ;@----------------------------------------------------------------------------
 i_scasb:
@@ -2676,9 +2685,9 @@ f2af:	;@ REPNE CMPMW/SCASW
 	cmpne r0,#PSR_Z
 	bne 0b
 	str v30ofs,[v30ptr,#v30RegIY]
-1:
 	strh r5,[v30ptr,#v30RegCW]
-//	bic v30cyc,v30cyc,#REP_PREFIX+LOCK_PREFIX
+1:
+//	ClearPrefixes
 	fetch 5
 ;@----------------------------------------------------------------------------
 f3af:	;@ REPE CMPMW/SCASW
@@ -2701,9 +2710,9 @@ f3af:	;@ REPE CMPMW/SCASW
 	tstne v30f,#PSR_Z
 	bne 0b
 	str v30ofs,[v30ptr,#v30RegIY]
-1:
 	strh r5,[v30ptr,#v30RegCW]
-//	bic v30cyc,v30cyc,#REP_PREFIX+LOCK_PREFIX
+1:
+//	ClearPrefixes
 	fetch 5
 ;@----------------------------------------------------------------------------
 i_scasw:
