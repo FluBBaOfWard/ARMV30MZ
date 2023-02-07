@@ -2059,16 +2059,19 @@ _9D:	;@ POP F
 	ands r1,r0,#TF
 	movne r1,#4
 	strb r1,[v30ptr,#v30TF]
-	ands r1,r0,#IF
-	movne r1,#1
-	strb r1,[v30ptr,#v30IF]
 	tst r0,#DF
 	moveq r1,#1
 	movne r1,#-1
 	strb r1,[v30ptr,#v30DF]
-
+	ands r1,r0,#IF
+	movne r1,#1
+	ldrb r0,[v30ptr,#v30IF]
+	strb r1,[v30ptr,#v30IF]
+	eor r0,r0,r1
+	tst r0,r1				;@ Check if Interrupt became enabled
 	eatCycles 3
-	b v30ChkIrqInternal
+	bne v30DelayIrqCheck
+	fetch 0
 ;@----------------------------------------------------------------------------
 i_sahf:
 _9E:	;@ SAHF
@@ -4084,10 +4087,13 @@ _FA:	;@ DI/CLI			;@ Disable/Clear Interrupt
 i_ei:
 _FB:	;@ EI/STI			;@ Enable/Set Interrupt
 ;@----------------------------------------------------------------------------
+	ldrb r1,[v30ptr,#v30IF]
 	mov r0,#1
 	strb r0,[v30ptr,#v30IF]
 	eatCycles 4
-	b v30ChkIrqInternal
+	cmp r1,#0
+	beq v30DelayIrqCheck
+	fetch 0
 ;@----------------------------------------------------------------------------
 i_cld:
 _FC:	;@ CLR1 DIR/CLD		;@ Clear Direction
@@ -4739,7 +4745,7 @@ V30RunXCycles:				;@ r0 = number of cycles to run
 V30CheckIRQs:
 ;@----------------------------------------------------------------------------
 	stmfd sp!,{lr}
-v30ChkIrqInternal:				;@ This can be used on EI/IRET/POPF/HALT
+v30ChkIrqInternal:				;@ This can be used on HALT
 	ldr r0,[v30ptr,#v30IrqPin]	;@ NMI, Irq pin and IF
 	movs r1,r0,lsr#24
 	bne doV30NMI
@@ -4758,7 +4764,18 @@ v30InHalt:
 	mvns r0,v30cyc,asr#CYC_SHIFT			;@
 	addmi v30cyc,v30cyc,r0,lsl#CYC_SHIFT	;@ Consume all remaining cycles in steps of 1.
 v30OutOfCycles:
+	mov v30cyc,v30cyc,lsl#2		;@ Check for Int enable delay check.
+	movs v30cyc,v30cyc,asr#2
+	bgt v30ChkIrqInternal
 	ldmfd sp!,{pc}
+;@----------------------------------------------------------------------------
+v30DelayIrqCheck:				;@ This can be used on EI/IRET/POPF
+	ldrb r0,[v30ptr,#v30IrqPin]
+	tst r0,#1					;@ IRQ Pin ?
+	beq V30Go
+	cmp v30cyc,#0
+	orrpl v30cyc,v30cyc,#0xC0000000
+	executeNext
 ;@----------------------------------------------------------------------------
 #if GBA
 	.section .ewram, "ax", %progbits	;@ For the GBA

@@ -80,10 +80,14 @@
 	b v30OutOfCycles
 	.endm
 
-	.macro fetchForce count
-	sub v30cyc,v30cyc,#(\count)*CYCLE
+	.macro executeNext
 	ldrb r0,[v30pc],#1
 	ldr pc,[v30ptr,r0,lsl#2]
+	.endm
+
+	.macro fetchForce count
+	eatCycles \count
+	executeNext
 	.endm
 
 	.macro v30DecodeFastPC
