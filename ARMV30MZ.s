@@ -2064,10 +2064,10 @@ _9D:	;@ POP F
 	movne r1,#-1
 	strb r1,[v30ptr,#v30DF]
 	ands r1,r0,#IF
-	movne r1,#1
+	movne r1,#IRQ_PIN
 	ldrb r0,[v30ptr,#v30IF]
-	strb r1,[v30ptr,#v30IF]
-	eor r0,r0,r1
+	eors r0,r0,r1
+	strbne r1,[v30ptr,#v30IF]
 	tst r0,r1				;@ Check if Interrupt became enabled
 	eatCycles 3
 	bne v30DelayIrqCheck
@@ -2225,7 +2225,9 @@ f3a5:	;@ REP MOVMW/MOVSW
 	add r0,r0,r3,lsr#4
 	str r2,[v30ptr,#v30RegIY]
 	bl cpuWriteMem20W
-	eatCycles 7
+//	eatCycles 7
+	subs v30cyc,v30cyc,#7*CYCLE
+	bmi breakRepMov
 	subs r5,r5,#1
 	bne 0b
 	str v30ofs,[v30ptr,#v30RegIX]
@@ -2233,6 +2235,15 @@ f3a5:	;@ REP MOVMW/MOVSW
 1:
 	ClearPrefixes
 	fetch 5
+breakRepMov:
+	sub r5,r5,#1
+	str v30ofs,[v30ptr,#v30RegIX]
+	strh r5,[v30ptr,#v30RegCW]
+	sub v30pc,v30pc,#2
+	TestSegmentPrefix
+	subne v30pc,v30pc,#1
+	ClearPrefixes
+	b v30OutOfCycles
 ;@----------------------------------------------------------------------------
 i_movsw:
 _A5:	;@ MOVMW/MOVSW
@@ -4087,12 +4098,11 @@ _FA:	;@ DI/CLI			;@ Disable/Clear Interrupt
 i_ei:
 _FB:	;@ EI/STI			;@ Enable/Set Interrupt
 ;@----------------------------------------------------------------------------
-	ldrb r1,[v30ptr,#v30IF]
-	mov r0,#1
-	strb r0,[v30ptr,#v30IF]
 	eatCycles 4
-	cmp r1,#0
-	beq v30DelayIrqCheck
+	ldrb r0,[v30ptr,#v30IF]
+	eors r0,r0,#IRQ_PIN
+	strbne r0,[v30ptr,#v30IF]
+	bne v30DelayIrqCheck
 	fetch 0
 ;@----------------------------------------------------------------------------
 i_cld:
@@ -4698,7 +4708,7 @@ V30EncodePC:
 V30SetIRQPin:			;@ r0=pin state
 ;@----------------------------------------------------------------------------
 	cmp r0,#0
-	movne r0,#0x01
+	movne r0,#IRQ_PIN
 	strb r0,[v30ptr,#v30IrqPin]
 	bx lr
 ;@----------------------------------------------------------------------------
@@ -4758,20 +4768,20 @@ V30Go:						;@ Continue running
 ;@----------------------------------------------------------------------------
 	fetch 0
 v30InHalt:
-	tst r0,#1					;@ IRQ Pin ?
+	tst r0,#IRQ_PIN				;@ IRQ Pin ?
 	bicne v30cyc,v30cyc,#HALT_FLAG
 	bne V30Go
 	mvns r0,v30cyc,asr#CYC_SHIFT			;@
 	addmi v30cyc,v30cyc,r0,lsl#CYC_SHIFT	;@ Consume all remaining cycles in steps of 1.
 v30OutOfCycles:
-	mov v30cyc,v30cyc,lsl#2		;@ Check for Int enable delay check.
+	mov v30cyc,v30cyc,lsl#2		;@ Check for delayed irq check.
 	movs v30cyc,v30cyc,asr#2
 	bgt v30ChkIrqInternal
 	ldmfd sp!,{pc}
 ;@----------------------------------------------------------------------------
 v30DelayIrqCheck:				;@ This can be used on EI/IRET/POPF
 	ldrb r0,[v30ptr,#v30IrqPin]
-	tst r0,#1					;@ IRQ Pin ?
+	tst r0,#IRQ_PIN				;@ IRQ Pin ?
 	beq V30Go
 	cmp v30cyc,#0
 	orrpl v30cyc,v30cyc,#0xC0000000

@@ -26,6 +26,7 @@
 	.equ LOCK_PREFIX, 1<<3		;@ Bit 3
 	.equ HALT_FLAG, 1<<4		;@ Bit 4
 ;@----------------------------------------------------------------------------
+	.equ IRQ_PIN, 1			;@ Which value is a set when INT pin is set.
 
 	.struct -(37*4)			;@ Changes section so make sure it is set before real code.
 v30I:

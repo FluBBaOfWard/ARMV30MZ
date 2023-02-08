@@ -20,7 +20,7 @@
 
 
 							;@ V30 flags
-	.equ MF, 0x8000				;@ Mode, native/emulated, invalid in V30MZ.
+	.equ MF, 0x8000				;@ Mode, 1=native/0=emulated, 0 invalid in V30MZ.
 		;@   0x4000				;@ 1
 		;@   0x2000				;@ 1
 		;@   0x1000				;@ 1
