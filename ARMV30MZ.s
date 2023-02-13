@@ -4787,7 +4787,7 @@ v30DelayIrqCheck:				;@ This can be used on EI/IRET/POPF
 	orrpl v30cyc,v30cyc,#0xC0000000
 	executeNext
 ;@----------------------------------------------------------------------------
-#if GBA
+#ifdef GBA
 	.section .ewram, "ax", %progbits	;@ For the GBA
 #else
 	.section .text						;@ For anything else

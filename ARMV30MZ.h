@@ -39,15 +39,14 @@ typedef struct {
 
 	u32 v30Opz[256];
 	u8 v30PZST[256];
-	void *EATable[192];
-	u8 v30ModRmRm[256];
-	u8 v30ModRmReg[256];
+	void *EATable[256];
+	u32 v30ModRm[256];
 	u8 v30SegTbl[256];
 } ARMV30Core;
 
 extern ARMV30Core V30OpTable;
 
-void V30Reset(int type);
+void V30Reset(ARMV30Core *cpu);
 
 /**
  * Saves the state of the cpu to the destination.
