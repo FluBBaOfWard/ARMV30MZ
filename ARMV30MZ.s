@@ -4918,7 +4918,7 @@ V30Reset:					;@ r0=v30ptr
 	bx lr
 ;@----------------------------------------------------------------------------
 V30SaveState:				;@ In r0=destination, r1=v30ptr. Out r0=size.
-	.type   V30SaveState STT_FUNC
+	.type V30SaveState STT_FUNC
 ;@----------------------------------------------------------------------------
 	stmfd sp!,{r4,v30pc,v30ptr,lr}
 
@@ -4939,7 +4939,7 @@ V30SaveState:				;@ In r0=destination, r1=v30ptr. Out r0=size.
 	bx lr
 ;@----------------------------------------------------------------------------
 V30LoadState:				;@ In r0=v30ptr, r1=source. Out r0=size.
-	.type   V30LoadState STT_FUNC
+	.type V30LoadState STT_FUNC
 ;@----------------------------------------------------------------------------
 	stmfd sp!,{v30pc,v30ptr,lr}
 
@@ -4955,13 +4955,13 @@ V30LoadState:				;@ In r0=v30ptr, r1=source. Out r0=size.
 	ldmfd sp!,{v30pc,v30ptr,lr}
 ;@----------------------------------------------------------------------------
 V30GetStateSize:			;@ Out r0=state size.
-	.type   V30GetStateSize STT_FUNC
+	.type V30GetStateSize STT_FUNC
 ;@----------------------------------------------------------------------------
 	mov r0,#v30StateEnd-v30StateStart
 	bx lr
 ;@----------------------------------------------------------------------------
 V30RedirectOpcode:			;@ In r0=opcode, r1=address.
-	.type   V30RedirectOpcode STT_FUNC
+	.type V30RedirectOpcode STT_FUNC
 ;@----------------------------------------------------------------------------
 	ldr r2,=V30OpTable
 	str r1,[r2,r0,lsl#2]
