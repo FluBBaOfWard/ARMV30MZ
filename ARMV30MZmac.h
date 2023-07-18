@@ -122,7 +122,7 @@
 	.endm
 
 	.macro GetIyOfsESegment
-#ifdef ARM9
+#ifdef __ARM_ARCH_5TE__
 	ldrd v30ofs,v30csr,[v30ptr,#v30RegIY]
 #else
 	ldr v30ofs,[v30ptr,#v30RegIY]

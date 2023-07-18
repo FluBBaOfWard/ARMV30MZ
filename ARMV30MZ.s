@@ -1386,23 +1386,18 @@ f36d:	;@ REP INMW/INSW
 	ldrh r5,[v30ptr,#v30RegCW]
 	cmp r5,#0
 	beq 1f
-	ldr v30csr,[v30ptr,#v30SRegES]
-	ldrh r4,[v30ptr,#v30RegDW]
+	GetIyOfsESegment
+	ldrsb r4,[v30ptr,#v30DF]
 0:
-	mov r0,r4
-	bl v30ReadPort
-	mov r6,r0
-	add r0,r4,#1
-	bl v30ReadPort
-	ldrsb r3,[v30ptr,#v30DF]
-	orr r1,r6,r0,lsl#8
-	ldr v30ofs,[v30ptr,#v30RegIY]
-	add r3,v30ofs,r3,lsl#17
-	str r3,[v30ptr,#v30RegIY]
+	ldrh r0,[v30ptr,#v30RegDW]
+	bl v30ReadPort16
+	mov r1,r0
 	bl v30WriteSegOfsW
+	add v30ofs,v30ofs,r4,lsl#17
 	eatCycles 6
 	subs r5,r5,#1
 	bne 0b
+	str v30ofs,[v30ptr,#v30RegIY]
 	strh r5,[v30ptr,#v30RegCW]
 1:
 //	ClearPrefixes
@@ -1412,14 +1407,10 @@ i_inmw:
 _6D:	;@ INMW/INSW
 ;@----------------------------------------------------------------------------
 	GetIyOfsESegment
-	ldrh r4,[v30ptr,#v30RegDW]
-	mov r0,r4
-	bl v30ReadPort
-	mov r5,r0
-	add r0,r4,#1
-	bl v30ReadPort
+	ldrh r0,[v30ptr,#v30RegDW]
+	bl v30ReadPort16
 	ldrsb r4,[v30ptr,#v30DF]
-	orr r1,r5,r0,lsl#8
+	mov r1,r0
 	bl v30WriteSegOfsW
 	add v30ofs,v30ofs,r4,lsl#17
 	str v30ofs,[v30ptr,#v30RegIY]
@@ -1471,23 +1462,18 @@ f36f:	;@ REP OUTMW/OUTSW
 	beq 1f
 	TestSegmentPrefix
 	ldreq v30csr,[v30ptr,#v30SRegDS]
-0:
 	ldr v30ofs,[v30ptr,#v30RegIX]
 	ldrsb r4,[v30ptr,#v30DF]
-	add r2,v30ofs,r4,lsl#17
-	str r2,[v30ptr,#v30RegIX]
+0:
 	bl v30ReadSegOfsW
-	and r1,r0,#0xFF
-	mov r4,r0
-	ldrh r6,[v30ptr,#v30RegDW]
-	mov r0,r6
-	bl v30WritePort
-	mov r1,r4,lsr#8
-	add r0,r6,#1
-	bl v30WritePort
+	mov r1,r0
+	ldrh r0,[v30ptr,#v30RegDW]
+	add v30ofs,v30ofs,r4,lsl#17
+	bl v30WritePort16
 	eatCycles 6
 	subs r5,r5,#1
 	bne 0b
+	str r2,[v30ptr,#v30RegIX]
 	strh r5,[v30ptr,#v30RegCW]
 1:
 	ClearPrefixes
@@ -1496,21 +1482,13 @@ f36f:	;@ REP OUTMW/OUTSW
 i_outmw:
 _6F:	;@ OUTMW/OUTSW
 ;@----------------------------------------------------------------------------
-	TestSegmentPrefix
-	ldreq v30csr,[v30ptr,#v30SRegDS]
-	ldr v30ofs,[v30ptr,#v30RegIX]
-	ldrsb r4,[v30ptr,#v30DF]
-	bl v30ReadSegOfsW
-	add v30ofs,v30ofs,r4,lsl#17
+	bl v30ReadDsIx
+	ldrsb r2,[v30ptr,#v30DF]
+	mov r1,r0
+	add v30ofs,v30ofs,r2,lsl#17
 	str v30ofs,[v30ptr,#v30RegIX]
-	and r1,r0,#0xFF
-	mov r4,r0
-	ldrh r5,[v30ptr,#v30RegDW]
-	mov r0,r5
-	bl v30WritePort
-	mov r1,r4,lsr#8
-	add r0,r5,#1
-	bl v30WritePort
+	ldrh r0,[v30ptr,#v30RegDW]
+	bl v30WritePort16
 	ClearSegmentPrefix
 	fetch 5
 
@@ -3442,12 +3420,8 @@ i_inax:
 _E5:	;@ INAX
 ;@----------------------------------------------------------------------------
 	getNextByte
-	mov r4,r0
-	bl v30ReadPort
-	strb r0,[v30ptr,#v30RegAL]
-	add r0,r4,#1
-	bl v30ReadPort
-	strb r0,[v30ptr,#v30RegAH]
+	bl v30ReadPort16
+	strh r0,[v30ptr,#v30RegAW]
 	fetch 7
 ;@----------------------------------------------------------------------------
 i_outal:
@@ -3462,12 +3436,8 @@ i_outax:
 _E7:	;@ OUTAX
 ;@----------------------------------------------------------------------------
 	getNextByte
-	ldrb r1,[v30ptr,#v30RegAL]
-	mov r4,r0
-	bl v30WritePort
-	ldrb r1,[v30ptr,#v30RegAH]
-	add r0,r4,#1
-	bl v30WritePort
+	ldrh r1,[v30ptr,#v30RegAW]
+	bl v30WritePort16
 	fetch 7
 
 ;@----------------------------------------------------------------------------
@@ -3523,13 +3493,9 @@ _EC:	;@ INALDX
 i_inaxdx:
 _ED:	;@ INAXDX
 ;@----------------------------------------------------------------------------
-	ldrh r4,[v30ptr,#v30RegDW]
-	mov r0,r4
-	bl v30ReadPort
-	strb r0,[v30ptr,#v30RegAL]
-	add r0,r4,#1
-	bl v30ReadPort
-	strb r0,[v30ptr,#v30RegAH]
+	ldrh r0,[v30ptr,#v30RegDW]
+	bl v30ReadPort16
+	strh r0,[v30ptr,#v30RegAW]
 	fetch 5
 ;@----------------------------------------------------------------------------
 i_outdxal:
@@ -3543,13 +3509,9 @@ _EE:	;@ OUTDXAL
 i_outdxax:
 _EF:	;@ OUTDXAX
 ;@----------------------------------------------------------------------------
-	ldrh r4,[v30ptr,#v30RegDW]
-	ldrb r1,[v30ptr,#v30RegAL]
-	mov r0,r4
-	bl v30WritePort
-	ldrb r1,[v30ptr,#v30RegAH]
-	add r0,r4,#1
-	bl v30WritePort
+	ldrh r0,[v30ptr,#v30RegDW]
+	ldrh r1,[v30ptr,#v30RegAW]
+	bl v30WritePort16
 	fetch 5
 
 ;@----------------------------------------------------------------------------
