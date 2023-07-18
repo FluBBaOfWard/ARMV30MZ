@@ -61,7 +61,7 @@ v30RegIX:			.short 0
 v30RegIXL:			.byte 0
 v30RegIXH:			.byte 0
 
-v30RegIY:			.short 0
+v30RegIY:			.short 0	;@ Must be right before ES so we can use "ldrd v30ofs".
 v30RegIYL:			.byte 0
 v30RegIYH:			.byte 0
 

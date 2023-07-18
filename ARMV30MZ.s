@@ -1350,8 +1350,7 @@ f36c:	;@ REP INMB/INSB
 	ldrh r5,[v30ptr,#v30RegCW]
 	cmp r5,#0
 	beq 1f
-	ldr v30csr,[v30ptr,#v30SRegES]
-	ldr v30ofs,[v30ptr,#v30RegIY]
+	GetIyOfsESegment
 	ldrsb r4,[v30ptr,#v30DF]
 0:
 	ldrh r0,[v30ptr,#v30RegDW]
@@ -1375,8 +1374,7 @@ _6C:	;@ INMB/INSB
 	ldrh r0,[v30ptr,#v30RegDW]
 	bl v30ReadPort
 	mov r1,r0
-	ldr v30csr,[v30ptr,#v30SRegES]
-	ldr v30ofs,[v30ptr,#v30RegIY]
+	GetIyOfsESegment
 	bl v30WriteSegOfs
 	add v30ofs,v30ofs,r4,lsl#16
 	str v30ofs,[v30ptr,#v30RegIY]
@@ -1413,7 +1411,7 @@ f36d:	;@ REP INMW/INSW
 i_inmw:
 _6D:	;@ INMW/INSW
 ;@----------------------------------------------------------------------------
-	ldr v30csr,[v30ptr,#v30SRegES]
+	GetIyOfsESegment
 	ldrh r4,[v30ptr,#v30RegDW]
 	mov r0,r4
 	bl v30ReadPort
@@ -1421,7 +1419,6 @@ _6D:	;@ INMW/INSW
 	add r0,r4,#1
 	bl v30ReadPort
 	ldrsb r4,[v30ptr,#v30DF]
-	ldr v30ofs,[v30ptr,#v30RegIY]
 	orr r1,r5,r0,lsl#8
 	bl v30WriteSegOfsW
 	add v30ofs,v30ofs,r4,lsl#17
@@ -2351,7 +2348,7 @@ _A6:	;@ CMPBKB/CMPSB
 
 	sub8 r0,r4
 
-//	ClearSegmentPrefix
+	ClearSegmentPrefix
 	fetch 6
 
 ;@----------------------------------------------------------------------------
@@ -2468,8 +2465,7 @@ f3aa:	;@ REP STMB/STOSB
 	ldrh r5,[v30ptr,#v30RegCW]
 	cmp r5,#0
 	beq 1f
-	ldr v30csr,[v30ptr,#v30SRegES]
-	ldr v30ofs,[v30ptr,#v30RegIY]
+	GetIyOfsESegment
 	ldrsb r4,[v30ptr,#v30DF]
 0:
 	ldrb r1,[v30ptr,#v30RegAL]
@@ -2489,8 +2485,7 @@ _AA:	;@ STMB/STOSB
 ;@----------------------------------------------------------------------------
 	ldrsb r4,[v30ptr,#v30DF]
 	ldrb r1,[v30ptr,#v30RegAL]
-	ldr v30csr,[v30ptr,#v30SRegES]
-	ldr v30ofs,[v30ptr,#v30RegIY]
+	GetIyOfsESegment
 	bl v30WriteSegOfs
 	add v30ofs,v30ofs,r4,lsl#16
 	str v30ofs,[v30ptr,#v30RegIY]
@@ -2502,8 +2497,7 @@ f3ab:	;@ REP STMW/STOSW
 	ldrh r5,[v30ptr,#v30RegCW]
 	cmp r5,#0
 	beq 1f
-	ldr v30csr,[v30ptr,#v30SRegES]
-	ldr v30ofs,[v30ptr,#v30RegIY]
+	GetIyOfsESegment
 	ldrsb r4,[v30ptr,#v30DF]
 0:
 	ldrh r1,[v30ptr,#v30RegAW]
@@ -2530,8 +2524,7 @@ breakRep:
 i_stosw:
 _AB:	;@ STMW/STOSW
 ;@----------------------------------------------------------------------------
-	ldr v30csr,[v30ptr,#v30SRegES]
-	ldr v30ofs,[v30ptr,#v30RegIY]
+	GetIyOfsESegment
 	ldrsb r4,[v30ptr,#v30DF]
 	ldrh r1,[v30ptr,#v30RegAW]
 	bl v30WriteSegOfsW
@@ -2616,8 +2609,7 @@ f2ae:	;@ REPNE CMPMB/SCASB
 	ldrh r5,[v30ptr,#v30RegCW]
 	cmp r5,#0
 	beq 1f
-	ldr v30csr,[v30ptr,#v30SRegES]
-	ldr v30ofs,[v30ptr,#v30RegIY]
+	GetIyOfsESegment
 	ldrsb r4,[v30ptr,#v30DF]
 0:
 	bl v30ReadSegOfs
@@ -2642,8 +2634,7 @@ f3ae:	;@ REPE CMPMB/SCASB
 	ldrh r5,[v30ptr,#v30RegCW]
 	cmp r5,#0
 	beq 1f
-	ldr v30csr,[v30ptr,#v30SRegES]
-	ldr v30ofs,[v30ptr,#v30RegIY]
+	GetIyOfsESegment
 	ldrsb r4,[v30ptr,#v30DF]
 0:
 	bl v30ReadSegOfs
@@ -2665,8 +2656,7 @@ f3ae:	;@ REPE CMPMB/SCASB
 i_scasb:
 _AE:	;@ CMPMB/SCASB
 ;@----------------------------------------------------------------------------
-	ldr v30csr,[v30ptr,#v30SRegES]
-	ldr v30ofs,[v30ptr,#v30RegIY]
+	GetIyOfsESegment
 	ldrsb r4,[v30ptr,#v30DF]
 	bl v30ReadSegOfs
 	add v30ofs,v30ofs,r4,lsl#16
@@ -2683,8 +2673,7 @@ f2af:	;@ REPNE CMPMW/SCASW
 	ldrh r5,[v30ptr,#v30RegCW]
 	cmp r5,#0
 	beq 1f
-	ldr v30csr,[v30ptr,#v30SRegES]
-	ldr v30ofs,[v30ptr,#v30RegIY]
+	GetIyOfsESegment
 	ldrsb r4,[v30ptr,#v30DF]
 0:
 	bl v30ReadSegOfsW
@@ -2709,8 +2698,7 @@ f3af:	;@ REPE CMPMW/SCASW
 	ldrh r5,[v30ptr,#v30RegCW]
 	cmp r5,#0
 	beq 1f
-	ldr v30csr,[v30ptr,#v30SRegES]
-	ldr v30ofs,[v30ptr,#v30RegIY]
+	GetIyOfsESegment
 	ldrsb r4,[v30ptr,#v30DF]
 0:
 	bl v30ReadSegOfsW
@@ -2732,8 +2720,7 @@ f3af:	;@ REPE CMPMW/SCASW
 i_scasw:
 _AF:	;@ CMPMW/SCASW
 ;@----------------------------------------------------------------------------
-	ldr v30csr,[v30ptr,#v30SRegES]
-	ldr v30ofs,[v30ptr,#v30RegIY]
+	GetIyOfsESegment
 	ldrsb r4,[v30ptr,#v30DF]
 	bl v30ReadSegOfsW
 	add v30ofs,v30ofs,r4,lsl#17

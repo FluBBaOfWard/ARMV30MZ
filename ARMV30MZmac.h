@@ -121,6 +121,14 @@
 	bic v30f,v30f,#SEG_PF+REP_PF	//+LOCK_PREFIX
 	.endm
 
+	.macro GetIyOfsESegment
+#ifdef ARM9
+	ldrd v30ofs,v30csr,[v30ptr,#v30RegIY]
+#else
+	ldr v30ofs,[v30ptr,#v30RegIY]
+	ldr v30csr,[v30ptr,#v30SRegES]
+#endif
+	.endm
 
 ;@ Opcode macros always return result in r1
 ;@ Any register except r2 can be used for src & dst.
