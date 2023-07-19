@@ -88,7 +88,6 @@ add80Reg:
 	bl v30ReadEA
 add80EA:
 	add8 r4,r0
-
 	bl v30WriteSegOfs
 	fetch 3
 ;@----------------------------------------------------------------------------
@@ -202,7 +201,6 @@ or80Reg:
 	bl v30ReadEA
 or80EA:
 	or8 r4,r0
-
 	bl v30WriteSegOfs
 	fetch 3
 ;@----------------------------------------------------------------------------
@@ -309,7 +307,6 @@ adc80Reg:
 	bl v30ReadEA
 adc80EA:
 	adc8 r4,r0
-
 	bl v30WriteSegOfs
 	fetch 3
 ;@----------------------------------------------------------------------------
@@ -426,7 +423,6 @@ subc80Reg:
 	bl v30ReadEA
 subc80EA:
 	subc8 r4,r0
-
 	bl v30WriteSegOfs
 	fetch 3
 ;@----------------------------------------------------------------------------
@@ -540,7 +536,6 @@ and80Reg:
 	bl v30ReadEA
 and80EA:
 	and8 r4,r0
-
 	bl v30WriteSegOfs
 	fetch 3
 ;@----------------------------------------------------------------------------
@@ -675,7 +670,6 @@ sub80Reg:
 	bl v30ReadEA
 sub80EA:
 	sub8 r4,r0
-
 	bl v30WriteSegOfs
 	fetch 3
 ;@----------------------------------------------------------------------------
@@ -810,7 +804,6 @@ xor80Reg:
 	bl v30ReadEA
 xor80EA:
 	xor8 r4,r0
-
 	bl v30WriteSegOfs
 	fetch 3
 ;@----------------------------------------------------------------------------
@@ -1364,20 +1357,17 @@ f36c:	;@ REP INMB/INSB
 	str v30ofs,[v30ptr,#v30RegIY]
 	strh r5,[v30ptr,#v30RegCW]
 1:
-//	ClearPrefixes
+//	ClearPrefixes				;@ REP_PF not used yet.
 	fetch 5
 ;@----------------------------------------------------------------------------
 i_inmb:
 _6C:	;@ INMB/INSB
 ;@----------------------------------------------------------------------------
-	ldrsb r4,[v30ptr,#v30DF]
 	ldrh r0,[v30ptr,#v30RegDW]
 	bl v30ReadPort
 	mov r1,r0
-	GetIyOfsESegment
-	bl v30WriteSegOfs
-	add v30ofs,v30ofs,r4,lsl#16
-	str v30ofs,[v30ptr,#v30RegIY]
+	ldrsb r4,[v30ptr,#v30DF]
+	bl v30WriteEsIy
 	fetch 5
 
 ;@----------------------------------------------------------------------------
@@ -1400,7 +1390,7 @@ f36d:	;@ REP INMW/INSW
 	str v30ofs,[v30ptr,#v30RegIY]
 	strh r5,[v30ptr,#v30RegCW]
 1:
-//	ClearPrefixes
+//	ClearPrefixes				;@ REP_PF not used yet.
 	fetch 5
 ;@----------------------------------------------------------------------------
 i_inmw:
@@ -1444,10 +1434,7 @@ f36e:	;@ REP OUTMB/OUTSB
 i_outmb:
 _6E:	;@ OUTMB/OUTSB
 ;@----------------------------------------------------------------------------
-	ldrsb r4,[v30ptr,#v30DF]
 	bl v30ReadDsIx
-	add v30ofs,v30ofs,r4,lsl#16
-	str v30ofs,[v30ptr,#v30RegIX]
 	mov r1,r0
 	ldrh r0,[v30ptr,#v30RegDW]
 	bl v30WritePort
@@ -1473,7 +1460,7 @@ f36f:	;@ REP OUTMW/OUTSW
 	eatCycles 6
 	subs r5,r5,#1
 	bne 0b
-	str r2,[v30ptr,#v30RegIX]
+	str v30ofs,[v30ptr,#v30RegIX]
 	strh r5,[v30ptr,#v30RegCW]
 1:
 	ClearPrefixes
@@ -1482,10 +1469,13 @@ f36f:	;@ REP OUTMW/OUTSW
 i_outmw:
 _6F:	;@ OUTMW/OUTSW
 ;@----------------------------------------------------------------------------
-	bl v30ReadDsIx
-	ldrsb r2,[v30ptr,#v30DF]
+	TestSegmentPrefix
+	ldreq v30csr,[v30ptr,#v30SRegDS]
+	ldr v30ofs,[v30ptr,#v30RegIX]
+	ldrsb r4,[v30ptr,#v30DF]
+	bl v30ReadSegOfsW
 	mov r1,r0
-	add v30ofs,v30ofs,r2,lsl#17
+	add v30ofs,v30ofs,r4,lsl#17
 	str v30ofs,[v30ptr,#v30RegIX]
 	ldrh r0,[v30ptr,#v30RegDW]
 	bl v30WritePort16
@@ -1633,7 +1623,6 @@ _7F:	;@ BGT. Branch if Greater Than, (S ^ V) | Z = 0.
 ;@----------------------------------------------------------------------------
 i_80pre:
 _80:	;@ PRE 80
-;@----------------------------------------------------------------------------
 ;@----------------------------------------------------------------------------
 i_82pre:
 _82:	;@ PRE 82
@@ -2147,11 +2136,10 @@ f3a4:	;@ REP MOVMB/MOVSB
 0:
 	bl v30ReadSegOfs
 	add v30ofs,v30ofs,r4,lsl#16
+	GetIyOfsESegmentR2R3
 	mov r1,r0
-	ldr r3,[v30ptr,#v30RegIY]
-	ldr r0,[v30ptr,#v30SRegES]
-	add r2,r3,r4,lsl#16
-	add r0,r0,r3,lsr#4
+	add r0,r3,r2,lsr#4
+	add r2,r2,r4,lsl#16
 	str r2,[v30ptr,#v30RegIY]
 	bl cpuWriteMem20
 	eatCycles 7
@@ -2166,17 +2154,9 @@ f3a4:	;@ REP MOVMB/MOVSB
 i_movsb:
 _A4:	;@ MOVMB/MOVSB
 ;@----------------------------------------------------------------------------
-	ldrsb r4,[v30ptr,#v30DF]
 	bl v30ReadDsIx
-	add v30ofs,v30ofs,r4,lsl#16
-	str v30ofs,[v30ptr,#v30RegIX]
 	mov r1,r0
-	ldr r3,[v30ptr,#v30RegIY]
-	ldr r0,[v30ptr,#v30SRegES]
-	add r2,r3,r4,lsl#16
-	add r0,r0,r3,lsr#4
-	str r2,[v30ptr,#v30RegIY]
-	bl cpuWriteMem20
+	bl v30WriteEsIy
 	ClearSegmentPrefix
 	fetch 5
 
@@ -2193,14 +2173,12 @@ f3a5:	;@ REP MOVMW/MOVSW
 0:
 	bl v30ReadSegOfsW
 	add v30ofs,v30ofs,r4,lsl#17
+	GetIyOfsESegmentR2R3
 	mov r1,r0
-	ldr r3,[v30ptr,#v30RegIY]
-	ldr r0,[v30ptr,#v30SRegES]
-	add r2,r3,r4,lsl#17
-	add r0,r0,r3,lsr#4
+	add r0,r3,r2,lsr#4
+	add r2,r2,r4,lsl#17
 	str r2,[v30ptr,#v30RegIY]
 	bl cpuWriteMem20W
-//	eatCycles 7
 	subs v30cyc,v30cyc,#7*CYCLE
 	bmi breakRepMov
 	subs r5,r5,#1
@@ -2230,13 +2208,11 @@ _A5:	;@ MOVMW/MOVSW
 	bl v30ReadSegOfsW
 	add v30ofs,v30ofs,r4,lsl#17
 	str v30ofs,[v30ptr,#v30RegIX]
+	GetIyOfsESegment
 	mov r1,r0
-	ldr r3,[v30ptr,#v30RegIY]
-	ldr r0,[v30ptr,#v30SRegES]
-	add r2,r3,r4,lsl#17
-	add r0,r0,r3,lsr#4
-	str r2,[v30ptr,#v30RegIY]
-	bl cpuWriteMem20W
+	bl v30WriteSegOfsW
+	add v30ofs,v30ofs,r4,lsl#17
+	str v30ofs,[v30ptr,#v30RegIY]
 	ClearSegmentPrefix
 	fetch 5
 
@@ -2254,12 +2230,11 @@ f2a6:	;@ REPNZ CMPBKB/CMPSB
 	bl v30ReadSegOfs
 	add v30ofs,v30ofs,r4,lsl#16
 
-	ldr r1,[v30ptr,#v30RegIY]
-	ldr r3,[v30ptr,#v30SRegES]
-	add r2,r1,r4,lsl#16
+	GetIyOfsESegmentR2R3
+	add r1,r2,r4,lsl#16
 	mov r4,r0
-	add r0,r3,r1,lsr#4
-	str r2,[v30ptr,#v30RegIY]
+	add r0,r3,r2,lsr#4
+	str r1,[v30ptr,#v30RegIY]
 	bl cpuReadMem20
 
 	sub8 r0,r4
@@ -2288,12 +2263,11 @@ f3a6:	;@ REPZ CMPBKB/CMPSB
 	bl v30ReadSegOfs
 	add v30ofs,v30ofs,r4,lsl#16
 
-	ldr r1,[v30ptr,#v30RegIY]
-	ldr r3,[v30ptr,#v30SRegES]
-	add r2,r1,r4,lsl#16
+	GetIyOfsESegmentR2R3
+	add r1,r2,r4,lsl#16
 	mov r4,r0
-	add r0,r3,r1,lsr#4
-	str r2,[v30ptr,#v30RegIY]
+	add r0,r3,r2,lsr#4
+	str r1,[v30ptr,#v30RegIY]
 	bl cpuReadMem20
 
 	sub8 r0,r4
@@ -2311,22 +2285,17 @@ f3a6:	;@ REPZ CMPBKB/CMPSB
 i_cmpsb:
 _A6:	;@ CMPBKB/CMPSB
 ;@----------------------------------------------------------------------------
-	ldrsb r4,[v30ptr,#v30DF]
 	bl v30ReadDsIx
-	add v30ofs,v30ofs,r4,lsl#16
-	str v30ofs,[v30ptr,#v30RegIX]
 
-	ldr r1,[v30ptr,#v30RegIY]
-	ldr r3,[v30ptr,#v30SRegES]
-	add r2,r1,r4,lsl#16
+	GetIyOfsESegment
+	add r2,v30ofs,r4,lsl#16
 	mov r4,r0
-	add r0,r3,r1,lsr#4
 	str r2,[v30ptr,#v30RegIY]
-	bl cpuReadMem20
+	bl v30ReadSegOfs
 
 	sub8 r0,r4
 
-	ClearSegmentPrefix
+//	ClearSegmentPrefix				;@ sub8 clears flags
 	fetch 6
 
 ;@----------------------------------------------------------------------------
@@ -2343,12 +2312,11 @@ f2a7:	;@ REPNZ CMPBKW/CMPSW
 	bl v30ReadSegOfsW
 	add v30ofs,v30ofs,r4,lsl#17
 
-	ldr r1,[v30ptr,#v30RegIY]
-	ldr r3,[v30ptr,#v30SRegES]
-	add r2,r1,r4,lsl#17
+	GetIyOfsESegmentR2R3
+	add r1,r2,r4,lsl#17
 	mov r4,r0,lsl#16
-	add r0,r3,r1,lsr#4
-	str r2,[v30ptr,#v30RegIY]
+	add r0,r3,r2,lsr#4
+	str r1,[v30ptr,#v30RegIY]
 	bl cpuReadMem20W
 
 	sub16 r0,r4
@@ -2361,7 +2329,7 @@ f2a7:	;@ REPNZ CMPBKW/CMPSW
 	str v30ofs,[v30ptr,#v30RegIX]
 	strh r5,[v30ptr,#v30RegCW]
 1:
-	ClearPrefixes
+//	ClearPrefixes					;@ sub16 clears flags
 	fetch 5
 ;@----------------------------------------------------------------------------
 f3a7:	;@ REPZ CMPBKW/CMPSW
@@ -2377,12 +2345,11 @@ f3a7:	;@ REPZ CMPBKW/CMPSW
 	bl v30ReadSegOfsW
 	add v30ofs,v30ofs,r4,lsl#17
 
-	ldr r1,[v30ptr,#v30RegIY]
-	ldr r3,[v30ptr,#v30SRegES]
-	add r2,r1,r4,lsl#17
+	GetIyOfsESegmentR2R3
+	add r1,r2,r4,lsl#17
 	mov r4,r0,lsl#16
-	add r0,r3,r1,lsr#4
-	str r2,[v30ptr,#v30RegIY]
+	add r0,r3,r2,lsr#4
+	str r1,[v30ptr,#v30RegIY]
 	bl cpuReadMem20W
 
 	sub16 r0,r4
@@ -2394,7 +2361,7 @@ f3a7:	;@ REPZ CMPBKW/CMPSW
 	str v30ofs,[v30ptr,#v30RegIX]
 	strh r5,[v30ptr,#v30RegCW]
 1:
-	ClearPrefixes
+//	ClearPrefixes					;@ sub16 clears flags
 	fetch 5
 ;@----------------------------------------------------------------------------
 i_cmpsw:
@@ -2408,17 +2375,15 @@ _A7:	;@ CMPBKW/CMPSW
 	add v30ofs,v30ofs,r4,lsl#17
 	str v30ofs,[v30ptr,#v30RegIX]
 
-	ldr r1,[v30ptr,#v30RegIY]
-	ldr r3,[v30ptr,#v30SRegES]
-	add r2,r1,r4,lsl#17
+	GetIyOfsESegment
+	add r1,v30ofs,r4,lsl#17
 	mov r4,r0,lsl#16
-	add r0,r3,r1,lsr#4
-	str r2,[v30ptr,#v30RegIY]
-	bl cpuReadMem20W
+	str r1,[v30ptr,#v30RegIY]
+	bl v30ReadSegOfsW
 
 	sub16 r0,r4
 
-//	ClearSegmentPrefix
+//	ClearSegmentPrefix			;@ sub16 clears flags
 	fetch 6
 ;@----------------------------------------------------------------------------
 i_test_ald8:
@@ -2455,18 +2420,15 @@ f3aa:	;@ REP STMB/STOSB
 	str v30ofs,[v30ptr,#v30RegIY]
 	strh r5,[v30ptr,#v30RegCW]
 1:
-//	ClearPrefixes
+//	ClearPrefixes				;@ REP_PF not used yet.
 	fetch 5
 ;@----------------------------------------------------------------------------
 i_stosb:
 _AA:	;@ STMB/STOSB
 ;@----------------------------------------------------------------------------
-	ldrsb r4,[v30ptr,#v30DF]
 	ldrb r1,[v30ptr,#v30RegAL]
-	GetIyOfsESegment
-	bl v30WriteSegOfs
-	add v30ofs,v30ofs,r4,lsl#16
-	str v30ofs,[v30ptr,#v30RegIY]
+	ldrsb r4,[v30ptr,#v30DF]
+	bl v30WriteEsIy
 	fetch 3
 
 ;@----------------------------------------------------------------------------
@@ -2481,7 +2443,6 @@ f3ab:	;@ REP STMW/STOSW
 	ldrh r1,[v30ptr,#v30RegAW]
 	bl v30WriteSegOfsW
 	add v30ofs,v30ofs,r4,lsl#17
-//	eatCycles 6
 	subs v30cyc,v30cyc,#6*CYCLE
 	bmi breakRep
 	subs r5,r5,#1
@@ -2489,14 +2450,14 @@ f3ab:	;@ REP STMW/STOSW
 	str v30ofs,[v30ptr,#v30RegIY]
 	strh r5,[v30ptr,#v30RegCW]
 1:
-//	ClearPrefixes
+//	ClearPrefixes				;@ REP_PF not used yet.
 	fetch 5
 breakRep:
 	sub r5,r5,#1
 	str v30ofs,[v30ptr,#v30RegIY]
 	strh r5,[v30ptr,#v30RegCW]
 	sub v30pc,v30pc,#2
-//	ClearPrefixes
+//	ClearPrefixes				;@ REP_PF not used yet.
 	b v30OutOfCycles
 ;@----------------------------------------------------------------------------
 i_stosw:
@@ -2536,10 +2497,7 @@ f3ac:	;@ REP LDMB/LODSB
 i_lodsb:
 _AC:	;@ LDMB/LODSB
 ;@----------------------------------------------------------------------------
-	ldrsb r4,[v30ptr,#v30DF]
 	bl v30ReadDsIx
-	add v30ofs,v30ofs,r4,lsl#16
-	str v30ofs,[v30ptr,#v30RegIX]
 	strb r0,[v30ptr,#v30RegAL]
 	ClearSegmentPrefix
 	fetch 3
@@ -2604,7 +2562,7 @@ f2ae:	;@ REPNE CMPMB/SCASB
 	str v30ofs,[v30ptr,#v30RegIY]
 	strh r5,[v30ptr,#v30RegCW]
 1:
-//	ClearPrefixes
+//	ClearPrefixes					;@ sub8 clears flags
 	fetch 5
 ;@----------------------------------------------------------------------------
 f3ae:	;@ REPE CMPMB/SCASB
@@ -2628,7 +2586,7 @@ f3ae:	;@ REPE CMPMB/SCASB
 	str v30ofs,[v30ptr,#v30RegIY]
 	strh r5,[v30ptr,#v30RegCW]
 1:
-//	ClearPrefixes
+//	ClearPrefixes					;@ sub8 clears flags
 	fetch 5
 ;@----------------------------------------------------------------------------
 i_scasb:
@@ -2668,7 +2626,7 @@ f2af:	;@ REPNE CMPMW/SCASW
 	str v30ofs,[v30ptr,#v30RegIY]
 	strh r5,[v30ptr,#v30RegCW]
 1:
-//	ClearPrefixes
+//	ClearPrefixes					;@ sub16 clears flags
 	fetch 5
 ;@----------------------------------------------------------------------------
 f3af:	;@ REPE CMPMW/SCASW
@@ -2692,7 +2650,7 @@ f3af:	;@ REPE CMPMW/SCASW
 	str v30ofs,[v30ptr,#v30RegIY]
 	strh r5,[v30ptr,#v30RegCW]
 1:
-//	ClearPrefixes
+//	ClearPrefixes					;@ sub16 clears flags
 	fetch 5
 ;@----------------------------------------------------------------------------
 i_scasw:

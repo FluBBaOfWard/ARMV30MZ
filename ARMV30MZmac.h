@@ -130,6 +130,15 @@
 #endif
 	.endm
 
+	.macro GetIyOfsESegmentR2R3
+#ifdef __ARM_ARCH_5TE__
+	ldrd r2,r3,[v30ptr,#v30RegIY]
+#else
+	ldr r2,[v30ptr,#v30RegIY]
+	ldr r3,[v30ptr,#v30SRegES]
+#endif
+	.endm
+
 ;@ Opcode macros always return result in r1
 ;@ Any register except r2 can be used for src & dst.
 ;@----------------------------------------------------------------------------

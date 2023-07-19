@@ -2,8 +2,8 @@ ARMV30MZ revision history
 -=-=-=-=-=-=-=-=-=-=-=-=-
 
 
-V0.8.5 - 2023-07-18 (FluBBa)
-	Optimized fetch of IY & ES on ARM9.
+V0.8.5 - 2023-07-19 (FluBBa)
+	Optimized fetch of IY+ES on ARM9.
 
 V0.8.4 - 2023-02-13 (FluBBa)
 	Fixed LEA/LDS/LES opcodes.
