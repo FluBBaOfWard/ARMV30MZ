@@ -9,4 +9,4 @@ It only handles interrupts during REP instructions for MOVMW/MOVSW & STMW/STOSW,
 TRAP/BRK is not implemented.
 
 This is a version with insecure handling of PC.
-This version requires asm hooks for memory reading.
+This version requires asm hooks for memory/io handling.
