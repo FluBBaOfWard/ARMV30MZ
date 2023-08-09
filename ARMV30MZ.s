@@ -4238,39 +4238,15 @@ pushFF:
 ;@----------------------------------------------------------------------------
 division16:
 ;@----------------------------------------------------------------------------
+	.rept 8
 	adds r0,r1,r0,lsl#1
 	subcc r0,r0,r1
-	adds r0,r1,r0,lsl#1
-	subcc r0,r0,r1
-	adds r0,r1,r0,lsl#1
-	subcc r0,r0,r1
-	adds r0,r1,r0,lsl#1
-	subcc r0,r0,r1
-	adds r0,r1,r0,lsl#1
-	subcc r0,r0,r1
-	adds r0,r1,r0,lsl#1
-	subcc r0,r0,r1
-	adds r0,r1,r0,lsl#1
-	subcc r0,r0,r1
-	adds r0,r1,r0,lsl#1
-	subcc r0,r0,r1
+	.endr
 division8:
+	.rept 8
 	adds r0,r1,r0,lsl#1
 	subcc r0,r0,r1
-	adds r0,r1,r0,lsl#1
-	subcc r0,r0,r1
-	adds r0,r1,r0,lsl#1
-	subcc r0,r0,r1
-	adds r0,r1,r0,lsl#1
-	subcc r0,r0,r1
-	adds r0,r1,r0,lsl#1
-	subcc r0,r0,r1
-	adds r0,r1,r0,lsl#1
-	subcc r0,r0,r1
-	adds r0,r1,r0,lsl#1
-	subcc r0,r0,r1
-	adds r0,r1,r0,lsl#1
-	subcc r0,r0,r1
+	.endr
 	bx lr
 
 ;@----------------------------------------------------------------------------
