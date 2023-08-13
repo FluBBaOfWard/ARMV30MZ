@@ -24,10 +24,10 @@ typedef struct {
 	u32 v30ICount;
 	u8 v30IrqPin;
 	u8 v30IF;
-	u8 v30NmiPin;
+	u8 v30TF;
 	u8 v30NmiPending;
 	u16 v30ParityVal;
-	u8 v30TF;
+	u8 v30NmiPin;
 	u8 v30DF;
 	u8 v30MulOverflow;
 	u8 dummy0[3];

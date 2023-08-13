@@ -26,7 +26,7 @@
 	.equ LOCK_PREFIX, 1<<3		;@ Bit 3
 	.equ HALT_FLAG, 1<<4		;@ Bit 4
 ;@----------------------------------------------------------------------------
-	.equ IRQ_PIN, 1			;@ Which value is a set when INT pin is set.
+	.equ IRQ_PIN, 1			;@ Which value is set when INT pin is set.
 
 	.struct -(37*4)			;@ Changes section so make sure it is set before real code.
 v30I:
@@ -77,7 +77,7 @@ v30IP:				.long 0		;@ Mapped to r9
 v30ICount:			.long 0		;@ Mapped to r10
 v30IrqPin:			.byte 0		;@ IrqPin & IF needs to be together in the same Word.
 v30IF:				.byte 0
-v30TF:				.byte 0
+v30TF:				.byte 0		;@ TRAP/BREAK flag
 v30NmiPending:		.byte 0
 v30ParityVal:		.short 0
 v30NmiPin:			.byte 0

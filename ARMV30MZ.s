@@ -1741,11 +1741,11 @@ _87:	;@ XCH/XCHG WR16
 	bmi 0f
 
 	andpl r0,r0,#7
-	add r2,v30ptr,r0,lsl#2
-	ldrh r0,[r2,#v30Regs]
+	add v30ofs,v30ptr,r0,lsl#2
+	ldrh r0,[v30ofs,#v30Regs]
 	ldrh r1,[r4,#v30Regs]
 	strh r0,[r4,#v30Regs]
-	strh r1,[r2,#v30Regs]
+	strh r1,[v30ofs,#v30Regs]
 	ClearSegmentPrefix
 	fetch 3
 0:
@@ -4663,9 +4663,6 @@ v30OutOfCycles:
 	ldmfd sp!,{pc}
 ;@----------------------------------------------------------------------------
 v30DelayIrqCheck:				;@ This can be used on EI/IRET/POPF
-	ldrb r0,[v30ptr,#v30IrqPin]
-	tst r0,#IRQ_PIN				;@ IRQ Pin ?
-	beq V30Go
 	cmp v30cyc,#0
 	orrpl v30cyc,v30cyc,#0xC0000000
 	executeNext
