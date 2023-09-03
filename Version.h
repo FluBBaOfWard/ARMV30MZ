@@ -6,4 +6,4 @@
 //  Copyright © 2021-2023 Fredrik Ahlström. All rights reserved.
 //
 
-#define ARMV30MZVERSION "V0.8.6"
+#define ARMV30MZVERSION "V0.8.7"

@@ -1419,8 +1419,7 @@ f36e:	;@ REP OUTMB/OUTSB
 0:
 	bl v30ReadSegOfs
 	add v30ofs,v30ofs,r4,lsl#16
-	mov r1,r0
-	ldrh r0,[v30ptr,#v30RegDW]
+	ldrh r1,[v30ptr,#v30RegDW]
 	bl v30WritePort
 	eatCycles 6
 	subs r5,r5,#1
@@ -1435,8 +1434,7 @@ i_outmb:
 _6E:	;@ OUTMB/OUTSB
 ;@----------------------------------------------------------------------------
 	bl v30ReadDsIx
-	mov r1,r0
-	ldrh r0,[v30ptr,#v30RegDW]
+	ldrh r1,[v30ptr,#v30RegDW]
 	bl v30WritePort
 	ClearSegmentPrefix
 	fetch 5
@@ -1453,8 +1451,7 @@ f36f:	;@ REP OUTMW/OUTSW
 	ldrsb r4,[v30ptr,#v30DF]
 0:
 	bl v30ReadSegOfsW
-	mov r1,r0
-	ldrh r0,[v30ptr,#v30RegDW]
+	ldrh r1,[v30ptr,#v30RegDW]
 	add v30ofs,v30ofs,r4,lsl#17
 	bl v30WritePort16
 	eatCycles 6
@@ -1474,10 +1471,9 @@ _6F:	;@ OUTMW/OUTSW
 	ldr v30ofs,[v30ptr,#v30RegIX]
 	ldrsb r4,[v30ptr,#v30DF]
 	bl v30ReadSegOfsW
-	mov r1,r0
 	add v30ofs,v30ofs,r4,lsl#17
 	str v30ofs,[v30ptr,#v30RegIX]
-	ldrh r0,[v30ptr,#v30RegDW]
+	ldrh r1,[v30ptr,#v30RegDW]
 	bl v30WritePort16
 	ClearSegmentPrefix
 	fetch 5
@@ -3385,16 +3381,16 @@ _E5:	;@ INAX
 i_outal:
 _E6:	;@ OUTAL
 ;@----------------------------------------------------------------------------
-	getNextByte
-	ldrb r1,[v30ptr,#v30RegAL]
+	getNextByteTo r1
+	ldrb r0,[v30ptr,#v30RegAL]
 	bl v30WritePort
 	fetch 7
 ;@----------------------------------------------------------------------------
 i_outax:
 _E7:	;@ OUTAX
 ;@----------------------------------------------------------------------------
-	getNextByte
-	ldrh r1,[v30ptr,#v30RegAW]
+	getNextByteTo r1
+	ldrh r0,[v30ptr,#v30RegAW]
 	bl v30WritePort16
 	fetch 7
 
@@ -3459,16 +3455,16 @@ _ED:	;@ INAXDX
 i_outdxal:
 _EE:	;@ OUTDXAL
 ;@----------------------------------------------------------------------------
-	ldrh r0,[v30ptr,#v30RegDW]
-	ldrb r1,[v30ptr,#v30RegAL]
+	ldrb r0,[v30ptr,#v30RegAL]
+	ldrh r1,[v30ptr,#v30RegDW]
 	bl v30WritePort
 	fetch 5
 ;@----------------------------------------------------------------------------
 i_outdxax:
 _EF:	;@ OUTDXAX
 ;@----------------------------------------------------------------------------
-	ldrh r0,[v30ptr,#v30RegDW]
-	ldrh r1,[v30ptr,#v30RegAW]
+	ldrh r0,[v30ptr,#v30RegAW]
+	ldrh r1,[v30ptr,#v30RegDW]
 	bl v30WritePort16
 	fetch 5
 

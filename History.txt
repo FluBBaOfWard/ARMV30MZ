@@ -2,6 +2,9 @@ ARMV30MZ revision history
 -=-=-=-=-=-=-=-=-=-=-=-=-
 
 
+V0.8.7 - 2023-09-03 (FluBBa)
+	Optimized IO port writes.
+
 V0.8.6 - 2023-08-12 (FluBBa)
 	Optimized IF enable.
 
