@@ -900,13 +900,12 @@ _37:	;@ ADJBA/AAA
 	ldrh r0,[v30ptr,#v30RegAW]
 	mov r1,r0,lsl#28
 	cmp r1,#0xA0000000
-	orrcs v30f,v30f,#PSR_A			;@ Set Aux.
-	tst v30f,#PSR_A
-	moveq v30f,#PSR_S
-	movne v30f,#PSR_Z+PSR_A+PSR_C
+	tstcc v30f,v30f,lsr#5			;@ Shift out PSR_A
+	movcs v30f,#PSR_Z+PSR_A+PSR_C
+	movcc v30f,#PSR_S
 	strb r1,[v30ptr,#v30ParityVal]	;@ Parity allways set
-	orrne r0,r0,#0x00F0
-	addne r0,r0,#0x0016
+	orr r0,r0,#0x00F0
+	addcs r0,r0,#0x0016
 	bic r0,r0,#0x00F0
 	strh r0,[v30ptr,#v30RegAW]
 	fetch 9
@@ -4853,7 +4852,7 @@ V30RedirectOpcode:			;@ In r0=opcode, r1=address.
 ;@----------------------------------------------------------------------------
 defaultV30:
 v30StateStart:
-I:	.space 19*4
+	.space 19*4
 v30StateEnd:
 	.long 0			;@ v30LastBank
 	.long 0			;@ v30IrqVectorFunc
