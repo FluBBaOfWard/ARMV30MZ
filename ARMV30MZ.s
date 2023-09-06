@@ -633,12 +633,11 @@ _27:	;@ ADJ4A/DAA
 	ldrb r0,[v30ptr,#v30RegAL]
 	and v30f,v30f,#PSR_A|PSR_C
 	mov r1,#0x66000000
-	cmn r1,r0,lsl#24
-	orrcs v30f,v30f,#PSR_C
 	cmn r1,r0,lsl#28
 	orrcs v30f,v30f,#PSR_A
-	tst v30f,#PSR_C
-	biceq r1,r1,#0x60000000
+	cmp r0,#0x9A
+	tstcc v30f,v30f,lsr#2
+	biccc r1,r1,#0x60000000
 	tst v30f,#PSR_A
 	biceq r1,r1,#0x06000000
 	adds r0,r1,r0,lsl#24
