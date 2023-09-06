@@ -636,7 +636,7 @@ _27:	;@ ADJ4A/DAA
 	cmn r1,r0,lsl#28
 	orrcs v30f,v30f,#PSR_A
 	cmp r0,#0x9A
-	tstcc v30f,v30f,lsr#2
+	tstcc v30f,v30f,lsr#2	;@ #PSR_C
 	biccc r1,r1,#0x60000000
 	tst v30f,#PSR_A
 	biceq r1,r1,#0x06000000
@@ -763,15 +763,14 @@ i_das:
 _2F:	;@ ADJ4S/DAS
 ;@----------------------------------------------------------------------------
 	ldrb r0,[v30ptr,#v30RegAL]
-	and v30f,v30f,#PSR_A|PSR_C
 	mov r2,r0,ror#4
-	cmp r0,#0x9A
-	orrcs v30f,v30f,#PSR_C
-	tst v30f,#PSR_C
-	subne r0,r0,#0x60
 	cmp r2,#0xA0000000
 	orrcs v30f,v30f,#PSR_A
-	tst v30f,#PSR_A
+	cmp r0,#0x9A
+	tstcc v30f,v30f,lsr#2	;@ #PSR_C
+	ands v30f,v30f,#PSR_A
+	orrcs v30f,v30f,#PSR_C
+	subcs r0,r0,#0x60
 	subne r0,r0,#0x06
 	strb r0,[v30ptr,#v30RegAL]
 	movs r1,r0,lsl#24

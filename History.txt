@@ -6,6 +6,7 @@ V0.8.7 - 2023-09-06 (FluBBa)
 	Optimized IO port writes.
 	Optimized ADJBA/AAA.
 	Optimized ADJ4A/DAA.
+	Optimized ADJ4S/DAS.
 
 V0.8.6 - 2023-08-12 (FluBBa)
 	Optimized IF enable.
