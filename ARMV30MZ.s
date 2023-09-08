@@ -4770,14 +4770,15 @@ V30Reset:					;@ r0=v30ptr
 	stmfd sp!,{r4-r11,lr}
 	mov v30ptr,r0
 
-	add r0,v30ptr,#v30I			;@ Clear CPU state
+	;@ Clear CPU state, PC, ES, DS & SS are set to 0x0000,
+	;@ AW, BW, CW, DW, SP, BP, IX & IY are undefined.
+	;@ CS is set to 0xFFFF
+	add r0,v30ptr,#v30I
 	mov r1,#(v30IEnd-v30I)/4
 	bl memclr_
 
 	ldr r0,=0xFFFF0000
 	str r0,[v30ptr,#v30SRegCS]
-	ldr r0,=0xFFFE0000
-	str r0,[v30ptr,#v30RegSP]
 	mov r0,#v30PZST
 	strh r0,[v30ptr,#v30ParityVal]
 	mov r0,#1
