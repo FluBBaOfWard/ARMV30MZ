@@ -27,7 +27,7 @@
 	.equ OF, 0x0800				;@ Overflow
 	.equ DF, 0x0400				;@ Direction
 	.equ IF, 0x0200				;@ Interrupt enable
-	.equ TF, 0x0100				;@ BREAK
+	.equ TF, 0x0100				;@ BREAK/TRAP
 	.equ SF, 0x0080				;@ Sign (negative)
 	.equ ZF, 0x0040				;@ Zero
 		;@   0x0020				;@ 0

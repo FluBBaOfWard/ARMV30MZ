@@ -4642,21 +4642,20 @@ V30Go:						;@ Continue running
 	fetch 0
 v30InHaltTrap:
 	tst v30cyc,#TRAP_FLAG
-	movne r0,#1					;@ BRK Vector
-	bne nec_interrupt
+	bne doV30Trap
 	tst r0,#IRQ_PIN				;@ IRQ Pin ?
 	bicne v30cyc,v30cyc,#HALT_FLAG
 	bne V30Go
 	mvns r0,v30cyc,asr#CYC_SHIFT			;@
 	addmi v30cyc,v30cyc,r0,lsl#CYC_SHIFT	;@ Consume all remaining cycles in steps of 1.
 v30OutOfCycles:
-	mov v30cyc,v30cyc,lsl#1		;@ Check for delayed irq check.
-	movs v30cyc,v30cyc,asr#1
+	mov v30cyc,v30cyc,lsl#2		;@ Check for delayed irq check.
+	movs v30cyc,v30cyc,asr#2
 	bgt v30ChkIrqInternal
 	ldmfd sp!,{pc}
 ;@----------------------------------------------------------------------------
 v30DelayIrqCheck:				;@ This can be used on EI/IRET/POPF
-	orr v30cyc,v30cyc,#0x80000000
+	orr v30cyc,v30cyc,#0xC0000000
 	executeNext
 ;@----------------------------------------------------------------------------
 #ifdef GBA
@@ -4676,6 +4675,12 @@ V30SetNMIPin:			;@ r0=pin state
 	bics r0,r0,r1
 	strbne r0,[v30ptr,#v30NmiPending]
 	bx lr
+;@----------------------------------------------------------------------------
+doV30Trap:
+;@----------------------------------------------------------------------------
+	eatCycles 1
+	mov r0,#1
+	b nec_interrupt
 ;@----------------------------------------------------------------------------
 doV30NMI:
 ;@----------------------------------------------------------------------------
