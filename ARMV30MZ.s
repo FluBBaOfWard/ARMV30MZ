@@ -1973,14 +1973,13 @@ pushFlags:
 	ldrh r2,[v30ptr,#v30ParityVal]	;@ Top of ParityVal is pointer to v30PZST
 	ldr r1,=0xF002
 	ldrb r2,[v30ptr,r2]
-	ldrb r0,[v30ptr,#v30TF]
 	tst v30f,#PSR_A
 	orrne r1,r1,#AF
 	ldrb r3,[v30ptr,#v30IF]
 	tst r2,#PSR_P
 	orrne r1,r1,#PF
 	ldrsb r2,[v30ptr,#v30DF]
-	cmp r0,#0
+	tst v30cyc,#TRAP_FLAG
 	orrne r1,r1,#TF
 	cmp r3,#0
 	orrne r1,r1,#IF
@@ -2013,19 +2012,18 @@ _9D:	;@ POP F
 	orrne v30f,v30f,#PSR_C
 	tst r0,#OF
 	orrne v30f,v30f,#PSR_V
-	ands r1,r0,#TF
-	movne r1,#4
-	strb r1,[v30ptr,#v30TF]
 	tst r0,#DF
 	moveq r1,#1
 	movne r1,#-1
 	strb r1,[v30ptr,#v30DF]
 	ands r1,r0,#IF
 	movne r1,#IRQ_PIN
-	ldrb r0,[v30ptr,#v30IF]
-	eors r0,r0,r1
+	ldrb r2,[v30ptr,#v30IF]
+	eors r2,r2,r1
 	strbne r1,[v30ptr,#v30IF]
-	tst r0,r1				;@ Check if Interrupt became enabled
+	tst r0,#TF				;@ Check if Trap is set.
+	orrne v30cyc,v30cyc,#TRAP_FLAG
+	tsteq r2,r1				;@ Or if Interrupt became enabled
 	eatCycles 3
 	bne v30DelayIrqCheck
 	fetch 0
@@ -3144,14 +3142,14 @@ _CB:	;@ RETF
 	fetch 8
 ;@----------------------------------------------------------------------------
 i_int3:
-_CC:	;@ INT3
+_CC:	;@ BRK3/INT3
 ;@----------------------------------------------------------------------------
 	eatCycles 9
 	mov r0,#3
 	b nec_interrupt
 ;@----------------------------------------------------------------------------
 i_int:
-_CD:	;@ INT
+_CD:	;@ BRK/INT
 ;@----------------------------------------------------------------------------
 	eatCycles 10
 	getNextByte
@@ -4600,8 +4598,7 @@ nec_interrupt:				;@ r0 = vector number
 	mov r4,r0,lsl#12+2
 	bl pushFlags				;@ This should setup v30ofs & v30csr for stack
 	strb r4,[v30ptr,#v30IF]		;@ Clear IF
-	strb r4,[v30ptr,#v30TF]		;@ Clear TF
-	bic v30cyc,v30cyc,#HALT_FLAG
+	bic v30cyc,v30cyc,#HALT_FLAG | TRAP_FLAG
 
 	ldrh r1,[v30ptr,#v30SRegCS+2]
 	sub v30ofs,v30ofs,#0x20000
@@ -4637,27 +4634,29 @@ v30ChkIrqInternal:				;@ This can be used on HALT
 	bne doV30NMI
 	ands r1,r0,r0,lsr#8
 	bne V30FetchIRQ
-	tst v30cyc,#HALT_FLAG
-	bne v30InHalt
+	tst v30cyc,#HALT_FLAG | TRAP_FLAG
+	bne v30InHaltTrap
 ;@----------------------------------------------------------------------------
 V30Go:						;@ Continue running
 ;@----------------------------------------------------------------------------
 	fetch 0
-v30InHalt:
+v30InHaltTrap:
+	tst v30cyc,#TRAP_FLAG
+	movne r0,#1					;@ BRK Vector
+	bne nec_interrupt
 	tst r0,#IRQ_PIN				;@ IRQ Pin ?
 	bicne v30cyc,v30cyc,#HALT_FLAG
 	bne V30Go
 	mvns r0,v30cyc,asr#CYC_SHIFT			;@
 	addmi v30cyc,v30cyc,r0,lsl#CYC_SHIFT	;@ Consume all remaining cycles in steps of 1.
 v30OutOfCycles:
-	mov v30cyc,v30cyc,lsl#2		;@ Check for delayed irq check.
-	movs v30cyc,v30cyc,asr#2
+	mov v30cyc,v30cyc,lsl#1		;@ Check for delayed irq check.
+	movs v30cyc,v30cyc,asr#1
 	bgt v30ChkIrqInternal
 	ldmfd sp!,{pc}
 ;@----------------------------------------------------------------------------
 v30DelayIrqCheck:				;@ This can be used on EI/IRET/POPF
-	cmp v30cyc,#0
-	orrpl v30cyc,v30cyc,#0xC0000000
+	orr v30cyc,v30cyc,#0x80000000
 	executeNext
 ;@----------------------------------------------------------------------------
 #ifdef GBA

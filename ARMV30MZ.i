@@ -25,6 +25,7 @@
 	.equ REPN_PREFIX, 1<<2		;@ Bit 2
 	.equ LOCK_PREFIX, 1<<3		;@ Bit 3
 	.equ HALT_FLAG, 1<<4		;@ Bit 4
+	.equ TRAP_FLAG, 1<<5		;@ Bit 5
 ;@----------------------------------------------------------------------------
 	.equ IRQ_PIN, 1			;@ Which value is set when INT pin is set.
 
@@ -77,7 +78,7 @@ v30IP:				.long 0		;@ Mapped to r9
 v30ICount:			.long 0		;@ Mapped to r10
 v30IrqPin:			.byte 0		;@ IrqPin & IF needs to be together in the same Word.
 v30IF:				.byte 0
-v30TF:				.byte 0		;@ TRAP/BREAK flag
+v30Empty:			.byte 0		;@ Was TRAP/BREAK flag
 v30NmiPending:		.byte 0
 v30ParityVal:		.short 0
 v30NmiPin:			.byte 0
