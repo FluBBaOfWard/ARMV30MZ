@@ -72,10 +72,10 @@ v30SRegCS:			.long 0
 v30SRegSS:			.long 0
 v30SRegDS:			.long 0
 
-v30PrefixBase:		.long 0		;@ Mapped to r7
-v30Flags:			.long 0		;@ Mapped to r8
-v30IP:				.long 0		;@ Mapped to r9
-v30ICount:			.long 0		;@ Mapped to r10
+v30PrefixBase:		.long 0		;@ Mapped to v30csr/r7
+v30Flags:			.long 0		;@ Mapped to v30f/r8
+v30IP:				.long 0		;@ Mapped to v30pc/r9
+v30Cycles:			.long 0		;@ Mapped to v30cyc/r10
 v30IrqPin:			.byte 0		;@ IrqPin & IF needs to be together in the same Word.
 v30IF:				.byte 0
 v30Empty:			.byte 0		;@ Was TRAP/BREAK flag
