@@ -2,7 +2,7 @@ ARMV30MZ revision history
 -=-=-=-=-=-=-=-=-=-=-=-=-
 
 
-V0.8.7 - 2023-09-14 (FluBBa)
+V0.8.7 - 2023-09-20 (FluBBa)
 	Added support for Break/Trap.
 	Fixed initial values of registers.
 	Optimized IO port writes.

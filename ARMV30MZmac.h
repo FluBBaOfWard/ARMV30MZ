@@ -126,7 +126,7 @@
 	ldrd v30ofs,v30csr,[v30ptr,#v30RegIY]
 #else
 	ldr v30ofs,[v30ptr,#v30RegIY]
-	ldr v30csr,[v30ptr,#v30SRegES]
+	ldr v30csr,[v30ptr,#v30SRegDS1]
 #endif
 	.endm
 
@@ -135,7 +135,7 @@
 	ldrd r2,r3,[v30ptr,#v30RegIY]
 #else
 	ldr r2,[v30ptr,#v30RegIY]
-	ldr r3,[v30ptr,#v30SRegES]
+	ldr r3,[v30ptr,#v30SRegDS1]
 #endif
 	.endm
 

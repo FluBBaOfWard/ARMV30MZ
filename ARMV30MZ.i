@@ -34,19 +34,19 @@ v30I:
 v30Regs2:
 					.short 0
 v30Regs:
-v30RegAW:
+v30RegAW:						;@ AX on Intel
 v30RegAL:			.byte 0
 v30RegAH:			.byte 0
 					.short 0
-v30RegCW:
+v30RegCW:						;@ CX on Intel
 v30RegCL:			.byte 0
 v30RegCH:			.byte 0
 					.short 0
-v30RegDW:
+v30RegDW:						;@ DX on Intel
 v30RegDL:			.byte 0
 v30RegDH:			.byte 0
 					.short 0
-v30RegBW:
+v30RegBW:						;@ BX on Intel
 v30RegBL:			.byte 0
 v30RegBH:			.byte 0
 
@@ -58,23 +58,23 @@ v30RegBP:			.short 0
 v30RegBPL:			.byte 0
 v30RegBPH:			.byte 0
 
-v30RegIX:			.short 0
+v30RegIX:			.short 0	;@ SI on Intel
 v30RegIXL:			.byte 0
 v30RegIXH:			.byte 0
 
-v30RegIY:			.short 0	;@ Must be right before ES so we can use "ldrd v30ofs, v30csr".
+v30RegIY:			.short 0	;@ DI on Intel. Must be right before DS1 so we can use "ldrd v30ofs, v30csr".
 v30RegIYL:			.byte 0
 v30RegIYH:			.byte 0
 
 v30SRegs:
-v30SRegES:			.long 0
-v30SRegCS:			.long 0
+v30SRegDS1:			.long 0		;@ ES on Intel
+v30SRegPS:			.long 0		;@ CS on Intel
 v30SRegSS:			.long 0
-v30SRegDS:			.long 0
+v30SRegDS0:			.long 0		;@ DS on Intel
 
 v30PrefixBase:		.long 0		;@ Mapped to v30csr/r7
 v30Flags:			.long 0		;@ Mapped to v30f/r8
-v30IP:				.long 0		;@ Mapped to v30pc/r9
+v30PC:				.long 0		;@ Mapped to v30pc/r9
 v30Cycles:			.long 0		;@ Mapped to v30cyc/r10
 v30IrqPin:			.byte 0		;@ IrqPin & IF needs to be together in the same Word.
 v30IF:				.byte 0

@@ -157,8 +157,8 @@ _04:	;@ ADD ALD8
 	strb r1,[v30ptr,#v30RegAL]
 	fetch 1
 ;@----------------------------------------------------------------------------
-i_add_axd16:
-_05:	;@ ADD AXD16
+i_add_awd16:
+_05:	;@ ADD AWD16
 ;@----------------------------------------------------------------------------
 	getNextWord
 	ldr r1,[v30ptr,#v30RegAW-2]
@@ -166,18 +166,18 @@ _05:	;@ ADD AXD16
 	strh r1,[v30ptr,#v30RegAW]
 	fetch 1
 ;@----------------------------------------------------------------------------
-i_push_es:
-_06:	;@ PUSH ES
+i_push_ds1:
+_06:	;@ PUSH DS1/ES
 ;@----------------------------------------------------------------------------
-	ldrh r1,[v30ptr,#v30SRegES+2]
+	ldrh r1,[v30ptr,#v30SRegDS1+2]
 	bl v30PushW
 	fetch 2
 ;@----------------------------------------------------------------------------
-i_pop_es:
-_07:	;@ POP ES
+i_pop_ds1:
+_07:	;@ POP DS1/ES
 ;@----------------------------------------------------------------------------
 	popWord
-	strh r0,[v30ptr,#v30SRegES+2]
+	strh r0,[v30ptr,#v30SRegDS1+2]
 	fetch 3
 ;@----------------------------------------------------------------------------
 i_or_br8:
@@ -270,8 +270,8 @@ _0C:	;@ OR ALD8
 	strb r1,[v30ptr,#v30RegAL]
 	fetch 1
 ;@----------------------------------------------------------------------------
-i_or_axd16:
-_0D:	;@ OR AXD16
+i_or_awd16:
+_0D:	;@ OR AWD16
 ;@----------------------------------------------------------------------------
 	getNextWord
 	ldr r1,[v30ptr,#v30RegAW-2]
@@ -279,10 +279,10 @@ _0D:	;@ OR AXD16
 	strh r1,[v30ptr,#v30RegAW]
 	fetch 1
 ;@----------------------------------------------------------------------------
-i_push_cs:
-_0E:	;@ PUSH CS
+i_push_ps:
+_0E:	;@ PUSH PS/CS
 ;@----------------------------------------------------------------------------
-	ldrh r1,[v30ptr,#v30SRegCS+2]
+	ldrh r1,[v30ptr,#v30SRegPS+2]
 	bl v30PushW
 	fetch 2
 ;@----------------------------------------------------------------------------
@@ -376,8 +376,8 @@ _14:	;@ ADDC/ADC ALD8
 	strb r1,[v30ptr,#v30RegAL]
 	fetch 1
 ;@----------------------------------------------------------------------------
-i_adc_axd16:
-_15:	;@ ADDC/ADC AXD16
+i_adc_awd16:
+_15:	;@ ADDC/ADC AWD16
 ;@----------------------------------------------------------------------------
 	getNextWord
 	ldr r1,[v30ptr,#v30RegAW-2]
@@ -492,8 +492,8 @@ _1C:	;@ SUBC/SBB ALD8
 	strb r1,[v30ptr,#v30RegAL]
 	fetch 1
 ;@----------------------------------------------------------------------------
-i_sbb_axd16:
-_1D:	;@ SUBC/SBB AXD16
+i_sbb_awd16:
+_1D:	;@ SUBC/SBB AWD16
 ;@----------------------------------------------------------------------------
 	getNextWord
 	ldr r1,[v30ptr,#v30RegAW-2]
@@ -501,18 +501,18 @@ _1D:	;@ SUBC/SBB AXD16
 	strh r1,[v30ptr,#v30RegAW]
 	fetch 1
 ;@----------------------------------------------------------------------------
-i_push_ds:
-_1E:	;@ PUSH DS
+i_push_ds0:
+_1E:	;@ PUSH DS0/DS
 ;@----------------------------------------------------------------------------
-	ldrh r1,[v30ptr,#v30SRegDS+2]
+	ldrh r1,[v30ptr,#v30SRegDS0+2]
 	bl v30PushW
 	fetch 2
 ;@----------------------------------------------------------------------------
-i_pop_ds:
-_1F:	;@ POP DS
+i_pop_ds0:
+_1F:	;@ POP DS0/DS
 ;@----------------------------------------------------------------------------
 	popWord
-	strh r0,[v30ptr,#v30SRegDS+2]
+	strh r0,[v30ptr,#v30SRegDS0+2]
 	fetch 3
 ;@----------------------------------------------------------------------------
 i_and_br8:
@@ -605,8 +605,8 @@ _24:	;@ AND ALD8
 	strb r1,[v30ptr,#v30RegAL]
 	fetch 1
 ;@----------------------------------------------------------------------------
-i_and_axd16:
-_25:	;@ AND AXD16
+i_and_awd16:
+_25:	;@ AND AWD16
 ;@----------------------------------------------------------------------------
 	getNextWord
 	ldr r1,[v30ptr,#v30RegAW-2]
@@ -614,10 +614,10 @@ _25:	;@ AND AXD16
 	strh r1,[v30ptr,#v30RegAW]
 	fetch 1
 ;@----------------------------------------------------------------------------
-i_es:
-_26:	;@ ES prefix
+i_ds1:
+_26:	;@ DS1/ES prefix
 ;@----------------------------------------------------------------------------
-	ldr v30csr,[v30ptr,#v30SRegES]
+	ldr v30csr,[v30ptr,#v30SRegDS1]
 
 	getNextByte
 	add r2,v30ptr,#v30SegTbl
@@ -738,8 +738,8 @@ _2C:	;@ SUB ALD8
 	strb r1,[v30ptr,#v30RegAL]
 	fetch 1
 ;@----------------------------------------------------------------------------
-i_sub_axd16:
-_2D:	;@ SUB AXD16
+i_sub_awd16:
+_2D:	;@ SUB AWD16
 ;@----------------------------------------------------------------------------
 	getNextWord
 	ldr r1,[v30ptr,#v30RegAW-2]
@@ -747,10 +747,10 @@ _2D:	;@ SUB AXD16
 	strh r1,[v30ptr,#v30RegAW]
 	fetch 1
 ;@----------------------------------------------------------------------------
-i_cs:
-_2E:	;@ CS prefix
+i_ps:
+_2E:	;@ PS/CS prefix
 ;@----------------------------------------------------------------------------
-	ldr v30csr,[v30ptr,#v30SRegCS]
+	ldr v30csr,[v30ptr,#v30SRegPS]
 
 	getNextByte
 	add r2,v30ptr,#v30SegTbl
@@ -871,8 +871,8 @@ _34:	;@ XOR ALD8
 	strb r1,[v30ptr,#v30RegAL]
 	fetch 1
 ;@----------------------------------------------------------------------------
-i_xor_axd16:
-_35:	;@ XOR AXD16
+i_xor_awd16:
+_35:	;@ XOR AWD16
 ;@----------------------------------------------------------------------------
 	getNextWord
 	ldr r1,[v30ptr,#v30RegAW-2]
@@ -986,18 +986,18 @@ _3C:	;@ CMP ALD8
 	sub8 r0,r1
 	fetch 1
 ;@----------------------------------------------------------------------------
-i_cmp_axd16:
-_3D:	;@ CMP AXD16
+i_cmp_awd16:
+_3D:	;@ CMP AWD16
 ;@----------------------------------------------------------------------------
 	getNextWord
 	ldr r1,[v30ptr,#v30RegAW-2]
 	sub16 r0,r1
 	fetch 1
 ;@----------------------------------------------------------------------------
-i_ds:
-_3E:	;@ DS prefix
+i_ds0:
+_3E:	;@ DS0/DS prefix
 ;@----------------------------------------------------------------------------
-	ldr v30csr,[v30ptr,#v30SRegDS]
+	ldr v30csr,[v30ptr,#v30SRegDS0]
 
 	getNextByte
 	add r2,v30ptr,#v30SegTbl
@@ -1007,7 +1007,7 @@ _3E:	;@ DS prefix
 	ldr pc,[v30ptr,r0,lsl#2]
 ;@----------------------------------------------------------------------------
 i_aas:
-_3F:	;@ ADJBS / AAS
+_3F:	;@ ADJBS/AAS
 ;@----------------------------------------------------------------------------
 	ldrh r0,[v30ptr,#v30RegAW]
 	mov r1,r0,lsl#28
@@ -1023,22 +1023,22 @@ _3F:	;@ ADJBS / AAS
 	fetch 9
 
 ;@----------------------------------------------------------------------------
-i_inc_ax:
+i_inc_aw:
 _40:	;@ INC AW/AX
 ;@----------------------------------------------------------------------------
 	incWord v30RegAW
 ;@----------------------------------------------------------------------------
-i_inc_cx:
+i_inc_cw:
 _41:	;@ INC CW/CX
 ;@----------------------------------------------------------------------------
 	incWord v30RegCW
 ;@----------------------------------------------------------------------------
-i_inc_dx:
+i_inc_dw:
 _42:	;@ INC DW/DX
 ;@----------------------------------------------------------------------------
 	incWord v30RegDW
 ;@----------------------------------------------------------------------------
-i_inc_bx:
+i_inc_bw:
 _43:	;@ INC BW/BX
 ;@----------------------------------------------------------------------------
 	incWord v30RegBW
@@ -1053,32 +1053,32 @@ _45:	;@ INC BP
 ;@----------------------------------------------------------------------------
 	incWord v30RegBP+2
 ;@----------------------------------------------------------------------------
-i_inc_si:
+i_inc_ix:
 _46:	;@ INC IX/SI
 ;@----------------------------------------------------------------------------
 	incWord v30RegIX+2
 ;@----------------------------------------------------------------------------
-i_inc_di:
+i_inc_iy:
 _47:	;@ INC IY/DI
 ;@----------------------------------------------------------------------------
 	incWord v30RegIY+2
 ;@----------------------------------------------------------------------------
-i_dec_ax:
+i_dec_aw:
 _48:	;@ DEC AW/AX
 ;@----------------------------------------------------------------------------
 	decWord v30RegAW
 ;@----------------------------------------------------------------------------
-i_dec_cx:
+i_dec_cw:
 _49:	;@ DEC CW/CX
 ;@----------------------------------------------------------------------------
 	decWord v30RegCW
 ;@----------------------------------------------------------------------------
-i_dec_dx:
+i_dec_dw:
 _4A:	;@ DEC DW/DX
 ;@----------------------------------------------------------------------------
 	decWord v30RegDW
 ;@----------------------------------------------------------------------------
-i_dec_bx:
+i_dec_bw:
 _4B:	;@ DEC BW/BX
 ;@----------------------------------------------------------------------------
 	decWord v30RegBW
@@ -1093,32 +1093,32 @@ _4D:	;@ DEC BP
 ;@----------------------------------------------------------------------------
 	decWord v30RegBP+2
 ;@----------------------------------------------------------------------------
-i_dec_si:
+i_dec_ix:
 _4E:	;@ DEC IX/SI
 ;@----------------------------------------------------------------------------
 	decWord v30RegIX+2
 ;@----------------------------------------------------------------------------
-i_dec_di:
+i_dec_iy:
 _4F:	;@ DEC IY/DI
 ;@----------------------------------------------------------------------------
 	decWord v30RegIY+2
 ;@----------------------------------------------------------------------------
-i_push_ax:
+i_push_aw:
 _50:	;@ PUSH AW/AX
 ;@----------------------------------------------------------------------------
 	pushRegister v30RegAW
 ;@----------------------------------------------------------------------------
-i_push_cx:
+i_push_cw:
 _51:	;@ PUSH CW/CX
 ;@----------------------------------------------------------------------------
 	pushRegister v30RegCW
 ;@----------------------------------------------------------------------------
-i_push_dx:
+i_push_dw:
 _52:	;@ PUSH DW/DX
 ;@----------------------------------------------------------------------------
 	pushRegister v30RegDW
 ;@----------------------------------------------------------------------------
-i_push_bx:
+i_push_bw:
 _53:	;@ PUSH BW/BX
 ;@----------------------------------------------------------------------------
 	pushRegister v30RegBW
@@ -1139,33 +1139,33 @@ _55:	;@ PUSH BP
 ;@----------------------------------------------------------------------------
 	pushRegister v30RegBP+2
 ;@----------------------------------------------------------------------------
-i_push_si:
+i_push_ix:
 _56:	;@ PUSH IX/SI
 ;@----------------------------------------------------------------------------
 	pushRegister v30RegIX+2
 ;@----------------------------------------------------------------------------
-i_push_di:
+i_push_iy:
 _57:	;@ PUSH IY/DI
 ;@----------------------------------------------------------------------------
 	pushRegister v30RegIY+2
 
 ;@----------------------------------------------------------------------------
-i_pop_ax:
+i_pop_aw:
 _58:	;@ POP AW/AX
 ;@----------------------------------------------------------------------------
 	popRegister v30RegAW
 ;@----------------------------------------------------------------------------
-i_pop_cx:
+i_pop_cw:
 _59:	;@ POP CW/CX
 ;@----------------------------------------------------------------------------
 	popRegister v30RegCW
 ;@----------------------------------------------------------------------------
-i_pop_dx:
+i_pop_dw:
 _5A:	;@ POP DW/DX
 ;@----------------------------------------------------------------------------
 	popRegister v30RegDW
 ;@----------------------------------------------------------------------------
-i_pop_bx:
+i_pop_bw:
 _5B:	;@ POP BW/BX
 ;@----------------------------------------------------------------------------
 	popRegister v30RegBW
@@ -1182,12 +1182,12 @@ _5D:	;@ POP BP
 ;@----------------------------------------------------------------------------
 	popRegister v30RegBP+2
 ;@----------------------------------------------------------------------------
-i_pop_si:
+i_pop_ix:
 _5E:	;@ POP IX/SI
 ;@----------------------------------------------------------------------------
 	popRegister v30RegIX+2
 ;@----------------------------------------------------------------------------
-i_pop_di:
+i_pop_iy:
 _5F:	;@ POP IY/DI
 ;@----------------------------------------------------------------------------
 	popRegister v30RegIY+2
@@ -1410,7 +1410,7 @@ f36e:	;@ REP OUTMB/OUTSB
 	cmp r5,#0
 	beq 1f
 	TestSegmentPrefix
-	ldreq v30csr,[v30ptr,#v30SRegDS]
+	ldreq v30csr,[v30ptr,#v30SRegDS0]
 	ldr v30ofs,[v30ptr,#v30RegIX]
 	ldrsb r4,[v30ptr,#v30DF]
 0:
@@ -1443,7 +1443,7 @@ f36f:	;@ REP OUTMW/OUTSW
 	cmp r5,#0
 	beq 1f
 	TestSegmentPrefix
-	ldreq v30csr,[v30ptr,#v30SRegDS]
+	ldreq v30csr,[v30ptr,#v30SRegDS0]
 	ldr v30ofs,[v30ptr,#v30RegIX]
 	ldrsb r4,[v30ptr,#v30DF]
 0:
@@ -1464,7 +1464,7 @@ i_outmw:
 _6F:	;@ OUTMW/OUTSW
 ;@----------------------------------------------------------------------------
 	TestSegmentPrefix
-	ldreq v30csr,[v30ptr,#v30SRegDS]
+	ldreq v30csr,[v30ptr,#v30SRegDS0]
 	ldr v30ofs,[v30ptr,#v30RegIX]
 	ldrsb r4,[v30ptr,#v30DF]
 	bl v30ReadSegOfsW
@@ -1880,7 +1880,7 @@ _8F:	;@ POPW
 	fetch 1
 ;@----------------------------------------------------------------------------
 i_nop:
-_90:	;@ NOP (XCH AXAX)
+_90:	;@ NOP (XCH AWAW)
 ;@----------------------------------------------------------------------------
 	ldrb r0,[v30pc]				;@ Check for 3 NOPs
 	cmp r0,#0x90
@@ -1889,38 +1889,38 @@ _90:	;@ NOP (XCH AXAX)
 	subeq v30cyc,v30cyc,#1*CYCLE
 	fetch 1
 ;@----------------------------------------------------------------------------
-i_xchg_axcx:
-_91:	;@ XCH/XCHG AXCX
+i_xchg_awcw:
+_91:	;@ XCH/XCHG AWCW
 ;@----------------------------------------------------------------------------
 	xchgreg v30RegCW
 ;@----------------------------------------------------------------------------
-i_xchg_axdx:
-_92:	;@ XCH/XCHG AXDX
+i_xchg_awdw:
+_92:	;@ XCH/XCHG AWDW
 ;@----------------------------------------------------------------------------
 	xchgreg v30RegDW
 ;@----------------------------------------------------------------------------
-i_xchg_axbx:
-_93:	;@ XCH/XCHG AXBX
+i_xchg_awbw:
+_93:	;@ XCH/XCHG AWBW
 ;@----------------------------------------------------------------------------
 	xchgreg v30RegBW
 ;@----------------------------------------------------------------------------
-i_xchg_axsp:
-_94:	;@ XCH/XCHG AXSP
+i_xchg_awsp:
+_94:	;@ XCH/XCHG AWSP
 ;@----------------------------------------------------------------------------
 	xchgreg v30RegSP+2
 ;@----------------------------------------------------------------------------
-i_xchg_axbp:
-_95:	;@ XCH/XCHG AXBP
+i_xchg_awbp:
+_95:	;@ XCH/XCHG AWBP
 ;@----------------------------------------------------------------------------
 	xchgreg v30RegBP+2
 ;@----------------------------------------------------------------------------
-i_xchg_axsi:
-_96:	;@ XCH/XCHG AXSI
+i_xchg_awix:
+_96:	;@ XCH/XCHG AWIX
 ;@----------------------------------------------------------------------------
 	xchgreg v30RegIX+2
 ;@----------------------------------------------------------------------------
-i_xchg_axdi:
-_97:	;@ XCH/XCHG AXDI
+i_xchg_awiy:
+_97:	;@ XCH/XCHG AWIY
 ;@----------------------------------------------------------------------------
 	xchgreg v30RegIY+2
 ;@----------------------------------------------------------------------------
@@ -1944,8 +1944,8 @@ _9A:	;@ CALL FAR
 ;@----------------------------------------------------------------------------
 	getNextWordTo r4, r0
 	getNextWord
-	ldrh r1,[v30ptr,#v30SRegCS+2]
-	strh r0,[v30ptr,#v30SRegCS+2]
+	ldrh r1,[v30ptr,#v30SRegPS+2]
+	strh r0,[v30ptr,#v30SRegPS+2]
 	ldr v30ofs,[v30ptr,#v30RegSP]
 	ldr v30csr,[v30ptr,#v30SRegSS]
 	sub v30ofs,v30ofs,#0x20000
@@ -2071,19 +2071,19 @@ _A0:	;@ MOV ALDISP
 ;@----------------------------------------------------------------------------
 	getNextWord
 	TestSegmentPrefix
-	ldreq v30csr,[v30ptr,#v30SRegDS]
+	ldreq v30csr,[v30ptr,#v30SRegDS0]
 	add r0,v30csr,r0,lsl#12
 	bl cpuReadMem20
 	strb r0,[v30ptr,#v30RegAL]
 	ClearSegmentPrefix
 	fetch 1
 ;@----------------------------------------------------------------------------
-i_mov_axdisp:
-_A1:	;@ MOV AXDISP
+i_mov_awdisp:
+_A1:	;@ MOV AWDISP
 ;@----------------------------------------------------------------------------
 	getNextWord
 	TestSegmentPrefix
-	ldreq v30csr,[v30ptr,#v30SRegDS]
+	ldreq v30csr,[v30ptr,#v30SRegDS0]
 	add r0,v30csr,r0,lsl#12
 	bl cpuReadMem20W
 	strh r0,[v30ptr,#v30RegAW]
@@ -2095,19 +2095,19 @@ _A2:	;@ MOV DISPAL
 ;@----------------------------------------------------------------------------
 	getNextWord
 	TestSegmentPrefix
-	ldreq v30csr,[v30ptr,#v30SRegDS]
+	ldreq v30csr,[v30ptr,#v30SRegDS0]
 	ldrb r1,[v30ptr,#v30RegAL]
 	add r0,v30csr,r0,lsl#12
 	bl cpuWriteMem20
 	ClearSegmentPrefix
 	fetch 1
 ;@----------------------------------------------------------------------------
-i_mov_dispax:
-_A3:	;@ MOV DISPAX
+i_mov_dispaw:
+_A3:	;@ MOV DISPAW
 ;@----------------------------------------------------------------------------
 	getNextWord
 	TestSegmentPrefix
-	ldreq v30csr,[v30ptr,#v30SRegDS]
+	ldreq v30csr,[v30ptr,#v30SRegDS0]
 	ldrh r1,[v30ptr,#v30RegAW]
 	add r0,v30csr,r0,lsl#12
 	bl cpuWriteMem20W
@@ -2121,7 +2121,7 @@ f3a4:	;@ REP MOVMB/MOVSB
 	cmp r5,#0
 	beq 1f
 	TestSegmentPrefix
-	ldreq v30csr,[v30ptr,#v30SRegDS]
+	ldreq v30csr,[v30ptr,#v30SRegDS0]
 	ldr v30ofs,[v30ptr,#v30RegIX]
 	ldrsb r4,[v30ptr,#v30DF]
 0:
@@ -2158,7 +2158,7 @@ f3a5:	;@ REP MOVMW/MOVSW
 	cmp r5,#0
 	beq 1f
 	TestSegmentPrefix
-	ldreq v30csr,[v30ptr,#v30SRegDS]
+	ldreq v30csr,[v30ptr,#v30SRegDS0]
 	ldr v30ofs,[v30ptr,#v30RegIX]
 	ldrsb r4,[v30ptr,#v30DF]
 0:
@@ -2193,7 +2193,7 @@ i_movsw:
 _A5:	;@ MOVMW/MOVSW
 ;@----------------------------------------------------------------------------
 	TestSegmentPrefix
-	ldreq v30csr,[v30ptr,#v30SRegDS]
+	ldreq v30csr,[v30ptr,#v30SRegDS0]
 	ldr v30ofs,[v30ptr,#v30RegIX]
 	ldrsb r4,[v30ptr,#v30DF]
 	bl v30ReadSegOfsW
@@ -2214,7 +2214,7 @@ f2a6:	;@ REPNZ CMPBKB/CMPSB
 	cmp r5,#0
 	beq 1f
 	TestSegmentPrefix
-	ldreq v30csr,[v30ptr,#v30SRegDS]
+	ldreq v30csr,[v30ptr,#v30SRegDS0]
 	ldr v30ofs,[v30ptr,#v30RegIX]
 0:
 	ldrsb r4,[v30ptr,#v30DF]
@@ -2247,7 +2247,7 @@ f3a6:	;@ REPZ CMPBKB/CMPSB
 	cmp r5,#0
 	beq 1f
 	TestSegmentPrefix
-	ldreq v30csr,[v30ptr,#v30SRegDS]
+	ldreq v30csr,[v30ptr,#v30SRegDS0]
 	ldr v30ofs,[v30ptr,#v30RegIX]
 0:
 	ldrsb r4,[v30ptr,#v30DF]
@@ -2296,7 +2296,7 @@ f2a7:	;@ REPNZ CMPBKW/CMPSW
 	cmp r5,#0
 	beq 1f
 	TestSegmentPrefix
-	ldreq v30csr,[v30ptr,#v30SRegDS]
+	ldreq v30csr,[v30ptr,#v30SRegDS0]
 	ldr v30ofs,[v30ptr,#v30RegIX]
 0:
 	ldrsb r4,[v30ptr,#v30DF]
@@ -2329,7 +2329,7 @@ f3a7:	;@ REPZ CMPBKW/CMPSW
 	cmp r5,#0
 	beq 1f
 	TestSegmentPrefix
-	ldreq v30csr,[v30ptr,#v30SRegDS]
+	ldreq v30csr,[v30ptr,#v30SRegDS0]
 	ldr v30ofs,[v30ptr,#v30RegIX]
 0:
 	ldrsb r4,[v30ptr,#v30DF]
@@ -2359,7 +2359,7 @@ i_cmpsw:
 _A7:	;@ CMPBKW/CMPSW
 ;@----------------------------------------------------------------------------
 	TestSegmentPrefix
-	ldreq v30csr,[v30ptr,#v30SRegDS]
+	ldreq v30csr,[v30ptr,#v30SRegDS0]
 	ldr v30ofs,[v30ptr,#v30RegIX]
 	ldrsb r4,[v30ptr,#v30DF]
 	bl v30ReadSegOfsW
@@ -2385,8 +2385,8 @@ _A8:	;@ TEST ALD8
 	and8 r0,r1
 	fetch 1
 ;@----------------------------------------------------------------------------
-i_test_axd16:
-_A9:	;@ TEST AXD16
+i_test_awd16:
+_A9:	;@ TEST AWD16
 ;@----------------------------------------------------------------------------
 	getNextWord
 	ldr r1,[v30ptr,#v30RegAW-2]
@@ -2469,7 +2469,7 @@ f3ac:	;@ REP LDMB/LODSB
 	cmp r5,#0
 	beq 1f
 	TestSegmentPrefix
-	ldreq v30csr,[v30ptr,#v30SRegDS]
+	ldreq v30csr,[v30ptr,#v30SRegDS0]
 	ldr v30ofs,[v30ptr,#v30RegIX]
 	ldrsb r4,[v30ptr,#v30DF]
 0:
@@ -2500,7 +2500,7 @@ f3ad:	;@ REP LDMW/LODSW
 	cmp r5,#0
 	beq 1f
 	TestSegmentPrefix
-	ldreq v30csr,[v30ptr,#v30SRegDS]
+	ldreq v30csr,[v30ptr,#v30SRegDS0]
 	ldr v30ofs,[v30ptr,#v30RegIX]
 	ldrsb r4,[v30ptr,#v30DF]
 0:
@@ -2520,7 +2520,7 @@ i_lodsw:
 _AD:	;@ LDMW/LODSW
 ;@----------------------------------------------------------------------------
 	TestSegmentPrefix
-	ldreq v30csr,[v30ptr,#v30SRegDS]
+	ldreq v30csr,[v30ptr,#v30SRegDS0]
 	ldr v30ofs,[v30ptr,#v30RegIX]
 	ldrsb r4,[v30ptr,#v30DF]
 	bl v30ReadSegOfsW
@@ -2715,29 +2715,29 @@ _B7:	;@ MOV BHD8
 	fetch 1
 
 ;@----------------------------------------------------------------------------
-i_mov_axd16:
-_B8:	;@ MOV AXD16
+i_mov_awd16:
+_B8:	;@ MOV AWD16
 ;@----------------------------------------------------------------------------
 	getNextWord
 	strh r0,[v30ptr,#v30RegAW]
 	fetch 1
 ;@----------------------------------------------------------------------------
-i_mov_cxd16:
-_B9:	;@ MOV CXD16
+i_mov_cwd16:
+_B9:	;@ MOV CWD16
 ;@----------------------------------------------------------------------------
 	getNextWord
 	strh r0,[v30ptr,#v30RegCW]
 	fetch 1
 ;@----------------------------------------------------------------------------
-i_mov_dxd16:
-_BA:	;@ MOV DXD16
+i_mov_dwd16:
+_BA:	;@ MOV DWD16
 ;@----------------------------------------------------------------------------
 	getNextWord
 	strh r0,[v30ptr,#v30RegDW]
 	fetch 1
 ;@----------------------------------------------------------------------------
-i_mov_bxd16:
-_BB:	;@ MOV BXD16
+i_mov_bwd16:
+_BB:	;@ MOV BWD16
 ;@----------------------------------------------------------------------------
 	getNextWord
 	strh r0,[v30ptr,#v30RegBW]
@@ -2757,15 +2757,15 @@ _BD:	;@ MOV BPD16
 	strh r0,[v30ptr,#v30RegBP+2]
 	fetch 1
 ;@----------------------------------------------------------------------------
-i_mov_sid16:
-_BE:	;@ MOV SID16
+i_mov_ixd16:
+_BE:	;@ MOV IXD16
 ;@----------------------------------------------------------------------------
 	getNextWord
 	strh r0,[v30ptr,#v30RegIX+2]
 	fetch 1
 ;@----------------------------------------------------------------------------
-i_mov_did16:
-_BF:	;@ MOV DID16
+i_mov_iyd16:
+_BF:	;@ MOV IYD16
 ;@----------------------------------------------------------------------------
 	getNextWord
 	strh r0,[v30ptr,#v30RegIY+2]
@@ -2983,7 +2983,7 @@ _C3:	;@ RET
 	fetch 6
 ;@----------------------------------------------------------------------------
 i_les_dw:
-_C4:	;@ LES DW
+_C4:	;@ MOV DS1 / LES DW
 ;@----------------------------------------------------------------------------
 	getNextByte
 	and r1,r0,#0x38
@@ -2994,13 +2994,13 @@ _C4:	;@ LES DW
 	add v30ofs,v30ofs,#0x20000
 	strh r0,[r4,#v30Regs]
 	bl v30ReadSegOfsW
-	strh r0,[v30ptr,#v30SRegES+2]
+	strh r0,[v30ptr,#v30SRegDS1+2]
 
 	ClearSegmentPrefix
 	fetch 6
 ;@----------------------------------------------------------------------------
 i_lds_dw:
-_C5:	;@ LDS DW
+_C5:	;@ MOV DS0 / LDS DW
 ;@----------------------------------------------------------------------------
 	getNextByte
 	and r1,r0,#0x38
@@ -3011,7 +3011,7 @@ _C5:	;@ LDS DW
 	add v30ofs,v30ofs,#0x20000
 	strh r0,[r4,#v30Regs]
 	bl v30ReadSegOfsW
-	strh r0,[v30ptr,#v30SRegDS+2]
+	strh r0,[v30ptr,#v30SRegDS0+2]
 
 	ClearSegmentPrefix
 	fetch 6
@@ -3123,7 +3123,7 @@ _CA:	;@ RETF D16
 	bl v30ReadSegOfsW
 	add v30ofs,v30ofs,#0x20000
 	add v30ofs,v30ofs,r4,lsl#16
-	strh r0,[v30ptr,#v30SRegCS+2]
+	strh r0,[v30ptr,#v30SRegPS+2]
 	str v30ofs,[v30ptr,#v30RegSP]
 	v30EncodeFastPC
 	fetch 9
@@ -3136,7 +3136,7 @@ _CB:	;@ RETF
 	mov v30pc,r0,lsl#16
 	bl v30ReadSegOfsW
 	add v30ofs,v30ofs,#0x20000
-	strh r0,[v30ptr,#v30SRegCS+2]
+	strh r0,[v30ptr,#v30SRegPS+2]
 	str v30ofs,[v30ptr,#v30RegSP]
 	v30EncodeFastPC
 	fetch 8
@@ -3172,7 +3172,7 @@ _CF:	;@ IRET
 	mov v30pc,r0,lsl#16
 	bl v30ReadSegOfsW
 	add v30ofs,v30ofs,#0x20000
-	strh r0,[v30ptr,#v30SRegCS+2]
+	strh r0,[v30ptr,#v30SRegPS+2]
 	str v30ofs,[v30ptr,#v30RegSP]
 	v30EncodeFastPC
 	eatCycles 10-3				;@ i_popf eats 3 cycles
@@ -3291,7 +3291,7 @@ i_trans:
 _D7:	;@ TRANS/XLAT	;@ Translate al via LUT.
 ;@----------------------------------------------------------------------------
 	TestSegmentPrefix
-	ldreq v30csr,[v30ptr,#v30SRegDS]
+	ldreq v30csr,[v30ptr,#v30SRegDS0]
 	ldrb r0,[v30ptr,#v30RegAL]
 	ldr v30ofs,[v30ptr,#v30RegBW-2]
 	add v30ofs,v30ofs,r0,lsl#16
@@ -3345,7 +3345,7 @@ _E2:	;@ DBNZ/LOOP
 	v30ReEncodeFastPC
 	fetch 2
 ;@----------------------------------------------------------------------------
-i_jcxz:
+i_bcwz:
 _E3:	;@ BCWZ/JCXZ
 ;@----------------------------------------------------------------------------
 	getNextSignedByte
@@ -3365,8 +3365,8 @@ _E4:	;@ INAL
 	strb r0,[v30ptr,#v30RegAL]
 	fetch 7
 ;@----------------------------------------------------------------------------
-i_inax:
-_E5:	;@ INAX
+i_inaw:
+_E5:	;@ INAW
 ;@----------------------------------------------------------------------------
 	getNextByte
 	bl v30ReadPort16
@@ -3381,8 +3381,8 @@ _E6:	;@ OUTAL
 	bl v30WritePort
 	fetch 7
 ;@----------------------------------------------------------------------------
-i_outax:
-_E7:	;@ OUTAX
+i_outaw:
+_E7:	;@ OUTAW
 ;@----------------------------------------------------------------------------
 	getNextByteTo r1
 	ldrh r0,[v30ptr,#v30RegAW]
@@ -3416,7 +3416,7 @@ _EA:	;@ BR/JMP FAR
 ;@----------------------------------------------------------------------------
 	getNextWordTo r4, r0
 	getNextWord
-	strh r0,[v30ptr,#v30SRegCS+2]
+	strh r0,[v30ptr,#v30SRegPS+2]
 	mov v30pc,r4,lsl#16
 	v30EncodeFastPC
 	fetch 7
@@ -3431,32 +3431,32 @@ _EB:	;@ BR/JMP short
 	v30ReEncodeFastPC
 	fetch 4
 ;@----------------------------------------------------------------------------
-i_inaldx:
-_EC:	;@ INALDX
+i_inaldw:
+_EC:	;@ INALDW
 ;@----------------------------------------------------------------------------
 	ldrh r0,[v30ptr,#v30RegDW]
 	bl v30ReadPort
 	strb r0,[v30ptr,#v30RegAL]
 	fetch 5
 ;@----------------------------------------------------------------------------
-i_inaxdx:
-_ED:	;@ INAXDX
+i_inawdw:
+_ED:	;@ INAWDW
 ;@----------------------------------------------------------------------------
 	ldrh r0,[v30ptr,#v30RegDW]
 	bl v30ReadPort16
 	strh r0,[v30ptr,#v30RegAW]
 	fetch 5
 ;@----------------------------------------------------------------------------
-i_outdxal:
-_EE:	;@ OUTDXAL
+i_outdwal:
+_EE:	;@ OUTDWAL
 ;@----------------------------------------------------------------------------
 	ldrb r0,[v30ptr,#v30RegAL]
 	ldrh r1,[v30ptr,#v30RegDW]
 	bl v30WritePort
 	fetch 5
 ;@----------------------------------------------------------------------------
-i_outdxax:
-_EF:	;@ OUTDXAX
+i_outdwaw:
+_EF:	;@ OUTDWAW
 ;@----------------------------------------------------------------------------
 	ldrh r0,[v30ptr,#v30RegAW]
 	ldrh r1,[v30ptr,#v30RegDW]
@@ -4189,8 +4189,8 @@ callFarFF:
 	add v30ofs,v30ofs,#0x20000
 	bl v30ReadSegOfsW
 
-	ldrh r1,[v30ptr,#v30SRegCS+2]
-	strh r0,[v30ptr,#v30SRegCS+2]
+	ldrh r1,[v30ptr,#v30SRegPS+2]
+	strh r0,[v30ptr,#v30SRegPS+2]
 	ldr v30ofs,[v30ptr,#v30RegSP]
 	ldr v30csr,[v30ptr,#v30SRegSS]
 	sub v30ofs,v30ofs,#0x20000
@@ -4214,7 +4214,7 @@ braFarFF:
 	mov v30pc,r0,lsl#16
 	add v30ofs,v30ofs,#0x20000
 	bl v30ReadSegOfsW
-	strh r0,[v30ptr,#v30SRegCS+2]
+	strh r0,[v30ptr,#v30SRegPS+2]
 	v30EncodeFastPC
 	ClearSegmentPrefix
 	fetch 10
@@ -4248,7 +4248,7 @@ EA_000:	;@
 	ldr v30ofs,[v30ptr,#v30RegBW-2]
 	ldr r0,[v30ptr,#v30RegIX]
 	TestSegmentPrefix
-	ldreq v30csr,[v30ptr,#v30SRegDS]
+	ldreq v30csr,[v30ptr,#v30SRegDS0]
 	add v30ofs,v30ofs,r0
 	eatCycles 2
 	bx r12
@@ -4258,7 +4258,7 @@ EA_001:	;@
 	ldr v30ofs,[v30ptr,#v30RegBW-2]
 	ldr r0,[v30ptr,#v30RegIY]
 	TestSegmentPrefix
-	ldreq v30csr,[v30ptr,#v30SRegDS]
+	ldreq v30csr,[v30ptr,#v30SRegDS0]
 	add v30ofs,v30ofs,r0
 	eatCycles 2
 	bx r12
@@ -4287,21 +4287,21 @@ EA_004:	;@
 ;@----------------------------------------------------------------------------
 	ldr v30ofs,[v30ptr,#v30RegIX]
 	TestSegmentPrefix
-	ldreq v30csr,[v30ptr,#v30SRegDS]
+	ldreq v30csr,[v30ptr,#v30SRegDS0]
 	bx r12
 ;@----------------------------------------------------------------------------
 EA_005:	;@
 ;@----------------------------------------------------------------------------
 	ldr v30ofs,[v30ptr,#v30RegIY]
 	TestSegmentPrefix
-	ldreq v30csr,[v30ptr,#v30SRegDS]
+	ldreq v30csr,[v30ptr,#v30SRegDS0]
 	bx r12
 ;@----------------------------------------------------------------------------
 EA_006:	;@
 ;@----------------------------------------------------------------------------
 	getNextWordTo r0, r2
 	TestSegmentPrefix
-	ldreq v30csr,[v30ptr,#v30SRegDS]
+	ldreq v30csr,[v30ptr,#v30SRegDS0]
 	mov v30ofs,r0,lsl#16
 	bx r12
 ;@----------------------------------------------------------------------------
@@ -4309,7 +4309,7 @@ EA_007:	;@
 ;@----------------------------------------------------------------------------
 	ldr v30ofs,[v30ptr,#v30RegBW-2]
 	TestSegmentPrefix
-	ldreq v30csr,[v30ptr,#v30SRegDS]
+	ldreq v30csr,[v30ptr,#v30SRegDS0]
 	bx r12
 ;@----------------------------------------------------------------------------
 EA_100:	;@
@@ -4318,7 +4318,7 @@ EA_100:	;@
 	ldr v30ofs,[v30ptr,#v30RegBW-2]
 	ldr r2,[v30ptr,#v30RegIX]
 	TestSegmentPrefix
-	ldreq v30csr,[v30ptr,#v30SRegDS]
+	ldreq v30csr,[v30ptr,#v30SRegDS0]
 	add v30ofs,v30ofs,r0,lsl#16
 	add v30ofs,v30ofs,r2
 	eatCycles 2
@@ -4330,7 +4330,7 @@ EA_101:	;@
 	ldr v30ofs,[v30ptr,#v30RegBW-2]
 	ldr r2,[v30ptr,#v30RegIY]
 	TestSegmentPrefix
-	ldreq v30csr,[v30ptr,#v30SRegDS]
+	ldreq v30csr,[v30ptr,#v30SRegDS0]
 	add v30ofs,v30ofs,r0,lsl#16
 	add v30ofs,v30ofs,r2
 	eatCycles 2
@@ -4365,7 +4365,7 @@ EA_104:	;@
 	getNextSignedByte
 	ldr v30ofs,[v30ptr,#v30RegIX]
 	TestSegmentPrefix
-	ldreq v30csr,[v30ptr,#v30SRegDS]
+	ldreq v30csr,[v30ptr,#v30SRegDS0]
 	add v30ofs,v30ofs,r0,lsl#16
 	bx r12
 ;@----------------------------------------------------------------------------
@@ -4374,7 +4374,7 @@ EA_105:	;@
 	getNextSignedByte
 	ldr v30ofs,[v30ptr,#v30RegIY]
 	TestSegmentPrefix
-	ldreq v30csr,[v30ptr,#v30SRegDS]
+	ldreq v30csr,[v30ptr,#v30SRegDS0]
 	add v30ofs,v30ofs,r0,lsl#16
 	bx r12
 ;@----------------------------------------------------------------------------
@@ -4392,7 +4392,7 @@ EA_107:	;@
 	getNextSignedByte
 	ldr v30ofs,[v30ptr,#v30RegBW-2]
 	TestSegmentPrefix
-	ldreq v30csr,[v30ptr,#v30SRegDS]
+	ldreq v30csr,[v30ptr,#v30SRegDS0]
 	add v30ofs,v30ofs,r0,lsl#16
 	bx r12
 ;@----------------------------------------------------------------------------
@@ -4402,7 +4402,7 @@ EA_200:	;@
 	ldr v30ofs,[v30ptr,#v30RegBW-2]
 	ldr r2,[v30ptr,#v30RegIX]
 	TestSegmentPrefix
-	ldreq v30csr,[v30ptr,#v30SRegDS]
+	ldreq v30csr,[v30ptr,#v30SRegDS0]
 	add v30ofs,v30ofs,r0,lsl#16
 	add v30ofs,v30ofs,r2
 	eatCycles 2
@@ -4414,7 +4414,7 @@ EA_201:	;@
 	ldr v30ofs,[v30ptr,#v30RegBW-2]
 	ldr r2,[v30ptr,#v30RegIY]
 	TestSegmentPrefix
-	ldreq v30csr,[v30ptr,#v30SRegDS]
+	ldreq v30csr,[v30ptr,#v30SRegDS0]
 	add v30ofs,v30ofs,r0,lsl#16
 	add v30ofs,v30ofs,r2
 	eatCycles 2
@@ -4449,7 +4449,7 @@ EA_204:	;@
 	getNextWordTo r0, r2
 	ldr v30ofs,[v30ptr,#v30RegIX]
 	TestSegmentPrefix
-	ldreq v30csr,[v30ptr,#v30SRegDS]
+	ldreq v30csr,[v30ptr,#v30SRegDS0]
 	add v30ofs,v30ofs,r0,lsl#16
 	bx r12
 ;@----------------------------------------------------------------------------
@@ -4458,7 +4458,7 @@ EA_205:	;@
 	getNextWordTo r0, r2
 	ldr v30ofs,[v30ptr,#v30RegIY]
 	TestSegmentPrefix
-	ldreq v30csr,[v30ptr,#v30SRegDS]
+	ldreq v30csr,[v30ptr,#v30SRegDS0]
 	add v30ofs,v30ofs,r0,lsl#16
 	bx r12
 ;@----------------------------------------------------------------------------
@@ -4476,7 +4476,7 @@ EA_207:	;@
 	getNextWordTo r0, r2
 	ldr v30ofs,[v30ptr,#v30RegBW-2]
 	TestSegmentPrefix
-	ldreq v30csr,[v30ptr,#v30SRegDS]
+	ldreq v30csr,[v30ptr,#v30SRegDS0]
 	add v30ofs,v30ofs,r0,lsl#16
 	bx r12
 ;@----------------------------------------------------------------------------
@@ -4485,7 +4485,7 @@ EA_300:	;@
 	ldr v30ofs,[v30ptr,#v30RegBW-2]
 	ldr r0,[v30ptr,#v30RegAW-2]
 	TestSegmentPrefix
-	ldreq v30csr,[v30ptr,#v30SRegDS]
+	ldreq v30csr,[v30ptr,#v30SRegDS0]
 	add v30ofs,v30ofs,r0
 	bx r12
 ;@----------------------------------------------------------------------------
@@ -4494,7 +4494,7 @@ EA_301:	;@
 	ldr v30ofs,[v30ptr,#v30RegBW-2]
 	ldr r0,[v30ptr,#v30RegCW-2]
 	TestSegmentPrefix
-	ldreq v30csr,[v30ptr,#v30SRegDS]
+	ldreq v30csr,[v30ptr,#v30SRegDS0]
 	add v30ofs,v30ofs,r0
 	bx r12
 ;@----------------------------------------------------------------------------
@@ -4521,7 +4521,7 @@ EA_304:	;@
 	ldr v30ofs,[v30ptr,#v30RegIX]
 	ldr r0,[v30ptr,#v30RegSP]
 	TestSegmentPrefix
-	ldreq v30csr,[v30ptr,#v30SRegDS]
+	ldreq v30csr,[v30ptr,#v30SRegDS0]
 	add v30ofs,v30ofs,r0
 	bx r12
 ;@----------------------------------------------------------------------------
@@ -4530,7 +4530,7 @@ EA_305:	;@
 	ldr v30ofs,[v30ptr,#v30RegIY]
 	ldr r0,[v30ptr,#v30RegBP]
 	TestSegmentPrefix
-	ldreq v30csr,[v30ptr,#v30SRegDS]
+	ldreq v30csr,[v30ptr,#v30SRegDS0]
 	add v30ofs,v30ofs,r0
 	bx r12
 ;@----------------------------------------------------------------------------
@@ -4548,7 +4548,7 @@ EA_307:	;@
 	ldr v30ofs,[v30ptr,#v30RegBW-2]
 	ldr r0,[v30ptr,#v30RegIY]
 	TestSegmentPrefix
-	ldreq v30csr,[v30ptr,#v30SRegDS]
+	ldreq v30csr,[v30ptr,#v30SRegDS0]
 	add v30ofs,v30ofs,r0
 	bx r12
 
@@ -4569,7 +4569,7 @@ V30ReEncodePC:
 V30EncodePC:
 ;@----------------------------------------------------------------------------
 	stmfd sp!,{lr}
-	ldr r0,[v30ptr,#v30SRegCS]
+	ldr r0,[v30ptr,#v30SRegPS]
 	add r0,r0,v30pc,lsr#4
 	bl cpuReadMem20
 	sub r0,r1,v30pc,lsr#16
@@ -4600,7 +4600,7 @@ nec_interrupt:				;@ r0 = vector number
 	strb r4,[v30ptr,#v30IF]		;@ Clear IF
 	bic v30cyc,v30cyc,#HALT_FLAG | TRAP_FLAG
 
-	ldrh r1,[v30ptr,#v30SRegCS+2]
+	ldrh r1,[v30ptr,#v30SRegPS+2]
 	sub v30ofs,v30ofs,#0x20000
 	bl v30WriteSegOfsW
 	v30DecodeFastPCToReg r1
@@ -4611,7 +4611,7 @@ nec_interrupt:				;@ r0 = vector number
 	mov v30pc,r0,lsl#16
 	add r0,r4,#0x2000
 	bl cpuReadMem20W
-	strh r0,[v30ptr,#v30SRegCS+2]
+	strh r0,[v30ptr,#v30SRegPS+2]
 
 	v30EncodeFastPC
 	fetch 32
@@ -4776,7 +4776,7 @@ V30Reset:					;@ r0=v30ptr
 	stmfd sp!,{r4-r11,lr}
 	mov v30ptr,r0
 
-	;@ Clear CPU state, PC, ES, DS & SS are set to 0x0000,
+	;@ Clear CPU state, PC, DS1, DS0 & SS are set to 0x0000,
 	;@ AW, BW, CW, DW, SP, BP, IX & IY are undefined.
 	;@ CS is set to 0xFFFF
 	add r0,v30ptr,#v30I
@@ -4784,7 +4784,7 @@ V30Reset:					;@ r0=v30ptr
 	bl memclr_
 
 	ldr r0,=0xFFFF0000
-	str r0,[v30ptr,#v30SRegCS]
+	str r0,[v30ptr,#v30SRegPS]
 	mov r0,#v30PZST
 	strh r0,[v30ptr,#v30ParityVal]
 	mov r0,#1
@@ -4792,7 +4792,7 @@ V30Reset:					;@ r0=v30ptr
 
 	mov v30pc,#0
 	v30EncodeFastPC
-	str v30pc,[v30ptr,#v30IP]
+	str v30pc,[v30ptr,#v30PC]
 
 	ldmfd sp!,{r4-r11,lr}
 	bx lr
@@ -4810,9 +4810,9 @@ V30SaveState:				;@ In r0=destination, r1=v30ptr. Out r0=size.
 	bl memcpy
 
 	;@ Convert copied PC to not offseted.
-	ldr v30pc,[r4,#v30IP]				;@ Offseted v30pc
+	ldr v30pc,[r4,#v30PC]				;@ Offseted v30pc
 	v30DecodeFastPC
-	str v30pc,[r4,#v30IP]				;@ Normal v30pc
+	str v30pc,[r4,#v30PC]				;@ Normal v30pc
 
 	ldmfd sp!,{r4,v30pc,v30ptr,lr}
 	mov r0,#v30StateEnd-v30StateStart
@@ -4828,9 +4828,9 @@ V30LoadState:				;@ In r0=v30ptr, r1=source. Out r0=size.
 	mov r2,#v30StateEnd-v30StateStart
 	bl memcpy
 
-	ldr v30pc,[v30ptr,#v30IP]			;@ Normal v30pc
+	ldr v30pc,[v30ptr,#v30PC]			;@ Normal v30pc
 	v30EncodeFastPC
-	str v30pc,[v30ptr,#v30IP]			;@ Rewrite offseted v30pc
+	str v30pc,[v30ptr,#v30PC]			;@ Rewrite offseted v30pc
 
 	ldmfd sp!,{v30pc,v30ptr,lr}
 ;@----------------------------------------------------------------------------
@@ -4869,23 +4869,23 @@ V30OpTable:
 	.long i_add_r8b
 	.long i_add_r16w
 	.long i_add_ald8
-	.long i_add_axd16
-	.long i_push_es
-	.long i_pop_es
+	.long i_add_awd16
+	.long i_push_ds1
+	.long i_pop_ds1
 	.long i_or_br8
 	.long i_or_wr16
 	.long i_or_r8b
 	.long i_or_r16w
 	.long i_or_ald8
-	.long i_or_axd16
-	.long i_push_cs
+	.long i_or_awd16
+	.long i_push_ps
 	.long i_undefined
 	.long i_adc_br8
 	.long i_adc_wr16
 	.long i_adc_r8b
 	.long i_adc_r16w
 	.long i_adc_ald8
-	.long i_adc_axd16
+	.long i_adc_awd16
 	.long i_push_ss
 	.long i_pop_ss
 	.long i_sbb_br8
@@ -4893,31 +4893,31 @@ V30OpTable:
 	.long i_sbb_r8b
 	.long i_sbb_r16w
 	.long i_sbb_ald8
-	.long i_sbb_axd16
-	.long i_push_ds
-	.long i_pop_ds
+	.long i_sbb_awd16
+	.long i_push_ds0
+	.long i_pop_ds0
 	.long i_and_br8
 	.long i_and_wr16
 	.long i_and_r8b
 	.long i_and_r16w
 	.long i_and_ald8
-	.long i_and_axd16
-	.long i_es
+	.long i_and_awd16
+	.long i_ds1
 	.long i_daa
 	.long i_sub_br8
 	.long i_sub_wr16
 	.long i_sub_r8b
 	.long i_sub_r16w
 	.long i_sub_ald8
-	.long i_sub_axd16
-	.long i_cs
+	.long i_sub_awd16
+	.long i_ps
 	.long i_das
 	.long i_xor_br8
 	.long i_xor_wr16
 	.long i_xor_r8b
 	.long i_xor_r16w
 	.long i_xor_ald8
-	.long i_xor_axd16
+	.long i_xor_awd16
 	.long i_ss
 	.long i_aaa
 	.long i_cmp_br8
@@ -4925,41 +4925,41 @@ V30OpTable:
 	.long i_cmp_r8b
 	.long i_cmp_r16w
 	.long i_cmp_ald8
-	.long i_cmp_axd16
-	.long i_ds
+	.long i_cmp_awd16
+	.long i_ds0
 	.long i_aas
-	.long i_inc_ax
-	.long i_inc_cx
-	.long i_inc_dx
-	.long i_inc_bx
+	.long i_inc_aw
+	.long i_inc_cw
+	.long i_inc_dw
+	.long i_inc_bw
 	.long i_inc_sp
 	.long i_inc_bp
-	.long i_inc_si
-	.long i_inc_di
-	.long i_dec_ax
-	.long i_dec_cx
-	.long i_dec_dx
-	.long i_dec_bx
+	.long i_inc_ix
+	.long i_inc_iy
+	.long i_dec_aw
+	.long i_dec_cw
+	.long i_dec_dw
+	.long i_dec_bw
 	.long i_dec_sp
 	.long i_dec_bp
-	.long i_dec_si
-	.long i_dec_di
-	.long i_push_ax
-	.long i_push_cx
-	.long i_push_dx
-	.long i_push_bx
+	.long i_dec_ix
+	.long i_dec_iy
+	.long i_push_aw
+	.long i_push_cw
+	.long i_push_dw
+	.long i_push_bw
 	.long i_push_sp
 	.long i_push_bp
-	.long i_push_si
-	.long i_push_di
-	.long i_pop_ax
-	.long i_pop_cx
-	.long i_pop_dx
-	.long i_pop_bx
+	.long i_push_ix
+	.long i_push_iy
+	.long i_pop_aw
+	.long i_pop_cw
+	.long i_pop_dw
+	.long i_pop_bw
 	.long i_pop_sp
 	.long i_pop_bp
-	.long i_pop_si
-	.long i_pop_di
+	.long i_pop_ix
+	.long i_pop_iy
 	.long i_pusha
 	.long i_popa
 	.long i_chkind
@@ -5009,13 +5009,13 @@ V30OpTable:
 	.long i_mov_sregw
 	.long i_popw
 	.long i_nop
-	.long i_xchg_axcx
-	.long i_xchg_axdx
-	.long i_xchg_axbx
-	.long i_xchg_axsp
-	.long i_xchg_axbp
-	.long i_xchg_axsi
-	.long i_xchg_axdi
+	.long i_xchg_awcw
+	.long i_xchg_awdw
+	.long i_xchg_awbw
+	.long i_xchg_awsp
+	.long i_xchg_awbp
+	.long i_xchg_awix
+	.long i_xchg_awiy
 	.long i_cbw
 	.long i_cwd
 	.long i_call_far
@@ -5025,15 +5025,15 @@ V30OpTable:
 	.long i_sahf
 	.long i_lahf
 	.long i_mov_aldisp
-	.long i_mov_axdisp
+	.long i_mov_awdisp
 	.long i_mov_dispal
-	.long i_mov_dispax
+	.long i_mov_dispaw
 	.long i_movsb
 	.long i_movsw
 	.long i_cmpsb
 	.long i_cmpsw
 	.long i_test_ald8
-	.long i_test_axd16
+	.long i_test_awd16
 	.long i_stosb
 	.long i_stosw
 	.long i_lodsb
@@ -5048,14 +5048,14 @@ V30OpTable:
 	.long i_mov_chd8
 	.long i_mov_dhd8
 	.long i_mov_bhd8
-	.long i_mov_axd16
-	.long i_mov_cxd16
-	.long i_mov_dxd16
-	.long i_mov_bxd16
+	.long i_mov_awd16
+	.long i_mov_cwd16
+	.long i_mov_dwd16
+	.long i_mov_bwd16
 	.long i_mov_spd16
 	.long i_mov_bpd16
-	.long i_mov_sid16
-	.long i_mov_did16
+	.long i_mov_ixd16
+	.long i_mov_iyd16
 	.long i_rotshft_bd8
 	.long i_rotshft_wd8
 	.long i_ret_d16
@@ -5091,19 +5091,19 @@ V30OpTable:
 	.long i_loopne
 	.long i_loope
 	.long i_loop
-	.long i_jcxz
+	.long i_bcwz
 	.long i_inal
-	.long i_inax
+	.long i_inaw
 	.long i_outal
-	.long i_outax
+	.long i_outaw
 	.long i_call_d16
 	.long i_jmp_d16
 	.long i_jmp_far
 	.long i_br_d8
-	.long i_inaldx
-	.long i_inaxdx
-	.long i_outdxal
-	.long i_outdxax
+	.long i_inaldw
+	.long i_inawdw
+	.long i_outdwal
+	.long i_outdwaw
 	.long i_lock
 	.long i_brks	// 0xF1
 	.long i_repne
