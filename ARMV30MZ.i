@@ -29,7 +29,7 @@
 ;@----------------------------------------------------------------------------
 	.equ IRQ_PIN, 1			;@ Which value is set when INT pin is set.
 
-	.struct -(37*4)			;@ Changes section so make sure it is set before real code.
+	.struct -(37*4)
 v30I:
 v30Regs2:
 					.short 0
@@ -102,5 +102,5 @@ v30ModRmRm:
 v30ModRmReg:		.space 256*4
 v30SegTbl:			.space 256
 v30Size:
-
+	.previous
 ;@----------------------------------------------------------------------------
