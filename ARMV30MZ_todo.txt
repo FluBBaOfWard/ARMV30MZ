@@ -1,7 +1,8 @@
 ARMV30MZ To do
 --------------
 
-	Add support for TRAP/BRK exception (int 1, prio 4).
+	Add support for different mulu flags for ASWAN & SPHINX.
+	Test 16x16 mul & 32/16 div.
 	Make all rep instructions able to recognize interrupts.
 	Add fetchforce for ops setting SS (POP SS, MOV SREGW).
 	Segment wrapping eats extra cycles? At least for LDS.

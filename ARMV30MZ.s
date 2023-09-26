@@ -1291,13 +1291,13 @@ _69:	;@ MUL/IMUL D16
 
 	getNextWordto r1, r2
 
-	mov v30f,#PSR_Z						;@ Set Z and clear others.
-	strb v30f,[v30ptr,#v30ParityVal]	;@ Clear parity
 	mul r2,r0,r1
-	movs r1,r2,asr#15
-	mvnsne r1,r1
-	orrne v30f,v30f,#PSR_C+PSR_V	;@ Set Carry & Overflow.
+	movs v30f,r2,asr#15
+	mvnsne v30f,v30f
+	movne v30f,#PSR_C+PSR_V				;@ Set Carry & Overflow.
+	orr v30f,v30f,#PSR_Z				;@ Set Z.
 	strb v30f,[v30ptr,#v30MulOverflow]
+	strb v30f,[v30ptr,#v30ParityVal]	;@ Clear parity
 
 	strh r2,[r4,#v30Regs]
 	fetch 3
@@ -1323,13 +1323,13 @@ _6B:	;@ MUL/IMUL D8
 
 	getNextSignedByteTo r1
 
-	mov v30f,#PSR_Z					;@ Set Z and clear others.
-	strb v30f,[v30ptr,#v30ParityVal]	;@ Clear parity
 	mul r2,r0,r1
-	movs r1,r2,asr#15
-	mvnsne r1,r1
-	orrne v30f,v30f,#PSR_C+PSR_V	;@ Set Carry & Overflow.
+	movs v30f,r2,asr#15
+	mvnsne v30f,v30f
+	movne v30f,#PSR_C+PSR_V				;@ Set Carry & Overflow.
+	orr v30f,v30f,#PSR_Z				;@ Set Z.
 	strb v30f,[v30ptr,#v30MulOverflow]
+	strb v30f,[v30ptr,#v30ParityVal]	;@ Clear parity
 
 	strh r2,[r4,#v30Regs]
 	fetch 3
@@ -3745,28 +3745,39 @@ negF6EA:
 	fetch 2
 ;@----------------------------------------------------------------------------
 muluF6:			;@ MULU/MUL
-	mov v30f,#PSR_Z						;@ Set Z and clear others.
-	strb v30f,[v30ptr,#v30ParityVal]	;@ Clear parity
 	ldrb r1,[v30ptr,#v30RegAL]
 	mul r2,r0,r1
 	strh r2,[v30ptr,#v30RegAW]
-	movs r2,r2,lsr#8
-	orrne v30f,v30f,#PSR_C+PSR_V
+	movs v30f,r2,lsr#8
+	movne v30f,#PSR_C+PSR_V
+	orr v30f,v30f,#PSR_Z				;@ Set Z.
 	strb v30f,[v30ptr,#v30MulOverflow]
+	strb v30f,[v30ptr,#v30ParityVal]	;@ Clear parity
+	fetch 3
+;@----------------------------------------------------------------------------
+muluF6Aswan:	;@ MULU/MUL
+	ldrb r1,[v30ptr,#v30RegAL]
+	mul r2,r0,r1
+	strh r2,[v30ptr,#v30RegAW]
+	movs v30f,r2,lsr#8
+	movne v30f,#PSR_C+PSR_V
+	orr r0,v30f,#PSR_Z				;@ Set Z, but not for flags.
+	strb r0,[v30ptr,#v30MulOverflow]
+	strb r0,[v30ptr,#v30ParityVal]	;@ Clear parity
 	fetch 3
 ;@----------------------------------------------------------------------------
 mulF6:			;@ MUL/IMUL
-	mov v30f,#PSR_Z						;@ Set Z and clear others.
-	strb v30f,[v30ptr,#v30ParityVal]	;@ Clear parity
 	ldrsb r1,[v30ptr,#v30RegAL]
 	mov r0,r0,lsl#24
 	mov r0,r0,asr#24
 	mul r2,r0,r1
 	strh r2,[v30ptr,#v30RegAW]
-	movs r1,r2,asr#7
-	mvnsne r1,r1
-	orrne v30f,v30f,#PSR_C+PSR_V
+	movs v30f,r2,asr#7
+	mvnsne v30f,v30f
+	movne v30f,#PSR_C+PSR_V
+	orr v30f,v30f,#PSR_Z				;@ Set Z.
 	strb v30f,[v30ptr,#v30MulOverflow]
+	strb v30f,[v30ptr,#v30ParityVal]	;@ Clear parity
 	fetch 3
 ;@----------------------------------------------------------------------------
 divubF6:		;@ DIVU/DIV
@@ -3888,20 +3899,30 @@ negF7EA:
 	fetch 2
 ;@----------------------------------------------------------------------------
 muluF7:			;@ MULU/MUL
-	mov v30f,#PSR_Z						;@ Set Z and clear others.
-	strb v30f,[v30ptr,#v30ParityVal]	;@ Clear parity
 	ldrh r1,[v30ptr,#v30RegAW]
 	mul r2,r0,r1
 	strh r2,[v30ptr,#v30RegAW]
-	movs r2,r2,lsr#16
-	strh r2,[v30ptr,#v30RegDW]
-	orrne v30f,v30f,#PSR_C+PSR_V		;@ Set Carry & Overflow.
+	movs v30f,v30f,lsr#16
+	strh v30f,[v30ptr,#v30RegDW]
+	movne v30f,#PSR_C+PSR_V				;@ Set Carry & Overflow.
+	orr v30f,v30f,#PSR_Z				;@ Set Z.
 	strb v30f,[v30ptr,#v30MulOverflow]
+	strb v30f,[v30ptr,#v30ParityVal]	;@ Clear parity
+	fetch 3
+;@----------------------------------------------------------------------------
+muluF7Aswan:	;@ MULU/MUL
+	ldrh r1,[v30ptr,#v30RegAW]
+	mul r2,r0,r1
+	strh r2,[v30ptr,#v30RegAW]
+	movs v30f,r2,lsr#16
+	strh v30f,[v30ptr,#v30RegDW]
+	movne v30f,#PSR_C+PSR_V				;@ Set Carry & Overflow.
+	orr r0,v30f,#PSR_Z					;@ Set Z, but not for flags.
+	strb r0,[v30ptr,#v30MulOverflow]
+	strb r0,[v30ptr,#v30ParityVal]		;@ Clear parity
 	fetch 3
 ;@----------------------------------------------------------------------------
 mulF7:			;@ MUL/IMUL
-	mov v30f,#PSR_Z						;@ Set Z and clear others.
-	strb v30f,[v30ptr,#v30ParityVal]	;@ Clear parity
 	ldrsh r1,[v30ptr,#v30RegAW]
 	mov r0,r0,lsl#16
 	mov r0,r0,asr#16
@@ -3909,10 +3930,12 @@ mulF7:			;@ MUL/IMUL
 	strh r2,[v30ptr,#v30RegAW]
 	mov r1,r2,lsr#16
 	strh r1,[v30ptr,#v30RegDW]
-	movs r1,r2,asr#15
-	mvnsne r1,r1
-	orrne v30f,v30f,#PSR_C+PSR_V		;@ Set Carry & Overflow.
+	movs v30f,r2,asr#15
+	mvnsne v30f,v30f
+	movne v30f,#PSR_C+PSR_V				;@ Set Carry & Overflow.
+	orr v30f,v30f,#PSR_Z				;@ Set Z.
 	strb v30f,[v30ptr,#v30MulOverflow]
+	strb v30f,[v30ptr,#v30ParityVal]	;@ Clear parity
 	fetch 3
 ;@----------------------------------------------------------------------------
 divuwF7:		;@ DIVU/DIV

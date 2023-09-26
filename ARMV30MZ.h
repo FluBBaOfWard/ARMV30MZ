@@ -46,7 +46,7 @@ typedef struct {
 
 extern ARMV30Core V30OpTable;
 
-void V30Reset(ARMV30Core *cpu);
+void V30Reset(ARMV30Core *cpu, int type);
 
 /**
  * Saves the state of the cpu to the destination.
