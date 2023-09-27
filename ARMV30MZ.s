@@ -1266,7 +1266,7 @@ _62:	;@ CHKIND/BOUND
 	cmple r4,r0,lsl#16
 	subgt v30cyc,v30cyc,#21*CYCLE
 	movgt r0,#5
-	bgt nec_interrupt
+	bgt V30TakeIRQ
 	fetch 14
 
 ;@----------------------------------------------------------------------------
@@ -1860,7 +1860,7 @@ _8E:	;@ MOV SREGW
 	strh r0,[r1,#v30SRegs+2]
 //	orr v30cyc,v30cyc,#LOCK_PREFIX
 	ClearSegmentPrefix
-	cmp r4,#0x08			;@ CS?
+	cmp r4,#0x08			;@ PS?
 	bleq V30ReEncodePC
 	fetch 2
 ;@----------------------------------------------------------------------------
@@ -3146,14 +3146,14 @@ _CC:	;@ BRK3/INT3
 ;@----------------------------------------------------------------------------
 	eatCycles 9
 	mov r0,#3
-	b nec_interrupt
+	b V30TakeIRQ
 ;@----------------------------------------------------------------------------
 i_int:
 _CD:	;@ BRK/INT
 ;@----------------------------------------------------------------------------
 	eatCycles 10
 	getNextByte
-	b nec_interrupt
+	b V30TakeIRQ
 ;@----------------------------------------------------------------------------
 i_into:
 _CE:	;@ BRKV				;@ Break if Overflow
@@ -3161,7 +3161,7 @@ _CE:	;@ BRKV				;@ Break if Overflow
 	tst v30f,#PSR_V
 	subne v30cyc,v30cyc,#13*CYCLE
 	movne r0,#4
-	bne nec_interrupt
+	bne V30TakeIRQ
 	fetch 6
 ;@----------------------------------------------------------------------------
 i_iret:
@@ -3694,6 +3694,7 @@ _F6:	;@ PRE F6
 
 	ldr pc,[pc,r5,lsr#1]
 	nop
+jmpTblF6:
 	.long testF6, undefF6, notF6EA,  negF6EA,  muluF6, mulF6, divubF6, divbF6
 	.long testF6, undefF6, notF6EA,  negF6EA,  muluF6, mulF6, divubF6, divbF6
 	.long testF6, undefF6, notF6EA,  negF6EA,  muluF6, mulF6, divubF6, divbF6
@@ -3849,6 +3850,7 @@ _F7:	;@ PRE F7
 
 	ldr pc,[pc,r5,lsr#1]
 	nop
+jmpTblF7:
 	.long testF7, undefF7, notF7EA,  negF7EA,  muluF7, mulF7, divuwF7, divwF7
 	.long testF7, undefF7, notF7EA,  negF7EA,  muluF7, mulF7, divuwF7, divwF7
 	.long testF7, undefF7, notF7EA,  negF7EA,  muluF7, mulF7, divuwF7, divwF7
@@ -4615,8 +4617,7 @@ V30FetchIRQ:
 	mov lr,pc
 	ldr pc,[v30ptr,#v30IrqVectorFunc]
 ;@----------------------------------------------------------------------------
-V30TakeIRQ:
-nec_interrupt:				;@ r0 = vector number
+V30TakeIRQ:					;@ r0 = vector number
 ;@----------------------------------------------------------------------------
 	mov r4,r0,lsl#12+2
 	bl pushFlags				;@ This should setup v30ofs & v30csr for stack
@@ -4704,15 +4705,15 @@ doV30Trap:
 ;@----------------------------------------------------------------------------
 	eatCycles 1
 	mov r0,#1
-	b nec_interrupt
+	b V30TakeIRQ
 ;@----------------------------------------------------------------------------
 doV30NMI:
 ;@----------------------------------------------------------------------------
 	eatCycles 1
 	mov r0,#0
 	strb r0,[v30ptr,#v30NmiPending]
-	mov r0,#2
-	b nec_interrupt
+	mov r0,#NEC_NMI_VECTOR
+	b V30TakeIRQ
 ;@----------------------------------------------------------------------------
 divideError:
 ;@----------------------------------------------------------------------------
@@ -4724,7 +4725,7 @@ divideError:
 
 	mov r11,r11					;@ NoCash breakpoint
 	mov r0,#0					;@ 0 = division error
-	b nec_interrupt
+	b V30TakeIRQ
 
 ;@----------------------------------------------------------------------------
 logUndefinedOpcode:
@@ -4793,10 +4794,10 @@ regConv2Loop:
 regConvert:
 	.long v30RegAL,v30RegCL,v30RegDL,v30RegBL,v30RegAH,v30RegCH,v30RegDH,v30RegBH
 ;@----------------------------------------------------------------------------
-V30Reset:					;@ r0=v30ptr
+V30Reset:					;@ r0=v30ptr, r1=type (0=ASWAN)
 ;@ Called by cpuReset
 ;@----------------------------------------------------------------------------
-	stmfd sp!,{r4-r11,lr}
+	stmfd sp!,{r1,r4-r11,lr}
 	mov v30ptr,r0
 
 	;@ Clear CPU state, PC, DS1, DS0 & SS are set to 0x0000,
@@ -4816,6 +4817,23 @@ V30Reset:					;@ r0=v30ptr
 	mov v30pc,#0
 	v30EncodeFastPC
 	str v30pc,[v30ptr,#v30PC]
+
+	ldmfd sp!,{r1}
+	cmp r1,#0			;@ Aswan?
+	ldr r0,=jmpTblF6
+	ldreq r1,=muluF6Aswan
+	ldrne r1,=muluF6
+	str r1,[r0,#4*4]
+	str r1,[r0,#12*4]
+	str r1,[r0,#20*4]
+	str r1,[r0,#28*4]
+	ldr r0,=jmpTblF7
+	ldreq r1,=muluF7Aswan
+	ldrne r1,=muluF7
+	str r1,[r0,#4*4]
+	str r1,[r0,#12*4]
+	str r1,[r0,#20*4]
+	str r1,[r0,#28*4]
 
 	ldmfd sp!,{r4-r11,lr}
 	bx lr

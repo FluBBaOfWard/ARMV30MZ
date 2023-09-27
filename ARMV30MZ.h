@@ -13,8 +13,6 @@
 extern "C" {
 #endif
 
-#define NEC_NMI_INT_VECTOR 2
-
 typedef struct {
 	u32 v30Regs[8];
 	u32 v30SRegs[4];
@@ -46,6 +44,11 @@ typedef struct {
 
 extern ARMV30Core V30OpTable;
 
+/**
+ * Reset the cpu core.
+ * @param  *cpu: The ARMV30Core cpu to reset.
+ * @param  type: ASWAN = 0, SPHINX(2) != 0.
+ */
 void V30Reset(ARMV30Core *cpu, int type);
 
 /**

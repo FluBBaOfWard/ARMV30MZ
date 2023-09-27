@@ -2,8 +2,8 @@ ARMV30MZ revision history
 -=-=-=-=-=-=-=-=-=-=-=-=-
 
 
-V0.8.8 - 2023-09-26 (FluBBa)
-	Fixing unsigned mul on ASWAN.
+V0.8.8 - 2023-09-27 (FluBBa)
+	Fixed unsigned mul on ASWAN.
 
 V0.8.7 - 2023-09-20 (FluBBa)
 	Added support for Break/Trap.

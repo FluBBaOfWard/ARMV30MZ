@@ -6,6 +6,8 @@
 //  Copyright © 2021-2023 Fredrik Ahlström. All rights reserved.
 //
 
+#define NEC_NMI_VECTOR 2
+
 				;@ r0,r1,r2=temp regs.
 	v30ofs		.req r6			;@ Effective Offset 
 	v30csr		.req r7			;@ Current Segment Register
