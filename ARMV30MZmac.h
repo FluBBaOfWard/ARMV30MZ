@@ -73,6 +73,16 @@
 	getNextWordTo r0, r1
 	.endm
 
+	.macro getNextSignedWordTo dst use
+	ldrb \dst,[v30pc],#1
+	ldrsb \use,[v30pc],#1
+	orr \dst,\dst,\use,lsl#8
+	.endm
+
+	.macro getNextSignedWord
+	getNextSignedWordTo r0, r1
+	.endm
+
 	.macro fetch count
 	subs v30cyc,v30cyc,#(\count)*CYCLE
 	ldrbgt r0,[v30pc],#1

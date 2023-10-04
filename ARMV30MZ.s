@@ -1286,14 +1286,16 @@ _69:	;@ MUL/IMUL D16
 	cmp r0,#0xC0
 	andpl r0,r0,#7
 	add v30ofs,v30ptr,r0,lsl#2
-	ldrhpl r0,[v30ofs,#v30Regs]
+	ldrshpl r0,[v30ofs,#v30Regs]
 	blmi v30ReadEAW1
+	mov r0,r0,lsl#16
+	mov r0,r0,asr#16
 
-	getNextWordto r1, r2
+	getNextSignedWordto r1, r2
 
 	mul r2,r0,r1
-	movs v30f,r2,asr#15
-	mvnsne v30f,v30f
+	mov r1,r2,asr#16
+	eors v30f,r1,r2,asr#15
 	movne v30f,#PSR_C+PSR_V				;@ Set Carry & Overflow.
 	orr v30f,v30f,#PSR_Z				;@ Set Z.
 	strb v30f,[v30ptr,#v30MulOverflow]
@@ -1318,14 +1320,16 @@ _6B:	;@ MUL/IMUL D8
 	cmp r0,#0xC0
 	andpl r0,r0,#7
 	add v30ofs,v30ptr,r0,lsl#2
-	ldrhpl r0,[v30ofs,#v30Regs]
+	ldrshpl r0,[v30ofs,#v30Regs]
 	blmi v30ReadEAW1
+	mov r0,r0,lsl#16
+	mov r0,r0,asr#16
 
 	getNextSignedByteTo r1
 
 	mul r2,r0,r1
-	movs v30f,r2,asr#15
-	mvnsne v30f,v30f
+	mov r1,r2,asr#16
+	eors v30f,r1,r2,asr#15
 	movne v30f,#PSR_C+PSR_V				;@ Set Carry & Overflow.
 	orr v30f,v30f,#PSR_Z				;@ Set Z.
 	strb v30f,[v30ptr,#v30MulOverflow]
@@ -3773,8 +3777,8 @@ mulF6:			;@ MUL/IMUL
 	mov r0,r0,asr#24
 	mul r2,r0,r1
 	strh r2,[v30ptr,#v30RegAW]
-	movs v30f,r2,asr#7
-	mvnsne v30f,v30f
+	mov r1,r2,asr#8
+	eors v30f,r1,r2,asr#7
 	movne v30f,#PSR_C+PSR_V
 	orr v30f,v30f,#PSR_Z				;@ Set Z.
 	strb v30f,[v30ptr,#v30MulOverflow]
@@ -3904,7 +3908,7 @@ muluF7:			;@ MULU/MUL
 	ldrh r1,[v30ptr,#v30RegAW]
 	mul r2,r0,r1
 	strh r2,[v30ptr,#v30RegAW]
-	movs v30f,v30f,lsr#16
+	movs v30f,r2,lsr#16
 	strh v30f,[v30ptr,#v30RegDW]
 	movne v30f,#PSR_C+PSR_V				;@ Set Carry & Overflow.
 	orr v30f,v30f,#PSR_Z				;@ Set Z.
@@ -3930,10 +3934,9 @@ mulF7:			;@ MUL/IMUL
 	mov r0,r0,asr#16
 	mul r2,r0,r1
 	strh r2,[v30ptr,#v30RegAW]
-	mov r1,r2,lsr#16
+	mov r1,r2,asr#16
 	strh r1,[v30ptr,#v30RegDW]
-	movs v30f,r2,asr#15
-	mvnsne v30f,v30f
+	eors v30f,r1,r2,asr#15
 	movne v30f,#PSR_C+PSR_V				;@ Set Carry & Overflow.
 	orr v30f,v30f,#PSR_Z				;@ Set Z.
 	strb v30f,[v30ptr,#v30MulOverflow]
