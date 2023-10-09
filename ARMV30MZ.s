@@ -3944,21 +3944,33 @@ mulF7:			;@ MUL/IMUL
 	fetch 3
 ;@----------------------------------------------------------------------------
 divuwF7:		;@ DIVU/DIV
-	ldrb v30f,[v30ptr,#v30MulOverflow]	;@ C & V from last mul, Z always set.
-	strb v30f,[v30ptr,#v30ParityVal]	;@ Clear parity
-	mov r1,r0,lsl#16
+	mov r1,#1
+	strb r1,[v30ptr,#v30ParityVal]		;@ Clear parity
+	mov v30f,#0							;@ Clear flags.
+	mov r1,r0,lsl#15
 	ldrh r0,[v30ptr,#v30RegAW]
 	ldrh r2,[v30ptr,#v30RegDW]
 	orr r0,r0,r2,lsl#16
-	cmp r0,r1
+	cmp r0,r1,lsl#1
 	bcs divuwF7Error
-	rsb r1,r1,#1
 
-	bl division16
+	rsb r1,r1,#0
+	adds r0,r1,r0
+	subcc r0,r0,r1
 
-	mov r1,r0,lsr#16
+	.rept 15
+	adcs r0,r1,r0,lsl#1
+	subcc r0,r0,r1
+	.endr
+	adc r0,r0,r0
+
+	movs r1,r0,lsr#16
 	strh r0,[v30ptr,#v30RegAW]
 	strh r1,[v30ptr,#v30RegDW]
+	andeq r0,r0,#1
+	cmpeq r0,#1
+	moveq v30f,#PSR_Z					;@ Set Z.
+	
 	fetch 23
 divuwF7Error:
 	eatCycles 16
