@@ -3953,16 +3953,9 @@ divuwF7:		;@ DIVU/DIV
 	orr r0,r0,r2,lsl#16
 	cmp r0,r1,lsl#1
 	bcs divuwF7Error
-
 	rsb r1,r1,#0
-	adds r0,r1,r0
-	subcc r0,r0,r1
 
-	.rept 15
-	adcs r0,r1,r0,lsl#1
-	subcc r0,r0,r1
-	.endr
-	adc r0,r0,r0
+	bl division16
 
 	movs r1,r0,lsr#16
 	strh r0,[v30ptr,#v30RegAW]
@@ -3988,7 +3981,7 @@ divwF7:			;@ DIV/IDIV
 	rsbmi r0,r0,#0
 	cmn r0,r1,asr#1
 	bcs divwF7Error2
-	add r1,r1,#1
+//	add r1,r1,#1
 
 	bl division16
 
@@ -4269,11 +4262,18 @@ pushFF:
 ;@----------------------------------------------------------------------------
 division16:
 ;@----------------------------------------------------------------------------
-	.rept 8
-	adds r0,r1,r0,lsl#1
+	adds r0,r1,r0
+	subcc r0,r0,r1
+
+	.rept 15
+	adcs r0,r1,r0,lsl#1
 	subcc r0,r0,r1
 	.endr
+	adc r0,r0,r0
+	bx lr
+;@----------------------------------------------------------------------------
 division8:
+;@----------------------------------------------------------------------------
 	.rept 8
 	adds r0,r1,r0,lsl#1
 	subcc r0,r0,r1
