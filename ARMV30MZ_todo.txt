@@ -1,7 +1,6 @@
 ARMV30MZ To do
 --------------
 
-	Fix 32/16 div.
 	Figure out how Zero flag is set during division exception.
 	Move REPE/REPNE (0xF2/0xF3) logic to normal instructions and test flags there.
 	Make all rep instructions able to recognize interrupts.

@@ -3944,9 +3944,8 @@ mulF7:			;@ MUL/IMUL
 	fetch 3
 ;@----------------------------------------------------------------------------
 divuwF7:		;@ DIVU/DIV
-	mov r1,#1
-	strb r1,[v30ptr,#v30ParityVal]		;@ Clear parity
-	mov v30f,#0							;@ Clear flags.
+	mov v30f,#PSR_Z						;@ Set Z.
+	strb v30f,[v30ptr,#v30ParityVal]	;@ Clear parity
 	mov r1,r0,lsl#15
 	ldrh r0,[v30ptr,#v30RegAW]
 	ldrh r2,[v30ptr,#v30RegDW]
@@ -3962,14 +3961,17 @@ divuwF7:		;@ DIVU/DIV
 	strh r1,[v30ptr,#v30RegDW]
 	andeq r0,r0,#1
 	cmpeq r0,#1
-	moveq v30f,#PSR_Z					;@ Set Z.
+	movne v30f,#0						;@ Clear flags.
 	
 	fetch 23
 divuwF7Error:
+	mov v30f,#0							;@ Clear flags.
 	eatCycles 16
 	b divideError
 ;@----------------------------------------------------------------------------
 divwF7:			;@ DIV/IDIV
+	mov v30f,#PSR_Z						;@ Set Z.
+	strb v30f,[v30ptr,#v30ParityVal]	;@ Clear parity
 	movs r1,r0,lsl#16
 	ldrh r0,[v30ptr,#v30RegAW]
 	ldrh r2,[v30ptr,#v30RegDW]
@@ -3981,7 +3983,7 @@ divwF7:			;@ DIV/IDIV
 	rsbmi r0,r0,#0
 	cmn r0,r1,asr#1
 	bcs divwF7Error2
-//	add r1,r1,#1
+	mov r1,r1,asr#1
 
 	bl division16
 
@@ -3990,20 +3992,19 @@ divwF7:			;@ DIV/IDIV
 	rsbcs r1,r1,#0
 	rsbmi r0,r0,#0
 1:
-	movs v30f,r0,lsl#16					;@ Test S, Z.
-	movmi v30f,#PSR_S
-	moveq v30f,#PSR_Z
 	strh r0,[v30ptr,#v30RegAW]
 	strh r1,[v30ptr,#v30RegDW]
-	strb r0,[v30ptr,#v30ParityVal]		;@ Set parity
+	movs r1,r1,lsl#16
+	andeq r0,r0,#1
+	cmpeq r0,#1
+	movne v30f,#0						;@ Clear flags.
 	fetch 24
 divwF7Error:
 	cmp r0,#0x80000000
-	moveq r0,#0x0081
+	ldreq r0,=0x8001
 	beq 1b
 divwF7Error2:
-	ldrb v30f,[v30ptr,#v30MulOverflow]	;@ C & V from last mul, Z always set.
-	strb v30f,[v30ptr,#v30ParityVal]	;@ Clear parity
+	mov v30f,#0							;@ Clear flags.
 	eatCycles 19
 	b divideError
 ;@----------------------------------------------------------------------------
