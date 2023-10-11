@@ -3257,11 +3257,11 @@ _D4:	;@ CVTBD/AAM	;@ Convert Binary to Decimal / Adjust After Multiply
 	moveq v30f,#PSR_Z
 	fetch 16
 d4DivideError:
-	eatCycles 16
 	ldrb v30f,[v30ptr,#v30MulOverflow]	;@ C & V from last mul, Z always set.
 	strb v30f,[v30ptr,#v30ParityVal]	;@ Clear parity
 	tst r0,#0xC0
 	bicne v30f,v30f,#PSR_Z
+	eatCycles 16
 	b divideError
 ;@----------------------------------------------------------------------------
 i_aad:
@@ -3810,12 +3810,12 @@ divbF6:			;@ DIV/IDIV
 	ldr r0,[v30ptr,#v30RegAW-2]
 	beq divbF6Error
 	eor r3,r1,r0,asr#16
-	rsbpl r1,r1,#0
+	rsbmi r1,r1,#0
 	cmp r0,#0
 	rsbmi r0,r0,#0
-	cmn r0,r1,asr#1
+	cmp r0,r1,lsr#1
 	bcs divbF6Error2
-	add r1,r1,#1
+	rsb r1,r1,#1
 
 	bl division8
 
