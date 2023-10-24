@@ -2,7 +2,7 @@ ARMV30MZ revision history
 -=-=-=-=-=-=-=-=-=-=-=-=-
 
 
-V0.8.8 - 2023-10-11 (FluBBa)
+V0.8.8 - 2023-10-24 (FluBBa)
 	Fixed unsigned mul on ASWAN.
 	Fixed immediate mul.
 	Fixed 32/16 division.

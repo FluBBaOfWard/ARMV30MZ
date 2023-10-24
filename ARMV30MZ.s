@@ -4007,6 +4007,7 @@ divwF7Error2:
 	mov v30f,#0							;@ Clear flags.
 	eatCycles 19
 	b divideError
+	.pool
 ;@----------------------------------------------------------------------------
 i_clc:
 _F8:	;@ CLR1 CY/CLC		;@ Clear Carry.
