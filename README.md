@@ -1,5 +1,8 @@
-# ARMV30MZ V0.8.8
+# ARMV30MZ V0.8.9
+
 NEC V30MZ emulator for ARM 32.
+
+## About
 
 All opcodes should behave pretty much like the real deal in a WonderSwan.
 All flags should be emulated correctly except when a division exception occurs,
@@ -9,3 +12,16 @@ It only handles interrupts during REP instructions for MOVMW/MOVSW & STMW/STOSW,
 
 This is a version with insecure handling of PC.
 This version requires asm hooks for memory/io handling.
+
+## Projects that use this cpu core
+
+* <https://github.com/FluBBaOfWard/NitroSwan>
+* <https://github.com/FluBBaOfWard/SwanGBA>
+
+## Credits
+
+Fredrik Ahlström
+
+X/Twitter @TheRealFluBBa
+
+<https://www.github.com/FluBBaOfWard>

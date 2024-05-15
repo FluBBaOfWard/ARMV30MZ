@@ -3,7 +3,7 @@
 //  V30MZ cpu emulator for arm32.
 //
 //  Created by Fredrik Ahlström on 2021-10-19.
-//  Copyright © 2021-2023 Fredrik Ahlström. All rights reserved.
+//  Copyright © 2021-2024 Fredrik Ahlström. All rights reserved.
 //
 
 #ifndef ARMV30MZ_HEADER
@@ -14,32 +14,32 @@ extern "C" {
 #endif
 
 typedef struct {
-	u32 v30Regs[8];
-	u32 v30SRegs[4];
-	u32 v30PrefixBase;
-	u32 v30Flags;
-	u32 v30PC;
-	u32 v30Cycles;
-	u8 v30IrqPin;
-	u8 v30IF;
-	u8 v30Empty;
-	u8 v30NmiPending;
-	u16 v30ParityVal;
-	u8 v30NmiPin;
-	u8 v30DF;
-	u8 v30MulOverflow;
+	u32 regs[8];
+	u32 sRegs[4];
+	u32 prefixBase;
+	u32 flags;
+	u8 *pc;
+	u32 cycles;
+	u8 irqPin;
+	u8 iFlag;
+	u8 empty;
+	u8 nmiPending;
+	u16 parityVal;
+	u8 nmiPin;
+	u8 df;
+	u8 mulOverflow;
 	u8 dummy0[3];
 
-	u32 v30LastBank;
-	void *v30IrqVectorFunc;
+	u8 *lastBank;
+	u8 (*irqVectorFunc)(void);
 
-	u32 v30MemTbl[16];
+	u8 *memTbl[16];
 
-	u32 v30Opz[256];
-	u8 v30PZST[256];
-	void *EATable[256];
-	u32 v30ModRm[256];
-	u8 v30SegTbl[256];
+	void (*opz[256])(void);
+	u8 pzst[256];
+	void (*EATable[256])(void);
+	u32 modRm[256];
+	u8 segTbl[256];
 } ARMV30Core;
 
 extern ARMV30Core V30OpTable;
@@ -78,7 +78,7 @@ int V30GetStateSize(void);
  * @param  opcode: Which opcode to redirect.
  * @param  *function: Pointer to new function .
  */
-void V30RedirectOpcode(int opcode, void *function);
+void V30RedirectOpcode(int opcode, void (*function)(void));
 
 void V30SetIRQPin(bool set);
 void V30SetNMIPin(bool set);
