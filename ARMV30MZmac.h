@@ -15,8 +15,9 @@
 
 	.equ PSR_P, 0x00000020		;@ Parity
 	.equ PSR_A, 0x00000010		;@ Aux/Half carry
-	.equ SEG_PF, 1<<7			;@ Segment prefix
-	.equ REP_PF, 1<<6			;@ Repeat prefix
+	.equ SEG_PF, 1<<6			;@ Segment prefix
+	.equ REPE_PF, 1<<7			;@ Repeat E/Z prefix
+	.equ RPNE_PF, 1<<8			;@ Repeat NE/NZ prefix
 
 
 							;@ V30 flags
@@ -127,8 +128,20 @@
 	bic v30f,v30f,#SEG_PF
 	.endm
 
+	.macro TestRepeatPrefix
+	tst v30f,#REPE_PF+RPNE_PF
+	.endm
+
+	.macro TestRepeatEPrefix
+	tst v30f,#REPE_PF
+	.endm
+
+	.macro TestRepeatNEPrefix
+	tst v30f,#RPNE_PF
+	.endm
+
 	.macro ClearPrefixes
-	bic v30f,v30f,#SEG_PF+REP_PF	//+LOCK_PREFIX
+	bic v30f,v30f,#SEG_PF+REPE_PF+RPNE_PF	//+LOCK_PREFIX
 	.endm
 
 	.macro GetIyOfsESegment

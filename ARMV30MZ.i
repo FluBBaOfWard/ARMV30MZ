@@ -8,7 +8,6 @@
 
 #define NEC_NMI_VECTOR 2
 
-				;@ r0,r1,r2=temp regs.
 	v30ofs		.req r6			;@ Effective Offset 
 	v30csr		.req r7			;@ Current Segment Register
 	v30f		.req r8			;@ CPU flags A, S, Z, C & V
@@ -24,7 +23,7 @@
 ;@ v30cyc flags in lower bits
 //	.equ SEG_PREFIX, 1<<0		;@ Bit 0
 //	.equ REP_PREFIX, 1<<1		;@ Bit 1
-	.equ REPN_PREFIX, 1<<2		;@ Bit 2
+//	.equ REPN_PREFIX, 1<<2		;@ Bit 2
 	.equ LOCK_PREFIX, 1<<3		;@ Bit 3
 	.equ HALT_FLAG, 1<<4		;@ Bit 4
 	.equ TRAP_FLAG, 1<<5		;@ Bit 5
@@ -78,7 +77,7 @@ v30PrefixBase:		.long 0		;@ Mapped to v30csr/r7
 v30Flags:			.long 0		;@ Mapped to v30f/r8
 v30PC:				.long 0		;@ Mapped to v30pc/r9
 v30Cycles:			.long 0		;@ Mapped to v30cyc/r10
-v30IrqPin:			.byte 0		;@ IrqPin & IF needs to be together in the same Word.
+v30IrqPin:			.byte 0		;@ IrqPin, IF  & NmiPending needs to be together in the same Word.
 v30IF:				.byte 0
 v30Empty:			.byte 0		;@ Was TRAP/BREAK flag
 v30NmiPending:		.byte 0

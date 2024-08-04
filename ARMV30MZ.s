@@ -3501,7 +3501,8 @@ noF2Prefix:
 	sub r3,r0,#0x6C
 	cmp r3,#0x43
 	ldrls pc,[pc,r3,lsl#2]
-	b f3Default
+f2Default:
+	ldr pc,[v30ptr,r0,lsl#2]
 	.long f36c
 	.long f36d
 	.long f36e
@@ -3594,7 +3595,8 @@ noF3Prefix:
 	sub r3,r0,#0x6C
 	cmp r3,#0x43
 	ldrls pc,[pc,r3,lsl#2]
-	b f3Default
+f3Default:
+	ldr pc,[v30ptr,r0,lsl#2]
 	.long f36c
 	.long f36d
 	.long f36e
@@ -3664,8 +3666,6 @@ noF3Prefix:
 	.long f3ae
 	.long f3af
 
-f3Default:
-	ldr pc,[v30ptr,r0,lsl#2]
 ;@----------------------------------------------------------------------------
 i_hlt:
 _F4:	;@ HALT
@@ -4670,10 +4670,10 @@ V30CheckIRQs:
 ;@----------------------------------------------------------------------------
 	stmfd sp!,{lr}
 v30ChkIrqInternal:				;@ This can be used on HALT
-	ldr r0,[v30ptr,#v30IrqPin]	;@ NMI, Irq pin and IF
-	movs r1,r0,lsr#24
+	ldr r1,[v30ptr,#v30IrqPin]	;@ NMI, Irq pin and IF
+	movs r0,r1,lsr#24
 	bne doV30NMI
-	ands r1,r0,r0,lsr#8
+	ands r0,r1,r1,lsr#8
 	bne V30FetchIRQ
 	tst v30cyc,#HALT_FLAG | TRAP_FLAG
 	bne v30InHaltTrap
@@ -4684,7 +4684,7 @@ V30Go:						;@ Continue running
 v30InHaltTrap:
 	tst v30cyc,#TRAP_FLAG
 	bne doV30Trap
-	tst r0,#IRQ_PIN				;@ IRQ Pin ?
+	tst r1,#IRQ_PIN				;@ IRQ Pin ?
 	bicne v30cyc,v30cyc,#HALT_FLAG
 	bne V30Go
 	mvns r0,v30cyc,asr#CYC_SHIFT			;@
@@ -4711,7 +4711,7 @@ v30DelayIrqCheck:			;@ This can be used on EI/IRET/POPF
 V30SetNMIPin:			;@ r0=pin state
 ;@----------------------------------------------------------------------------
 	cmp r0,#0
-	movne r0,#2					;@ NMI vector
+	movne r0,#NEC_NMI_VECTOR
 	ldrb r1,[v30ptr,#v30NmiPin]
 	strb r0,[v30ptr,#v30NmiPin]
 	bics r0,r0,r1
@@ -4724,12 +4724,11 @@ doV30Trap:
 	mov r0,#1
 	b V30TakeIRQ
 ;@----------------------------------------------------------------------------
-doV30NMI:
+doV30NMI:			;@ r0=NMI_VECTOR (2)
 ;@----------------------------------------------------------------------------
 	eatCycles 1
-	mov r0,#0
-	strb r0,[v30ptr,#v30NmiPending]
-	mov r0,#NEC_NMI_VECTOR
+	mov r1,#0
+	strb r1,[v30ptr,#v30NmiPending]
 	b V30TakeIRQ
 ;@----------------------------------------------------------------------------
 divideError:

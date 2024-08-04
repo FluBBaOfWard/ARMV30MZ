@@ -1,6 +1,6 @@
 # ARMV30MZ V0.8.9
 
-NEC V30MZ emulator for ARM 32.
+NEC V30MZ emulator for ARM32.
 
 ## About
 
