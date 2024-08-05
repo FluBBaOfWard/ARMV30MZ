@@ -2,8 +2,8 @@ ARMV30MZ revision history
 -=-=-=-=-=-=-=-=-=-=-=-=-
 
 
-V0.8.9 - 2024-08-04 (FluBBa)
-	Fixed...
+V0.8.9 - 2024-08-05 (FluBBa)
+	Fixed prefix handling.
 
 V0.8.8 - 2023-10-24 (FluBBa)
 	Fixed unsigned mul on ASWAN.

@@ -28,6 +28,13 @@
 	.equ HALT_FLAG, 1<<4		;@ Bit 4
 	.equ TRAP_FLAG, 1<<5		;@ Bit 5
 ;@----------------------------------------------------------------------------
+;@ Extra v30f flags
+	.equ SEG_PF, 1<<6			;@ Segment prefix
+	.equ REPE_PF, 1<<7			;@ Repeat E/Z prefix
+	.equ RPNE_PF, 1<<8			;@ Repeat NE/NZ prefix
+	.equ NOT_PF, (SEG_PF+REPE_PF+RPNE_PF)>>6
+	.equ NOTSEG, (SEG_PF)>>6
+;@----------------------------------------------------------------------------
 	.equ IRQ_PIN, 1			;@ Which value is set when INT pin is set.
 
 	.struct -(37*4)

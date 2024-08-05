@@ -622,7 +622,8 @@ _26:	;@ DS1/ES prefix
 	getNextByte
 	add r2,v30ptr,#v30SegTbl
 	ldrb r1,[r2,r0]
-	orr v30f,v30f,r1		;@ SEG_PF
+	SetSegmentPrefix
+	bic v30f,v30f,r1,lsl#6	;@ Clear prefixes if not applicable
 //	eatCycles 1
 	ldr pc,[v30ptr,r0,lsl#2]
 
@@ -755,7 +756,8 @@ _2E:	;@ PS/CS prefix
 	getNextByte
 	add r2,v30ptr,#v30SegTbl
 	ldrb r1,[r2,r0]
-	orr v30f,v30f,r1		;@ SEG_PF
+	SetSegmentPrefix
+	bic v30f,v30f,r1,lsl#6	;@ Clear prefixes if not applicable
 //	eatCycles 1
 	ldr pc,[v30ptr,r0,lsl#2]
 ;@----------------------------------------------------------------------------
@@ -888,7 +890,8 @@ _36:	;@ SS prefix
 	getNextByte
 	add r2,v30ptr,#v30SegTbl
 	ldrb r1,[r2,r0]
-	orr v30f,v30f,r1		;@ SEG_PF
+	SetSegmentPrefix
+	bic v30f,v30f,r1,lsl#6	;@ Clear prefixes if not applicable
 //	eatCycles 1
 	ldr pc,[v30ptr,r0,lsl#2]
 ;@----------------------------------------------------------------------------
@@ -1002,7 +1005,8 @@ _3E:	;@ DS0/DS prefix
 	getNextByte
 	add r2,v30ptr,#v30SegTbl
 	ldrb r1,[r2,r0]
-	orr v30f,v30f,r1		;@ SEG_PF
+	SetSegmentPrefix
+	bic v30f,v30f,r1,lsl#6	;@ Clear prefixes if not applicable
 //	eatCycles 1
 	ldr pc,[v30ptr,r0,lsl#2]
 ;@----------------------------------------------------------------------------
@@ -1261,7 +1265,7 @@ _62:	;@ CHKIND/BOUND
 	add v30ofs,v30ofs,#0x20000
 	mov r5,r0,lsl#16
 	bl v30ReadSegOfsW
-	ClearSegmentPrefix
+	ClearPrefixes
 	cmp r5,r4
 	cmple r4,r0,lsl#16
 	subgt v30cyc,v30cyc,#21*CYCLE
@@ -1358,12 +1362,14 @@ f36c:	;@ REP INMB/INSB
 	str v30ofs,[v30ptr,#v30RegIY]
 	strh r5,[v30ptr,#v30RegCW]
 1:
-//	ClearPrefixes				;@ REP_PF not used yet.
+	ClearPrefixes
 	fetch 5
 ;@----------------------------------------------------------------------------
 i_inmb:
 _6C:	;@ INMB/INSB
 ;@----------------------------------------------------------------------------
+	TestRepeatPrefix
+	bne f36c
 	ldrh r0,[v30ptr,#v30RegDW]
 	bl v30ReadPort
 	mov r1,r0
@@ -1391,12 +1397,14 @@ f36d:	;@ REP INMW/INSW
 	str v30ofs,[v30ptr,#v30RegIY]
 	strh r5,[v30ptr,#v30RegCW]
 1:
-//	ClearPrefixes				;@ REP_PF not used yet.
+	ClearPrefixes
 	fetch 5
 ;@----------------------------------------------------------------------------
 i_inmw:
 _6D:	;@ INMW/INSW
 ;@----------------------------------------------------------------------------
+	TestRepeatPrefix
+	bne f36d
 	GetIyOfsESegment
 	ldrh r0,[v30ptr,#v30RegDW]
 	bl v30ReadPort16
@@ -1434,10 +1442,12 @@ f36e:	;@ REP OUTMB/OUTSB
 i_outmb:
 _6E:	;@ OUTMB/OUTSB
 ;@----------------------------------------------------------------------------
+	TestRepeatPrefix
+	bne f36e
 	bl v30ReadDsIx
 	ldrh r1,[v30ptr,#v30RegDW]
 	bl v30WritePort
-	ClearSegmentPrefix
+	ClearPrefixes
 	fetch 5
 
 ;@----------------------------------------------------------------------------
@@ -1467,6 +1477,8 @@ f36f:	;@ REP OUTMW/OUTSW
 i_outmw:
 _6F:	;@ OUTMW/OUTSW
 ;@----------------------------------------------------------------------------
+	TestRepeatPrefix
+	bne f36f
 	TestSegmentPrefix
 	ldreq v30csr,[v30ptr,#v30SRegDS0]
 	ldr v30ofs,[v30ptr,#v30RegIX]
@@ -1476,7 +1488,7 @@ _6F:	;@ OUTMW/OUTSW
 	str v30ofs,[v30ptr,#v30RegIX]
 	ldrh r1,[v30ptr,#v30RegDW]
 	bl v30WritePort16
-	ClearSegmentPrefix
+	ClearPrefixes
 	fetch 5
 
 ;@----------------------------------------------------------------------------
@@ -1717,14 +1729,14 @@ _86:	;@ XCH/XCHG BR8
 	ldrb r1,[v30ptr,-r4,lsr#24]
 	strb r0,[v30ptr,-r4,lsr#24]
 	strb r1,[v30ptr,-r2]
-	ClearSegmentPrefix
+	ClearPrefixes
 	fetch 3
 0:
 	bl v30ReadEA
 	ldrb r1,[v30ptr,-r4,lsr#24]
 	strb r0,[v30ptr,-r4,lsr#24]
 	bl v30WriteSegOfs
-	ClearSegmentPrefix
+	ClearPrefixes
 	fetch 5
 
 ;@----------------------------------------------------------------------------
@@ -1743,14 +1755,14 @@ _87:	;@ XCH/XCHG WR16
 	ldrh r1,[r4,#v30Regs]
 	strh r0,[r4,#v30Regs]
 	strh r1,[v30ofs,#v30Regs]
-	ClearSegmentPrefix
+	ClearPrefixes
 	fetch 3
 0:
 	bl v30ReadEAW
 	ldrh r1,[r4,#v30Regs]
 	strh r0,[r4,#v30Regs]
 	bl v30WriteSegOfsW
-	ClearSegmentPrefix
+	ClearPrefixes
 	fetch 5
 ;@----------------------------------------------------------------------------
 i_mov_br8:
@@ -1769,7 +1781,7 @@ _88:	;@ MOV BR8
 	andpl r3,r3,#0xff
 	strbpl r1,[v30ptr,-r3]
 	blmi v30WriteEA
-	ClearSegmentPrefix
+	ClearPrefixes
 	fetch 1
 ;@----------------------------------------------------------------------------
 i_mov_wr16:
@@ -1785,7 +1797,7 @@ _89:	;@ MOV WR16
 	add v30ofs,v30ptr,r0,lsl#2
 	strhpl r1,[v30ofs,#v30Regs]
 	blmi v30WriteEAW
-	ClearSegmentPrefix
+	ClearPrefixes
 	fetch 1
 ;@----------------------------------------------------------------------------
 i_mov_r8b:
@@ -1800,7 +1812,7 @@ _8A:	;@ MOV R8B
 	ldrbpl r0,[v30ptr,-r1]
 	blmi v30ReadEA
 	strb r0,[v30ptr,-r4,lsr#24]
-	ClearSegmentPrefix
+	ClearPrefixes
 	fetch 1
 ;@----------------------------------------------------------------------------
 i_mov_r16w:
@@ -1816,7 +1828,7 @@ _8B:	;@ MOV R16W
 	ldrhpl r0,[v30ofs,#v30Regs]
 	blmi v30ReadEAW_noAdd
 	strh r0,[r4,#v30Regs]
-	ClearSegmentPrefix
+	ClearPrefixes
 	fetch 1
 ;@----------------------------------------------------------------------------
 i_mov_wsreg:
@@ -1832,7 +1844,7 @@ _8C:	;@ MOV WSREG
 	add v30ofs,v30ptr,r0,lsl#2
 	strhpl r1,[v30ofs,#v30Regs]
 	blmi v30WriteEAW
-	ClearSegmentPrefix
+	ClearPrefixes
 	fetch 1
 ;@----------------------------------------------------------------------------
 i_lea:
@@ -1863,7 +1875,7 @@ _8E:	;@ MOV SREGW
 	add r1,v30ptr,r4,lsr#1
 	strh r0,[r1,#v30SRegs+2]
 //	orr v30cyc,v30cyc,#LOCK_PREFIX
-	ClearSegmentPrefix
+	ClearPrefixes
 	cmp r4,#0x08			;@ PS?
 	bleq V30ReEncodePC
 	fetch 2
@@ -1880,7 +1892,7 @@ _8F:	;@ POPW
 	add v30ofs,v30ptr,r0,lsl#2
 	strhpl r1,[v30ofs,#v30Regs]
 	blmi v30WriteEAW2
-	ClearSegmentPrefix
+	ClearPrefixes
 	fetch 1
 ;@----------------------------------------------------------------------------
 i_nop:
@@ -2041,10 +2053,9 @@ _9E:	;@ SAHF
 	and r1,r0,#PF
 	eor r1,r1,#PF
 	strb r1,[v30ptr,#v30ParityVal]
-	tst r0,#SF
-	orrne v30f,v30f,#PSR_S
-	tst r0,#ZF
-	orrne v30f,v30f,#PSR_Z
+	movs r1,r0,lsl#25
+	orrcs v30f,v30f,#PSR_S	;@ Bit 7 of r0
+	orrmi v30f,v30f,#PSR_Z	;@ Bit 6 of r0
 	tst r0,#CF
 	orrne v30f,v30f,#PSR_C
 	tst r0,#AF
@@ -2079,7 +2090,7 @@ _A0:	;@ MOV ALDISP
 	add r0,v30csr,r0,lsl#12
 	bl cpuReadMem20
 	strb r0,[v30ptr,#v30RegAL]
-	ClearSegmentPrefix
+	ClearPrefixes
 	fetch 1
 ;@----------------------------------------------------------------------------
 i_mov_awdisp:
@@ -2091,7 +2102,7 @@ _A1:	;@ MOV AWDISP
 	add r0,v30csr,r0,lsl#12
 	bl cpuReadMem20W
 	strh r0,[v30ptr,#v30RegAW]
-	ClearSegmentPrefix
+	ClearPrefixes
 	fetch 1
 ;@----------------------------------------------------------------------------
 i_mov_dispal:
@@ -2103,7 +2114,7 @@ _A2:	;@ MOV DISPAL
 	ldrb r1,[v30ptr,#v30RegAL]
 	add r0,v30csr,r0,lsl#12
 	bl cpuWriteMem20
-	ClearSegmentPrefix
+	ClearPrefixes
 	fetch 1
 ;@----------------------------------------------------------------------------
 i_mov_dispaw:
@@ -2115,7 +2126,7 @@ _A3:	;@ MOV DISPAW
 	ldrh r1,[v30ptr,#v30RegAW]
 	add r0,v30csr,r0,lsl#12
 	bl cpuWriteMem20W
-	ClearSegmentPrefix
+	ClearPrefixes
 	fetch 1
 
 ;@----------------------------------------------------------------------------
@@ -2149,10 +2160,12 @@ f3a4:	;@ REP MOVMB/MOVSB
 i_movsb:
 _A4:	;@ MOVMB/MOVSB
 ;@----------------------------------------------------------------------------
+	TestRepeatPrefix
+	bne f3a4
 	bl v30ReadDsIx
 	mov r1,r0
 	bl v30WriteEsIy
-	ClearSegmentPrefix
+	ClearPrefixes
 	fetch 5
 
 ;@----------------------------------------------------------------------------
@@ -2196,6 +2209,8 @@ breakRepMov:
 i_movsw:
 _A5:	;@ MOVMW/MOVSW
 ;@----------------------------------------------------------------------------
+	TestRepeatPrefix
+	bne f3a5
 	TestSegmentPrefix
 	ldreq v30csr,[v30ptr,#v30SRegDS0]
 	ldr v30ofs,[v30ptr,#v30RegIX]
@@ -2208,15 +2223,15 @@ _A5:	;@ MOVMW/MOVSW
 	bl v30WriteSegOfsW
 	add v30ofs,v30ofs,r4,lsl#17
 	str v30ofs,[v30ptr,#v30RegIY]
-	ClearSegmentPrefix
+	ClearPrefixes
 	fetch 5
 
 ;@----------------------------------------------------------------------------
-f2a6:	;@ REPNZ CMPBKB/CMPSB
+f2a6:	;@ REPNE CMPBKB/CMPSB
 ;@----------------------------------------------------------------------------
 	ldrh r5,[v30ptr,#v30RegCW]
 	cmp r5,#0
-	beq 1f
+	beq repZero
 	TestSegmentPrefix
 	ldreq v30csr,[v30ptr,#v30SRegDS0]
 	ldr v30ofs,[v30ptr,#v30RegIX]
@@ -2241,15 +2256,16 @@ f2a6:	;@ REPNZ CMPBKB/CMPSB
 	bne 0b
 	str v30ofs,[v30ptr,#v30RegIX]
 	strh r5,[v30ptr,#v30RegCW]
-1:
+	fetch 5
+repZero:
 	ClearPrefixes
 	fetch 5
 ;@----------------------------------------------------------------------------
-f3a6:	;@ REPZ CMPBKB/CMPSB
+f3a6:	;@ REPE CMPBKB/CMPSB
 ;@----------------------------------------------------------------------------
 	ldrh r5,[v30ptr,#v30RegCW]
 	cmp r5,#0
-	beq 1f
+	beq repZero
 	TestSegmentPrefix
 	ldreq v30csr,[v30ptr,#v30SRegDS0]
 	ldr v30ofs,[v30ptr,#v30RegIX]
@@ -2273,13 +2289,15 @@ f3a6:	;@ REPZ CMPBKB/CMPSB
 	bne 0b
 	str v30ofs,[v30ptr,#v30RegIX]
 	strh r5,[v30ptr,#v30RegCW]
-1:
-	ClearPrefixes
 	fetch 5
 ;@----------------------------------------------------------------------------
 i_cmpsb:
 _A6:	;@ CMPBKB/CMPSB
 ;@----------------------------------------------------------------------------
+	TestRepeatEPrefix
+	bne f3a6
+	TestRepeatNEPrefix
+	bne f2a6
 	bl v30ReadDsIx
 
 	GetIyOfsESegment
@@ -2288,17 +2306,16 @@ _A6:	;@ CMPBKB/CMPSB
 	str r2,[v30ptr,#v30RegIY]
 	bl v30ReadSegOfs
 
-	sub8 r0,r4
+	sub8 r0,r4					;@ sub8 clears prefixes
 
-//	ClearSegmentPrefix				;@ sub8 clears flags
 	fetch 6
 
 ;@----------------------------------------------------------------------------
-f2a7:	;@ REPNZ CMPBKW/CMPSW
+f2a7:	;@ REPNE CMPBKW/CMPSW
 ;@----------------------------------------------------------------------------
 	ldrh r5,[v30ptr,#v30RegCW]
 	cmp r5,#0
-	beq 1f
+	beq repZero
 	TestSegmentPrefix
 	ldreq v30csr,[v30ptr,#v30SRegDS0]
 	ldr v30ofs,[v30ptr,#v30RegIX]
@@ -2323,15 +2340,13 @@ f2a7:	;@ REPNZ CMPBKW/CMPSW
 	bne 0b
 	str v30ofs,[v30ptr,#v30RegIX]
 	strh r5,[v30ptr,#v30RegCW]
-1:
-//	ClearPrefixes					;@ sub16 clears flags
 	fetch 5
 ;@----------------------------------------------------------------------------
-f3a7:	;@ REPZ CMPBKW/CMPSW
+f3a7:	;@ REPE CMPBKW/CMPSW
 ;@----------------------------------------------------------------------------
 	ldrh r5,[v30ptr,#v30RegCW]
 	cmp r5,#0
-	beq 1f
+	beq repZero
 	TestSegmentPrefix
 	ldreq v30csr,[v30ptr,#v30SRegDS0]
 	ldr v30ofs,[v30ptr,#v30RegIX]
@@ -2355,13 +2370,15 @@ f3a7:	;@ REPZ CMPBKW/CMPSW
 	bne 0b
 	str v30ofs,[v30ptr,#v30RegIX]
 	strh r5,[v30ptr,#v30RegCW]
-1:
-//	ClearPrefixes					;@ sub16 clears flags
 	fetch 5
 ;@----------------------------------------------------------------------------
 i_cmpsw:
 _A7:	;@ CMPBKW/CMPSW
 ;@----------------------------------------------------------------------------
+	TestRepeatEPrefix
+	bne f3a7
+	TestRepeatNEPrefix
+	bne f2a7
 	TestSegmentPrefix
 	ldreq v30csr,[v30ptr,#v30SRegDS0]
 	ldr v30ofs,[v30ptr,#v30RegIX]
@@ -2376,9 +2393,8 @@ _A7:	;@ CMPBKW/CMPSW
 	str r1,[v30ptr,#v30RegIY]
 	bl v30ReadSegOfsW
 
-	sub16 r0,r4
+	sub16 r0,r4					;@ sub16 clears prefixes
 
-//	ClearSegmentPrefix			;@ sub16 clears flags
 	fetch 6
 ;@----------------------------------------------------------------------------
 i_test_ald8:
@@ -2415,12 +2431,14 @@ f3aa:	;@ REP STMB/STOSB
 	str v30ofs,[v30ptr,#v30RegIY]
 	strh r5,[v30ptr,#v30RegCW]
 1:
-//	ClearPrefixes				;@ REP_PF not used yet.
+	ClearPrefixes
 	fetch 5
 ;@----------------------------------------------------------------------------
 i_stosb:
 _AA:	;@ STMB/STOSB
 ;@----------------------------------------------------------------------------
+	TestRepeatPrefix
+	bne f3aa
 	ldrb r1,[v30ptr,#v30RegAL]
 	ldrsb r4,[v30ptr,#v30DF]
 	bl v30WriteEsIy
@@ -2445,19 +2463,21 @@ f3ab:	;@ REP STMW/STOSW
 	str v30ofs,[v30ptr,#v30RegIY]
 	strh r5,[v30ptr,#v30RegCW]
 1:
-//	ClearPrefixes				;@ REP_PF not used yet.
+	ClearPrefixes
 	fetch 5
 breakRep:
 	sub r5,r5,#1
 	str v30ofs,[v30ptr,#v30RegIY]
 	strh r5,[v30ptr,#v30RegCW]
 	sub v30pc,v30pc,#2
-//	ClearPrefixes				;@ REP_PF not used yet.
+	ClearPrefixes
 	b v30OutOfCycles
 ;@----------------------------------------------------------------------------
 i_stosw:
 _AB:	;@ STMW/STOSW
 ;@----------------------------------------------------------------------------
+	TestRepeatPrefix
+	bne f3ab
 	GetIyOfsESegment
 	ldrsb r4,[v30ptr,#v30DF]
 	ldrh r1,[v30ptr,#v30RegAW]
@@ -2492,9 +2512,11 @@ f3ac:	;@ REP LDMB/LODSB
 i_lodsb:
 _AC:	;@ LDMB/LODSB
 ;@----------------------------------------------------------------------------
+	TestRepeatPrefix
+	bne f3ac
 	bl v30ReadDsIx
 	strb r0,[v30ptr,#v30RegAL]
-	ClearSegmentPrefix
+	ClearPrefixes
 	fetch 3
 
 ;@----------------------------------------------------------------------------
@@ -2523,6 +2545,8 @@ f3ad:	;@ REP LDMW/LODSW
 i_lodsw:
 _AD:	;@ LDMW/LODSW
 ;@----------------------------------------------------------------------------
+	TestRepeatPrefix
+	bne f3ad
 	TestSegmentPrefix
 	ldreq v30csr,[v30ptr,#v30SRegDS0]
 	ldr v30ofs,[v30ptr,#v30RegIX]
@@ -2531,7 +2555,7 @@ _AD:	;@ LDMW/LODSW
 	add v30ofs,v30ofs,r4,lsl#17
 	str v30ofs,[v30ptr,#v30RegIX]
 	strh r0,[v30ptr,#v30RegAW]
-	ClearSegmentPrefix
+	ClearPrefixes
 	fetch 3
 
 ;@----------------------------------------------------------------------------
@@ -2539,7 +2563,7 @@ f2ae:	;@ REPNE CMPMB/SCASB
 ;@----------------------------------------------------------------------------
 	ldrh r5,[v30ptr,#v30RegCW]
 	cmp r5,#0
-	beq 1f
+	beq repZero
 	GetIyOfsESegment
 	ldrsb r4,[v30ptr,#v30DF]
 0:
@@ -2556,15 +2580,13 @@ f2ae:	;@ REPNE CMPMB/SCASB
 	bne 0b
 	str v30ofs,[v30ptr,#v30RegIY]
 	strh r5,[v30ptr,#v30RegCW]
-1:
-//	ClearPrefixes					;@ sub8 clears flags
 	fetch 5
 ;@----------------------------------------------------------------------------
 f3ae:	;@ REPE CMPMB/SCASB
 ;@----------------------------------------------------------------------------
 	ldrh r5,[v30ptr,#v30RegCW]
 	cmp r5,#0
-	beq 1f
+	beq repZero
 	GetIyOfsESegment
 	ldrsb r4,[v30ptr,#v30DF]
 0:
@@ -2580,13 +2602,15 @@ f3ae:	;@ REPE CMPMB/SCASB
 	bne 0b
 	str v30ofs,[v30ptr,#v30RegIY]
 	strh r5,[v30ptr,#v30RegCW]
-1:
-//	ClearPrefixes					;@ sub8 clears flags
 	fetch 5
 ;@----------------------------------------------------------------------------
 i_scasb:
 _AE:	;@ CMPMB/SCASB
 ;@----------------------------------------------------------------------------
+	TestRepeatEPrefix
+	bne f3ae
+	TestRepeatNEPrefix
+	bne f2ae
 	GetIyOfsESegment
 	ldrsb r4,[v30ptr,#v30DF]
 	bl v30ReadSegOfs
@@ -2603,7 +2627,7 @@ f2af:	;@ REPNE CMPMW/SCASW
 ;@----------------------------------------------------------------------------
 	ldrh r5,[v30ptr,#v30RegCW]
 	cmp r5,#0
-	beq 1f
+	beq repZero
 	GetIyOfsESegment
 	ldrsb r4,[v30ptr,#v30DF]
 0:
@@ -2620,15 +2644,13 @@ f2af:	;@ REPNE CMPMW/SCASW
 	bne 0b
 	str v30ofs,[v30ptr,#v30RegIY]
 	strh r5,[v30ptr,#v30RegCW]
-1:
-//	ClearPrefixes					;@ sub16 clears flags
 	fetch 5
 ;@----------------------------------------------------------------------------
 f3af:	;@ REPE CMPMW/SCASW
 ;@----------------------------------------------------------------------------
 	ldrh r5,[v30ptr,#v30RegCW]
 	cmp r5,#0
-	beq 1f
+	beq repZero
 	GetIyOfsESegment
 	ldrsb r4,[v30ptr,#v30DF]
 0:
@@ -2644,13 +2666,15 @@ f3af:	;@ REPE CMPMW/SCASW
 	bne 0b
 	str v30ofs,[v30ptr,#v30RegIY]
 	strh r5,[v30ptr,#v30RegCW]
-1:
-//	ClearPrefixes					;@ sub16 clears flags
 	fetch 5
 ;@----------------------------------------------------------------------------
 i_scasw:
 _AF:	;@ CMPMW/SCASW
 ;@----------------------------------------------------------------------------
+	TestRepeatEPrefix
+	bne f3af
+	TestRepeatNEPrefix
+	bne f2af
 	GetIyOfsESegment
 	ldrsb r4,[v30ptr,#v30DF]
 	bl v30ReadSegOfsW
@@ -2828,7 +2852,7 @@ undC0Reg:
 	bl logUndefinedOpcode
 	mov r1,#0
 	strb r1,[v30ptr,-v30ofs]
-	ClearSegmentPrefix
+	ClearPrefixes
 	fetch 1
 shraC0Reg:
 	shra8 r0,r1
@@ -2863,7 +2887,7 @@ undC0EA:
 	bl logUndefinedOpcode
 	mov r1,#0
 	bl v30WriteSegOfs
-	ClearSegmentPrefix
+	ClearPrefixes
 	fetch 3
 shraC0EA:
 	shra8 r0,r1
@@ -2922,7 +2946,7 @@ undC1Reg:
 	bl logUndefinedOpcode
 	mov r1,#0
 	strh r1,[v30ofs,#v30Regs]
-	ClearSegmentPrefix
+	ClearPrefixes
 	fetch 1
 shraC1Reg:
 	shra16 r0,r1
@@ -2957,7 +2981,7 @@ undC1EA:
 	bl logUndefinedOpcode
 	mov r1,#0
 	bl v30WriteSegOfsW
-	ClearSegmentPrefix
+	ClearPrefixes
 	fetch 3
 shraC1EA:
 	shra16 r0,r1
@@ -3000,7 +3024,7 @@ _C4:	;@ MOV DS1 / LES DW
 	bl v30ReadSegOfsW
 	strh r0,[v30ptr,#v30SRegDS1+2]
 
-	ClearSegmentPrefix
+	ClearPrefixes
 	fetch 6
 ;@----------------------------------------------------------------------------
 i_lds_dw:
@@ -3017,7 +3041,7 @@ _C5:	;@ MOV DS0 / LDS DW
 	bl v30ReadSegOfsW
 	strh r0,[v30ptr,#v30SRegDS0+2]
 
-	ClearSegmentPrefix
+	ClearPrefixes
 	fetch 6
 ;@----------------------------------------------------------------------------
 i_mov_bd8:
@@ -3030,14 +3054,14 @@ _C6:	;@ MOV BD8
 	ldrb r4,[v30ofs,#v30ModRmRm]
 	getNextByteTo r1
 	strb r1,[v30ptr,-r4]
-	ClearSegmentPrefix
+	ClearPrefixes
 	fetch 1
 0:
 	mov r12,pc					;@ Return reg for EA
 	ldr pc,[v30ofs,#v30EATable]
 	getNextByteTo r1
 	bl v30WriteSegOfs
-	ClearSegmentPrefix
+	ClearPrefixes
 	fetch 1
 
 ;@----------------------------------------------------------------------------
@@ -3051,7 +3075,7 @@ _C7:	;@ MOV WD16
 	add v30ofs,v30ptr,r0,lsl#2
 	getNextWordTo r1, r0
 	strh r1,[v30ofs,#v30Regs]
-	ClearSegmentPrefix
+	ClearPrefixes
 	fetch 1
 0:
 	add v30ofs,v30ptr,r0,lsl#2
@@ -3059,7 +3083,7 @@ _C7:	;@ MOV WD16
 	ldr pc,[v30ofs,#v30EATable]
 	getNextWordTo r1, r0
 	bl v30WriteSegOfsW
-	ClearSegmentPrefix
+	ClearPrefixes
 	fetch 1
 ;@----------------------------------------------------------------------------
 i_prepare:
@@ -3103,7 +3127,7 @@ _C8:	;@ PREPARE/ENTER
 	ldmfd sp!,{r0, r8}
 	sub r4,r4,r0,lsl#16
 	str r4,[v30ptr,#v30RegSP]
-	ClearSegmentPrefix
+	ClearPrefixes
 	fetch 8
 ;@----------------------------------------------------------------------------
 i_dispose:
@@ -3301,7 +3325,7 @@ _D7:	;@ TRANS/XLAT	;@ Translate al via LUT.
 	add v30ofs,v30ofs,r0,lsl#16
 	bl v30ReadSegOfs
 	strb r0,[v30ptr,#v30RegAL]
-	ClearSegmentPrefix
+	ClearPrefixes
 	fetch 5
 ;@----------------------------------------------------------------------------
 i_fpo1:
@@ -3471,8 +3495,13 @@ _EF:	;@ OUTDWAW
 i_lock:
 _F0:	;@ BUS LOCK
 ;@----------------------------------------------------------------------------
-//	orr v30cyc,v30cyc,#LOCK_PREFIX
-	fetch 0
+	getNextByte
+	SetLockPrefix
+	add r2,v30ptr,#v30SegTbl
+	ldrb r1,[r2,r0]
+	bic v30f,v30f,r1,lsl#6	;@ Clear segments if not applicable
+//	eatCycles 1
+	ldr pc,[v30ptr,r0,lsl#2]
 ;@----------------------------------------------------------------------------
 i_brks:
 _F1:	;@ BRKS, Break to Security Mode. Not working on V30MZ?
@@ -3483,188 +3512,24 @@ i_repne:
 _F2:	;@ REPNE
 ;@----------------------------------------------------------------------------
 	getNextByte
-	and r1,r0,#0xE7
-	cmp r1,#0x26
-	bne noF2Prefix
-	orr v30f,v30f,#SEG_PF
-	and r1,r0,#0x18
-	add r1,v30ptr,r1,lsr#1
-	ldr v30csr,[r1,#v30SRegs]
-
-//	eatCycles 1
-	getNextByte
-noF2Prefix:
+	SetRepeatNEPrefix
 	add r2,v30ptr,#v30SegTbl
 	ldrb r1,[r2,r0]
-	tst r1,#SEG_PF
-	biceq v30f,v30f,#SEG_PF
-	sub r3,r0,#0x6C
-	cmp r3,#0x43
-	ldrls pc,[pc,r3,lsl#2]
-f2Default:
+	bic v30f,v30f,r1,lsl#6	;@ Clear segments if not applicable
+//	eatCycles 1
 	ldr pc,[v30ptr,r0,lsl#2]
-	.long f36c
-	.long f36d
-	.long f36e
-	.long f36f
-	.long	f3Default
-	.long	f3Default
-	.long	f3Default
-	.long	f3Default
-	.long	f3Default
-	.long	f3Default
-	.long	f3Default
-	.long	f3Default
-	.long	f3Default
-	.long	f3Default
-	.long	f3Default
-	.long	f3Default
-	.long	f3Default
-	.long	f3Default
-	.long	f3Default
-	.long	f3Default
-	.long	f3Default
-	.long	f3Default
-	.long	f3Default
-	.long	f3Default
-	.long	f3Default
-	.long	f3Default
-	.long	f3Default
-	.long	f3Default
-	.long	f3Default
-	.long	f3Default
-	.long	f3Default
-	.long	f3Default
-	.long	f3Default
-	.long	f3Default
-	.long	f3Default
-	.long	f3Default
-	.long	f3Default
-	.long	f3Default
-	.long	f3Default
-	.long	f3Default
-	.long	f3Default
-	.long	f3Default
-	.long	f3Default
-	.long	f3Default
-	.long	f3Default
-	.long	f3Default
-	.long	f3Default
-	.long	f3Default
-	.long	f3Default
-	.long	f3Default
-	.long	f3Default
-	.long	f3Default
-	.long	f3Default
-	.long	f3Default
-	.long	f3Default
-	.long	f3Default
-	.long f3a4
-	.long f3a5
-	.long f2a6
-	.long f2a7
-	.long	f3Default
-	.long	f3Default
-	.long f3aa
-	.long f3ab
-	.long f3ac
-	.long f3ad
-	.long f2ae
-	.long f2af
 
 ;@----------------------------------------------------------------------------
 i_repe:
 _F3:	;@ REPE
 ;@----------------------------------------------------------------------------
 	getNextByte
-	and r1,r0,#0xE7
-	cmp r1,#0x26
-	bne noF3Prefix
-	orr v30f,v30f,#SEG_PF
-	and r1,r0,#0x18
-	add r1,v30ptr,r1,lsr#1
-	ldr v30csr,[r1,#v30SRegs]
-
-//	eatCycles 1
-	getNextByte
-noF3Prefix:
+	SetRepeatEPrefix
 	add r2,v30ptr,#v30SegTbl
 	ldrb r1,[r2,r0]
-	tst r1,#SEG_PF
-	biceq v30f,v30f,#SEG_PF
-	sub r3,r0,#0x6C
-	cmp r3,#0x43
-	ldrls pc,[pc,r3,lsl#2]
-f3Default:
+	bic v30f,v30f,r1,lsl#6	;@ Clear segments if not applicable
+//	eatCycles 1
 	ldr pc,[v30ptr,r0,lsl#2]
-	.long f36c
-	.long f36d
-	.long f36e
-	.long f36f
-	.long	f3Default
-	.long	f3Default
-	.long	f3Default
-	.long	f3Default
-	.long	f3Default
-	.long	f3Default
-	.long	f3Default
-	.long	f3Default
-	.long	f3Default
-	.long	f3Default
-	.long	f3Default
-	.long	f3Default
-	.long	f3Default
-	.long	f3Default
-	.long	f3Default
-	.long	f3Default
-	.long	f3Default
-	.long	f3Default
-	.long	f3Default
-	.long	f3Default
-	.long	f3Default
-	.long	f3Default
-	.long	f3Default
-	.long	f3Default
-	.long	f3Default
-	.long	f3Default
-	.long	f3Default
-	.long	f3Default
-	.long	f3Default
-	.long	f3Default
-	.long	f3Default
-	.long	f3Default
-	.long	f3Default
-	.long	f3Default
-	.long	f3Default
-	.long	f3Default
-	.long	f3Default
-	.long	f3Default
-	.long	f3Default
-	.long	f3Default
-	.long	f3Default
-	.long	f3Default
-	.long	f3Default
-	.long	f3Default
-	.long	f3Default
-	.long	f3Default
-	.long	f3Default
-	.long	f3Default
-	.long	f3Default
-	.long	f3Default
-	.long	f3Default
-	.long	f3Default
-	.long f3a4
-	.long f3a5
-	.long f3a6
-	.long f3a7
-	.long	f3Default
-	.long	f3Default
-	.long f3aa
-	.long f3ab
-	.long f3ac
-	.long f3ad
-	.long f3ae
-	.long f3af
 
 ;@----------------------------------------------------------------------------
 i_hlt:
@@ -3712,13 +3577,13 @@ testF6:
 notF6Reg:
 	mvn r1,r0
 	strb r1,[v30ptr,-v30ofs]
-	ClearSegmentPrefix
+	ClearPrefixes
 	fetch 1
 ;@----------------------------------------------------------------------------
 notF6EA:
 	mvn r1,r0
 	bl v30WriteSegOfs
-	ClearSegmentPrefix
+	ClearPrefixes
 	fetch 2
 ;@----------------------------------------------------------------------------
 negF6Reg:
@@ -3869,13 +3734,13 @@ testF7:
 notF7Reg:
 	mvn r1,r0
 	strh r1,[v30ofs,#v30Regs]
-	ClearSegmentPrefix
+	ClearPrefixes
 	fetch 1
 ;@----------------------------------------------------------------------------
 notF7EA:
 	mvn r1,r0
 	bl v30WriteSegOfsW
-	ClearSegmentPrefix
+	ClearPrefixes
 	fetch 2
 ;@----------------------------------------------------------------------------
 negF7Reg:
@@ -4214,7 +4079,7 @@ callFF:
 	mov v30pc,r0,lsl#16
 	bl v30PushW
 	V30EncodeFastPC
-	ClearSegmentPrefix
+	ClearPrefixes
 	fetch 5
 ;@----------------------------------------------------------------------------
 callFarFF:
@@ -4234,14 +4099,14 @@ callFarFF:
 	mov r1,r4
 	bl v30PushLastW
 	V30EncodeFastPC
-	ClearSegmentPrefix
+	ClearPrefixes
 	fetch 12
 ;@----------------------------------------------------------------------------
 braFF:
 	blmi v30ReadEAW1
 	mov v30pc,r0,lsl#16
 	v30EncodeFastPC
-	ClearSegmentPrefix
+	ClearPrefixes
 	fetch 5
 ;@----------------------------------------------------------------------------
 braFarFF:
@@ -4251,14 +4116,14 @@ braFarFF:
 	bl v30ReadSegOfsW
 	strh r0,[v30ptr,#v30SRegPS+2]
 	v30EncodeFastPC
-	ClearSegmentPrefix
+	ClearPrefixes
 	fetch 10
 ;@----------------------------------------------------------------------------
 pushFF:
 	blmi v30ReadEAW1
 	mov r1,r0
 	bl v30PushW
-	ClearSegmentPrefix
+	ClearPrefixes
 	fetch 1
 
 ;@----------------------------------------------------------------------------
@@ -4756,7 +4621,7 @@ undefF7:
 undefFF:
 ;@----------------------------------------------------------------------------
 	bl logUndefinedOpcode
-	ClearSegmentPrefix
+	ClearPrefixes
 	fetch 1
 ;@----------------------------------------------------------------------------
 i_crash:
@@ -5234,22 +5099,23 @@ GetEA:
 Mod_RM:
 	.space 0x400
 SegmentTable:
-	.byte SEG_PF, SEG_PF, SEG_PF, SEG_PF,      0,      0,      0,      0, SEG_PF, SEG_PF, SEG_PF, SEG_PF,      0,      0,      0,      0
-	.byte SEG_PF, SEG_PF, SEG_PF, SEG_PF,      0,      0,      0,      0, SEG_PF, SEG_PF, SEG_PF, SEG_PF,      0,      0,      0,      0
-	.byte SEG_PF, SEG_PF, SEG_PF, SEG_PF,      0,      0,      0,      0, SEG_PF, SEG_PF, SEG_PF, SEG_PF,      0,      0,      0,      0
-	.byte SEG_PF, SEG_PF, SEG_PF, SEG_PF,      0,      0,      0,      0, SEG_PF, SEG_PF, SEG_PF, SEG_PF,      0,      0,      0,      0
-	.byte      0,      0,      0,      0,      0,      0,      0,      0,      0,      0,      0,      0,      0,      0,      0,      0
-	.byte      0,      0,      0,      0,      0,      0,      0,      0,      0,      0,      0,      0,      0,      0,      0,      0
-	.byte      0,      0, SEG_PF,      0,      0,      0,      0,      0,      0, SEG_PF,      0, SEG_PF,      0,      0, SEG_PF, SEG_PF
-	.byte      0,      0,      0,      0,      0,      0,      0,      0,      0,      0,      0,      0,      0,      0,      0,      0
-	.byte SEG_PF, SEG_PF, SEG_PF, SEG_PF, SEG_PF, SEG_PF, SEG_PF, SEG_PF, SEG_PF, SEG_PF, SEG_PF, SEG_PF, SEG_PF,      0, SEG_PF, SEG_PF
-	.byte      0,      0,      0,      0,      0,      0,      0,      0,      0,      0,      0,      0,      0,      0,      0,      0
-	.byte SEG_PF, SEG_PF, SEG_PF, SEG_PF, SEG_PF, SEG_PF, SEG_PF, SEG_PF,      0,      0,      0,      0, SEG_PF, SEG_PF,      0,      0
-	.byte      0,      0,      0,      0,      0,      0,      0,      0,      0,      0,      0,      0,      0,      0,      0,      0
-	.byte SEG_PF, SEG_PF,      0,      0, SEG_PF, SEG_PF, SEG_PF, SEG_PF, SEG_PF,      0,      0,      0,      0,      0,      0,      0
-	.byte SEG_PF, SEG_PF, SEG_PF, SEG_PF,      0,      0,      0, SEG_PF,      0,      0,      0,      0,      0,      0,      0,      0
-	.byte      0,      0,      0,      0,      0,      0,      0,      0,      0,      0,      0,      0,      0,      0,      0,      0
-	.byte      0,      0, SEG_PF, SEG_PF,      0,      0, SEG_PF, SEG_PF,      0,      0,      0,      0,      0,      0, SEG_PF, SEG_PF
+	.byte      0,      0,      0,      0, NOT_PF, NOT_PF, NOT_PF, NOT_PF,      0,      0,      0,      0, NOT_PF, NOT_PF, NOT_PF, NOT_PF
+	.byte      0,      0,      0,      0, NOT_PF, NOT_PF, NOT_PF, NOT_PF,      0,      0,      0,      0, NOT_PF, NOT_PF, NOT_PF, NOT_PF
+	.byte      0,      0,      0,      0, NOT_PF, NOT_PF,      0, NOT_PF,      0,      0,      0,      0, NOT_PF, NOT_PF,      0, NOT_PF
+	.byte      0,      0,      0,      0, NOT_PF, NOT_PF, NOT_PF, NOT_PF,      0,      0,      0,      0, NOT_PF, NOT_PF, NOT_PF, NOT_PF
+	.byte NOT_PF, NOT_PF, NOT_PF, NOT_PF, NOT_PF, NOT_PF, NOT_PF, NOT_PF, NOT_PF, NOT_PF, NOT_PF, NOT_PF, NOT_PF, NOT_PF, NOT_PF, NOT_PF
+	.byte NOT_PF, NOT_PF, NOT_PF, NOT_PF, NOT_PF, NOT_PF, NOT_PF, NOT_PF, NOT_PF, NOT_PF, NOT_PF, NOT_PF, NOT_PF, NOT_PF, NOT_PF, NOT_PF
+	.byte NOT_PF, NOT_PF,      0, NOT_PF, NOT_PF, NOT_PF, NOT_PF, NOT_PF, NOT_PF,      0, NOT_PF,      0, NOTSEG, NOTSEG,      0,      0
+	.byte NOT_PF, NOT_PF, NOT_PF, NOT_PF, NOT_PF, NOT_PF, NOT_PF, NOT_PF, NOT_PF, NOT_PF, NOT_PF, NOT_PF, NOT_PF, NOT_PF, NOT_PF, NOT_PF
+	.byte      0,      0,      0,      0,      0,      0,      0,      0,      0,      0,      0,      0,      0, NOT_PF,      0,      0
+	.byte NOT_PF, NOT_PF, NOT_PF, NOT_PF, NOT_PF, NOT_PF, NOT_PF, NOT_PF, NOT_PF, NOT_PF, NOT_PF, NOT_PF, NOT_PF, NOT_PF, NOT_PF, NOT_PF
+	.byte      0,      0,      0,      0,      0,      0,      0,      0, NOT_PF, NOT_PF, NOTSEG, NOTSEG,      0,      0, NOTSEG, NOTSEG
+	.byte NOT_PF, NOT_PF, NOT_PF, NOT_PF, NOT_PF, NOT_PF, NOT_PF, NOT_PF, NOT_PF, NOT_PF, NOT_PF, NOT_PF, NOT_PF, NOT_PF, NOT_PF, NOT_PF
+	.byte      0,      0, NOT_PF, NOT_PF,      0,      0,      0,      0,      0, NOT_PF, NOT_PF, NOT_PF, NOT_PF, NOT_PF, NOT_PF, NOT_PF
+	.byte      0,      0,      0,      0, NOT_PF, NOT_PF, NOT_PF,      0, NOT_PF, NOT_PF, NOT_PF, NOT_PF, NOT_PF, NOT_PF, NOT_PF, NOT_PF
+	.byte NOT_PF, NOT_PF, NOT_PF, NOT_PF, NOT_PF, NOT_PF, NOT_PF, NOT_PF, NOT_PF, NOT_PF, NOT_PF, NOT_PF, NOT_PF, NOT_PF, NOT_PF, NOT_PF
+	.byte      0, NOT_PF,      0,      0, NOT_PF, NOT_PF,      0,      0, NOT_PF, NOT_PF, NOT_PF, NOT_PF, NOT_PF, NOT_PF,      0,      0
+
 ;@----------------------------------------------------------------------------
 
 #endif // #ifdef __arm__
