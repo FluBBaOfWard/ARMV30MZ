@@ -3587,8 +3587,7 @@ notF6EA:
 	fetch 2
 ;@----------------------------------------------------------------------------
 negF6Reg:
-	mov r1,r0,lsl#24
-	rsbs r1,r1,#0
+	subs r1,r0,r0,lsl#24
 	mrs v30f,cpsr				;@ S, Z, V & C.
 	eor r0,r0,r1,lsr#24
 	and r0,r0,#PSR_A
@@ -3601,8 +3600,7 @@ negF6Reg:
 	fetch 1
 ;@----------------------------------------------------------------------------
 negF6EA:
-	mov r1,r0,lsl#24
-	rsbs r1,r1,#0
+	subs r1,r0,r0,lsl#24
 	mrs v30f,cpsr				;@ S, Z, V & C.
 	eor r0,r0,r1,lsr#24
 	and r0,r0,#PSR_A
@@ -3744,8 +3742,7 @@ notF7EA:
 	fetch 2
 ;@----------------------------------------------------------------------------
 negF7Reg:
-	mov r1,r0,lsl#16
-	rsbs r1,r1,#0
+	subs r1,r0,r0,lsl#16
 	mrs v30f,cpsr				;@ S, Z, V & C.
 	eor r0,r0,r1,lsr#16
 	and r0,r0,#PSR_A
@@ -3753,12 +3750,12 @@ negF7Reg:
 	eor v30f,v30f,#PSR_C		;@ Invert C
 	mov r1,r1,lsr#16
 	strb r1,[v30ptr,#v30ParityVal]
+
 	strh r1,[v30ofs,#v30Regs]
 	fetch 1
 ;@----------------------------------------------------------------------------
 negF7EA:
-	mov r1,r0,lsl#16
-	rsbs r1,r1,#0
+	subs r1,r0,r0,lsl#16
 	mrs v30f,cpsr				;@ S, Z, V & C.
 	eor r0,r0,r1,lsr#16
 	and r0,r0,#PSR_A
@@ -3766,6 +3763,7 @@ negF7EA:
 	eor v30f,v30f,#PSR_C		;@ Invert C
 	mov r1,r1,lsr#16
 	strb r1,[v30ptr,#v30ParityVal]
+
 	bl v30WriteSegOfsW
 	fetch 2
 ;@----------------------------------------------------------------------------
