@@ -360,14 +360,13 @@
 	tst v30f,#PSR_C
 	and v30f,v30f,#PSR_S+PSR_Z+PSR_A	;@ Keep S, Z & A
 	orrne \dst,\dst,#0x100
-	cmp \src,#0
-	beq 10f
-9:
-	tst \dst,\dst,lsr#9
-	adc \dst,\dst,\dst
-	subs \src,\src,#1
-	bhi 9b
-10:
+	orr \dst,\dst,\dst,lsl#9
+	cmp \src,#18
+	subcs \src,\src,#18
+	mov r2,\dst,lsl \src
+	rsb \src,\src,#18
+	orr \dst,r2,\dst,lsr \src
+
 	movs \dst,\dst,lsl#24
 	orrcs v30f,v30f,#PSR_C+PSR_V
 	eormi v30f,v30f,#PSR_V
@@ -378,14 +377,12 @@
 	tst v30f,#PSR_C
 	and v30f,v30f,#PSR_S+PSR_Z+PSR_A	;@ Keep S, Z & A
 	orrne \dst,\dst,#0x10000
-	cmp \src,#0
-	beq 12f
-11:
-	tst \dst,\dst,lsr#17
-	adc \dst,\dst,\dst
-	subs \src,\src,#1
-	bhi 11b
-12:
+	cmp \src,#17
+	subcs \src,\src,#17
+	mov r2,\dst,lsl \src
+	rsb \src,\src,#17
+	orr \dst,r2,\dst,lsr \src
+
 	movs \dst,\dst,lsl#16
 	orrcs v30f,v30f,#PSR_C+PSR_V
 	eormi v30f,v30f,#PSR_V
@@ -420,17 +417,16 @@
 	tst v30f,#PSR_C
 	and v30f,v30f,#PSR_S+PSR_Z+PSR_A	;@ Keep S, Z & A
 	orrne \dst,\dst,#0x00800000
-	cmp \src,#0
-	beq 14f
-13:
-	tst \dst,\dst,lsr#24
-	rrx \dst,\dst
-	subs \src,\src,#1
-	bhi 13b
-14:
+	orr \dst,\dst,\dst,lsr#9
+	cmp \src,#18
+	subcs \src,\src,#18
+	mov r2,\dst,lsr \src
+	rsb \src,\src,#18
+	orr \dst,r2,\dst,lsl \src
+
 	movs r1,\dst,lsr#24
 	orrcs v30f,v30f,#PSR_C
-	eors r2,\dst,\dst,lsl#1
+	teq \dst,\dst,lsl#1
 	orrmi v30f,v30f,#PSR_V
 	.endm
 
@@ -439,14 +435,12 @@
 	and v30f,v30f,#PSR_S+PSR_Z+PSR_A	;@ Keep S, Z & A
 	mov \dst,\dst,lsl#16
 	orrne \dst,\dst,#0x00008000
-	cmp \src,#0
-	beq 16f
-15:
-	tst \dst,\dst,lsr#16
-	rrx \dst,\dst
-	subs \src,\src,#1
-	bhi 15b
-16:
+	cmp \src,#17
+	subcs \src,\src,#17
+	mov r2,\dst,lsr \src
+	rsb \src,\src,#17
+	orr \dst,r2,\dst,lsl \src
+
 	movs r1,\dst,lsr#16
 	orrcs v30f,v30f,#PSR_C
 	eors r2,\dst,\dst,lsl#1
