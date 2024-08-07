@@ -149,7 +149,7 @@
 	.endm
 
 	.macro ClearPrefixes
-	bic v30f,v30f,#SEG_PF+REPE_PF+RPNE_PF	//+LOCK_PREFIX
+	bic v30f,v30f,#SEG_PF+REPE_PF+RPNE_PF	//+LOCK_PF
 	.endm
 
 	.macro GetIyOfsESegment
@@ -396,7 +396,7 @@
 	orr \dst,\dst,\dst,lsl#16
 	movs \dst,\dst,ror \src
 	orrcs v30f,v30f,#PSR_C
-	eors r1,\dst,\dst,lsl#1
+	teq \dst,\dst,lsl#1
 	orrmi v30f,v30f,#PSR_V
 	mov r1,\dst,lsr#24
 	.endm
@@ -407,7 +407,7 @@
 	orr \dst,\dst,\dst,lsl#16
 	movs \dst,\dst,ror \src
 	orrcs v30f,v30f,#PSR_C
-	eors r1,\dst,\dst,lsl#1
+	teq \dst,\dst,lsl#1
 	orrmi v30f,v30f,#PSR_V
 	mov r1,\dst,lsr#16
 	.endm
@@ -443,7 +443,7 @@
 
 	movs r1,\dst,lsr#16
 	orrcs v30f,v30f,#PSR_C
-	eors r2,\dst,\dst,lsl#1
+	teq \dst,\dst,lsl#1
 	orrmi v30f,v30f,#PSR_V
 	.endm
 ;@----------------------------------------------------------------------------
