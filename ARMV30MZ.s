@@ -1662,11 +1662,11 @@ _81:	;@ PRE 81
 	blmi v30ReadEAW
 
 	getNextWordTo r4, r1
-pre81Continue:
 	mov r4,r4,lsl#16
 
 	ldr pc,[pc,r5,lsr#1]
 	nop
+_81Table:
 	.long add81EA,  or81EA,  adc81EA,  subc81EA,  and81EA,  sub81EA,  xor81EA,  cmp81EA
 	.long add81EA,  or81EA,  adc81EA,  subc81EA,  and81EA,  sub81EA,  xor81EA,  cmp81EA
 	.long add81EA,  or81EA,  adc81EA,  subc81EA,  and81EA,  sub81EA,  xor81EA,  cmp81EA
@@ -1682,7 +1682,10 @@ _83:	;@ PRE 83
 	blmi v30ReadEAW
 
 	getNextSignedByteTo r4
-	b pre81Continue
+	mov r4,r4,lsl#16
+
+	adr r2,_81Table
+	ldr pc,[r2,r5,lsr#1]
 ;@----------------------------------------------------------------------------
 i_test_br8:
 _84:	;@ TEST BR8
@@ -2812,13 +2815,12 @@ _C0:	;@ ROTSHFT BD8
 	blmi v30ReadEA
 
 	getNextByteTo r1
-d2Continue:
 	eatCycles 2
 	and r1,r1,#0x1F
-d0Continue:
 
 	ldr pc,[pc,r5,lsr#1]
 	nop
+c0Table:
 	.long rolC0EA,  rorC0EA,  rolcC0EA,  rorcC0EA,  shlC0EA,  shrC0EA,  undC0EA,  shraC0EA
 	.long rolC0EA,  rorC0EA,  rolcC0EA,  rorcC0EA,  shlC0EA,  shrC0EA,  undC0EA,  shraC0EA
 	.long rolC0EA,  rorC0EA,  rolcC0EA,  rorcC0EA,  shlC0EA,  shrC0EA,  undC0EA,  shraC0EA
@@ -2906,13 +2908,12 @@ _C1:	;@ ROTSHFT WD8
 	blmi v30ReadEAW_noAdd
 
 	getNextByteTo r1
-d3Continue:
 	eatCycles 2
 	and r1,r1,#0x1F
-d1Continue:
 
 	ldr pc,[pc,r5,lsr#1]
 	nop
+c1Table:
 	.long rolC1EA,  rorC1EA,  rolcC1EA,  rorcC1EA,  shlC1EA,  shrC1EA,  undC1EA,  shraC1EA
 	.long rolC1EA,  rorC1EA,  rolcC1EA,  rorcC1EA,  shlC1EA,  shrC1EA,  undC1EA,  shraC1EA
 	.long rolC1EA,  rorC1EA,  rolcC1EA,  rorcC1EA,  shlC1EA,  shrC1EA,  undC1EA,  shraC1EA
@@ -3218,7 +3219,8 @@ _D0:	;@ ROTSHFT B
 	ldrbpl r0,[v30ptr,-v30ofs]
 	blmi v30ReadEA
 	mov r1,#1
-	b d0Continue
+	adr r2,c0Table
+	ldr pc,[r2,r5,lsr#1]
 ;@----------------------------------------------------------------------------
 i_rotshft_w:
 _D1:	;@ ROTSHFT W
@@ -3231,7 +3233,8 @@ _D1:	;@ ROTSHFT W
 	ldrhpl r0,[v30ofs,#v30Regs]
 	blmi v30ReadEAW_noAdd
 	mov r1,#1
-	b d1Continue
+	adr r2,c1Table
+	ldr pc,[r2,r5,lsr#1]
 ;@----------------------------------------------------------------------------
 i_rotshft_bcl:
 _D2:	;@ ROTSHFT BCL
@@ -3244,7 +3247,10 @@ _D2:	;@ ROTSHFT BCL
 	ldrbpl r0,[v30ptr,-v30ofs]
 	blmi v30ReadEA
 	ldrb r1,[v30ptr,#v30RegCL]
-	b d2Continue
+	adr r2,c0Table
+	eatCycles 2
+	and r1,r1,#0x1F
+	ldr pc,[r2,r5,lsr#1]
 ;@----------------------------------------------------------------------------
 i_rotshft_wcl:
 _D3:	;@ ROTSHFT WCL
@@ -3257,7 +3263,10 @@ _D3:	;@ ROTSHFT WCL
 	ldrhpl r0,[v30ofs,#v30Regs]
 	blmi v30ReadEAW_noAdd
 	ldrb r1,[v30ptr,#v30RegCL]
-	b d3Continue
+	eatCycles 2
+	and r1,r1,#0x1F
+	adr r2,c1Table
+	ldr pc,[r2,r5,lsr#1]
 ;@----------------------------------------------------------------------------
 i_aam:
 _D4:	;@ CVTBD/AAM	;@ Convert Binary to Decimal / Adjust After Multiply
