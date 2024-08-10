@@ -8,6 +8,7 @@ V0.8.9 - 2024-08-10 (FluBBa)
 	Optimized RCR & RCL opcodes.
 	Optimized 0x83 opcodes.
 	Optimized 0xD0/0xD1/0xD2/0xD3 opcodes.
+	Optimized 0xF7 & 0xFF opcodes.
 
 V0.8.8 - 2023-10-24 (FluBBa)
 	Fixed unsigned mul on ASWAN.

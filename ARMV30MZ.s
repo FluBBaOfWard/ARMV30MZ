@@ -3708,20 +3708,15 @@ i_f7pre:
 _F7:	;@ PRE F7
 ;@----------------------------------------------------------------------------
 	getNextByte
+	add r2,v30ptr,#v30F7Table
+	mov r5,r0,ror#3
+	ldr lr,[r2,r5,lsl#3]
 	cmp r0,#0xC0
-	and r5,r0,#0xF8
-	andpl r0,r0,#7
-	add v30ofs,v30ptr,r0,lsl#2
-	ldrhpl r0,[v30ofs,#v30Regs]
-	blmi v30ReadEAW1
+	bmi v30ReadEAWF7
+	add v30ofs,v30ptr,r5,lsr#27
+	ldrh r0,[v30ofs,#v30Regs]
+	bx lr
 
-	ldr pc,[pc,r5,lsr#1]
-	nop
-jmpTblF7:
-	.long testF7, undefF7, notF7EA,  negF7EA,  muluF7, mulF7, divuwF7, divwF7
-	.long testF7, undefF7, notF7EA,  negF7EA,  muluF7, mulF7, divuwF7, divwF7
-	.long testF7, undefF7, notF7EA,  negF7EA,  muluF7, mulF7, divuwF7, divwF7
-	.long testF7, undefF7, notF7Reg, negF7Reg, muluF7, mulF7, divuwF7, divwF7
 ;@----------------------------------------------------------------------------
 testF7:
 	mov r4,r0,lsl#16
@@ -4000,18 +3995,14 @@ _FF:	;@ PRE FF
 ;@----------------------------------------------------------------------------
 	getNextByte
 contFF:
+	add r2,v30ptr,#v30FFTable
+	mov r5,r0,ror#3
+	ldr lr,[r2,r5,lsl#3]
 	cmp r0,#0xC0
-	and r5,r0,#0xF8
-	andpl r0,r0,#7
-	add v30ofs,v30ptr,r0,lsl#2
-	ldrhpl r0,[v30ofs,#v30Regs]
-
-	ldr pc,[pc,r5,lsr#1]
-	nop
-	.long incFFEA,  decFFEA,  callFF, callFarFF, braFF, braFarFF, pushFF, undefFF
-	.long incFFEA,  decFFEA,  callFF, callFarFF, braFF, braFarFF, pushFF, undefFF
-	.long incFFEA,  decFFEA,  callFF, callFarFF, braFF, braFarFF, pushFF, undefFF
-	.long incFFReg, decFFReg, callFF, callFarFF, braFF, braFarFF, pushFF, undefFF
+	bmi v30ReadEAW
+	add v30ofs,v30ptr,r5,lsr#27
+	ldrh r0,[v30ofs,#v30Regs]
+	bx lr
 ;@----------------------------------------------------------------------------
 incFFReg:
 	and v30f,v30f,#PSR_C		;@ Only keep C
@@ -4028,7 +4019,6 @@ incFFReg:
 	fetch 1
 ;@----------------------------------------------------------------------------
 incFFEA:
-	bl v30ReadEAW_noAdd
 	and v30f,v30f,#PSR_C		;@ Only keep C
 	mov r1,r0,lsl#16
 	adds r1,r1,#0x10000
@@ -4057,7 +4047,6 @@ decFFReg:
 	fetch 1
 ;@----------------------------------------------------------------------------
 decFFEA:
-	bl v30ReadEAW_noAdd
 	and v30f,v30f,#PSR_C		;@ Only keep C
 	mov r1,r0,lsl#16
 	subs r1,r1,#0x10000
@@ -4071,8 +4060,9 @@ decFFEA:
 	bl v30WriteSegOfsW
 	fetch 3
 ;@----------------------------------------------------------------------------
-callFF:
-	blmi v30ReadEAW1
+callFFEA:
+	eatCycles 1
+callFFReg:
 	v30DecodeFastPCToReg r1
 	mov v30pc,r0,lsl#16
 	bl v30PushW
@@ -4081,7 +4071,6 @@ callFF:
 	fetch 5
 ;@----------------------------------------------------------------------------
 callFarFF:
-	bl v30ReadEAW_noAdd
 	v30DecodeFastPCToReg r4
 	mov v30pc,r0,lsl#16
 	add v30ofs,v30ofs,#0x20000
@@ -4100,15 +4089,15 @@ callFarFF:
 	ClearPrefixes
 	fetch 12
 ;@----------------------------------------------------------------------------
-braFF:
-	blmi v30ReadEAW1
+braFFEA:
+	eatCycles 1
+braFFReg:
 	mov v30pc,r0,lsl#16
 	v30EncodeFastPC
 	ClearPrefixes
 	fetch 5
 ;@----------------------------------------------------------------------------
 braFarFF:
-	bl v30ReadEAW_noAdd
 	mov v30pc,r0,lsl#16
 	add v30ofs,v30ofs,#0x20000
 	bl v30ReadSegOfsW
@@ -4117,8 +4106,9 @@ braFarFF:
 	ClearPrefixes
 	fetch 10
 ;@----------------------------------------------------------------------------
-pushFF:
-	blmi v30ReadEAW1
+pushFFEA:
+	eatCycles 1
+pushFFReg:
 	mov r1,r0
 	bl v30PushW
 	ClearPrefixes
@@ -4709,10 +4699,10 @@ V30Reset:					;@ r0=v30ptr, r1=type (0=ASWAN)
 	ldr r0,=jmpTblF7
 	ldreq r1,=muluF7Aswan
 	ldrne r1,=muluF7
-	str r1,[r0,#4*4]
-	str r1,[r0,#12*4]
-	str r1,[r0,#20*4]
-	str r1,[r0,#28*4]
+	str r1,[r0,#4*8]
+	str r1,[r0,#12*8]
+	str r1,[r0,#20*8]
+	str r1,[r0,#28*8]
 
 	ldmfd sp!,{r4-r11,lr}
 	bx lr
@@ -5123,6 +5113,16 @@ c1Table:
 	.long rolC1EA, 0, rorC1EA, 0, rolcC1EA, 0, rorcC1EA, 0, shlC1EA, 0, shrC1EA, 0, undC1EA, 0, shraC1EA, 0
 	.long rolC1EA, 0, rorC1EA, 0, rolcC1EA, 0, rorcC1EA, 0, shlC1EA, 0, shrC1EA, 0, undC1EA, 0, shraC1EA, 0
 	.long rolC1Reg,0, rorC1Reg,0, rolcC1Reg,0, rorcC1Reg,0, shlC1Reg,0, shrC1Reg,0, undC1Reg,0, shraC1Reg,0
+jmpTblF7:
+	.long testF7,0, undefF7,0, notF7EA, 0, negF7EA, 0, muluF7,0, mulF7,0, divuwF7,0, divwF7,0
+	.long testF7,0, undefF7,0, notF7EA, 0, negF7EA, 0, muluF7,0, mulF7,0, divuwF7,0, divwF7,0
+	.long testF7,0, undefF7,0, notF7EA, 0, negF7EA, 0, muluF7,0, mulF7,0, divuwF7,0, divwF7,0
+	.long testF7,0, undefF7,0, notF7Reg,0, negF7Reg,0, muluF7,0, mulF7,0, divuwF7,0, divwF7,0
+ffTable:
+	.long incFFEA, 0, decFFEA, 0, callFFEA, 0, callFarFF,0, braFFEA, 0, braFarFF,0, pushFFEA, 0, undefFF,0
+	.long incFFEA, 0, decFFEA, 0, callFFEA, 0, callFarFF,0, braFFEA, 0, braFarFF,0, pushFFEA, 0, undefFF,0
+	.long incFFEA, 0, decFFEA, 0, callFFEA, 0, callFarFF,0, braFFEA, 0, braFarFF,0, pushFFEA, 0, undefFF,0
+	.long incFFReg,0, decFFReg,0, callFFReg,0, callFarFF,0, braFFReg,0, braFarFF,0, pushFFReg,0, undefFF,0
 
 ;@----------------------------------------------------------------------------
 
