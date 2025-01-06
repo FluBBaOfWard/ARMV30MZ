@@ -9,6 +9,7 @@ All flags should be emulated correctly except when a division exception occurs,
 then the Zero flag is not updated as it is on HW.
 Timing should be pretty close to HW as well, it doesn't handle extra cycles on branches to odd addresses.
 It only handles interrupts during REP instructions for MOVMW/MOVSW & STMW/STOSW, on these instructions LOCK is never accounted for.
+It doesn't handle emulation bit/mode in status register, I haven't figured out how to test that.
 
 This is a version with insecure handling of PC.
 This version requires asm hooks for memory/io handling.

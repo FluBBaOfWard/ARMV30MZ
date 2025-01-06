@@ -14,3 +14,4 @@ ARMV30MZ To do
 	Buslock is used with REP and hinders interrupts until finished.
 	* Break in REPE/REPNE (0xF2/0xF3) to see if any games use BUSLOCK.
 	Make 26, 2E, 36 & 3E share code?
+	Try to figure out how emulation mode works, if it works at all.
