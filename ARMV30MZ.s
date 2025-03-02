@@ -399,8 +399,7 @@ _17:	;@ POP SS
 ;@----------------------------------------------------------------------------
 	popWord
 	strh r0,[v30ptr,#v30SRegSS+2]
-//	orr v30cyc,v30cyc,#LOCK_PREFIX
-	fetchForce 3
+	fetchForce 3				;@ No interrupt directly after this instruction
 ;@----------------------------------------------------------------------------
 i_sbb_br8:
 _18:	;@ SUBC/SBB BR8
@@ -1869,19 +1868,28 @@ _8E:	;@ MOV SREGW
 ;@----------------------------------------------------------------------------
 	getNextByte
 	and r4,r0,#0x18				;@ This is correct.
+	add r4,v30ptr,r4,lsr#1
+	ldr lr,[r4,#v30SRegTable]
 	cmp r0,#0xC0
-	andpl r0,r0,#7
+	bmi v30ReadEAWF7
+	and r0,r0,#7
 	add v30ofs,v30ptr,r0,lsl#2
-	ldrhpl r0,[v30ofs,#v30Regs]
-	blmi v30ReadEAW1
+	ldrh r0,[v30ofs,#v30Regs]
+	bx lr
 
-	add r1,v30ptr,r4,lsr#1
-	strh r0,[r1,#v30SRegs+2]
-//	orr v30cyc,v30cyc,#LOCK_PREFIX
+movSRegPS:
 	ClearPrefixes
-	cmp r4,#0x08			;@ PS?
-	bleq V30ReEncodePC
+	strh r0,[r4,#v30SRegs+2]
+	bl V30ReEncodePC
 	fetch 2
+movSRegDS:
+	ClearPrefixes
+	strh r0,[r4,#v30SRegs+2]
+	fetch 2
+movSRegSS:
+	ClearPrefixes
+	strh r0,[r4,#v30SRegs+2]
+	fetchForce 2
 ;@----------------------------------------------------------------------------
 i_popw:
 _8F:	;@ POPW
@@ -3539,10 +3547,12 @@ _F4:	;@ HALT
 	ldrb r0,[v30ptr,#v30IrqPin]
 	cmp r0,#0
 	bne v30ChkIrqInternal
+	mov lr,pc
+	ldr pc,[v30ptr,#v30BusStatusFunc]
 	orr v30cyc,v30cyc,#HALT_FLAG
 	mvns r0,v30cyc,asr#CYC_SHIFT			;@
 	addmi v30cyc,v30cyc,r0,lsl#CYC_SHIFT	;@ Consume all remaining cycles in steps of 1.
-	fetch 0
+	b v30OutOfCycles
 ;@----------------------------------------------------------------------------
 i_cmc:
 _F5:	;@ NOT1 CY/CMC		;@ Not Carry/Complement Carry
@@ -4137,6 +4147,8 @@ division8:
 
 ;@----------------------------------------------------------------------------
 // All EA functions must leave EO (EffectiveOffset) in top 16bits of v30ofs!
+// r1 can not be used as it's used as value during write.
+// r12 is return address
 ;@----------------------------------------------------------------------------
 EA_000:	;@
 ;@----------------------------------------------------------------------------
@@ -4626,6 +4638,9 @@ i_crash:
 V30IrqVectorDummy:
 ;@----------------------------------------------------------------------------
 	mov r0,#0
+;@----------------------------------------------------------------------------
+V30BusStatusDummy:
+;@----------------------------------------------------------------------------
 	bx lr
 
 ;@----------------------------------------------------------------------------
@@ -4658,6 +4673,10 @@ regConv2Loop:
 	cmp r2,#0x100
 	bne regConv2Loop
 
+	adr r0,V30IrqVectorDummy
+	str r0,[v30ptr,#v30IrqVectorFunc]
+	adr r0,V30BusStatusDummy
+	str r0,[v30ptr,#v30BusStatusFunc]
 	ldmfd sp!,{v30ptr,lr}
 	bx lr
 regConvert:
@@ -4671,7 +4690,7 @@ V30Reset:					;@ r0=v30ptr, r1=type (0=ASWAN)
 
 	;@ Clear CPU state, PC, DS1, DS0 & SS are set to 0x0000,
 	;@ AW, BW, CW, DW, SP, BP, IX & IY are undefined.
-	;@ CS is set to 0xFFFF
+	;@ PS is set to 0xFFFF
 	add r0,v30ptr,#v30I
 	mov r1,#(v30IEnd-v30I)/4
 	bl memclr_
@@ -4771,6 +4790,9 @@ v30StateStart:
 v30StateEnd:
 	.long 0			;@ v30LastBank
 	.long 0			;@ v30IrqVectorFunc
+	.long 0			;@ v30BusStatusFunc
+writeSRegTbl:
+	.long movSRegDS, movSRegPS, movSRegSS, movSRegDS
 	.space 16*4		;@ v30MemTbl $00000-FFFFF
 
 V30OpTable:

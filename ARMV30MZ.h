@@ -3,7 +3,7 @@
 //  V30MZ cpu emulator for arm32.
 //
 //  Created by Fredrik Ahlström on 2021-10-19.
-//  Copyright © 2021-2024 Fredrik Ahlström. All rights reserved.
+//  Copyright © 2021-2025 Fredrik Ahlström. All rights reserved.
 //
 
 #ifndef ARMV30MZ_HEADER
@@ -32,6 +32,8 @@ typedef struct {
 
 	u8 *lastBank;
 	u8 (*irqVectorFunc)(void);
+	void (*v30BusStatusFunc)(u8);
+	void (*v30SRegTable[4])(void);
 
 	u8 *memTbl[16];
 
@@ -40,6 +42,10 @@ typedef struct {
 	void (*EATable[256])(void);
 	u32 modRm[256];
 	u8 segTbl[256];
+	void (*c0Table[32])(void);
+	void (*c1Table[32*2])(void);
+	void (*f7Table[32*2])(void);
+	void (*ffTable[32*2])(void);
 } ARMV30Core;
 
 extern ARMV30Core V30OpTable;

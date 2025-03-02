@@ -3,10 +3,8 @@ ARMV30MZ To do
 
 	Figure out how Zero flag is set during division exception.
 	Make all rep instructions able to recognize interrupts.
-	Add fetchforce for ops setting SS (MOV SREGW (0x8E), (POP SS done)).
 	Segment wrapping eats extra cycles? At least for LDS.
 	Log opcode for undefined instructions.
-	Make SRegs access different code paths for each reg.
 	Prepare (C8) uses r4-r8, (r8 = SP).
 	Interrupt uses r4-r6, (r6 = SP).
 	Rename more opcodes.

@@ -37,7 +37,7 @@
 ;@----------------------------------------------------------------------------
 	.equ IRQ_PIN, 1			;@ Which value is set when INT pin is set.
 
-	.struct -(37*4)
+	.struct -(42*4)
 v30I:
 v30Regs2:
 					.short 0
@@ -98,10 +98,12 @@ v30IEnd:
 ;@--------------------------------
 v30LastBank:		.long 0
 v30IrqVectorFunc:	.long 0
+v30BusStatusFunc:	.long 0		;@ Set BS0-BS3, only used by Halt right now.
+v30SRegTable:		.space 4*4
 
 v30MemTbl:			.space 16*4
 v30MemTblInv:
-
+								;@ Base address
 v30Opz:				.space 256*4
 v30PZST:			.space 256
 v30EATable:			.space 256*4
