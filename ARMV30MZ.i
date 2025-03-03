@@ -3,7 +3,7 @@
 //  V30MZ cpu emulator for arm32.
 //
 //  Created by Fredrik Ahlström on 2021-10-19.
-//  Copyright © 2021-2024 Fredrik Ahlström. All rights reserved.
+//  Copyright © 2021-2025 Fredrik Ahlström. All rights reserved.
 //
 
 #define NEC_NMI_VECTOR 2
@@ -21,12 +21,9 @@
 	.equ CYC_MASK, CYCLE-1		;@ Mask
 ;@----------------------------------------------------------------------------
 ;@ v30cyc flags in lower bits
-//	.equ SEG_PREFIX, 1<<0		;@ Bit 0
-//	.equ REP_PREFIX, 1<<1		;@ Bit 1
-//	.equ REPN_PREFIX, 1<<2		;@ Bit 2
-	.equ LOCK_PREFIX, 1<<3		;@ Bit 3
-	.equ HALT_FLAG, 1<<4		;@ Bit 4
-	.equ TRAP_FLAG, 1<<5		;@ Bit 5
+	.equ TRAP_FLAG, 1<<0		;@ Bit 0, this is used directly as IRQ nr.
+	.equ HALT_FLAG, 1<<1		;@ Bit 1
+	.equ LOCK_PREFIX, 1<<2		;@ Bit 2
 ;@----------------------------------------------------------------------------
 ;@ Extra v30f flags
 	.equ SEG_PF, 1<<6			;@ Segment prefix

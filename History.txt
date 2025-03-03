@@ -2,8 +2,9 @@ ARMV30MZ revision history
 -=-=-=-=-=-=-=-=-=-=-=-=-
 
 
-V0.8.10 - 2025-03-02 (FluBBa)
+V0.8.10 - 2025-03-03 (FluBBa)
 	Fixed mov to stack segment register.
+	Fixed Trap flag handling in EI.
 
 V0.8.9 - 2024-08-10 (FluBBa)
 	Fixed prefix handling.

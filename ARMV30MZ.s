@@ -3,7 +3,7 @@
 //  V30MZ cpu emulator for arm32.
 //
 //  Created by Fredrik Ahlström on 2021-12-19.
-//  Copyright © 2021-2024 Fredrik Ahlström. All rights reserved.
+//  Copyright © 2021-2025 Fredrik Ahlström. All rights reserved.
 //
 
 #ifdef __arm__
@@ -1267,7 +1267,7 @@ _62:	;@ CHKIND/BOUND
 	ClearPrefixes
 	cmp r5,r4
 	cmple r4,r0,lsl#16
-	subgt v30cyc,v30cyc,#21*CYCLE
+	subgt v30cyc,v30cyc,#20*CYCLE
 	movgt r0,#5
 	bgt V30TakeIRQ
 	fetch 14
@@ -3170,14 +3170,14 @@ _CB:	;@ RETF
 i_int3:
 _CC:	;@ BRK3/INT3
 ;@----------------------------------------------------------------------------
-	eatCycles 9
+	eatCycles 8
 	mov r0,#3
 	b V30TakeIRQ
 ;@----------------------------------------------------------------------------
 i_int:
 _CD:	;@ BRK/INT
 ;@----------------------------------------------------------------------------
-	eatCycles 10
+	eatCycles 9
 	getNextByte
 	b V30TakeIRQ
 ;@----------------------------------------------------------------------------
@@ -3185,7 +3185,7 @@ i_into:
 _CE:	;@ BRKV				;@ Break if Overflow
 ;@----------------------------------------------------------------------------
 	tst v30f,#PSR_V
-	subne v30cyc,v30cyc,#13*CYCLE
+	subne v30cyc,v30cyc,#12*CYCLE
 	movne r0,#4
 	bne V30TakeIRQ
 	fetch 6
@@ -3293,7 +3293,7 @@ d4DivideError:
 	strb v30f,[v30ptr,#v30ParityVal]	;@ Clear parity
 	tst r0,#0xC0
 	bicne v30f,v30f,#PSR_Z
-	eatCycles 16
+	eatCycles 15
 	b divideError
 ;@----------------------------------------------------------------------------
 i_aad:
@@ -3675,7 +3675,7 @@ divubF6:		;@ DIVU/DIV
 	bicne v30f,v30f,#PSR_Z
 	fetch 15
 divubF6Error:
-	eatCycles 16
+	eatCycles 15
 	b divideError
 ;@----------------------------------------------------------------------------
 divbF6:			;@ DIV/IDIV
@@ -3711,7 +3711,7 @@ divbF6Error:
 divbF6Error2:
 	ldrb v30f,[v30ptr,#v30MulOverflow]	;@ C & V from last mul, Z always set.
 	strb v30f,[v30ptr,#v30ParityVal]	;@ Clear parity
-	eatCycles 19
+	eatCycles 18
 	b divideError
 ;@----------------------------------------------------------------------------
 i_f7pre:
@@ -3834,7 +3834,7 @@ divuwF7:		;@ DIVU/DIV
 	fetch 23
 divuwF7Error:
 	mov v30f,#0							;@ Clear flags.
-	eatCycles 16
+	eatCycles 15
 	b divideError
 ;@----------------------------------------------------------------------------
 divwF7:			;@ DIV/IDIV
@@ -3873,7 +3873,7 @@ divwF7Error:
 	beq 1b
 divwF7Error2:
 	mov v30f,#0							;@ Clear flags.
-	eatCycles 19
+	eatCycles 18
 	b divideError
 	.pool
 ;@----------------------------------------------------------------------------
@@ -3903,7 +3903,7 @@ _FB:	;@ EI/STI			;@ Enable/Set Interrupt
 	ldrb r0,[v30ptr,#v30IF]
 	eors r0,r0,#IRQ_PIN
 	strbne r0,[v30ptr,#v30IF]
-	bne v30DelayIrqCheck
+	bne v30DelayIrqCheckTrap
 	fetch 0
 ;@----------------------------------------------------------------------------
 i_cld:
@@ -4486,7 +4486,7 @@ V30EncodePC:
 //	subne v30cyc,v30cyc,#1*CYCLE
 	ldmfd sp!,{pc}
 ;@----------------------------------------------------------------------------
-V30SetIRQPin:			;@ r0=pin state
+V30SetIRQPin:				;@ r0=pin state
 ;@----------------------------------------------------------------------------
 	cmp r0,#0
 	movne r0,#IRQ_PIN
@@ -4495,7 +4495,7 @@ V30SetIRQPin:			;@ r0=pin state
 ;@----------------------------------------------------------------------------
 V30FetchIRQ:
 ;@----------------------------------------------------------------------------
-	eatCycles 8
+	eatCycles 7
 	mov lr,pc
 	ldr pc,[v30ptr,#v30IrqVectorFunc]
 ;@----------------------------------------------------------------------------
@@ -4520,7 +4520,7 @@ V30TakeIRQ:					;@ r0 = vector number
 	strh r0,[v30ptr,#v30SRegPS+2]
 
 	v30EncodeFastPC
-	fetch 32
+	fetch 33
 ;@----------------------------------------------------------------------------
 V30RestoreAndRunXCycles:	;@ r0 = number of cycles to run
 ;@----------------------------------------------------------------------------
@@ -4547,8 +4547,8 @@ V30Go:						;@ Continue running
 ;@----------------------------------------------------------------------------
 	fetch 0
 v30InHaltTrap:
-	tst v30cyc,#TRAP_FLAG
-	bne doV30Trap
+	ands r0,v30cyc,#TRAP_FLAG	;@ Bit 0 = Trap flag = IRQ 1.
+	bne V30TakeIRQ
 	tst r1,#IRQ_PIN				;@ IRQ Pin ?
 	bicne v30cyc,v30cyc,#HALT_FLAG
 	bne V30Go
@@ -4560,7 +4560,12 @@ v30OutOfCycles:
 	bgt v30ChkIrqInternal
 	ldmfd sp!,{pc}
 ;@----------------------------------------------------------------------------
-v30DelayIrqCheck:			;@ This can be used on EI/IRET/POPF
+v30DelayIrqCheckTrap:		;@ This is used by EI
+;@----------------------------------------------------------------------------
+	ands r0,v30cyc,#TRAP_FLAG	;@ Bit 0 = Trap flag = IRQ 1.
+	bne V30TakeIRQ
+;@----------------------------------------------------------------------------
+v30DelayIrqCheck:			;@ This is used by IRET/POPF
 ;@----------------------------------------------------------------------------
 	orr v30cyc,v30cyc,#0xC0000000
 	executeNext
@@ -4573,7 +4578,7 @@ v30DelayIrqCheck:			;@ This can be used on EI/IRET/POPF
 ;@----------------------------------------------------------------------------
 
 ;@----------------------------------------------------------------------------
-V30SetNMIPin:			;@ r0=pin state
+V30SetNMIPin:				;@ r0=pin state
 ;@----------------------------------------------------------------------------
 	cmp r0,#0
 	movne r0,#NEC_NMI_VECTOR
@@ -4583,15 +4588,8 @@ V30SetNMIPin:			;@ r0=pin state
 	strbne r0,[v30ptr,#v30NmiPending]
 	bx lr
 ;@----------------------------------------------------------------------------
-doV30Trap:
+doV30NMI:					;@ r0=NMI_VECTOR (2)
 ;@----------------------------------------------------------------------------
-	eatCycles 1
-	mov r0,#1
-	b V30TakeIRQ
-;@----------------------------------------------------------------------------
-doV30NMI:			;@ r0=NMI_VECTOR (2)
-;@----------------------------------------------------------------------------
-	eatCycles 1
 	mov r1,#0
 	strb r1,[v30ptr,#v30NmiPending]
 	b V30TakeIRQ
@@ -4739,9 +4737,9 @@ V30SaveState:				;@ In r0=destination, r1=v30ptr. Out r0=size.
 	bl memcpy
 
 	;@ Convert copied PC to not offseted.
-	ldr v30pc,[r4,#v30PC]				;@ Offseted v30pc
+	ldr v30pc,[r4,#v30PC]		;@ Offseted v30pc
 	v30DecodeFastPC
-	str v30pc,[r4,#v30PC]				;@ Normal v30pc
+	str v30pc,[r4,#v30PC]		;@ Normal v30pc
 
 	ldmfd sp!,{r4,v30pc,v30ptr,lr}
 	mov r0,#v30StateEnd-v30StateStart
@@ -4757,9 +4755,9 @@ V30LoadState:				;@ In r0=v30ptr, r1=source. Out r0=size.
 	mov r2,#v30StateEnd-v30StateStart
 	bl memcpy
 
-	ldr v30pc,[v30ptr,#v30PC]			;@ Normal v30pc
+	ldr v30pc,[v30ptr,#v30PC]	;@ Normal v30pc
 	v30EncodeFastPC
-	str v30pc,[v30ptr,#v30PC]			;@ Rewrite offseted v30pc
+	str v30pc,[v30ptr,#v30PC]	;@ Rewrite offseted v30pc
 
 	ldmfd sp!,{v30pc,v30ptr,lr}
 ;@----------------------------------------------------------------------------
@@ -4777,9 +4775,9 @@ V30RedirectOpcode:			;@ In r0=opcode, r1=address.
 	bx lr
 ;@----------------------------------------------------------------------------
 #ifdef NDS
-	.section .dtcm, "ax", %progbits				;@ For the NDS
+	.section .dtcm, "ax", %progbits		;@ For the NDS
 #elif GBA
-	.section .iwram, "ax", %progbits			;@ For the GBA
+	.section .iwram, "ax", %progbits	;@ For the GBA
 #else
 	.section .text
 #endif
