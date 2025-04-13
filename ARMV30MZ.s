@@ -4648,24 +4648,26 @@ V30Init:					;@ r0=v30ptr
 	mov v30ptr,r0
 	add r0,v30ptr,#v30ModRmRm
 	adr r1,regConvert
-	mov r2,#0xC0
+	mov r2,#0
 regConvLoop:
-	and r3,r2,#7
-	ldr r3,[r1,r3,lsl#2]
+	and r3,r2,#0x38
+	ldr r3,[r1,r3,lsr#1]
 	rsb r3,r3,#0
-	strb r3,[r0,r2,lsl#2]
+	mov r3,r3,lsl#24
+	str r3,[r0,r2,lsl#2]
 	add r2,r2,#1
-	cmp r2,#0x100
+	cmp r2,#0xC0
 	bne regConvLoop
 
-	add r0,v30ptr,#v30ModRmReg
-	add r0,r0,#3
-	mov r2,#0
 regConv2Loop:
 	and r3,r2,#0x38
 	ldr r3,[r1,r3,lsr#1]
 	rsb r3,r3,#0
-	strb r3,[r0,r2,lsl#2]
+	and lr,r2,#7
+	ldr lr,[r1,lr,lsl#2]
+	rsb lr,lr,#0
+	orr r3,lr,r3,lsl#24
+	str r3,[r0,r2,lsl#2]
 	add r2,r2,#1
 	cmp r2,#0x100
 	bne regConv2Loop
