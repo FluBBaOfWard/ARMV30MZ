@@ -2,6 +2,10 @@ ARMV30MZ revision history
 -=-=-=-=-=-=-=-=-=-=-=-=-
 
 
+V0.8.11 - 2025-04-13 (FluBBa)
+	Refactored neg opcodes to be more like the Z80 implementation.
+	Optimized CVTDB/AAD.
+
 V0.8.10 - 2025-03-03 (FluBBa)
 	Fixed mov to stack segment register.
 	Fixed Trap flag handling in EI.

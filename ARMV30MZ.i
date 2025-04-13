@@ -56,20 +56,16 @@ v30RegBL:			.byte 0
 v30RegBH:			.byte 0
 
 v30RegSP:			.short 0
-v30RegSPL:			.byte 0
-v30RegSPH:			.byte 0
+					.short 0
 
 v30RegBP:			.short 0
-v30RegBPL:			.byte 0
-v30RegBPH:			.byte 0
+					.short 0
 
 v30RegIX:			.short 0	;@ SI on Intel
-v30RegIXL:			.byte 0
-v30RegIXH:			.byte 0
+					.short 0
 
 v30RegIY:			.short 0	;@ DI on Intel. Must be right before DS1 so we can use "ldrd v30ofs, v30csr".
-v30RegIYL:			.byte 0
-v30RegIYH:			.byte 0
+					.short 0
 
 v30SRegs:
 v30SRegDS1:			.long 0		;@ ES on Intel

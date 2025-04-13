@@ -622,7 +622,7 @@ _26:	;@ DS1/ES prefix
 	add r2,v30ptr,#v30SegTbl
 	ldrb r1,[r2,r0]
 	SetSegmentPrefix
-	bic v30f,v30f,r1,lsl#6	;@ Clear prefixes if not applicable
+	bic v30f,v30f,r1,lsl#6		;@ Clear prefixes if not applicable
 //	eatCycles 1
 	ldr pc,[v30ptr,r0,lsl#2]
 
@@ -636,12 +636,12 @@ _27:	;@ ADJ4A/DAA
 	cmn r1,r0,lsl#28
 	orrcs v30f,v30f,#PSR_A
 	cmp r0,#0x9A
-	tstcc v30f,v30f,lsr#2	;@ #PSR_C
+	tstcc v30f,v30f,lsr#2		;@ #PSR_C
 	biccc r1,r1,#0x60000000
 	tst v30f,#PSR_A
 	biceq r1,r1,#0x06000000
 	adds r0,r1,r0,lsl#24
-	mrs r1,cpsr				;@ S, Z, V & C.
+	mrs r1,cpsr					;@ S, Z, V & C.
 	orr v30f,v30f,r1,lsr#28
 	mov r0,r0,lsr#24
 	strb r0,[v30ptr,#v30RegAL]
@@ -756,7 +756,7 @@ _2E:	;@ PS/CS prefix
 	add r2,v30ptr,#v30SegTbl
 	ldrb r1,[r2,r0]
 	SetSegmentPrefix
-	bic v30f,v30f,r1,lsl#6	;@ Clear prefixes if not applicable
+	bic v30f,v30f,r1,lsl#6		;@ Clear prefixes if not applicable
 //	eatCycles 1
 	ldr pc,[v30ptr,r0,lsl#2]
 ;@----------------------------------------------------------------------------
@@ -768,7 +768,7 @@ _2F:	;@ ADJ4S/DAS
 	cmp r2,#0xA0000000
 	orrcs v30f,v30f,#PSR_A
 	cmp r0,#0x9A
-	tstcc v30f,v30f,lsr#2	;@ #PSR_C
+	tstcc v30f,v30f,lsr#2		;@ #PSR_C
 	ands v30f,v30f,#PSR_A
 	orrcs v30f,v30f,#PSR_C
 	subcs r0,r0,#0x60
@@ -890,7 +890,7 @@ _36:	;@ SS prefix
 	add r2,v30ptr,#v30SegTbl
 	ldrb r1,[r2,r0]
 	SetSegmentPrefix
-	bic v30f,v30f,r1,lsl#6	;@ Clear prefixes if not applicable
+	bic v30f,v30f,r1,lsl#6		;@ Clear prefixes if not applicable
 //	eatCycles 1
 	ldr pc,[v30ptr,r0,lsl#2]
 ;@----------------------------------------------------------------------------
@@ -1005,7 +1005,7 @@ _3E:	;@ DS0/DS prefix
 	add r2,v30ptr,#v30SegTbl
 	ldrb r1,[r2,r0]
 	SetSegmentPrefix
-	bic v30f,v30f,r1,lsl#6	;@ Clear prefixes if not applicable
+	bic v30f,v30f,r1,lsl#6		;@ Clear prefixes if not applicable
 //	eatCycles 1
 	ldr pc,[v30ptr,r0,lsl#2]
 ;@----------------------------------------------------------------------------
@@ -1020,7 +1020,7 @@ _3F:	;@ ADJBS/AAS
 	movcc v30f,#PSR_S
 	strb r1,[v30ptr,#v30ParityVal]	;@ Parity allways set
 	bic r0,r0,#0x00F0
-	subcs r0,r0,#0x16
+	subcs r0,r0,#0x0016
 	bic r0,r0,#0x00F0
 	strh r0,[v30ptr,#v30RegAW]
 	fetch 9
@@ -2030,7 +2030,7 @@ _9D:	;@ POP F
 	and r1,r0,#PF
 	eor r1,r1,#PF
 	strb r1,[v30ptr,#v30ParityVal]
-	and v30f,r0,#AF			;@ PSR_A is in the same place as AF
+	and v30f,r0,#AF				;@ PSR_A is in the same place as AF
 	tst r0,#SF
 	orrne v30f,v30f,#PSR_S
 	tst r0,#ZF
@@ -2048,9 +2048,9 @@ _9D:	;@ POP F
 	ldrb r2,[v30ptr,#v30IF]
 	eors r2,r2,r1
 	strbne r1,[v30ptr,#v30IF]
-	tst r0,#TF				;@ Check if Trap is set.
+	tst r0,#TF					;@ Check if Trap is set.
 	orrne v30cyc,v30cyc,#TRAP_FLAG
-	tsteq r2,r1				;@ Or if Interrupt became enabled
+	tsteq r2,r1					;@ Or if Interrupt became enabled
 	eatCycles 3
 	bne v30DelayIrqCheck
 	fetch 0
@@ -2060,13 +2060,13 @@ _9E:	;@ SAHF
 ;@----------------------------------------------------------------------------
 	ldrb r0,[v30ptr,#v30RegAH]
 
-	and v30f,v30f,#PSR_V	;@ Keep V.
+	and v30f,v30f,#PSR_V		;@ Keep V.
 	and r1,r0,#PF
 	eor r1,r1,#PF
 	strb r1,[v30ptr,#v30ParityVal]
 	movs r1,r0,lsl#25
-	orrcs v30f,v30f,#PSR_S	;@ Bit 7 of r0
-	orrmi v30f,v30f,#PSR_Z	;@ Bit 6 of r0
+	orrcs v30f,v30f,#PSR_S		;@ Bit 7 of r0
+	orrmi v30f,v30f,#PSR_Z		;@ Bit 6 of r0
 	tst r0,#CF
 	orrne v30f,v30f,#PSR_C
 	tst r0,#AF
@@ -3270,10 +3270,10 @@ _D3:	;@ ROTSHFT WCL
 i_aam:
 _D4:	;@ CVTBD/AAM	;@ Convert Binary to Decimal / Adjust After Multiply
 ;@----------------------------------------------------------------------------
-	getNextByte
+	getNextByteTo r1
 
-	movs r1,r0,lsl#8
 	ldrb r0,[v30ptr,#v30RegAL]
+	movs r1,r1,lsl#8
 	beq d4DivideError
 	rsb r1,r1,#1
 
@@ -3300,23 +3300,22 @@ i_aad:
 _D5:	;@ CVTDB/AAD	;@ Convert Decimal to Binary / Adjust After Division
 ;@----------------------------------------------------------------------------
 	getNextByte
-	ldrh r1,[v30ptr,#v30RegAW]
-	mov r2,r1,lsr#8
+	ldr r1,[v30ptr,#v30RegAW-2]
+	and r2,r1,#0xFF000000
 	mul r0,r2,r0
-	eor r2,r1,r0
-	mov r1,r1,lsl#24
-	adds r0,r1,r0,lsl#24
-	eor r2,r2,r0,lsr#24
-	and r2,r2,#PSR_A
+	mov r2,r0,lsl#4
+	adds r0,r0,r1,lsl#8
 	mrs v30f,cpsr				;@ S, Z, V & C.
-	orr v30f,r2,v30f,lsr#28
+	mov v30f,v30f,lsr#28
+	adds r2,r2,r1,lsl#12
+	orrcs v30f,v30f,#PSR_A
 	mov r0,r0,lsr#24
 	strh r0,[v30ptr,#v30RegAW]
 	strb r0,[v30ptr,#v30ParityVal]
 	fetch 6
 ;@----------------------------------------------------------------------------
 i_salc:
-_D6:	;@ SALC			;@ Set AL on Carry
+_D6:	;@ SALC				;@ Set AL on Carry
 ;@----------------------------------------------------------------------------
 	ands r0,v30f,PSR_C
 	movne r0,#0xFF
@@ -3324,7 +3323,7 @@ _D6:	;@ SALC			;@ Set AL on Carry
 	fetch 8
 ;@----------------------------------------------------------------------------
 i_trans:
-_D7:	;@ TRANS/XLAT	;@ Translate al via LUT.
+_D7:	;@ TRANS/XLAT		;@ Translate al via LUT.
 ;@----------------------------------------------------------------------------
 	TestSegmentPrefix
 	ldreq v30csr,[v30ptr,#v30SRegDS0]
@@ -3507,7 +3506,7 @@ _F0:	;@ BUS LOCK
 	SetLockPrefix
 	add r2,v30ptr,#v30SegTbl
 	ldrb r1,[r2,r0]
-	bic v30f,v30f,r1,lsl#6	;@ Clear segments if not applicable
+	bic v30f,v30f,r1,lsl#6		;@ Clear segments if not applicable
 //	eatCycles 1
 	ldr pc,[v30ptr,r0,lsl#2]
 ;@----------------------------------------------------------------------------
@@ -3523,7 +3522,7 @@ _F2:	;@ REPNE
 	SetRepeatNEPrefix
 	add r2,v30ptr,#v30SegTbl
 	ldrb r1,[r2,r0]
-	bic v30f,v30f,r1,lsl#6	;@ Clear segments if not applicable
+	bic v30f,v30f,r1,lsl#6		;@ Clear segments if not applicable
 //	eatCycles 1
 	ldr pc,[v30ptr,r0,lsl#2]
 
@@ -3535,7 +3534,7 @@ _F3:	;@ REPE
 	SetRepeatEPrefix
 	add r2,v30ptr,#v30SegTbl
 	ldrb r1,[r2,r0]
-	bic v30f,v30f,r1,lsl#6	;@ Clear segments if not applicable
+	bic v30f,v30f,r1,lsl#6		;@ Clear segments if not applicable
 //	eatCycles 1
 	ldr pc,[v30ptr,r0,lsl#2]
 
@@ -3599,10 +3598,10 @@ notF6EA:
 negF6Reg:
 	subs r1,r0,r0,lsl#24
 	mrs v30f,cpsr				;@ S, Z, V & C.
-	eor r0,r0,r1,lsr#24
-	and r0,r0,#PSR_A
-	orr v30f,r0,v30f,lsr#28
+	mov v30f,v30f,lsr#28
 	eor v30f,v30f,#PSR_C		;@ Invert C
+	tst r0,#0xF
+	orrne v30f,v30f,#PSR_A
 	mov r1,r1,lsr#24
 	strb r1,[v30ptr,#v30ParityVal]
 
@@ -3612,10 +3611,10 @@ negF6Reg:
 negF6EA:
 	subs r1,r0,r0,lsl#24
 	mrs v30f,cpsr				;@ S, Z, V & C.
-	eor r0,r0,r1,lsr#24
-	and r0,r0,#PSR_A
-	orr v30f,r0,v30f,lsr#28
+	mov v30f,v30f,lsr#28
 	eor v30f,v30f,#PSR_C		;@ Invert C
+	tst r0,#0xF
+	orrne v30f,v30f,#PSR_A
 	mov r1,r1,lsr#24
 	strb r1,[v30ptr,#v30ParityVal]
 
@@ -3719,11 +3718,11 @@ _F7:	;@ PRE F7
 ;@----------------------------------------------------------------------------
 	getNextByte
 	add r2,v30ptr,#v30F7Table
-	mov r5,r0,ror#3
-	ldr lr,[r2,r5,lsl#3]
+	mov r1,r0,ror#3
+	ldr lr,[r2,r1,lsl#3]
 	cmp r0,#0xC0
 	bmi v30ReadEAWF7
-	add v30ofs,v30ptr,r5,lsr#27
+	add v30ofs,v30ptr,r1,lsr#27
 	ldrh r0,[v30ofs,#v30Regs]
 	bx lr
 
@@ -3749,10 +3748,10 @@ notF7EA:
 negF7Reg:
 	subs r1,r0,r0,lsl#16
 	mrs v30f,cpsr				;@ S, Z, V & C.
-	eor r0,r0,r1,lsr#16
-	and r0,r0,#PSR_A
-	orr v30f,r0,v30f,lsr#28
+	mov v30f,v30f,lsr#28
 	eor v30f,v30f,#PSR_C		;@ Invert C
+	tst r0,#0xF
+	orrne v30f,v30f,#PSR_A
 	mov r1,r1,lsr#16
 	strb r1,[v30ptr,#v30ParityVal]
 
@@ -3762,10 +3761,10 @@ negF7Reg:
 negF7EA:
 	subs r1,r0,r0,lsl#16
 	mrs v30f,cpsr				;@ S, Z, V & C.
-	eor r0,r0,r1,lsr#16
-	and r0,r0,#PSR_A
-	orr v30f,r0,v30f,lsr#28
+	mov v30f,v30f,lsr#28
 	eor v30f,v30f,#PSR_C		;@ Invert C
+	tst r0,#0xF
+	orrne v30f,v30f,#PSR_A
 	mov r1,r1,lsr#16
 	strb r1,[v30ptr,#v30ParityVal]
 
@@ -3925,8 +3924,8 @@ _FE:	;@ PRE FE
 ;@----------------------------------------------------------------------------
 	getNextByte
 	add v30ofs,v30ptr,r0,lsl#2
-	and r5,r0,#0xF8
-	ldr pc,[pc,r5,lsr#1]
+	and r1,r0,#0xF8
+	ldr pc,[pc,r1,lsr#1]
 	nop
 	.long incFEEA,  decFEEA,  contFF, contFF, contFF, contFF, contFF, undefFF
 	.long incFEEA,  decFEEA,  contFF, contFF, contFF, contFF, contFF, undefFF
@@ -4006,11 +4005,11 @@ _FF:	;@ PRE FF
 	getNextByte
 contFF:
 	add r2,v30ptr,#v30FFTable
-	mov r5,r0,ror#3
-	ldr lr,[r2,r5,lsl#3]
+	mov r1,r0,ror#3
+	ldr lr,[r2,r1,lsl#3]
 	cmp r0,#0xC0
 	bmi v30ReadEAW
-	add v30ofs,v30ptr,r5,lsr#27
+	add v30ofs,v30ptr,r1,lsr#27
 	ldrh r0,[v30ofs,#v30Regs]
 	bx lr
 ;@----------------------------------------------------------------------------
@@ -4643,7 +4642,7 @@ V30BusStatusDummy:
 
 ;@----------------------------------------------------------------------------
 V30Init:					;@ r0=v30ptr
-;@ Called by cpuReset
+;@ Called by cpuInit
 ;@----------------------------------------------------------------------------
 	stmfd sp!,{v30ptr,lr}
 	mov v30ptr,r0
