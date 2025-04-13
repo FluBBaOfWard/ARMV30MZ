@@ -73,20 +73,19 @@ _00:	;@ ADD BR8
 	getNextByte
 	add v30ofs,v30ptr,r0,lsl#2
 	ldr r1,[v30ofs,#v30ModRmReg]
-	cmp r0,#0xC0
+	adr lr,0f
 	ldrb r4,[v30ptr,-r1,lsr#24]
-	bmi 0f
+	ands r3,r1,#0xff
+	beq v30ReadEA
 
-	and v30ofs,r1,#0xff
 add80Reg:
-	ldrb r0,[v30ptr,-v30ofs]
+	ldrb r0,[v30ptr,-r3]
 	add8 r4,r0
-
-	strb r1,[v30ptr,-v30ofs]
+	strb r1,[v30ptr,-r3]
 	fetch 1
-0:
-	bl v30ReadEA
+
 add80EA:
+0:
 	add8 r4,r0
 	bl v30WriteSegOfs
 	fetch 3
@@ -121,10 +120,9 @@ _02:	;@ ADD R8b
 	getNextByte
 	add v30ofs,v30ptr,r0,lsl#2
 	ldr r4,[v30ofs,#v30ModRmReg]
-	cmp r0,#0xC0
-	andpl r1,r4,#0xff
-	ldrbpl r0,[v30ptr,-r1]
-	blmi v30ReadEA1
+	ands r1,r4,#0xff
+	ldrbne r0,[v30ptr,-r1]
+	bleq v30ReadEA1
 
 	ldrb r1,[v30ptr,-r4,lsr#24]
 	add8 r0,r1
@@ -186,20 +184,19 @@ _08:	;@ OR BR8
 	getNextByte
 	add v30ofs,v30ptr,r0,lsl#2
 	ldr r1,[v30ofs,#v30ModRmReg]
-	cmp r0,#0xC0
+	adr lr,0f
 	ldrb r4,[v30ptr,-r1,lsr#24]
-	bmi 0f
+	ands r3,r1,#0xff
+	beq v30ReadEA
 
-	and v30ofs,r1,#0xff
 or80Reg:
-	ldrb r0,[v30ptr,-v30ofs]
+	ldrb r0,[v30ptr,-r3]
 	or8 r4,r0
-
-	strb r1,[v30ptr,-v30ofs]
+	strb r1,[v30ptr,-r3]
 	fetch 1
-0:
-	bl v30ReadEA
+
 or80EA:
+0:
 	or8 r4,r0
 	bl v30WriteSegOfs
 	fetch 3
@@ -234,10 +231,9 @@ _0A:	;@ OR R8b
 	getNextByte
 	add v30ofs,v30ptr,r0,lsl#2
 	ldr r4,[v30ofs,#v30ModRmReg]
-	cmp r0,#0xC0
-	andpl r3,r4,#0xff
-	ldrbpl r0,[v30ptr,-r3]
-	blmi v30ReadEA1
+	ands r3,r4,#0xff
+	ldrbne r0,[v30ptr,-r3]
+	bleq v30ReadEA1
 
 	ldrb r1,[v30ptr,-r4,lsr#24]
 	or8 r0,r1
@@ -292,20 +288,19 @@ _10:	;@ ADDC/ADC BR8
 	getNextByte
 	add v30ofs,v30ptr,r0,lsl#2
 	ldr r1,[v30ofs,#v30ModRmReg]
-	cmp r0,#0xC0
+	adr lr,0f
 	ldrb r4,[v30ptr,-r1,lsr#24]
-	bmi 0f
+	ands r3,r1,#0xff
+	beq v30ReadEA
 
-	and v30ofs,r1,#0xff
 adc80Reg:
-	ldrb r0,[v30ptr,-v30ofs]
+	ldrb r0,[v30ptr,-r3]
 	adc8 r4,r0
-
-	strb r1,[v30ptr,-v30ofs]
+	strb r1,[v30ptr,-r3]
 	fetch 1
-0:
-	bl v30ReadEA
+
 adc80EA:
+0:
 	adc8 r4,r0
 	bl v30WriteSegOfs
 	fetch 3
@@ -340,10 +335,9 @@ _12:	;@ ADDC/ADC R8b
 	getNextByte
 	add v30ofs,v30ptr,r0,lsl#2
 	ldr r4,[v30ofs,#v30ModRmReg]
-	cmp r0,#0xC0
-	andpl r1,r4,#0xff
-	ldrbpl r0,[v30ptr,-r1]
-	blmi v30ReadEA1
+	ands r1,r4,#0xff
+	ldrbne r0,[v30ptr,-r1]
+	bleq v30ReadEA1
 
 	ldrb r1,[v30ptr,-r4,lsr#24]
 	adc8 r0,r1
@@ -407,20 +401,19 @@ _18:	;@ SUBC/SBB BR8
 	getNextByte
 	add v30ofs,v30ptr,r0,lsl#2
 	ldr r1,[v30ofs,#v30ModRmReg]
-	cmp r0,#0xC0
+	adr lr,0f
 	ldrb r4,[v30ptr,-r1,lsr#24]
-	bmi 0f
+	ands r3,r1,#0xff
+	beq v30ReadEA
 
-	and v30ofs,r1,#0xff
 subc80Reg:
-	ldrb r0,[v30ptr,-v30ofs]
+	ldrb r0,[v30ptr,-r3]
 	subc8 r4,r0
-
-	strb r1,[v30ptr,-v30ofs]
+	strb r1,[v30ptr,-r3]
 	fetch 1
-0:
-	bl v30ReadEA
+
 subc80EA:
+0:
 	subc8 r4,r0
 	bl v30WriteSegOfs
 	fetch 3
@@ -455,10 +448,9 @@ _1A:	;@ SUBC/SBB R8b
 	getNextByte
 	add v30ofs,v30ptr,r0,lsl#2
 	ldr r4,[v30ofs,#v30ModRmReg]
-	cmp r0,#0xC0
-	andpl r1,r4,#0xff
-	ldrbpl r0,[v30ptr,-r1]
-	blmi v30ReadEA1
+	ands r1,r4,#0xff
+	ldrbne r0,[v30ptr,-r1]
+	bleq v30ReadEA1
 
 	ldrb r1,[v30ptr,-r4,lsr#24]
 	subc8 r0,r1
@@ -520,20 +512,19 @@ _20:	;@ AND BR8
 	getNextByte
 	add v30ofs,v30ptr,r0,lsl#2
 	ldr r1,[v30ofs,#v30ModRmReg]
-	cmp r0,#0xC0
+	adr lr,0f
 	ldrb r4,[v30ptr,-r1,lsr#24]
-	bmi 0f
+	ands r3,r1,#0xff
+	beq v30ReadEA
 
-	and v30ofs,r1,#0xff
 and80Reg:
-	ldrb r0,[v30ptr,-v30ofs]
+	ldrb r0,[v30ptr,-r3]
 	and8 r4,r0
-
-	strb r1,[v30ptr,-v30ofs]
+	strb r1,[v30ptr,-r3]
 	fetch 1
-0:
-	bl v30ReadEA
+
 and80EA:
+0:
 	and8 r4,r0
 	bl v30WriteSegOfs
 	fetch 3
@@ -568,10 +559,9 @@ _22:	;@ AND R8b
 	getNextByte
 	add v30ofs,v30ptr,r0,lsl#2
 	ldr r4,[v30ofs,#v30ModRmReg]
-	cmp r0,#0xC0
-	andpl r1,r4,#0xff
-	ldrbpl r0,[v30ptr,-r1]
-	blmi v30ReadEA1
+	ands r1,r4,#0xff
+	ldrbne r0,[v30ptr,-r1]
+	bleq v30ReadEA1
 
 	ldrb r1,[v30ptr,-r4,lsr#24]
 	and8 r0,r1
@@ -654,20 +644,19 @@ _28:	;@ SUB BR8
 	getNextByte
 	add v30ofs,v30ptr,r0,lsl#2
 	ldr r1,[v30ofs,#v30ModRmReg]
-	cmp r0,#0xC0
+	adr lr,0f
 	ldrb r4,[v30ptr,-r1,lsr#24]
-	bmi 0f
+	ands r3,r1,#0xff
+	beq v30ReadEA
 
-	and v30ofs,r1,#0xff
 sub80Reg:
-	ldrb r0,[v30ptr,-v30ofs]
+	ldrb r0,[v30ptr,-r3]
 	sub8 r4,r0
-
-	strb r1,[v30ptr,-v30ofs]
+	strb r1,[v30ptr,-r3]
 	fetch 1
-0:
-	bl v30ReadEA
+
 sub80EA:
+0:
 	sub8 r4,r0
 	bl v30WriteSegOfs
 	fetch 3
@@ -702,10 +691,9 @@ _2A:	;@ SUB R8b
 	getNextByte
 	add v30ofs,v30ptr,r0,lsl#2
 	ldr r4,[v30ofs,#v30ModRmReg]
-	cmp r0,#0xC0
-	andpl r1,r4,#0xff
-	ldrbpl r0,[v30ptr,-r1]
-	blmi v30ReadEA1
+	ands r1,r4,#0xff
+	ldrbne r0,[v30ptr,-r1]
+	bleq v30ReadEA1
 
 	ldrb r1,[v30ptr,-r4,lsr#24]
 	sub8 r0,r1
@@ -788,20 +776,19 @@ _30:	;@ XOR BR8
 	getNextByte
 	add v30ofs,v30ptr,r0,lsl#2
 	ldr r1,[v30ofs,#v30ModRmReg]
-	cmp r0,#0xC0
+	adr lr,0f
 	ldrb r4,[v30ptr,-r1,lsr#24]
-	bmi 0f
+	ands r3,r1,#0xff
+	beq v30ReadEA
 
-	and v30ofs,r1,#0xff
 xor80Reg:
-	ldrb r0,[v30ptr,-v30ofs]
+	ldrb r0,[v30ptr,-r3]
 	xor8 r4,r0
-
-	strb r1,[v30ptr,-v30ofs]
+	strb r1,[v30ptr,-r3]
 	fetch 1
-0:
-	bl v30ReadEA
+
 xor80EA:
+0:
 	xor8 r4,r0
 	bl v30WriteSegOfs
 	fetch 3
@@ -836,10 +823,9 @@ _32:	;@ XOR R8b
 	getNextByte
 	add v30ofs,v30ptr,r0,lsl#2
 	ldr r4,[v30ofs,#v30ModRmReg]
-	cmp r0,#0xC0
-	andpl r1,r4,#0xff
-	ldrbpl r0,[v30ptr,-r1]
-	blmi v30ReadEA1
+	ands r1,r4,#0xff
+	ldrbne r0,[v30ptr,-r1]
+	bleq v30ReadEA1
 
 	ldrb r1,[v30ptr,-r4,lsr#24]
 	xor8 r0,r1
@@ -916,16 +902,18 @@ _38:	;@ CMP BR8
 	getNextByte
 	add v30ofs,v30ptr,r0,lsl#2
 	ldr r1,[v30ofs,#v30ModRmReg]
-	cmp r0,#0xC0
+	adr lr,0f
 	ldrb r4,[v30ptr,-r1,lsr#24]
-	andpl v30ofs,r1,#0xff
-cmp80Reg:
-	ldrbpl r0,[v30ptr,-v30ofs]
-	blmi v30ReadEA1
+	ands r3,r1,#0xff
+	beq v30ReadEA
 
+cmp80Reg:
+	ldrb r0,[v30ptr,-r3]
 	sub8 r4,r0
 	fetch 1
+
 cmp80EA:
+0:
 	sub8 r4,r0
 	fetch 2
 ;@----------------------------------------------------------------------------
@@ -955,10 +943,9 @@ _3A:	;@ CMP R8b
 	getNextByte
 	add v30ofs,v30ptr,r0,lsl#2
 	ldr r4,[v30ofs,#v30ModRmReg]
-	cmp r0,#0xC0
-	andpl r1,r4,#0xff
-	ldrbpl r0,[v30ptr,-r1]
-	blmi v30ReadEA1
+	ands r1,r4,#0xff
+	ldrbne r0,[v30ptr,-r1]
+	bleq v30ReadEA1
 
 	ldrb r1,[v30ptr,-r4,lsr#24]
 	sub8 r0,r1
@@ -1639,7 +1626,7 @@ _82:	;@ PRE 82
 	add v30ofs,v30ptr,r0,lsl#2
 	cmp r0,#0xC0
 	and r5,r0,#0xF8
-	ldrbpl v30ofs,[v30ofs,#v30ModRmRm]
+	ldrbpl r3,[v30ofs,#v30ModRmRm]
 	blmi v30ReadEA
 
 	getNextByteTo r4
@@ -1692,11 +1679,10 @@ _84:	;@ TEST BR8
 	getNextByte
 	add v30ofs,v30ptr,r0,lsl#2
 	ldr r1,[v30ofs,#v30ModRmReg]
-	cmp r0,#0xC0
 	ldrb r4,[v30ptr,-r1,lsr#24]
-	andpl v30ofs,r1,#0xff
-	ldrbpl r0,[v30ptr,-v30ofs]
-	blmi v30ReadEA1
+	ands r1,r1,#0xff
+	ldrbne r0,[v30ptr,-r1]
+	bleq v30ReadEA1
 
 	and8 r4,r0
 	fetch 1
@@ -1723,10 +1709,10 @@ _86:	;@ XCH/XCHG BR8
 	getNextByte
 	add v30ofs,v30ptr,r0,lsl#2
 	ldr r4,[v30ofs,#v30ModRmReg]
-	cmp r0,#0xC0
-	bmi 0f
+	adr lr,0f
+	ands r2,r4,#0xff
+	beq v30ReadEA
 
-	and r2,r4,#0xff
 	ldrb r0,[v30ptr,-r2]
 	ldrb r1,[v30ptr,-r4,lsr#24]
 	strb r0,[v30ptr,-r4,lsr#24]
@@ -1734,7 +1720,6 @@ _86:	;@ XCH/XCHG BR8
 	ClearPrefixes
 	fetch 3
 0:
-	bl v30ReadEA
 	ldrb r1,[v30ptr,-r4,lsr#24]
 	strb r0,[v30ptr,-r4,lsr#24]
 	bl v30WriteSegOfs
@@ -1777,12 +1762,11 @@ _88:	;@ MOV BR8
 //	bne noBreak
 //	mov r11,r11
 //noBreak:
-	cmp r0,#0xC0
 	ldrb r1,[v30ptr,-r3,lsr#24]
 
-	andpl r3,r3,#0xff
-	strbpl r1,[v30ptr,-r3]
-	blmi v30WriteEA
+	ands r3,r3,#0xff
+	strbne r1,[v30ptr,-r3]
+	bleq v30WriteEA
 	ClearPrefixes
 	fetch 1
 ;@----------------------------------------------------------------------------
@@ -1808,11 +1792,10 @@ _8A:	;@ MOV R8B
 	getNextByte
 	add v30ofs,v30ptr,r0,lsl#2
 	ldr r4,[v30ofs,#v30ModRmReg]
-	cmp r0,#0xC0
 
-	andpl r1,r4,#0xff
-	ldrbpl r0,[v30ptr,-r1]
-	blmi v30ReadEA
+	ands r1,r4,#0xff
+	ldrbne r0,[v30ptr,-r1]
+	bleq v30ReadEA
 	strb r0,[v30ptr,-r4,lsr#24]
 	ClearPrefixes
 	fetch 1
@@ -4171,7 +4154,7 @@ EA_001:	;@
 ;@----------------------------------------------------------------------------
 EA_002:	;@
 ;@----------------------------------------------------------------------------
-	ldr v30ofs,[v30ptr,#v30RegBP]
+	ldr v30ofs,[v30ptr,#v30RegBP]	;@ ldrd r2,r3?
 	ldr r0,[v30ptr,#v30RegIX]
 	TestSegmentPrefix
 	ldreq v30csr,[v30ptr,#v30SRegSS]
@@ -4245,7 +4228,7 @@ EA_101:	;@
 EA_102:	;@
 ;@----------------------------------------------------------------------------
 	getNextSignedByte
-	ldr v30ofs,[v30ptr,#v30RegBP]
+	ldr v30ofs,[v30ptr,#v30RegBP]	;@ ldrd r2,r3?
 	ldr r2,[v30ptr,#v30RegIX]
 	TestSegmentPrefix
 	ldreq v30csr,[v30ptr,#v30SRegSS]
@@ -4329,7 +4312,7 @@ EA_201:	;@
 EA_202:	;@
 ;@----------------------------------------------------------------------------
 	getNextWordTo r0, r2
-	ldr v30ofs,[v30ptr,#v30RegBP]
+	ldr v30ofs,[v30ptr,#v30RegBP]	;@ ldrd r2,r3?
 	ldr r2,[v30ptr,#v30RegIX]
 	TestSegmentPrefix
 	ldreq v30csr,[v30ptr,#v30SRegSS]
@@ -4442,7 +4425,7 @@ EA_305:	;@
 ;@----------------------------------------------------------------------------
 EA_306:	;@
 ;@----------------------------------------------------------------------------
-	ldr v30ofs,[v30ptr,#v30RegBP]
+	ldr v30ofs,[v30ptr,#v30RegBP]	;@ ldrd r2,r3?
 	ldr r0,[v30ptr,#v30RegIX]
 	TestSegmentPrefix
 	ldreq v30csr,[v30ptr,#v30SRegSS]
