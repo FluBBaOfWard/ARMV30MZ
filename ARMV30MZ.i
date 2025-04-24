@@ -77,7 +77,7 @@ v30PrefixBase:		.long 0		;@ Mapped to v30csr/r7
 v30Flags:			.long 0		;@ Mapped to v30f/r8
 v30PC:				.long 0		;@ Mapped to v30pc/r9
 v30Cycles:			.long 0		;@ Mapped to v30cyc/r10
-v30IrqPin:			.byte 0		;@ IrqPin, IF  & NmiPending needs to be together in the same Word.
+v30IrqPin:			.byte 0		;@ IrqPin, IF & NmiPending needs to be together in the same Word.
 v30IF:				.byte 0
 v30Empty:			.byte 0		;@ Was TRAP/BREAK flag
 v30NmiPending:		.byte 0

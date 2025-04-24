@@ -174,24 +174,24 @@
 ;@ Any register except r2 can be used for src & dst.
 ;@----------------------------------------------------------------------------
 	.macro add8 src dst
-	eor r2,\dst,\src
+	mov r2,\src,lsl#28
 	mov \dst,\dst,lsl#24
 	adds \src,\dst,\src,lsl#24
-	eor r2,r2,\src,lsr#24
-	and r2,r2,#PSR_A
-	mrs v30f,cpsr				;@ S, Z, V & C.
-	orr v30f,r2,v30f,lsr#28
+	mrs v30f,cpsr				;@ S, Z, C & V.
+	mov v30f,v30f,lsr#28
+	adds r2,r2,\dst,lsl#4
+	orrcs v30f,v30f,#PSR_A
 	mov r1,\src,lsr#24
 	strb r1,[v30ptr,#v30ParityVal]
 	.endm
 
 	.macro add16 src dst
-	eor r2,\src,\dst,lsr#16
+	mov r2,\src,lsl#28
 	adds \src,\dst,\src,lsl#16
-	eor r2,r2,\src,lsr#16
-	and r2,r2,#PSR_A
-	mrs v30f,cpsr				;@ S, Z, V & C.
-	orr v30f,r2,v30f,lsr#28
+	mrs v30f,cpsr				;@ S, Z, C & V.
+	mov v30f,v30f,lsr#28
+	adds r2,r2,\dst,lsl#12
+	orrcs v30f,v30f,#PSR_A
 	mov r1,\src,lsr#16
 	strb r1,[v30ptr,#v30ParityVal]
 	.endm
@@ -199,14 +199,14 @@
 	.macro adc8 src dst
 	tst v30f,v30f,lsr#2			;@ Get Carry
 	subcs \src,\src,#0x100
-	eor r2,\dst,\src
-	mov \dst,\dst,lsl#24
-	adcs \src,\dst,\src,ror#8
-	eor r2,r2,\src,lsr#24
-	and r2,r2,#PSR_A
-	mrs v30f,cpsr				;@ S, Z, V & C.
-	orr v30f,r2,v30f,lsr#28
-	mov r1,\src,lsr#24
+	mov \src,\src,ror#8
+	adcs \dst,\src,\dst,lsl#24
+	mrs v30f,cpsr				;@ S, Z, C & V.
+	mov v30f,v30f,lsr#28
+	mov r2,\dst,lsl#4
+	cmp r2,\src,lsl#4
+	orrcc v30f,v30f,#PSR_A
+	mov r1,\dst,lsr#24
 	strb r1,[v30ptr,#v30ParityVal]
 	.endm
 
@@ -519,37 +519,37 @@
 
 ;@----------------------------------------------------------------------------
 	.macro sub8 src dst
-	eor r2,\dst,\src
+	mov r2,\src,lsl#28
 	mov \dst,\dst,lsl#24
 	subs \src,\dst,\src,lsl#24
-	eor r2,r2,\src,lsr#24
-	and r2,r2,#PSR_A
-	mrs v30f,cpsr				;@ S, Z, V & C.
-	orr v30f,r2,v30f,lsr#28
+	mrs v30f,cpsr				;@ S, Z, C & V.
+	mov v30f,v30f,lsr#28
+	rsbs r2,r2,\dst,lsl#4
+	orrcc v30f,v30f,#PSR_A
 	eor v30f,v30f,#PSR_C		;@ Invert C
 	mov r1,\src,lsr#24
 	strb r1,[v30ptr,#v30ParityVal]
 	.endm
 
 	.macro sub16 src dst
-	eor r2,\src,\dst,lsr#16
+	mov r2,\src,lsl#28
 	subs \src,\dst,\src,lsl#16
-	eor r2,r2,\src,lsr#16
-	and r2,r2,#PSR_A
-	mrs v30f,cpsr				;@ S, Z, V & C.
-	orr v30f,r2,v30f,lsr#28
+	mrs v30f,cpsr				;@ S, Z, C & V.
+	mov v30f,v30f,lsr#28
+	rsbs r2,r2,\dst,lsl#12
+	orrcc v30f,v30f,#PSR_A
 	eor v30f,v30f,#PSR_C		;@ Invert C
 	mov r1,\src,lsr#16
 	strb r1,[v30ptr,#v30ParityVal]
 	.endm
 
 	.macro rsb16 src dst
-	eor r2,\src,\dst,lsr#16
+	mov r2,\src,lsl#28
 	rsbs \src,\dst,\src,lsl#16
-	eor r2,r2,\src,lsr#16
-	and r2,r2,#PSR_A
-	mrs v30f,cpsr				;@ S, Z, V & C.
-	orr v30f,r2,v30f,lsr#28
+	mrs v30f,cpsr				;@ S, Z, C & V.
+	mov v30f,v30f,lsr#28
+	cmp r2,\dst,lsl#12
+	orrcc v30f,v30f,#PSR_A
 	eor v30f,v30f,#PSR_C		;@ Invert C
 	mov r1,\src,lsr#16
 	strb r1,[v30ptr,#v30ParityVal]
@@ -558,15 +558,15 @@
 	.macro subc8 src dst
 	and v30f,v30f,#PSR_C
 	subs \src,\src,v30f,lsl#7	;@ Fix up src and set correct C.
-	eor r2,\dst,\src
-	mov \dst,\dst,lsl#24
-	sbcs \src,\dst,\src,ror#8
-	eor r2,r2,\src,lsr#24
-	and r2,r2,#PSR_A
-	mrs v30f,cpsr				;@ S, Z, V & C.
-	orr v30f,r2,v30f,lsr#28
+	mvn \src,\src,ror#8
+	adcs \dst,\src,\dst,lsl#24
+	mrs v30f,cpsr				;@ S, Z, C & V.
+	mov v30f,v30f,lsr#28
+	mov r2,\dst,lsl#4
+	cmp r2,\src,lsl#4
+	orrcs v30f,v30f,#PSR_A
 	eor v30f,v30f,#PSR_C		;@ Invert C
-	mov r1,\src,lsr#24
+	mov r1,\dst,lsr#24
 	strb r1,[v30ptr,#v30ParityVal]
 	.endm
 
@@ -577,7 +577,7 @@
 	sbcs \src,\dst,\src,ror#16
 	eor r2,r2,\src,lsr#16
 	and r2,r2,#PSR_A
-	mrs v30f,cpsr				;@ S, Z, V & C.
+	mrs v30f,cpsr				;@ S, Z, C & V.
 	orr v30f,r2,v30f,lsr#28
 	eor v30f,v30f,#PSR_C		;@ Invert C
 	mov r1,\src,lsr#16
@@ -586,17 +586,17 @@
 
 	.macro rsbc16 dst src
 	mov \src,\src,lsr#16
-	mov \dst,\dst,lsl#16
 	and v30f,v30f,#PSR_C
 	subs \src,\src,v30f,lsl#15	;@ Fix up src and set correct C.
-	eor r2,\src,\dst,lsr#16
-	sbcs \src,\dst,\src,ror#16
-	eor r2,r2,\src,lsr#16
-	and r2,r2,#PSR_A
-	mrs v30f,cpsr				;@ S, Z, V & C.
-	orr v30f,r2,v30f,lsr#28
+	mvn \src,\src,ror#16
+	adcs \dst,\src,\dst,lsl#16
+	mrs v30f,cpsr				;@ S, Z, C & V.
+	mov v30f,v30f,lsr#28
+	mov r2,\dst,lsl#12
+	cmp r2,\src,lsl#12
+	orrcs v30f,v30f,#PSR_A
 	eor v30f,v30f,#PSR_C		;@ Invert C
-	mov r1,\src,lsr#16
+	mov r1,\dst,lsr#16
 	strb r1,[v30ptr,#v30ParityVal]
 	.endm
 

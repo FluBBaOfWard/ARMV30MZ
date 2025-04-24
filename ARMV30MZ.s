@@ -752,21 +752,21 @@ i_das:
 _2F:	;@ ADJ4S/DAS
 ;@----------------------------------------------------------------------------
 	ldrb r0,[v30ptr,#v30RegAL]
-	mov r2,r0,ror#4
-	cmp r2,#0xA0000000
+	and v30f,v30f,#PSR_A|PSR_C
+	mov r1,#0x66000000
+	cmn r1,r0,lsl#28
 	orrcs v30f,v30f,#PSR_A
-	cmp r0,#0x9A
-	tstcc v30f,v30f,lsr#2		;@ #PSR_C
-	ands v30f,v30f,#PSR_A
+	movs r2,v30f,lsr#2			;@ Test PSR_C & PSR_A
+	biceq r1,r1,#0x06000000
+	cmncc r1,r0,lsl#24
 	orrcs v30f,v30f,#PSR_C
-	subcs r0,r0,#0x60
-	subne r0,r0,#0x06
+	biccc r1,r1,#0x60000000
+	rsbs r0,r1,r0,lsl#24
+	mrs r1,cpsr					;@ S, Z, C & V.
+	bic r1,r1,#PSR_C<<28
+	orr v30f,v30f,r1,lsr#28
+	mov r0,r0,lsr#24
 	strb r0,[v30ptr,#v30RegAL]
-	movs r1,r0,lsl#24
-	orrmi v30f,v30f,#PSR_S
-	orreq v30f,v30f,#PSR_Z
-	cmp r1,r2,ror#4
-	orrvs v30f,v30f,#PSR_V
 	strb r0,[v30ptr,#v30ParityVal]
 	fetch 11
 ;@----------------------------------------------------------------------------
@@ -2039,7 +2039,7 @@ _9D:	;@ POP F
 	fetch 0
 ;@----------------------------------------------------------------------------
 i_sahf:
-_9E:	;@ SAHF
+_9E:	;@ SAHF					Store AH to Flags
 ;@----------------------------------------------------------------------------
 	ldrb r0,[v30ptr,#v30RegAH]
 
@@ -2058,21 +2058,21 @@ _9E:	;@ SAHF
 	fetch 4
 ;@----------------------------------------------------------------------------
 i_lahf:
-_9F:	;@ LAHF
+_9F:	;@ LAHF					Load AH from Flags
 ;@----------------------------------------------------------------------------
 	ldrh r2,[v30ptr,#v30ParityVal]	;@ Top of ParityVal is pointer to v30PZST
-	mov r0,v30f,lsl#28
+	and r0,v30f,#PSR_S|PSR_Z
+	mov r0,r0,lsl#4
 	ldrb r2,[v30ptr,r2]
-	and r1,v30f,#PSR_A
-	orr r1,r1,#0x02
-	msr cpsr_flg,r0
-	orrmi r1,r1,#SF
-	orreq r1,r1,#ZF
-	orrcs r1,r1,#CF
+	orr r0,r0,#0x02
+	tst v30f,#PSR_A
+	orrne r0,r0,#AF
+	tst v30f,#PSR_C
+	orrne r0,r0,#CF
 	tst r2,#PSR_P
-	orrne r1,r1,#PF
+	orrne r0,r0,#PF
 
-	strb r1,[v30ptr,#v30RegAH]
+	strb r0,[v30ptr,#v30RegAH]
 	fetch 2
 ;@----------------------------------------------------------------------------
 i_mov_aldisp:
@@ -3288,7 +3288,7 @@ _D5:	;@ CVTDB/AAD	;@ Convert Decimal to Binary / Adjust After Division
 	mul r0,r2,r0
 	mov r2,r0,lsl#4
 	adds r0,r0,r1,lsl#8
-	mrs v30f,cpsr				;@ S, Z, V & C.
+	mrs v30f,cpsr				;@ S, Z, C & V.
 	mov v30f,v30f,lsr#28
 	adds r2,r2,r1,lsl#12
 	orrcs v30f,v30f,#PSR_A
@@ -3580,7 +3580,7 @@ notF6EA:
 ;@----------------------------------------------------------------------------
 negF6Reg:
 	subs r1,r0,r0,lsl#24
-	mrs v30f,cpsr				;@ S, Z, V & C.
+	mrs v30f,cpsr				;@ S, Z, C & V.
 	mov v30f,v30f,lsr#28
 	eor v30f,v30f,#PSR_C		;@ Invert C
 	tst r0,#0xF
@@ -3593,7 +3593,7 @@ negF6Reg:
 ;@----------------------------------------------------------------------------
 negF6EA:
 	subs r1,r0,r0,lsl#24
-	mrs v30f,cpsr				;@ S, Z, V & C.
+	mrs v30f,cpsr				;@ S, Z, C & V.
 	mov v30f,v30f,lsr#28
 	eor v30f,v30f,#PSR_C		;@ Invert C
 	tst r0,#0xF
@@ -3730,7 +3730,7 @@ notF7EA:
 ;@----------------------------------------------------------------------------
 negF7Reg:
 	subs r1,r0,r0,lsl#16
-	mrs v30f,cpsr				;@ S, Z, V & C.
+	mrs v30f,cpsr				;@ S, Z, C & V.
 	mov v30f,v30f,lsr#28
 	eor v30f,v30f,#PSR_C		;@ Invert C
 	tst r0,#0xF
@@ -3743,7 +3743,7 @@ negF7Reg:
 ;@----------------------------------------------------------------------------
 negF7EA:
 	subs r1,r0,r0,lsl#16
-	mrs v30f,cpsr				;@ S, Z, V & C.
+	mrs v30f,cpsr				;@ S, Z, C & V.
 	mov v30f,v30f,lsr#28
 	eor v30f,v30f,#PSR_C		;@ Invert C
 	tst r0,#0xF
@@ -4778,262 +4778,43 @@ writeSRegTbl:
 	.space 16*4		;@ v30MemTbl $00000-FFFFF
 
 V30OpTable:
-	.long i_add_br8
-	.long i_add_wr16
-	.long i_add_r8b
-	.long i_add_r16w
-	.long i_add_ald8
-	.long i_add_awd16
-	.long i_push_ds1
-	.long i_pop_ds1
-	.long i_or_br8
-	.long i_or_wr16
-	.long i_or_r8b
-	.long i_or_r16w
-	.long i_or_ald8
-	.long i_or_awd16
-	.long i_push_ps
-	.long i_undefined
-	.long i_adc_br8
-	.long i_adc_wr16
-	.long i_adc_r8b
-	.long i_adc_r16w
-	.long i_adc_ald8
-	.long i_adc_awd16
-	.long i_push_ss
-	.long i_pop_ss
-	.long i_sbb_br8
-	.long i_sbb_wr16
-	.long i_sbb_r8b
-	.long i_sbb_r16w
-	.long i_sbb_ald8
-	.long i_sbb_awd16
-	.long i_push_ds0
-	.long i_pop_ds0
-	.long i_and_br8
-	.long i_and_wr16
-	.long i_and_r8b
-	.long i_and_r16w
-	.long i_and_ald8
-	.long i_and_awd16
-	.long i_ds1
-	.long i_daa
-	.long i_sub_br8
-	.long i_sub_wr16
-	.long i_sub_r8b
-	.long i_sub_r16w
-	.long i_sub_ald8
-	.long i_sub_awd16
-	.long i_ps
-	.long i_das
-	.long i_xor_br8
-	.long i_xor_wr16
-	.long i_xor_r8b
-	.long i_xor_r16w
-	.long i_xor_ald8
-	.long i_xor_awd16
-	.long i_ss
-	.long i_aaa
-	.long i_cmp_br8
-	.long i_cmp_wr16
-	.long i_cmp_r8b
-	.long i_cmp_r16w
-	.long i_cmp_ald8
-	.long i_cmp_awd16
-	.long i_ds0
-	.long i_aas
-	.long i_inc_aw
-	.long i_inc_cw
-	.long i_inc_dw
-	.long i_inc_bw
-	.long i_inc_sp
-	.long i_inc_bp
-	.long i_inc_ix
-	.long i_inc_iy
-	.long i_dec_aw
-	.long i_dec_cw
-	.long i_dec_dw
-	.long i_dec_bw
-	.long i_dec_sp
-	.long i_dec_bp
-	.long i_dec_ix
-	.long i_dec_iy
-	.long i_push_aw
-	.long i_push_cw
-	.long i_push_dw
-	.long i_push_bw
-	.long i_push_sp
-	.long i_push_bp
-	.long i_push_ix
-	.long i_push_iy
-	.long i_pop_aw
-	.long i_pop_cw
-	.long i_pop_dw
-	.long i_pop_bw
-	.long i_pop_sp
-	.long i_pop_bp
-	.long i_pop_ix
-	.long i_pop_iy
-	.long i_pusha
-	.long i_popa
-	.long i_chkind
+	.long i_add_br8, i_add_wr16, i_add_r8b, i_add_r16w, i_add_ald8, i_add_awd16, i_push_ds1, i_pop_ds1	// 0x00
+	.long i_or_br8,  i_or_wr16,  i_or_r8b,  i_or_r16w,  i_or_ald8,  i_or_awd16,  i_push_ps, i_undefined	// 0x08
+	.long i_adc_br8, i_adc_wr16, i_adc_r8b, i_adc_r16w, i_adc_ald8, i_adc_awd16, i_push_ss, i_pop_ss	// 0x10
+	.long i_sbb_br8, i_sbb_wr16, i_sbb_r8b, i_sbb_r16w, i_sbb_ald8, i_sbb_awd16, i_push_ds0, i_pop_ds0	// 0x18
+	.long i_and_br8, i_and_wr16, i_and_r8b, i_and_r16w, i_and_ald8, i_and_awd16, i_ds1,     i_daa		// 0x20
+	.long i_sub_br8, i_sub_wr16, i_sub_r8b, i_sub_r16w, i_sub_ald8, i_sub_awd16, i_ps,      i_das		// 0x28
+	.long i_xor_br8, i_xor_wr16, i_xor_r8b, i_xor_r16w, i_xor_ald8, i_xor_awd16, i_ss,      i_aaa		// 0x30
+	.long i_cmp_br8, i_cmp_wr16, i_cmp_r8b, i_cmp_r16w, i_cmp_ald8, i_cmp_awd16, i_ds0,     i_aas		// 0x38
+	.long i_inc_aw,  i_inc_cw,   i_inc_dw,  i_inc_bw,   i_inc_sp,   i_inc_bp,    i_inc_ix,  i_inc_iy	// 0x40
+	.long i_dec_aw,  i_dec_cw,   i_dec_dw,  i_dec_bw,   i_dec_sp,   i_dec_bp,    i_dec_ix,  i_dec_iy	// 0x48
+	.long i_push_aw, i_push_cw,  i_push_dw, i_push_bw,  i_push_sp,  i_push_bp,   i_push_ix, i_push_iy	// 0x50
+	.long i_pop_aw,  i_pop_cw,   i_pop_dw,  i_pop_bw,   i_pop_sp,   i_pop_bp,    i_pop_ix,  i_pop_iy	// 0x58
+	.long i_pusha,   i_popa,     i_chkind
 	.long i_undefined	// arpl
 	.long i_undefined	// repnc
 	.long i_undefined	// repc
 	.long i_undefined	// fpo2
 	.long i_undefined	// fpo2
-	.long i_push_d16
-	.long i_imul_d16
-	.long i_push_d8
-	.long i_imul_d8
-	.long i_inmb
-	.long i_inmw
-	.long i_outmb
-	.long i_outmw
-	.long i_bv
-	.long i_bnv
-	.long i_bc
-	.long i_bnc
-	.long i_be
-	.long i_bne
-	.long i_bnh
-	.long i_bh
-	.long i_bn
-	.long i_bp
-	.long i_bpe
-	.long i_bpo
-	.long i_blt
-	.long i_bge
-	.long i_ble
-	.long i_bgt
-	.long i_80pre
-	.long i_81pre
-	.long i_82pre
-	.long i_83pre
-	.long i_test_br8
-	.long i_test_wr16
-	.long i_xchg_br8
-	.long i_xchg_wr16
-	.long i_mov_br8
-	.long i_mov_wr16
-	.long i_mov_r8b
-	.long i_mov_r16w
-	.long i_mov_wsreg
-	.long i_lea
-	.long i_mov_sregw
-	.long i_popw
-	.long i_nop
-	.long i_xchg_awcw
-	.long i_xchg_awdw
-	.long i_xchg_awbw
-	.long i_xchg_awsp
-	.long i_xchg_awbp
-	.long i_xchg_awix
-	.long i_xchg_awiy
-	.long i_cbw
-	.long i_cwd
-	.long i_call_far
-	.long i_poll
-	.long i_pushf
-	.long i_popf
-	.long i_sahf
-	.long i_lahf
-	.long i_mov_aldisp
-	.long i_mov_awdisp
-	.long i_mov_dispal
-	.long i_mov_dispaw
-	.long i_movsb
-	.long i_movsw
-	.long i_cmpsb
-	.long i_cmpsw
-	.long i_test_ald8
-	.long i_test_awd16
-	.long i_stosb
-	.long i_stosw
-	.long i_lodsb
-	.long i_lodsw
-	.long i_scasb
-	.long i_scasw
-	.long i_mov_ald8
-	.long i_mov_cld8
-	.long i_mov_dld8
-	.long i_mov_bld8
-	.long i_mov_ahd8
-	.long i_mov_chd8
-	.long i_mov_dhd8
-	.long i_mov_bhd8
-	.long i_mov_awd16
-	.long i_mov_cwd16
-	.long i_mov_dwd16
-	.long i_mov_bwd16
-	.long i_mov_spd16
-	.long i_mov_bpd16
-	.long i_mov_ixd16
-	.long i_mov_iyd16
-	.long i_rotshft_bd8
-	.long i_rotshft_wd8
-	.long i_ret_d16
-	.long i_ret
-	.long i_les_dw
-	.long i_lds_dw
-	.long i_mov_bd8
-	.long i_mov_wd16
-	.long i_prepare
-	.long i_dispose
-	.long i_retf_d16
-	.long i_retf
-	.long i_int3
-	.long i_int
-	.long i_into
-	.long i_iret
-	.long i_rotshft_b
-	.long i_rotshft_w
-	.long i_rotshft_bcl
-	.long i_rotshft_wcl
-	.long i_aam
-	.long i_aad
-	.long i_salc 	// D6 undefined opcode
-	.long i_trans  	// xlat
-	.long i_fpo1	// fpo1
-	.long i_fpo1	// fpo1
-	.long i_fpo1	// fpo1
-	.long i_fpo1	// fpo1
-	.long i_fpo1	// fpo1
-	.long i_fpo1	// fpo1
-	.long i_fpo1	// fpo1
-	.long i_fpo1	// fpo1
-	.long i_loopne
-	.long i_loope
-	.long i_loop
-	.long i_bcwz
-	.long i_inal
-	.long i_inaw
-	.long i_outal
-	.long i_outaw
-	.long i_call_d16
-	.long i_jmp_d16
-	.long i_jmp_far
-	.long i_br_d8
-	.long i_inaldw
-	.long i_inawdw
-	.long i_outdwal
-	.long i_outdwaw
-	.long i_lock
-	.long i_brks	// 0xF1
-	.long i_repne
-	.long i_repe
-	.long i_hlt
-	.long i_cmc
-	.long i_f6pre
-	.long i_f7pre
-	.long i_clc
-	.long i_stc
-	.long i_di
-	.long i_ei
-	.long i_cld
-	.long i_std
-	.long i_fepre
-	.long i_ffpre
+	.long i_push_d16, i_imul_d16, i_push_d8, i_imul_d8, i_inmb,     i_inmw,      i_outmb,   i_outmw		// 0x68
+	.long i_bv,      i_bnv,      i_bc,      i_bnc,      i_be,       i_bne,       i_bnh,     i_bh		// 0x70
+	.long i_bn,      i_bp,       i_bpe,     i_bpo,      i_blt,      i_bge,       i_ble,     i_bgt		// 0x78
+	.long i_80pre,   i_81pre,    i_82pre,   i_83pre,    i_test_br8, i_test_wr16, i_xchg_br8, i_xchg_wr16	// 0x80
+	.long i_mov_br8, i_mov_wr16, i_mov_r8b, i_mov_r16w, i_mov_wsreg, i_lea,      i_mov_sregw, i_popw	// 0x88
+	.long i_nop, i_xchg_awcw, i_xchg_awdw, i_xchg_awbw, i_xchg_awsp, i_xchg_awbp, i_xchg_awix, i_xchg_awiy	// 0x90
+	.long i_cbw,     i_cwd,      i_call_far, i_poll,    i_pushf,    i_popf,      i_sahf,    i_lahf		// 0x98
+	.long i_mov_aldisp, i_mov_awdisp, i_mov_dispal, i_mov_dispaw, i_movsb, i_movsw, i_cmpsb, i_cmpsw	// 0xA0
+	.long i_test_ald8, i_test_awd16, i_stosb, i_stosw,  i_lodsb,    i_lodsw,     i_scasb,    i_scasw	// 0xA8
+	.long i_mov_ald8, i_mov_cld8, i_mov_dld8, i_mov_bld8, i_mov_ahd8, i_mov_chd8, i_mov_dhd8, i_mov_bhd8	// 0xB0
+	.long i_mov_awd16, i_mov_cwd16, i_mov_dwd16, i_mov_bwd16, i_mov_spd16, i_mov_bpd16, i_mov_ixd16, i_mov_iyd16	// 0xB8
+	.long i_rotshft_bd8, i_rotshft_wd8, i_ret_d16, i_ret, i_les_dw, i_lds_dw,    i_mov_bd8, i_mov_wd16	// 0xC0
+	.long i_prepare, i_dispose, i_retf_d16, i_retf,     i_int3,     i_int,       i_into,    i_iret		// 0xC8
+	.long i_rotshft_b, i_rotshft_w, i_rotshft_bcl, i_rotshft_wcl, i_aam, i_aad, i_salc, i_trans			// 0xD0
+	.long i_fpo1,    i_fpo1,     i_fpo1,    i_fpo1,     i_fpo1,     i_fpo1,      i_fpo1,    i_fpo1		// 0xD8
+	.long i_loopne,  i_loope,    i_loop,    i_bcwz,     i_inal,     i_inaw,      i_outal,   i_outaw		// 0xE0
+	.long i_call_d16, i_jmp_d16, i_jmp_far, i_br_d8,    i_inaldw,   i_inawdw,    i_outdwal, i_outdwaw	// 0xE8
+	.long i_lock,    i_brks,     i_repne,   i_repe,     i_hlt,      i_cmc,       i_f6pre,   i_f7pre		// 0xF0
+	.long i_clc,     i_stc,      i_di,      i_ei,       i_cld,      i_std,       i_fepre,   i_ffpre		// 0xF8
 
 PZSTable:
 	.byte PSR_Z|PSR_P, 0, 0, PSR_P, 0, PSR_P, PSR_P, 0, 0, PSR_P, PSR_P, 0, PSR_P, 0, 0, PSR_P
