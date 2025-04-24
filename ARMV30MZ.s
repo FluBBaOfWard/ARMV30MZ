@@ -625,13 +625,12 @@ _27:	;@ ADJ4A/DAA
 	mov r1,#0x66000000
 	cmn r1,r0,lsl#28
 	orrcs v30f,v30f,#PSR_A
-	cmp r0,#0x9A
-	tstcc v30f,v30f,lsr#2		;@ #PSR_C
-	biccc r1,r1,#0x60000000
-	tst v30f,#PSR_A
+	movs r2,v30f,lsr#2			;@ Test PSR_C & PSR_A
 	biceq r1,r1,#0x06000000
+	cmncc r1,r0,lsl#24
+	biccc r1,r1,#0x60000000
 	adds r0,r1,r0,lsl#24
-	mrs r1,cpsr					;@ S, Z, V & C.
+	mrs r1,cpsr					;@ S, Z, C & V.
 	orr v30f,v30f,r1,lsr#28
 	mov r0,r0,lsr#24
 	strb r0,[v30ptr,#v30RegAL]
@@ -2013,11 +2012,10 @@ _9D:	;@ POP F
 	and r1,r0,#PF
 	eor r1,r1,#PF
 	strb r1,[v30ptr,#v30ParityVal]
-	and v30f,r0,#AF				;@ PSR_A is in the same place as AF
-	tst r0,#SF
-	orrne v30f,v30f,#PSR_S
-	tst r0,#ZF
-	orrne v30f,v30f,#PSR_Z
+	and v30f,r0,#SF|ZF
+	mov v30f,v30f,lsr#4
+	tst r0,#AF
+	orrne v30f,v30f,#PSR_A
 	tst r0,#CF
 	orrne v30f,v30f,#PSR_C
 	tst r0,#OF
