@@ -677,12 +677,13 @@ sub81Reg:
 	ldrh r0,[v30ofs,#v30Regs]
 
 	rsb16 r0,r4
-	strh r1,[v30ofs,#v30Regs]
+	str r1,[v30ofs,#v30Regs2]
 	fetch 1
 0:
 	bl v30ReadEAW
 sub81EA:
 	rsb16 r0,r4
+	mov r1,r1,lsr#16
 	bl v30WriteSegOfsW
 	fetch 3
 ;@----------------------------------------------------------------------------
@@ -714,8 +715,8 @@ _2B:	;@ SUB R16W
 	blmi v30ReadEAW1
 
 	ldr r1,[r4,#v30Regs2]
-	sub16 r0,r1
-	strh r1,[r4,#v30Regs]
+	sub16 r1,r0
+	str r1,[r4,#v30Regs2]
 	fetch 1
 ;@----------------------------------------------------------------------------
 i_sub_ald8:
@@ -732,8 +733,8 @@ _2D:	;@ SUB AWD16
 ;@----------------------------------------------------------------------------
 	getNextWord
 	ldr r1,[v30ptr,#v30RegAW-2]
-	sub16 r0,r1
-	strh r1,[v30ptr,#v30RegAW]
+	sub16 r1,r0
+	str r1,[v30ptr,#v30RegAW-2]
 	fetch 1
 ;@----------------------------------------------------------------------------
 i_ps:
@@ -965,7 +966,7 @@ _3B:	;@ CMP R16W
 	blmi v30ReadEAW1
 
 	ldr r1,[r4,#v30Regs2]
-	sub16 r0,r1
+	sub16 r1,r0
 	fetch 1
 ;@----------------------------------------------------------------------------
 i_cmp_ald8:
@@ -981,7 +982,7 @@ _3D:	;@ CMP AWD16
 ;@----------------------------------------------------------------------------
 	getNextWord
 	ldr r1,[v30ptr,#v30RegAW-2]
-	sub16 r0,r1
+	sub16 r1,r0
 	fetch 1
 ;@----------------------------------------------------------------------------
 i_ds0:
@@ -2329,7 +2330,7 @@ f2a7:	;@ REPNE CMPBKW/CMPSW
 	str r1,[v30ptr,#v30RegIY]
 	bl cpuReadMem20W
 
-	sub16 r0,r4
+	sub16 r4,r0
 
 	eatCycles 10
 	subs r5,r5,#1
@@ -2360,7 +2361,7 @@ f3a7:	;@ REPE CMPBKW/CMPSW
 	str r1,[v30ptr,#v30RegIY]
 	bl cpuReadMem20W
 
-	sub16 r0,r4
+	sub16 r4,r0
 
 	eatCycles 10
 	subs r5,r5,#1
@@ -2391,7 +2392,7 @@ _A7:	;@ CMPBKW/CMPSW
 	str r1,[v30ptr,#v30RegIY]
 	bl v30ReadSegOfsW
 
-	sub16 r0,r4					;@ sub16 clears prefixes
+	sub16 r4,r0					;@ sub16 clears prefixes
 
 	fetch 6
 ;@----------------------------------------------------------------------------
@@ -2633,7 +2634,7 @@ f2af:	;@ REPNE CMPMW/SCASW
 	add v30ofs,v30ofs,r4,lsl#17
 	ldr r1,[v30ptr,#v30RegAW-2]
 
-	sub16 r0,r1
+	sub16 r1,r0
 
 	eatCycles 9
 	subs r5,r5,#1
@@ -2656,7 +2657,7 @@ f3af:	;@ REPE CMPMW/SCASW
 	add v30ofs,v30ofs,r4,lsl#17
 	ldr r1,[v30ptr,#v30RegAW-2]
 
-	sub16 r0,r1
+	sub16 r1,r0
 
 	eatCycles 9
 	subs r5,r5,#1
@@ -2680,7 +2681,7 @@ _AF:	;@ CMPMW/SCASW
 	str v30ofs,[v30ptr,#v30RegIY]
 	ldr r1,[v30ptr,#v30RegAW-2]
 
-	sub16 r0,r1
+	sub16 r1,r0
 
 	fetch 4
 ;@----------------------------------------------------------------------------
@@ -2921,7 +2922,7 @@ rorcC1Reg:
 	fetch 1
 shlC1Reg:
 	shl16 r0,r4
-	strh r1,[v30ofs,#v30Regs]
+	str r1,[v30ofs,#v30Regs2]
 	fetch 1
 shrC1Reg:
 	shr16 r0,r4
@@ -2956,6 +2957,7 @@ rorcC1EA:
 	fetch 3
 shlC1EA:
 	shl16 r0,r4
+	mov r1,r1,lsr#16
 	bl v30WriteSegOfsW
 	fetch 3
 shrC1EA:

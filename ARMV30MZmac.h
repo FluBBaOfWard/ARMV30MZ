@@ -444,11 +444,10 @@
 	movs v30f,v30f,lsl#31		;@ Move PSR_C to Carry, clear flags
 	mov \dst,\dst,lsl#16
 	movs r1,\dst,lsl \src
-	mov r1,r1,lsr#16
 	orrcs v30f,v30f,#PSR_C+PSR_V
 	eormi v30f,v30f,#PSR_S+PSR_V
 	orreq v30f,v30f,#PSR_Z
-	strb r1,[v30ptr,#v30ParityVal]
+	str r1,[v30ptr,#v30ParityValL]
 	.endm
 ;@----------------------------------------------------------------------------
 	.macro shr8 dst src
@@ -513,28 +512,26 @@
 	strb r1,[v30ptr,#v30ParityVal]
 	.endm
 
-	.macro sub16 src dst
-	mov r2,\src,lsl#28
-	subs \src,\dst,\src,lsl#16
+	.macro sub16 dst src
+	mov r2,\dst,lsl#12
+	subs \dst,\dst,\src,lsl#16
 	mrs v30f,cpsr				;@ S, Z, C & V.
 	mov v30f,v30f,lsr#28
-	rsbs r2,r2,\dst,lsl#12
+	cmp r2,\src,lsl#28
 	orrcc v30f,v30f,#PSR_A
 	eor v30f,v30f,#PSR_C		;@ Invert C
-	mov r1,\src,lsr#16
-	strb r1,[v30ptr,#v30ParityVal]
+	str r1,[v30ptr,#v30ParityValL]
 	.endm
 
-	.macro rsb16 src dst
-	mov r2,\src,lsl#28
-	rsbs \src,\dst,\src,lsl#16
+	.macro rsb16 dst src
+	mov r2,\dst,lsl#28
+	rsbs r1,\src,\dst,lsl#16
 	mrs v30f,cpsr				;@ S, Z, C & V.
 	mov v30f,v30f,lsr#28
-	cmp r2,\dst,lsl#12
+	cmp r2,\src,lsl#12
 	orrcc v30f,v30f,#PSR_A
 	eor v30f,v30f,#PSR_C		;@ Invert C
-	mov r1,\src,lsr#16
-	strb r1,[v30ptr,#v30ParityVal]
+	str r1,[v30ptr,#v30ParityValL]
 	.endm
 ;@----------------------------------------------------------------------------
 	.macro subc8 src dst
