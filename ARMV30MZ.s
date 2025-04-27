@@ -435,12 +435,13 @@ subc81Reg:
 	ldrh r0,[v30ofs,#v30Regs]
 
 	rsbc16 r0,r4
-	strh r1,[v30ofs,#v30Regs]
+	str r1,[v30ofs,#v30Regs2]
 	fetch 1
 0:
 	bl v30ReadEAW
 subc81EA:
 	rsbc16 r0,r4
+	mov r1,r1,lsr#16
 	bl v30WriteSegOfsW
 	fetch 3
 ;@----------------------------------------------------------------------------
@@ -472,8 +473,8 @@ _1B:	;@ SUBC/SBB R16W
 	blmi v30ReadEAW1
 
 	ldr r1,[r4,#v30Regs2]
-	subc16 r0,r1
-	strh r1,[r4,#v30Regs]
+	subc16 r1,r0
+	str r1,[r4,#v30Regs2]
 	fetch 1
 ;@----------------------------------------------------------------------------
 i_sbb_ald8:
@@ -490,8 +491,8 @@ _1D:	;@ SUBC/SBB AWD16
 ;@----------------------------------------------------------------------------
 	getNextWord
 	ldr r1,[v30ptr,#v30RegAW-2]
-	subc16 r0,r1
-	strh r1,[v30ptr,#v30RegAW]
+	subc16 r1,r0
+	str r1,[v30ptr,#v30RegAW-2]
 	fetch 1
 ;@----------------------------------------------------------------------------
 i_push_ds0:

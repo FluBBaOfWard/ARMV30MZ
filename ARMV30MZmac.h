@@ -549,18 +549,17 @@
 	strb r1,[v30ptr,#v30ParityVal]
 	.endm
 
-	.macro subc16 src dst
+	.macro subc16 dst src
 	and v30f,v30f,#PSR_C
 	subs \src,\src,v30f,lsl#15	;@ Fix up src and set correct C.
 	eor r2,\src,\dst,lsr#16
-	sbcs \src,\dst,\src,ror#16
-	eor r2,r2,\src,lsr#16
+	sbcs r1,\dst,\src,ror#16
+	eor r2,r2,r1,lsr#16
 	and r2,r2,#PSR_A
 	mrs v30f,cpsr				;@ S, Z, C & V.
 	orr v30f,r2,v30f,lsr#28
 	eor v30f,v30f,#PSR_C		;@ Invert C
-	mov r1,\src,lsr#16
-	strb r1,[v30ptr,#v30ParityVal]
+	str r1,[v30ptr,#v30ParityValL]
 	.endm
 
 	.macro rsbc16 dst src
@@ -568,15 +567,14 @@
 	and v30f,v30f,#PSR_C
 	subs \src,\src,v30f,lsl#15	;@ Fix up src and set correct C.
 	mvn \src,\src,ror#16
-	adcs \dst,\src,\dst,lsl#16
+	adcs r1,\src,\dst,lsl#16
 	mrs v30f,cpsr				;@ S, Z, C & V.
 	mov v30f,v30f,lsr#28
-	mov r2,\dst,lsl#12
+	mov r2,r1,lsl#12
 	cmp r2,\src,lsl#12
 	orrcs v30f,v30f,#PSR_A
 	eor v30f,v30f,#PSR_C		;@ Invert C
-	mov r1,\dst,lsr#16
-	strb r1,[v30ptr,#v30ParityVal]
+	str r1,[v30ptr,#v30ParityValL]
 	.endm
 
 ;@----------------------------------------------------------------------------
