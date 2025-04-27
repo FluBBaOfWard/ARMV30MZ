@@ -104,13 +104,14 @@ add81Reg:
 	add v30ofs,v30ptr,r0,lsl#2
 	ldrh r0,[v30ofs,#v30Regs]
 
-	add16 r0,r4
-	strh r1,[v30ofs,#v30Regs]
+	add16 r4,r0
+	str r1,[v30ofs,#v30Regs2]
 	fetch 1
 0:
 	bl v30ReadEAW
 add81EA:
-	add16 r0,r4
+	add16 r4,r0
+	mov r1,r1,lsr#16
 	bl v30WriteSegOfsW
 	fetch 3
 ;@----------------------------------------------------------------------------
@@ -142,8 +143,8 @@ _03:	;@ ADD R16W
 	blmi v30ReadEAW1
 
 	ldr r1,[r4,#v30Regs2]
-	add16 r0,r1
-	strh r1,[r4,#v30Regs]
+	add16 r1,r0
+	str r1,[r4,#v30Regs2]
 	fetch 1
 ;@----------------------------------------------------------------------------
 i_add_ald8:
@@ -160,8 +161,8 @@ _05:	;@ ADD AWD16
 ;@----------------------------------------------------------------------------
 	getNextWord
 	ldr r1,[v30ptr,#v30RegAW-2]
-	add16 r0,r1
-	strh r1,[v30ptr,#v30RegAW]
+	add16 r1,r0
+	str r1,[v30ptr,#v30RegAW-2]
 	fetch 1
 ;@----------------------------------------------------------------------------
 i_push_ds1:
@@ -1546,7 +1547,8 @@ _7A:	;@ BPE. Branch if Parity Even
 		;@ JP/JPE. Branch if Parity/Parity Even
 ;@----------------------------------------------------------------------------
 	getNextSignedByte
-	ldrh r2,[v30ptr,#v30ParityVal]	;@ Top of ParityVal is pointer to v30PZST
+	ldrb r2,[v30ptr,#v30ParityVal]
+	orr r2,r2,#v30PZST
 	ldrb r2,[v30ptr,r2]
 	tst r2,#PSR_P
 	addne v30pc,v30pc,r0
@@ -1559,7 +1561,8 @@ _7B:	;@ BPO. Branch if Parity Odd
 		;@ JNP/JPO. Branch if Not Parity/Parity Odd
 ;@----------------------------------------------------------------------------
 	getNextSignedByte
-	ldrh r2,[v30ptr,#v30ParityVal]	;@ Top of ParityVal is pointer to v30PZST
+	ldrb r2,[v30ptr,#v30ParityVal]
+	orr r2,r2,#v30PZST
 	ldrb r2,[v30ptr,r2]
 	tst r2,#PSR_P
 	addeq v30pc,v30pc,r0
@@ -1979,8 +1982,9 @@ _9C:	;@ PUSH F
 	fetch 2
 ;@----------------------------------------------------------------------------
 pushFlags:
-	ldrh r2,[v30ptr,#v30ParityVal]	;@ Top of ParityVal is pointer to v30PZST
+	ldrb r2,[v30ptr,#v30ParityVal]
 	ldr r1,=0xF002
+	orr r2,r2,#v30PZST
 	ldrb r2,[v30ptr,r2]
 	tst v30f,#PSR_A
 	orrne r1,r1,#AF
@@ -2058,9 +2062,10 @@ _9E:	;@ SAHF					Store AH to Flags
 i_lahf:
 _9F:	;@ LAHF					Load AH from Flags
 ;@----------------------------------------------------------------------------
-	ldrh r2,[v30ptr,#v30ParityVal]	;@ Top of ParityVal is pointer to v30PZST
+	ldrb r2,[v30ptr,#v30ParityVal]
 	and r0,v30f,#PSR_S|PSR_Z
 	mov r0,r0,lsl#4
+	orr r2,r2,#v30PZST
 	ldrb r2,[v30ptr,r2]
 	orr r0,r0,#0x02
 	tst v30f,#PSR_A
@@ -4017,7 +4022,7 @@ incFFEA:
 	orrvs v30f,v30f,#PSR_V
 	tst r1,#0xF0000
 	orreq v30f,v30f,#PSR_A
-	movs r1,r1,asr#16
+	mov r1,r1,lsr#16
 	strb r1,[v30ptr,#v30ParityVal]
 	bl v30WriteSegOfsW
 	fetch 3
@@ -4045,7 +4050,7 @@ decFFEA:
 	orrvs v30f,v30f,#PSR_V
 	tst r0,#0xF
 	orreq v30f,v30f,#PSR_A
-	movs r1,r1,asr#16
+	mov r1,r1,lsr#16
 	strb r1,[v30ptr,#v30ParityVal]
 	bl v30WriteSegOfsW
 	fetch 3
@@ -4677,7 +4682,7 @@ V30Reset:					;@ r0=v30ptr, r1=type (0=ASWAN)
 
 	ldr r0,=0xFFFF0000
 	str r0,[v30ptr,#v30SRegPS]
-	mov r0,#v30PZST
+	mov r0,#0
 	strh r0,[v30ptr,#v30ParityVal]
 	mov r0,#1
 	strb r0,[v30ptr,#v30DF]

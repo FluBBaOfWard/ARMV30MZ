@@ -172,28 +172,28 @@
 
 ;@ Opcode macros always return result in r1
 ;@ Any register except r2 can be used for src & dst.
+;@ r1 should not be used for src
 ;@----------------------------------------------------------------------------
-	.macro add8 src dst
-	mov r2,\src,lsl#28
-	mov \dst,\dst,lsl#24
-	adds \src,\dst,\src,lsl#24
+	.macro add8 dst src
+	mov r2,\dst,lsl#28
+	mov \src,\src,lsl#24
+	adds \dst,\src,\dst,lsl#24
 	mrs v30f,cpsr				;@ S, Z, C & V.
 	mov v30f,v30f,lsr#28
-	adds r2,r2,\dst,lsl#4
+	adds r2,r2,\src,lsl#4
 	orrcs v30f,v30f,#PSR_A
-	mov r1,\src,lsr#24
+	mov r1,\dst,lsr#24
 	strb r1,[v30ptr,#v30ParityVal]
 	.endm
 
-	.macro add16 src dst
-	mov r2,\src,lsl#28
-	adds \src,\dst,\src,lsl#16
+	.macro add16 dst src
+	mov r2,\dst,lsl#12
+	adds r1,\dst,\src,lsl#16
 	mrs v30f,cpsr				;@ S, Z, C & V.
 	mov v30f,v30f,lsr#28
-	adds r2,r2,\dst,lsl#12
+	adds r2,r2,\src,lsl#28
 	orrcs v30f,v30f,#PSR_A
-	mov r1,\src,lsr#16
-	strb r1,[v30ptr,#v30ParityVal]
+	str r1,[v30ptr,#v30ParityValL]
 	.endm
 ;@----------------------------------------------------------------------------
 	.macro adc8 src dst

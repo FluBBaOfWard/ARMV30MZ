@@ -81,11 +81,12 @@ v30IrqPin:			.byte 0		;@ IrqPin, IF & NmiPending needs to be together in the sam
 v30IF:				.byte 0
 v30Empty:			.byte 0		;@ Was TRAP/BREAK flag
 v30NmiPending:		.byte 0
+v30ParityValL:		.short 0	;@ For 32bit access
 v30ParityVal:		.short 0
 v30NmiPin:			.byte 0
 v30DF:				.byte 0		;@ Direction flag, this is either 1 or -1.
 v30MulOverflow:		.byte 0
-					.space 3
+					.space 1
 
 v30IEnd:
 ;@--------------------------------
