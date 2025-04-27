@@ -196,7 +196,7 @@
 	str r1,[v30ptr,#v30ParityValL]
 	.endm
 ;@----------------------------------------------------------------------------
-	.macro adc8 src dst
+	.macro adc8 dst src
 	tst v30f,v30f,lsr#2			;@ Get Carry
 	subcs \src,\src,#0x100
 	mov \src,\src,ror#8
@@ -210,17 +210,16 @@
 	strb r1,[v30ptr,#v30ParityVal]
 	.endm
 
-	.macro adc16 src dst
+	.macro adc16 dst src
 	tst v30f,v30f,lsr#2			;@ Get Carry
 	subcs \src,\src,#0x10000
 	eor r2,\src,\dst,lsr#16
-	adcs \src,\dst,\src,ror#16
-	eor r2,r2,\src,lsr#16
+	adcs r1,\dst,\src,ror#16
+	eor r2,r2,r1,lsr#16
 	and r2,r2,#PSR_A
 	mrs v30f,cpsr				;@ S, Z, V & C.
 	orr v30f,r2,v30f,lsr#28
-	mov r1,\src,lsr#16
-	strb r1,[v30ptr,#v30ParityVal]
+	str r1,[v30ptr,#v30ParityValL]
 	.endm
 ;@----------------------------------------------------------------------------
 	.macro and8 src dst
@@ -249,8 +248,7 @@
 	tst r0,#0xF0000
 	orreq v30f,v30f,#PSR_A
 	str r1,[v30ptr,#\reg -2]
-	mov r1,r1,lsr#16
-	strb r1,[v30ptr,#v30ParityVal]
+	str r1,[v30ptr,#v30ParityValL]
 	fetch 1
 	.endm
 ;@----------------------------------------------------------------------------
@@ -264,8 +262,7 @@
 	tst r1,#0xF0000
 	orreq v30f,v30f,#PSR_A
 	str r1,[v30ptr,#\reg -2]
-	mov r1,r1,lsr#16
-	strb r1,[v30ptr,#v30ParityVal]
+	str r1,[v30ptr,#v30ParityValL]
 	fetch 1
 	.endm
 ;@----------------------------------------------------------------------------

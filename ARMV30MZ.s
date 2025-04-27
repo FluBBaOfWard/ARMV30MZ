@@ -320,13 +320,14 @@ adc81Reg:
 	add v30ofs,v30ptr,r0,lsl#2
 	ldrh r0,[v30ofs,#v30Regs]
 
-	adc16 r0,r4
-	strh r1,[v30ofs,#v30Regs]
+	adc16 r4,r0
+	str r1,[v30ofs,#v30Regs2]
 	fetch 1
 0:
 	bl v30ReadEAW
 adc81EA:
-	adc16 r0,r4
+	adc16 r4,r0
+	mov r1,r1,lsr#16
 	bl v30WriteSegOfsW
 	fetch 3
 ;@----------------------------------------------------------------------------
@@ -358,8 +359,8 @@ _13:	;@ ADDC/ADC R16W
 	blmi v30ReadEAW1
 
 	ldr r1,[r4,#v30Regs2]
-	adc16 r0,r1
-	strh r1,[r4,#v30Regs]
+	adc16 r1,r0
+	str r1,[r4,#v30Regs2]
 	fetch 1
 ;@----------------------------------------------------------------------------
 i_adc_ald8:
@@ -376,8 +377,8 @@ _15:	;@ ADDC/ADC AWD16
 ;@----------------------------------------------------------------------------
 	getNextWord
 	ldr r1,[v30ptr,#v30RegAW-2]
-	adc16 r0,r1
-	strh r1,[v30ptr,#v30RegAW]
+	adc16 r1,r0
+	str r1,[v30ptr,#v30RegAW-2]
 	fetch 1
 ;@----------------------------------------------------------------------------
 i_push_ss:
