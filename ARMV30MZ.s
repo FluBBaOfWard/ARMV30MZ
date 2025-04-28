@@ -4012,9 +4012,8 @@ incFFReg:
 	orrvs v30f,v30f,#PSR_V
 	tst r1,#0xF0000
 	orreq v30f,v30f,#PSR_A
-	mov r1,r1,lsr#16
-	strb r1,[v30ptr,#v30ParityVal]
-	strh r1,[v30ofs,#v30Regs]
+	str r1,[v30ptr,#v30ParityValL]
+	str r1,[v30ofs,#v30Regs2]
 	fetch 1
 ;@----------------------------------------------------------------------------
 incFFEA:
@@ -4040,9 +4039,8 @@ decFFReg:
 	orrvs v30f,v30f,#PSR_V
 	tst r0,#0xF
 	orreq v30f,v30f,#PSR_A
-	mov r1,r1,lsr#16
-	strb r1,[v30ptr,#v30ParityVal]
-	strh r1,[v30ofs,#v30Regs]
+	str r1,[v30ptr,#v30ParityValL]
+	str r1,[v30ofs,#v30Regs2]
 	fetch 1
 ;@----------------------------------------------------------------------------
 decFFEA:
