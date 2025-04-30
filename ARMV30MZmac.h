@@ -222,7 +222,7 @@
 	str r1,[v30ptr,#v30ParityValL]
 	.endm
 ;@----------------------------------------------------------------------------
-	.macro and8 src dst
+	.macro and8 dst src
 	and r1,\dst,\src
 	movs v30f,r1,lsl#24			;@ Clear flags.
 	movmi v30f,#PSR_S
@@ -230,8 +230,8 @@
 	strb r1,[v30ptr,#v30ParityVal]
 	.endm
 
-	.macro and16 src dst
-	and r1,\src,\dst,lsr#16
+	.macro and16 dst src
+	and r1,\dst,\src,lsr#16
 	movs v30f,r1,lsl#16			;@ Clear flags.
 	movmi v30f,#PSR_S
 	moveq v30f,#PSR_Z
@@ -284,7 +284,7 @@
 	fetch 1
 	.endm
 ;@----------------------------------------------------------------------------
-	.macro or8 src dst
+	.macro or8 dst src
 	orr r1,\dst,\src
 	movs v30f,r1,lsl#24			;@ Clear flags.
 	movmi v30f,#PSR_S
@@ -292,8 +292,8 @@
 	strb r1,[v30ptr,#v30ParityVal]
 	.endm
 
-	.macro or16 src dst
-	orr r1,\src,\dst,lsr#16
+	.macro or16 dst src
+	orr r1,\dst,\src,lsr#16
 	movs v30f,r1,lsl#16			;@ Clear flags.
 	movmi v30f,#PSR_S
 	moveq v30f,#PSR_Z
@@ -479,8 +479,8 @@
 	movs r1,\dst,asr \src
 	orrcs v30f,v30f,#PSR_C
 	orreq v30f,v30f,#PSR_Z
-	orrmi v30f,v30f,#PSR_S+PSR_V
-	movs r0,r1,lsl#25			;@ Move bit 6 to bit 31.
+	movs r0,r1,lsl#25			;@ Move bit 6 to bit 31 & 7 to Carry.
+	orrcs v30f,v30f,#PSR_S+PSR_V
 	eormi v30f,v30f,#PSR_V
 	strb r1,[v30ptr,#v30ParityVal]
 	.endm
@@ -492,8 +492,8 @@
 	movs r1,\dst,asr \src
 	orrcs v30f,v30f,#PSR_C
 	orreq v30f,v30f,#PSR_Z
-	orrmi v30f,v30f,#PSR_S+PSR_V
-	movs r0,r1,lsl#17			;@ Move bit 14 to bit 31.
+	movs r0,r1,lsl#17			;@ Move bit 14 to bit 31 & 15 to Carry.
+	orrcs v30f,v30f,#PSR_S+PSR_V
 	eormi v30f,v30f,#PSR_V
 	strb r1,[v30ptr,#v30ParityVal]
 	.endm
@@ -578,7 +578,7 @@
 	.endm
 
 ;@----------------------------------------------------------------------------
-	.macro xor8 src dst
+	.macro xor8 dst src
 	eor r1,\dst,\src
 	movs v30f,r1,lsl#24			;@ Clear flags.
 	movmi v30f,#PSR_S
@@ -586,8 +586,8 @@
 	strb r1,[v30ptr,#v30ParityVal]
 	.endm
 
-	.macro xor16 src dst
-	eor r1,\src,\dst,lsr#16
+	.macro xor16 dst src
+	eor r1,\dst,\src,lsr#16
 	movs v30f,r1,lsl#16			;@ Clear flags.
 	movmi v30f,#PSR_S
 	moveq v30f,#PSR_Z

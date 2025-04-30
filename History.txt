@@ -2,7 +2,7 @@ ARMV30MZ revision history
 -=-=-=-=-=-=-=-=-=-=-=-=-
 
 
-V0.8.11 - 2025-04-24 (FluBBa)
+V0.8.11 - 2025-05-01 (FluBBa)
 	Refactored neg opcodes to be more like the Z80 implementation.
 	Optimized CVTDB/AAD.
 	Optimized ADJ4A/DAA.
@@ -10,6 +10,7 @@ V0.8.11 - 2025-04-24 (FluBBa)
 	Optimized RCL/ROLC.
 	Optimized RCR/RORC.
 	Optimized POP F.
+	Optimized SAHF.
 	Optimized some byte opcodes.
 
 V0.8.10 - 2025-03-03 (FluBBa)

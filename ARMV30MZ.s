@@ -1578,10 +1578,10 @@ _7C:	;@ BLT. Branch if Less Than, S ^ V = 1.
 		;@ JL/JNGE. Jump if Less/Not Greater or Equal (SF!=OF)
 ;@----------------------------------------------------------------------------
 	getNextSignedByte
-	eor r2,v30f,v30f,lsr#3
-	tst r2,#PSR_V
-	addne v30pc,v30pc,r0
-	subne v30cyc,v30cyc,#3*CYCLE
+	mov r1,v30f,lsl#28
+	msr cpsr_flg,r1
+	addlt v30pc,v30pc,r0
+	sublt v30cyc,v30cyc,#3*CYCLE
 	v30ReEncodeFastPC
 	fetch 1
 ;@----------------------------------------------------------------------------
@@ -1590,10 +1590,10 @@ _7D:	;@ BGE. Branch if Greater than or Equal, S ^ V = 0.
 		;@ JNL/JGE. Jump if Not Less/Greater or Equal (SF=OF)
 ;@----------------------------------------------------------------------------
 	getNextSignedByte
-	eor r2,v30f,v30f,lsr#3
-	tst r2,#PSR_V
-	addeq v30pc,v30pc,r0
-	subeq v30cyc,v30cyc,#3*CYCLE
+	mov r1,v30f,lsl#28
+	msr cpsr_flg,r1
+	addge v30pc,v30pc,r0
+	subge v30cyc,v30cyc,#3*CYCLE
 	v30ReEncodeFastPC
 	fetch 1
 ;@----------------------------------------------------------------------------
@@ -2052,9 +2052,8 @@ _9E:	;@ SAHF					Store AH to Flags
 	and r1,r0,#PF
 	eor r1,r1,#PF
 	strb r1,[v30ptr,#v30ParityVal]
-	movs r1,r0,lsl#25
-	orrcs v30f,v30f,#PSR_S		;@ Bit 7 of r0
-	orrmi v30f,v30f,#PSR_Z		;@ Bit 6 of r0
+	and r1,r0,#SF|ZF
+	orr v30f,v30f,r1,lsr#4
 	tst r0,#CF
 	orrne v30f,v30f,#PSR_C
 	tst r0,#AF
@@ -3493,9 +3492,9 @@ i_lock:
 _F0:	;@ BUS LOCK
 ;@----------------------------------------------------------------------------
 	getNextByte
-	SetLockPrefix
 	add r2,v30ptr,#v30SegTbl
 	ldrb r1,[r2,r0]
+	SetLockPrefix
 	bic v30f,v30f,r1,lsl#6		;@ Clear segments if not applicable
 //	eatCycles 1
 	ldr pc,[v30ptr,r0,lsl#2]
@@ -3509,9 +3508,9 @@ i_repne:
 _F2:	;@ REPNE
 ;@----------------------------------------------------------------------------
 	getNextByte
-	SetRepeatNEPrefix
 	add r2,v30ptr,#v30SegTbl
 	ldrb r1,[r2,r0]
+	SetRepeatNEPrefix
 	bic v30f,v30f,r1,lsl#6		;@ Clear segments if not applicable
 //	eatCycles 1
 	ldr pc,[v30ptr,r0,lsl#2]
@@ -3521,9 +3520,9 @@ i_repe:
 _F3:	;@ REPE
 ;@----------------------------------------------------------------------------
 	getNextByte
-	SetRepeatEPrefix
 	add r2,v30ptr,#v30SegTbl
 	ldrb r1,[r2,r0]
+	SetRepeatEPrefix
 	bic v30f,v30f,r1,lsl#6		;@ Clear segments if not applicable
 //	eatCycles 1
 	ldr pc,[v30ptr,r0,lsl#2]
@@ -3819,7 +3818,7 @@ divuwF7:		;@ DIVU/DIV
 	andeq r0,r0,#1
 	cmpeq r0,#1
 	movne v30f,#0						;@ Clear flags.
-	
+
 	fetch 23
 divuwF7Error:
 	mov v30f,#0							;@ Clear flags.
@@ -3925,8 +3924,8 @@ _FE:	;@ PRE FE
 incFEReg:
 	ldrb v30ofs,[v30ofs,#v30ModRmRm]
 	ldrb r0,[v30ptr,-v30ofs]
-	mov r1,r0,lsl#24
 	and v30f,v30f,#PSR_C		;@ Only keep C
+	mov r1,r0,lsl#24
 	adds r1,r1,#0x1000000
 	orrmi v30f,v30f,#PSR_S
 	orreq v30f,v30f,#PSR_Z
@@ -3942,8 +3941,8 @@ incFEReg:
 decFEReg:
 	ldrb v30ofs,[v30ofs,#v30ModRmRm]
 	ldrb r0,[v30ptr,-v30ofs]
-	mov r1,r0,lsl#24
 	and v30f,v30f,#PSR_C		;@ Only keep C
+	mov r1,r0,lsl#24
 	subs r1,r1,#0x1000000
 	orrmi v30f,v30f,#PSR_S
 	orreq v30f,v30f,#PSR_Z
@@ -3958,8 +3957,8 @@ decFEReg:
 
 incFEEA:
 	bl v30ReadEA
-	mov r1,r0,lsl#24
 	and v30f,v30f,#PSR_C		;@ Only keep C
+	mov r1,r0,lsl#24
 	adds r1,r1,#0x1000000
 	orrmi v30f,v30f,#PSR_S
 	orreq v30f,v30f,#PSR_Z
@@ -3974,8 +3973,8 @@ incFEEA:
 
 decFEEA:
 	bl v30ReadEA
-	mov r1,r0,lsl#24
 	and v30f,v30f,#PSR_C		;@ Only keep C
+	mov r1,r0,lsl#24
 	subs r1,r1,#0x1000000
 	orrmi v30f,v30f,#PSR_S
 	orreq v30f,v30f,#PSR_Z
