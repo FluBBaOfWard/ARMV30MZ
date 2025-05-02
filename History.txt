@@ -2,14 +2,16 @@ ARMV30MZ revision history
 -=-=-=-=-=-=-=-=-=-=-=-=-
 
 
-V0.8.11 - 2025-05-01 (FluBBa)
+V0.8.11 - 2025-05-02 (FluBBa)
+	Fixed Branch Far & Call Far.
 	Refactored neg opcodes to be more like the Z80 implementation.
-	Optimized CVTDB/AAD.
 	Optimized ADJ4A/DAA.
+	Optimized CVTDB/AAD.
+	Optimized 16-bit INC/DEC.
+	Optimized POP F.
 	Optimized ROR.
 	Optimized RCL/ROLC.
 	Optimized RCR/RORC.
-	Optimized POP F.
 	Optimized SAHF.
 	Optimized some byte opcodes.
 

@@ -3999,13 +3999,12 @@ contFF:
 	cmp r0,#0xC0
 	bmi v30ReadEAW
 	add v30ofs,v30ptr,r1,lsr#27
-	ldrh r0,[v30ofs,#v30Regs]
 	bx lr
 ;@----------------------------------------------------------------------------
 incFFReg:
+	ldr r0,[v30ofs,#v30Regs2]
 	and v30f,v30f,#PSR_C		;@ Only keep C
-	mov r1,r0,lsl#16
-	adds r1,r1,#0x10000
+	adds r1,r0,#0x10000
 	orrmi v30f,v30f,#PSR_S
 	orreq v30f,v30f,#PSR_Z
 	orrvs v30f,v30f,#PSR_V
@@ -4017,8 +4016,8 @@ incFFReg:
 ;@----------------------------------------------------------------------------
 incFFEA:
 	and v30f,v30f,#PSR_C		;@ Only keep C
-	mov r1,r0,lsl#16
-	adds r1,r1,#0x10000
+	mov r0,r0,lsl#16
+	adds r1,r0,#0x10000
 	orrmi v30f,v30f,#PSR_S
 	orreq v30f,v30f,#PSR_Z
 	orrvs v30f,v30f,#PSR_V
@@ -4030,13 +4029,13 @@ incFFEA:
 	fetch 3
 ;@----------------------------------------------------------------------------
 decFFReg:
+	ldr r0,[v30ofs,#v30Regs2]
 	and v30f,v30f,#PSR_C		;@ Only keep C
-	mov r1,r0,lsl#16
-	subs r1,r1,#0x10000
+	subs r1,r0,#0x10000
 	orrmi v30f,v30f,#PSR_S
 	orreq v30f,v30f,#PSR_Z
 	orrvs v30f,v30f,#PSR_V
-	tst r0,#0xF
+	tst r0,#0xF0000
 	orreq v30f,v30f,#PSR_A
 	str r1,[v30ptr,#v30ParityValL]
 	str r1,[v30ofs,#v30Regs2]
@@ -4044,28 +4043,35 @@ decFFReg:
 ;@----------------------------------------------------------------------------
 decFFEA:
 	and v30f,v30f,#PSR_C		;@ Only keep C
-	mov r1,r0,lsl#16
-	subs r1,r1,#0x10000
+	mov r0,r0,lsl#16
+	subs r1,r0,#0x10000
 	orrmi v30f,v30f,#PSR_S
 	orreq v30f,v30f,#PSR_Z
 	orrvs v30f,v30f,#PSR_V
-	tst r0,#0xF
+	tst r0,#0xF0000
 	orreq v30f,v30f,#PSR_A
 	mov r1,r1,lsr#16
 	strb r1,[v30ptr,#v30ParityVal]
 	bl v30WriteSegOfsW
 	fetch 3
 ;@----------------------------------------------------------------------------
-callFFEA:
-	eatCycles 1
 callFFReg:
+	v30DecodeFastPCToReg r1
+	ldr v30pc,[v30ofs,#v30Regs2]
+	bl v30PushW
+	V30EncodeFastPC
+	ClearPrefixes
+	fetch 5
+callFFEA:
 	v30DecodeFastPCToReg r1
 	mov v30pc,r0,lsl#16
 	bl v30PushW
 	V30EncodeFastPC
 	ClearPrefixes
-	fetch 5
+	fetch 6
 ;@----------------------------------------------------------------------------
+callFarFFReg:
+	bl v30ReadEAW
 callFarFF:
 	v30DecodeFastPCToReg r4
 	mov v30pc,r0,lsl#16
@@ -4085,14 +4091,19 @@ callFarFF:
 	ClearPrefixes
 	fetch 12
 ;@----------------------------------------------------------------------------
-braFFEA:
-	eatCycles 1
 braFFReg:
-	mov v30pc,r0,lsl#16
+	ldr v30pc,[v30ofs,#v30Regs2]
 	v30EncodeFastPC
 	ClearPrefixes
 	fetch 5
+braFFEA:
+	mov v30pc,r0,lsl#16
+	v30EncodeFastPC
+	ClearPrefixes
+	fetch 6
 ;@----------------------------------------------------------------------------
+braFarFFReg:
+	bl v30ReadEAW
 braFarFF:
 	mov v30pc,r0,lsl#16
 	add v30ofs,v30ofs,#0x20000
@@ -4102,13 +4113,16 @@ braFarFF:
 	ClearPrefixes
 	fetch 10
 ;@----------------------------------------------------------------------------
-pushFFEA:
-	eatCycles 1
 pushFFReg:
-	mov r1,r0
+	ldrh r1,[v30ofs,#v30Regs]
 	bl v30PushW
 	ClearPrefixes
 	fetch 1
+pushFFEA:
+	mov r1,r0
+	bl v30PushW
+	ClearPrefixes
+	fetch 2
 
 ;@----------------------------------------------------------------------------
 division16:
@@ -4908,10 +4922,10 @@ jmpTblF7:
 	.long testF7,0, undefF7,0, notF7EA, 0, negF7EA, 0, muluF7,0, mulF7,0, divuwF7,0, divwF7,0
 	.long testF7,0, undefF7,0, notF7Reg,0, negF7Reg,0, muluF7,0, mulF7,0, divuwF7,0, divwF7,0
 ffTable:
-	.long incFFEA, 0, decFFEA, 0, callFFEA, 0, callFarFF,0, braFFEA, 0, braFarFF,0, pushFFEA, 0, undefFF,0
-	.long incFFEA, 0, decFFEA, 0, callFFEA, 0, callFarFF,0, braFFEA, 0, braFarFF,0, pushFFEA, 0, undefFF,0
-	.long incFFEA, 0, decFFEA, 0, callFFEA, 0, callFarFF,0, braFFEA, 0, braFarFF,0, pushFFEA, 0, undefFF,0
-	.long incFFReg,0, decFFReg,0, callFFReg,0, callFarFF,0, braFFReg,0, braFarFF,0, pushFFReg,0, undefFF,0
+	.long incFFEA, 0, decFFEA, 0, callFFEA, 0, callFarFF,   0, braFFEA, 0, braFarFF,0, pushFFEA,    0, undefFF,0
+	.long incFFEA, 0, decFFEA, 0, callFFEA, 0, callFarFF,   0, braFFEA, 0, braFarFF,0, pushFFEA,    0, undefFF,0
+	.long incFFEA, 0, decFFEA, 0, callFFEA, 0, callFarFF,   0, braFFEA, 0, braFarFF,0, pushFFEA,    0, undefFF,0
+	.long incFFReg,0, decFFReg,0, callFFReg,0, callFarFFReg,0, braFFReg,0, braFarFFReg,0, pushFFReg,0, undefFF,0
 
 ;@----------------------------------------------------------------------------
 
