@@ -2806,16 +2806,16 @@ _C0:	;@ ROTSHFT BD8
 	eatCycles 2
 	add v30ofs,v30ptr,r0,lsl#2
 	cmp r0,#0xC0
-	and r5,r0,#0xF8
+	mov r5,r0,ror#3
 	ldrbpl v30ofs,[v30ofs,#v30ModRmRm]
 	ldrbpl r0,[v30ptr,-v30ofs]
 	blmi v30ReadEA
 
 	getNextByteTo r4
-	add r2,v30ptr,#v30C0Table
+	add r2,v30ptr,r5,lsl#3
 	and r4,r4,#0x1F
 
-	ldr pc,[r2,r5,lsr#1]
+	ldr pc,[r2,#v30C0Table]
 
 rolC0Reg:
 	rol8 r0,r4
@@ -2899,10 +2899,10 @@ _C1:	;@ ROTSHFT WD8
 	blmi v30ReadEAW
 
 	getNextByteTo r4
-	add r2,v30ptr,#v30C1Table
+	add r2,v30ptr,r5,lsl#3
 	and r4,r4,#0x1F
 
-	ldr pc,[r2,r5,lsl#3]
+	ldr pc,[r2,#v30C1Table]
 
 rolC1Reg:
 	rol16 r0,r4
@@ -3200,9 +3200,9 @@ _D0:	;@ ROTSHFT B
 	getNextByte
 	mov r4,#1
 	add v30ofs,v30ptr,r0,lsl#2
-	and r5,r0,#0xF8
-	add r2,v30ptr,#v30C0Table
-	ldr lr,[r2,r5,lsr#1]
+	mov r5,r0,ror#3
+	add r2,v30ptr,r5,lsl#3
+	ldr lr,[r2,#v30C0Table]
 	cmp r0,#0xC0
 	ldrbpl v30ofs,[v30ofs,#v30ModRmRm]
 	bmi v30ReadEA
@@ -3215,8 +3215,8 @@ _D1:	;@ ROTSHFT W
 	getNextByte
 	mov r4,#1
 	mov r5,r0,ror#3
-	add r2,v30ptr,#v30C1Table
-	ldr lr,[r2,r5,lsl#3]
+	add r2,v30ptr,r5,lsl#3
+	ldr lr,[r2,#v30C1Table]
 	cmp r0,#0xC0
 	bmi v30ReadEAW
 	add v30ofs,v30ptr,r5,lsr#27
@@ -3229,9 +3229,9 @@ _D2:	;@ ROTSHFT BCL
 	getNextByte
 	ldrb r4,[v30ptr,#v30RegCL]
 	add v30ofs,v30ptr,r0,lsl#2
-	and r5,r0,#0xF8
-	add r2,v30ptr,#v30C0Table
-	ldr lr,[r2,r5,lsr#1]
+	mov r5,r0,ror#3
+	add r2,v30ptr,r5,lsl#3
+	ldr lr,[r2,#v30C0Table]
 	eatCycles 2
 	and r4,r4,#0x1F
 	cmp r0,#0xC0
@@ -3246,8 +3246,8 @@ _D3:	;@ ROTSHFT WCL
 	getNextByte
 	ldrb r4,[v30ptr,#v30RegCL]
 	mov r5,r0,ror#3
-	add r2,v30ptr,#v30C1Table
-	ldr lr,[r2,r5,lsl#3]
+	add r2,v30ptr,r5,lsl#3
+	ldr lr,[r2,#v30C1Table]
 	eatCycles 2
 	and r4,r4,#0x1F
 	cmp r0,#0xC0
@@ -4907,15 +4907,12 @@ SegmentTable:
 	.byte NOT_PF, NOT_PF, NOT_PF, NOT_PF, NOT_PF, NOT_PF, NOT_PF, NOT_PF, NOT_PF, NOT_PF, NOT_PF, NOT_PF, NOT_PF, NOT_PF, NOT_PF, NOT_PF
 	.byte      0, NOT_PF,      0,      0, NOT_PF, NOT_PF,      0,      0, NOT_PF, NOT_PF, NOT_PF, NOT_PF, NOT_PF, NOT_PF,      0,      0
 c0Table:
-	.long rolC0EA,  rorC0EA,  rolcC0EA,  rorcC0EA,  shlC0EA,  shrC0EA,  undC0EA,  shraC0EA
-	.long rolC0EA,  rorC0EA,  rolcC0EA,  rorcC0EA,  shlC0EA,  shrC0EA,  undC0EA,  shraC0EA
-	.long rolC0EA,  rorC0EA,  rolcC0EA,  rorcC0EA,  shlC0EA,  shrC0EA,  undC0EA,  shraC0EA
-	.long rolC0Reg, rorC0Reg, rolcC0Reg, rorcC0Reg, shlC0Reg, shrC0Reg, undC0Reg, shraC0Reg
+	.long rolC0EA
 c1Table:
-	.long rolC1EA, 0, rorC1EA, 0, rolcC1EA, 0, rorcC1EA, 0, shlC1EA, 0, shrC1EA, 0, undC1EA, 0, shraC1EA, 0
-	.long rolC1EA, 0, rorC1EA, 0, rolcC1EA, 0, rorcC1EA, 0, shlC1EA, 0, shrC1EA, 0, undC1EA, 0, shraC1EA, 0
-	.long rolC1EA, 0, rorC1EA, 0, rolcC1EA, 0, rorcC1EA, 0, shlC1EA, 0, shrC1EA, 0, undC1EA, 0, shraC1EA, 0
-	.long rolC1Reg,0, rorC1Reg,0, rolcC1Reg,0, rorcC1Reg,0, shlC1Reg,0, shrC1Reg,0, undC1Reg,0, shraC1Reg,0
+	.long           rolC1EA,  rorC0EA,  rorC1EA,  rolcC0EA,  rolcC1EA,  rorcC0EA,  rorcC1EA,  shlC0EA,  shlC1EA,  shrC0EA,  shrC1EA,  undC0EA,  undC1EA,  shraC0EA,  shraC1EA
+	.long rolC0EA,  rolC1EA,  rorC0EA,  rorC1EA,  rolcC0EA,  rolcC1EA,  rorcC0EA,  rorcC1EA,  shlC0EA,  shlC1EA,  shrC0EA,  shrC1EA,  undC0EA,  undC1EA,  shraC0EA,  shraC1EA
+	.long rolC0EA,  rolC1EA,  rorC0EA,  rorC1EA,  rolcC0EA,  rolcC1EA,  rorcC0EA,  rorcC1EA,  shlC0EA,  shlC1EA,  shrC0EA,  shrC1EA,  undC0EA,  undC1EA,  shraC0EA,  shraC1EA
+	.long rolC0Reg, rolC1Reg, rorC0Reg, rorC1Reg, rolcC0Reg, rolcC1Reg, rorcC0Reg, rorcC1Reg, shlC0Reg, shlC1Reg, shrC0Reg, shrC1Reg, undC0Reg, undC1Reg, shraC0Reg, shraC1Reg
 jmpTblF7:
 	.long testF7,0, undefF7,0, notF7EA, 0, negF7EA, 0, muluF7,0, mulF7,0, divuwF7,0, divwF7,0
 	.long testF7,0, undefF7,0, notF7EA, 0, negF7EA, 0, muluF7,0, mulF7,0, divuwF7,0, divwF7,0
