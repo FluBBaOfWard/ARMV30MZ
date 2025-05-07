@@ -2074,20 +2074,19 @@ _9D:	;@ POP F
 	orrne v30f,v30f,#PSR_A
 	tst r0,#CF
 	orrne v30f,v30f,#PSR_C
-	tst r0,#OF
-	orrne v30f,v30f,#PSR_V
-	tst r0,#DF
-	moveq r1,#1
-	movne r1,#-1
+	movs r1,r0,lsl#21			;@ Check OF & DF
+	orrcs v30f,v30f,#PSR_V
+	movpl r1,#1
+	movmi r1,#-1
 	strb r1,[v30ptr,#v30DF]
 	ands r1,r0,#IF
 	movne r1,#IRQ_PIN
 	ldrb r2,[v30ptr,#v30IF]
 	eors r2,r2,r1
 	strbne r1,[v30ptr,#v30IF]
-	tst r0,#TF					;@ Check if Trap is set.
+	tst r0,#TF					;@ Check if Trap is set...
 	orrne v30cyc,v30cyc,#TRAP_FLAG
-	tsteq r2,r1					;@ Or if Interrupt became enabled
+	tsteq r2,r1					;@ or if Interrupt became enabled.
 	eatCycles 3
 	bne v30DelayIrqCheck
 	fetch 0
@@ -4505,8 +4504,8 @@ V30TakeIRQ:					;@ r0 = vector number
 ;@----------------------------------------------------------------------------
 V30RestoreAndRunXCycles:	;@ r0 = number of cycles to run
 ;@----------------------------------------------------------------------------
-	add r1,v30ptr,#v30PrefixBase
-	ldmia r1,{v30csr-v30cyc}	;@ Restore V30MZ state
+	add r1,v30ptr,#v30Flags
+	ldmia r1,{v30f-v30cyc}	;@ Restore V30MZ state
 ;@----------------------------------------------------------------------------
 V30RunXCycles:				;@ r0 = number of cycles to run
 ;@----------------------------------------------------------------------------

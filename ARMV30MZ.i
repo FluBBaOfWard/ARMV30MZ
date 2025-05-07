@@ -73,7 +73,7 @@ v30SRegPS:			.long 0		;@ CS on Intel
 v30SRegSS:			.long 0
 v30SRegDS0:			.long 0		;@ DS on Intel
 
-v30PrefixBase:		.long 0		;@ Mapped to v30csr/r7
+v30PrefixBase:		.long 0		;@ Deprecated, to be removed.
 v30Flags:			.long 0		;@ Mapped to v30f/r8
 v30PC:				.long 0		;@ Mapped to v30pc/r9
 v30Cycles:			.long 0		;@ Mapped to v30cyc/r10
