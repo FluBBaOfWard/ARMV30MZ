@@ -238,8 +238,20 @@
 	moveq v30f,#PSR_Z
 	.endm
 ;@----------------------------------------------------------------------------
-	.macro decWord reg
-	ldr r0,[v30ptr,#\reg -2]
+	.macro decByte
+	and v30f,v30f,#PSR_C		;@ Only keep C
+	mov r0,r0,lsl#24
+	subs r1,r0,#0x1000000
+	orrmi v30f,v30f,#PSR_S
+	orreq v30f,v30f,#PSR_Z
+	orrvs v30f,v30f,#PSR_V
+	tst r0,#0xF000000
+	orreq v30f,v30f,#PSR_A
+	mov r1,r1,lsr#24
+	strb r1,[v30ptr,#v30ParityVal]
+	.endm
+
+	.macro decWord
 	and v30f,v30f,#PSR_C		;@ Only keep C
 	subs r1,r0,#0x10000
 	orrmi v30f,v30f,#PSR_S
@@ -247,13 +259,23 @@
 	orrvs v30f,v30f,#PSR_V
 	tst r0,#0xF0000
 	orreq v30f,v30f,#PSR_A
-	str r1,[v30ptr,#\reg -2]
 	str r1,[v30ptr,#v30ParityValL]
-	fetch 1
 	.endm
 ;@----------------------------------------------------------------------------
-	.macro incWord reg
-	ldr r0,[v30ptr,#\reg -2]
+	.macro incByte
+	and v30f,v30f,#PSR_C		;@ Only keep C
+	mov r0,r0,lsl#24
+	adds r1,r0,#0x1000000
+	orrmi v30f,v30f,#PSR_S
+	orreq v30f,v30f,#PSR_Z
+	orrvs v30f,v30f,#PSR_V
+	tst r1,#0xF000000
+	orreq v30f,v30f,#PSR_A
+	mov r1,r1,lsr#24
+	strb r1,[v30ptr,#v30ParityVal]
+	.endm
+
+	.macro incWord
 	and v30f,v30f,#PSR_C		;@ Only keep C
 	adds r1,r0,#0x10000
 	orrmi v30f,v30f,#PSR_S
@@ -261,9 +283,7 @@
 	orrvs v30f,v30f,#PSR_V
 	tst r1,#0xF0000
 	orreq v30f,v30f,#PSR_A
-	str r1,[v30ptr,#\reg -2]
 	str r1,[v30ptr,#v30ParityValL]
-	fetch 1
 	.endm
 ;@----------------------------------------------------------------------------
 	.macro jmpne flag

@@ -1019,82 +1019,130 @@ _3F:	;@ ADJBS/AAS
 i_inc_aw:
 _40:	;@ INC AW/AX
 ;@----------------------------------------------------------------------------
-	incWord v30RegAW
+	ldr r0,[v30ptr,#v30RegAW-2]
+	incWord
+	str r1,[v30ptr,#v30RegAW-2]
+	fetch 1
 ;@----------------------------------------------------------------------------
 i_inc_cw:
 _41:	;@ INC CW/CX
 ;@----------------------------------------------------------------------------
-	incWord v30RegCW
+	ldr r0,[v30ptr,#v30RegCW-2]
+	incWord
+	str r1,[v30ptr,#v30RegCW-2]
+	fetch 1
 ;@----------------------------------------------------------------------------
 i_inc_dw:
 _42:	;@ INC DW/DX
 ;@----------------------------------------------------------------------------
-	incWord v30RegDW
+	ldr r0,[v30ptr,#v30RegDW-2]
+	incWord
+	str r1,[v30ptr,#v30RegDW-2]
+	fetch 1
 ;@----------------------------------------------------------------------------
 i_inc_bw:
 _43:	;@ INC BW/BX
 ;@----------------------------------------------------------------------------
-	incWord v30RegBW
+	ldr r0,[v30ptr,#v30RegBW-2]
+	incWord
+	str r1,[v30ptr,#v30RegBW-2]
+	fetch 1
 ;@----------------------------------------------------------------------------
 i_inc_sp:
 _44:	;@ INC SP
 ;@----------------------------------------------------------------------------
-	incWord v30RegSP+2
+	ldr r0,[v30ptr,#v30RegSP]
+	incWord
+	str r1,[v30ptr,#v30RegSP]
+	fetch 1
 ;@----------------------------------------------------------------------------
 i_inc_bp:
 _45:	;@ INC BP
 ;@----------------------------------------------------------------------------
-	incWord v30RegBP+2
+	ldr r0,[v30ptr,#v30RegBP]
+	incWord
+	str r1,[v30ptr,#v30RegBP]
+	fetch 1
 ;@----------------------------------------------------------------------------
 i_inc_ix:
 _46:	;@ INC IX/SI
 ;@----------------------------------------------------------------------------
-	incWord v30RegIX+2
+	ldr r0,[v30ptr,#v30RegIX]
+	incWord
+	str r1,[v30ptr,#v30RegIX]
+	fetch 1
 ;@----------------------------------------------------------------------------
 i_inc_iy:
 _47:	;@ INC IY/DI
 ;@----------------------------------------------------------------------------
-	incWord v30RegIY+2
+	ldr r0,[v30ptr,#v30RegIY]
+	incWord
+	str r1,[v30ptr,#v30RegIY]
+	fetch 1
 ;@----------------------------------------------------------------------------
 i_dec_aw:
 _48:	;@ DEC AW/AX
 ;@----------------------------------------------------------------------------
-	decWord v30RegAW
+	ldr r0,[v30ptr,#v30RegAW-2]
+	decWord
+	str r1,[v30ptr,#v30RegAW-2]
+	fetch 1
 ;@----------------------------------------------------------------------------
 i_dec_cw:
 _49:	;@ DEC CW/CX
 ;@----------------------------------------------------------------------------
-	decWord v30RegCW
+	ldr r0,[v30ptr,#v30RegCW-2]
+	decWord
+	str r1,[v30ptr,#v30RegCW-2]
+	fetch 1
 ;@----------------------------------------------------------------------------
 i_dec_dw:
 _4A:	;@ DEC DW/DX
 ;@----------------------------------------------------------------------------
-	decWord v30RegDW
+	ldr r0,[v30ptr,#v30RegDW-2]
+	decWord
+	str r1,[v30ptr,#v30RegDW-2]
+	fetch 1
 ;@----------------------------------------------------------------------------
 i_dec_bw:
 _4B:	;@ DEC BW/BX
 ;@----------------------------------------------------------------------------
-	decWord v30RegBW
+	ldr r0,[v30ptr,#v30RegBW-2]
+	decWord
+	str r1,[v30ptr,#v30RegBW-2]
+	fetch 1
 ;@----------------------------------------------------------------------------
 i_dec_sp:
 _4C:	;@ DEC SP
 ;@----------------------------------------------------------------------------
-	decWord v30RegSP+2
+	ldr r0,[v30ptr,#v30RegSP]
+	decWord
+	str r1,[v30ptr,#v30RegSP]
+	fetch 1
 ;@----------------------------------------------------------------------------
 i_dec_bp:
 _4D:	;@ DEC BP
 ;@----------------------------------------------------------------------------
-	decWord v30RegBP+2
+	ldr r0,[v30ptr,#v30RegBP]
+	decWord
+	str r1,[v30ptr,#v30RegBP]
+	fetch 1
 ;@----------------------------------------------------------------------------
 i_dec_ix:
 _4E:	;@ DEC IX/SI
 ;@----------------------------------------------------------------------------
-	decWord v30RegIX+2
+	ldr r0,[v30ptr,#v30RegIX]
+	decWord
+	str r1,[v30ptr,#v30RegIX]
+	fetch 1
 ;@----------------------------------------------------------------------------
 i_dec_iy:
 _4F:	;@ DEC IY/DI
 ;@----------------------------------------------------------------------------
-	decWord v30RegIY+2
+	ldr r0,[v30ptr,#v30RegIY]
+	decWord
+	str r1,[v30ptr,#v30RegIY]
+	fetch 1
 ;@----------------------------------------------------------------------------
 i_push_aw:
 _50:	;@ PUSH AW/AX
@@ -3924,66 +3972,26 @@ _FE:	;@ PRE FE
 incFEReg:
 	ldrb v30ofs,[v30ofs,#v30ModRmRm]
 	ldrb r0,[v30ptr,-v30ofs]
-	and v30f,v30f,#PSR_C		;@ Only keep C
-	mov r1,r0,lsl#24
-	adds r1,r1,#0x1000000
-	orrmi v30f,v30f,#PSR_S
-	orreq v30f,v30f,#PSR_Z
-	orrvs v30f,v30f,#PSR_V
-	tst r1,#0xF000000
-	orreq v30f,v30f,#PSR_A
-	mov r1,r1,lsr#24
-	strb r1,[v30ptr,#v30ParityVal]
-
+	incByte
 	strb r1,[v30ptr,-v30ofs]
 	fetch 1
 
 decFEReg:
 	ldrb v30ofs,[v30ofs,#v30ModRmRm]
 	ldrb r0,[v30ptr,-v30ofs]
-	and v30f,v30f,#PSR_C		;@ Only keep C
-	mov r1,r0,lsl#24
-	subs r1,r1,#0x1000000
-	orrmi v30f,v30f,#PSR_S
-	orreq v30f,v30f,#PSR_Z
-	orrvs v30f,v30f,#PSR_V
-	tst r0,#0xF
-	orreq v30f,v30f,#PSR_A
-	mov r1,r1,lsr#24
-	strb r1,[v30ptr,#v30ParityVal]
-
+	decByte
 	strb r1,[v30ptr,-v30ofs]
 	fetch 1
 
 incFEEA:
 	bl v30ReadEA
-	and v30f,v30f,#PSR_C		;@ Only keep C
-	mov r1,r0,lsl#24
-	adds r1,r1,#0x1000000
-	orrmi v30f,v30f,#PSR_S
-	orreq v30f,v30f,#PSR_Z
-	orrvs v30f,v30f,#PSR_V
-	tst r1,#0xF000000
-	orreq v30f,v30f,#PSR_A
-	mov r1,r1,lsr#24
-	strb r1,[v30ptr,#v30ParityVal]
-
+	incByte
 	bl v30WriteSegOfs
 	fetch 3
 
 decFEEA:
 	bl v30ReadEA
-	and v30f,v30f,#PSR_C		;@ Only keep C
-	mov r1,r0,lsl#24
-	subs r1,r1,#0x1000000
-	orrmi v30f,v30f,#PSR_S
-	orreq v30f,v30f,#PSR_Z
-	orrvs v30f,v30f,#PSR_V
-	tst r0,#0xF
-	orreq v30f,v30f,#PSR_A
-	mov r1,r1,lsr#24
-	strb r1,[v30ptr,#v30ParityVal]
-
+	decByte
 	bl v30WriteSegOfs
 	fetch 3
 
@@ -4003,55 +4011,27 @@ contFF:
 ;@----------------------------------------------------------------------------
 incFFReg:
 	ldr r0,[v30ofs,#v30Regs2]
-	and v30f,v30f,#PSR_C		;@ Only keep C
-	adds r1,r0,#0x10000
-	orrmi v30f,v30f,#PSR_S
-	orreq v30f,v30f,#PSR_Z
-	orrvs v30f,v30f,#PSR_V
-	tst r1,#0xF0000
-	orreq v30f,v30f,#PSR_A
-	str r1,[v30ptr,#v30ParityValL]
+	incWord
 	str r1,[v30ofs,#v30Regs2]
 	fetch 1
 ;@----------------------------------------------------------------------------
 incFFEA:
-	and v30f,v30f,#PSR_C		;@ Only keep C
 	mov r0,r0,lsl#16
-	adds r1,r0,#0x10000
-	orrmi v30f,v30f,#PSR_S
-	orreq v30f,v30f,#PSR_Z
-	orrvs v30f,v30f,#PSR_V
-	tst r1,#0xF0000
-	orreq v30f,v30f,#PSR_A
+	incWord
 	mov r1,r1,lsr#16
-	strb r1,[v30ptr,#v30ParityVal]
 	bl v30WriteSegOfsW
 	fetch 3
 ;@----------------------------------------------------------------------------
 decFFReg:
 	ldr r0,[v30ofs,#v30Regs2]
-	and v30f,v30f,#PSR_C		;@ Only keep C
-	subs r1,r0,#0x10000
-	orrmi v30f,v30f,#PSR_S
-	orreq v30f,v30f,#PSR_Z
-	orrvs v30f,v30f,#PSR_V
-	tst r0,#0xF0000
-	orreq v30f,v30f,#PSR_A
-	str r1,[v30ptr,#v30ParityValL]
+	decWord
 	str r1,[v30ofs,#v30Regs2]
 	fetch 1
 ;@----------------------------------------------------------------------------
 decFFEA:
-	and v30f,v30f,#PSR_C		;@ Only keep C
 	mov r0,r0,lsl#16
-	subs r1,r0,#0x10000
-	orrmi v30f,v30f,#PSR_S
-	orreq v30f,v30f,#PSR_Z
-	orrvs v30f,v30f,#PSR_V
-	tst r0,#0xF0000
-	orreq v30f,v30f,#PSR_A
+	decWord
 	mov r1,r1,lsr#16
-	strb r1,[v30ptr,#v30ParityVal]
 	bl v30WriteSegOfsW
 	fetch 3
 ;@----------------------------------------------------------------------------
