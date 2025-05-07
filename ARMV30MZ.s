@@ -99,9 +99,9 @@ _01:	;@ ADD WR16
 	ldr r4,[r2,#v30Regs2]
 	cmp r0,#0xC0
 	bmi 0f
+	mov r5,r0,ror#3
 add81Reg:
-	andpl r0,r0,#7
-	add v30ofs,v30ptr,r0,lsl#2
+	add v30ofs,v30ptr,r5,lsr#27
 	ldrh r0,[v30ofs,#v30Regs]
 
 	add16 r4,r0
@@ -211,9 +211,9 @@ _09:	;@ OR WR16
 	ldr r4,[r2,#v30Regs2]
 	cmp r0,#0xC0
 	bmi 0f
+	mov r5,r0,ror#3
 or81Reg:
-	andpl r0,r0,#7
-	add v30ofs,v30ptr,r0,lsl#2
+	add v30ofs,v30ptr,r5,lsr#27
 	ldrh r0,[v30ofs,#v30Regs]
 
 	or16 r4,r0
@@ -315,9 +315,9 @@ _11:	;@ ADDC/ADC WR16
 	ldr r4,[r2,#v30Regs2]
 	cmp r0,#0xC0
 	bmi 0f
+	mov r5,r0,ror#3
 adc81Reg:
-	andpl r0,r0,#7
-	add v30ofs,v30ptr,r0,lsl#2
+	add v30ofs,v30ptr,r5,lsr#27
 	ldrh r0,[v30ofs,#v30Regs]
 
 	adc16 r4,r0
@@ -429,9 +429,9 @@ _19:	;@ SUBC/SBB WR16
 	ldr r4,[r2,#v30Regs2]
 	cmp r0,#0xC0
 	bmi 0f
+	mov r5,r0,ror#3
 subc81Reg:
-	andpl r0,r0,#7
-	add v30ofs,v30ptr,r0,lsl#2
+	add v30ofs,v30ptr,r5,lsr#27
 	ldrh r0,[v30ofs,#v30Regs]
 
 	rsbc16 r0,r4
@@ -541,9 +541,9 @@ _21:	;@ AND WR16
 	ldr r4,[r2,#v30Regs2]
 	cmp r0,#0xC0
 	bmi 0f
+	mov r5,r0,ror#3
 and81Reg:
-	andpl r0,r0,#7
-	add v30ofs,v30ptr,r0,lsl#2
+	add v30ofs,v30ptr,r5,lsr#27
 	ldrh r0,[v30ofs,#v30Regs]
 
 	and16 r4,r0
@@ -672,9 +672,9 @@ _29:	;@ SUB WR16
 	ldr r4,[r2,#v30Regs2]
 	cmp r0,#0xC0
 	bmi 0f
+	mov r5,r0,ror#3
 sub81Reg:
-	andpl r0,r0,#7
-	add v30ofs,v30ptr,r0,lsl#2
+	add v30ofs,v30ptr,r5,lsr#27
 	ldrh r0,[v30ofs,#v30Regs]
 
 	rsb16 r0,r4
@@ -805,9 +805,9 @@ _31:	;@ XOR WR16
 	ldr r4,[r2,#v30Regs2]
 	cmp r0,#0xC0
 	bmi 0f
+	mov r5,r0,ror#3
 xor81Reg:
-	andpl r0,r0,#7
-	add v30ofs,v30ptr,r0,lsl#2
+	add v30ofs,v30ptr,r5,lsr#27
 	ldrh r0,[v30ofs,#v30Regs]
 
 	xor16 r4,r0
@@ -936,6 +936,7 @@ cmp81Reg:
 
 	rsb16 r0,r4
 	fetch 1
+0:
 cmp81EA:
 	rsb16 r0,r4
 	fetch 2
@@ -1697,19 +1698,19 @@ _81:	;@ PRE 81
 ;@----------------------------------------------------------------------------
 	getNextByte
 	cmp r0,#0xC0
-	and r5,r0,#0xF8
+	mov r5,r0,ror#3
 	blmi v30ReadEAW
 
 	getNextWordTo r4, r1
 	mov r4,r4,lsl#16
 
-	ldr pc,[pc,r5,lsr#1]
+	ldr pc,[pc,r5,lsl#3]
 	nop
 _81Table:
-	.long add81EA,  or81EA,  adc81EA,  subc81EA,  and81EA,  sub81EA,  xor81EA,  cmp81EA
-	.long add81EA,  or81EA,  adc81EA,  subc81EA,  and81EA,  sub81EA,  xor81EA,  cmp81EA
-	.long add81EA,  or81EA,  adc81EA,  subc81EA,  and81EA,  sub81EA,  xor81EA,  cmp81EA
-	.long add81Reg, or81Reg, adc81Reg, subc81Reg, and81Reg, sub81Reg, xor81Reg, cmp81Reg
+	.long add81EA,0,  or81EA,0,  adc81EA,0,  subc81EA,0,  and81EA,0,  sub81EA,0,  xor81EA,0,  cmp81EA,0
+	.long add81EA,0,  or81EA,0,  adc81EA,0,  subc81EA,0,  and81EA,0,  sub81EA,0,  xor81EA,0,  cmp81EA,0
+	.long add81EA,0,  or81EA,0,  adc81EA,0,  subc81EA,0,  and81EA,0,  sub81EA,0,  xor81EA,0,  cmp81EA,0
+	.long add81Reg,0, or81Reg,0, adc81Reg,0, subc81Reg,0, and81Reg,0, sub81Reg,0, xor81Reg,0, cmp81Reg,0
 
 ;@----------------------------------------------------------------------------
 i_83pre:
@@ -1717,14 +1718,14 @@ _83:	;@ PRE 83
 ;@----------------------------------------------------------------------------
 	getNextByte
 	cmp r0,#0xC0
-	and r5,r0,#0xF8
+	mov r5,r0,ror#3
 	blmi v30ReadEAW
 
 	getNextSignedByteTo r4
 	mov r4,r4,lsl#16
 
 	adr r2,_81Table
-	ldr pc,[r2,r5,lsr#1]
+	ldr pc,[r2,r5,lsl#3]
 ;@----------------------------------------------------------------------------
 i_test_br8:
 _84:	;@ TEST BR8
