@@ -231,11 +231,11 @@
 	.endm
 
 	.macro and16 dst src
-	and r1,\dst,\src,lsr#16
-	movs v30f,r1,lsl#16			;@ Clear flags.
+	ands v30f,\dst,\src,lsl#16	;@ Do op & clear flags.
+	str v30f,[v30ptr,#v30ParityValL]
+	mov r1,v30f,lsr#16
 	movmi v30f,#PSR_S
 	moveq v30f,#PSR_Z
-	strb r1,[v30ptr,#v30ParityVal]
 	.endm
 ;@----------------------------------------------------------------------------
 	.macro decWord reg
@@ -293,11 +293,11 @@
 	.endm
 
 	.macro or16 dst src
-	orr r1,\dst,\src,lsr#16
-	movs v30f,r1,lsl#16			;@ Clear flags.
+	orrs v30f,\dst,\src,lsl#16	;@ Do op & clear flags.
+	str v30f,[v30ptr,#v30ParityValL]
+	mov r1,v30f,lsr#16
 	movmi v30f,#PSR_S
 	moveq v30f,#PSR_Z
-	strb r1,[v30ptr,#v30ParityVal]
 	.endm
 
 ;@----------------------------------------------------------------------------
@@ -578,6 +578,13 @@
 	.endm
 
 ;@----------------------------------------------------------------------------
+	.macro tst16 dst src
+	ands v30f,\dst,\src,lsl#16	;@ Do op & clear flags.
+	str v30f,[v30ptr,#v30ParityValL]
+	movmi v30f,#PSR_S
+	moveq v30f,#PSR_Z
+	.endm
+;@----------------------------------------------------------------------------
 	.macro xor8 dst src
 	eor r1,\dst,\src
 	movs v30f,r1,lsl#24			;@ Clear flags.
@@ -587,11 +594,11 @@
 	.endm
 
 	.macro xor16 dst src
-	eor r1,\dst,\src,lsr#16
-	movs v30f,r1,lsl#16			;@ Clear flags.
+	eors v30f,\dst,\src,lsl#16	;@ Do op & clear flags.
+	str v30f,[v30ptr,#v30ParityValL]
+	mov r1,v30f,lsr#16
 	movmi v30f,#PSR_S
 	moveq v30f,#PSR_Z
-	strb r1,[v30ptr,#v30ParityVal]
 	.endm
 
 ;@----------------------------------------------------------------------------
