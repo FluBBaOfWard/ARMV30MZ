@@ -1298,7 +1298,7 @@ _62:	;@ CHKIND/BOUND
 	getNextByte
 	and r1,r0,#0x38
 	add r2,v30ptr,r1,lsr#1
-	ldr r4,[r2,#v30Regs-2]
+	ldr r4,[r2,#v30Regs2]
 	bl v30ReadEAW
 	add v30ofs,v30ofs,#0x20000
 	mov r5,r0,lsl#16
@@ -1785,21 +1785,21 @@ i_xchg_wr16:
 _87:	;@ XCH/XCHG WR16
 ;@----------------------------------------------------------------------------
 	getNextByte
-	and r1,r0,#0x38
-	add r4,v30ptr,r1,lsr#1
+	adr lr,0f
+	and r4,r0,#0x38
 	cmp r0,#0xC0
-	bmi 0f
+	bmi v30ReadEAW
 
-	andpl r0,r0,#7
-	add v30ofs,v30ptr,r0,lsl#2
-	ldrh r0,[v30ofs,#v30Regs]
-	ldrh r1,[r4,#v30Regs]
-	strh r0,[r4,#v30Regs]
-	strh r1,[v30ofs,#v30Regs]
+	mov r5,r0,ror#3
+	add v30ofs,v30ptr,#v30Regs2
+	ldr r0,[v30ofs,r5,lsr#27]
+	ldr r1,[v30ofs,r4,lsr#1]
+	str r0,[v30ofs,r4,lsr#1]
+	str r1,[v30ofs,r5,lsr#27]
 	ClearPrefixes
 	fetch 3
 0:
-	bl v30ReadEAW
+	add r4,v30ptr,r4,lsr#1
 	ldrh r1,[r4,#v30Regs]
 	strh r0,[r4,#v30Regs]
 	bl v30WriteSegOfsW

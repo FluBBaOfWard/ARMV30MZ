@@ -13,6 +13,7 @@ V0.8.11 - 2025-05-07 (FluBBa)
 	Optimized RCL/ROLC.
 	Optimized RCR/RORC.
 	Optimized SAHF.
+	Optimized 16-bit XCHG.
 	Optimized some byte opcodes.
 
 V0.8.10 - 2025-03-03 (FluBBa)
