@@ -4516,9 +4516,8 @@ V30CheckIRQs:
 	stmfd sp!,{lr}
 v30ChkIrqInternal:				;@ This can be used on HALT
 	ldr r1,[v30ptr,#v30IrqPin]	;@ NMI, Irq pin and IF
-	movs r0,r1,lsr#24
-	bne doV30NMI
-	ands r0,r1,r1,lsr#8
+	ands r0,r1,r1,asr#8
+	bmi doV30NMI
 	bne V30FetchIRQ
 	tst v30cyc,#HALT_FLAG | TRAP_FLAG
 	bne v30InHaltTrap
@@ -4561,17 +4560,18 @@ v30DelayIrqCheck:			;@ This is used by IRET/POPF
 V30SetNMIPin:				;@ r0=pin state
 ;@----------------------------------------------------------------------------
 	cmp r0,#0
-	movne r0,#NEC_NMI_VECTOR
+	movne r0,#0x80
 	ldrb r1,[v30ptr,#v30NmiPin]
 	strb r0,[v30ptr,#v30NmiPin]
 	bics r0,r0,r1
 	strbne r0,[v30ptr,#v30NmiPending]
 	bx lr
 ;@----------------------------------------------------------------------------
-doV30NMI:					;@ r0=NMI_VECTOR (2)
+doV30NMI:					;@
 ;@----------------------------------------------------------------------------
 	mov r1,#0
 	strb r1,[v30ptr,#v30NmiPending]
+	mov r0,#NEC_NMI_VECTOR		;@ (2)
 	b V30TakeIRQ
 ;@----------------------------------------------------------------------------
 divideError:
