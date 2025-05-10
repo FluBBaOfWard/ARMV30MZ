@@ -85,6 +85,7 @@ add80Reg:
 	fetch 1
 
 add80EA:
+	getNextByteTo r4
 0:
 	add8 r4,r0
 	bl v30WriteSegOfs
@@ -103,7 +104,6 @@ _01:	;@ ADD WR16
 add81Reg:
 	add v30ofs,v30ptr,r5,lsr#27
 	ldrh r0,[v30ofs,#v30Regs]
-
 	add16 r4,r0
 	str r1,[v30ofs,#v30Regs2]
 	fetch 1
@@ -197,6 +197,7 @@ or80Reg:
 	fetch 1
 
 or80EA:
+	getNextByteTo r4
 0:
 	or8 r4,r0
 	bl v30WriteSegOfs
@@ -215,7 +216,6 @@ _09:	;@ OR WR16
 or81Reg:
 	add v30ofs,v30ptr,r5,lsr#27
 	ldrh r0,[v30ofs,#v30Regs]
-
 	or16 r4,r0
 	strh r1,[v30ofs,#v30Regs]
 	fetch 1
@@ -301,6 +301,7 @@ adc80Reg:
 	fetch 1
 
 adc80EA:
+	getNextByteTo r4
 0:
 	adc8 r4,r0
 	bl v30WriteSegOfs
@@ -319,7 +320,6 @@ _11:	;@ ADDC/ADC WR16
 adc81Reg:
 	add v30ofs,v30ptr,r5,lsr#27
 	ldrh r0,[v30ofs,#v30Regs]
-
 	adc16 r4,r0
 	str r1,[v30ofs,#v30Regs2]
 	fetch 1
@@ -415,6 +415,7 @@ subc80Reg:
 	fetch 1
 
 subc80EA:
+	getNextByteTo r4
 0:
 	subc8 r4,r0
 	bl v30WriteSegOfs
@@ -433,7 +434,6 @@ _19:	;@ SUBC/SBB WR16
 subc81Reg:
 	add v30ofs,v30ptr,r5,lsr#27
 	ldrh r0,[v30ofs,#v30Regs]
-
 	rsbc16 r0,r4
 	str r1,[v30ofs,#v30Regs2]
 	fetch 1
@@ -527,6 +527,7 @@ and80Reg:
 	fetch 1
 
 and80EA:
+	getNextByteTo r4
 0:
 	and8 r4,r0
 	bl v30WriteSegOfs
@@ -545,7 +546,6 @@ _21:	;@ AND WR16
 and81Reg:
 	add v30ofs,v30ptr,r5,lsr#27
 	ldrh r0,[v30ofs,#v30Regs]
-
 	and16 r4,r0
 	strh r1,[v30ofs,#v30Regs]
 	fetch 1
@@ -658,6 +658,7 @@ sub80Reg:
 	fetch 1
 
 sub80EA:
+	getNextByteTo r4
 0:
 	sub8 r4,r0
 	bl v30WriteSegOfs
@@ -676,7 +677,6 @@ _29:	;@ SUB WR16
 sub81Reg:
 	add v30ofs,v30ptr,r5,lsr#27
 	ldrh r0,[v30ofs,#v30Regs]
-
 	rsb16 r0,r4
 	str r1,[v30ofs,#v30Regs2]
 	fetch 1
@@ -791,6 +791,7 @@ xor80Reg:
 	fetch 1
 
 xor80EA:
+	getNextByteTo r4
 0:
 	xor8 r4,r0
 	bl v30WriteSegOfs
@@ -809,7 +810,6 @@ _31:	;@ XOR WR16
 xor81Reg:
 	add v30ofs,v30ptr,r5,lsr#27
 	ldrh r0,[v30ofs,#v30Regs]
-
 	xor16 r4,r0
 	strh r1,[v30ofs,#v30Regs]
 	fetch 1
@@ -916,6 +916,7 @@ cmp80Reg:
 	fetch 1
 
 cmp80EA:
+	getNextByteTo r4
 0:
 	sub8 r4,r0
 	fetch 2
@@ -1678,14 +1679,14 @@ _82:	;@ PRE 82
 ;@----------------------------------------------------------------------------
 	getNextByte
 	add v30ofs,v30ptr,r0,lsl#2
+	bic r1,v30ofs,#0x1f
+	ldr lr,[r1,#v3080Table]
 	cmp r0,#0xC0
-	bic r5,v30ofs,#0x1f
-	ldrbpl r3,[v30ofs,#v30ModRmRm]
-	blmi v30ReadEA
+	bmi v30ReadEA
+	ldrb r3,[v30ofs,#v30ModRmRm]
 
 	getNextByteTo r4
-
-	ldr pc,[r5,#v3080Table]
+	bx lr
 
 ;@----------------------------------------------------------------------------
 i_81pre:
@@ -3593,13 +3594,13 @@ _F6:	;@ PRE F6
 ;@----------------------------------------------------------------------------
 	getNextByte
 	add v30ofs,v30ptr,r0,lsl#2
+	bic r1,v30ofs,#0x1f
+	ldr lr,[r1,#v30F6Table]
 	cmp r0,#0xC0
-	bic r5,v30ofs,#0x1f
 	ldrbpl v30ofs,[v30ofs,#v30ModRmRm]
-	ldrbpl r0,[v30ptr,-v30ofs]
-	blmi v30ReadEA1
-
-	ldr pc,[r5,#v30F6Table]
+	bmi v30ReadEA1
+	ldrb r0,[v30ptr,-v30ofs]
+	bx lr
 ;@----------------------------------------------------------------------------
 testF6:
 	getNextByteTo r1
