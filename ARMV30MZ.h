@@ -42,10 +42,11 @@ typedef struct {
 	void (*EATable[256])(void);
 	u32 modRm[256];
 	u8 segTbl[256];
-	void (*c0Table[32])(void);
-	void (*c1Table[32*2])(void);
-	void (*f7Table[32*2])(void);
-	void (*ffTable[32*2])(void);
+	void (*c0Table[1])(void);
+	void (*c1Table[1])(void);
+	void (*f7Table[1])(void);
+	void (*ffTable[1])(void);
+	void (*xxTable[32*8-4])(void);
 } ARMV30Core;
 
 extern ARMV30Core V30OpTable;
