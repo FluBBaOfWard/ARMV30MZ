@@ -3594,18 +3594,12 @@ _F6:	;@ PRE F6
 	getNextByte
 	add v30ofs,v30ptr,r0,lsl#2
 	cmp r0,#0xC0
-	and r5,r0,#0xF8
+	bic r5,v30ofs,#0x1f
 	ldrbpl v30ofs,[v30ofs,#v30ModRmRm]
 	ldrbpl r0,[v30ptr,-v30ofs]
 	blmi v30ReadEA1
 
-	ldr pc,[pc,r5,lsr#1]
-	nop
-f6Table:
-	.long testF6, undefF6, notF6EA,  negF6EA,  muluF6, mulF6, divubF6, divbF6
-	.long testF6, undefF6, notF6EA,  negF6EA,  muluF6, mulF6, divubF6, divbF6
-	.long testF6, undefF6, notF6EA,  negF6EA,  muluF6, mulF6, divubF6, divbF6
-	.long testF6, undefF6, notF6Reg, negF6Reg, muluF6, mulF6, divubF6, divbF6
+	ldr pc,[r5,#v30F6Table]
 ;@----------------------------------------------------------------------------
 testF6:
 	getNextByteTo r1
@@ -4887,44 +4881,46 @@ c0Table:
 	.long rolC0EA
 c1Table:
 	.long rolC1EA
+f6Table:
+	.long testF6
 f7Table:
 	.long testF7
 ffTable:
-	.long incFFEA, 0, 0, 0
-	.long or80EA,   rorC0EA,  rorC1EA,  undefF7, decFFEA,   0, 0, 0
-	.long adc80EA,  rolcC0EA, rolcC1EA, notF7EA, callFFEA,  0, 0, 0
-	.long subc80EA, rorcC0EA, rorcC1EA, negF7EA, callFarFF, 0, 0, 0
-	.long and80EA,  shlC0EA,  shlC1EA,  muluF7,  braFFEA,   0, 0, 0
-	.long sub80EA,  shrC0EA,  shrC1EA,  mulF7,   braFarFF,  0, 0, 0
-	.long xor80EA,  undC0EA,  undC1EA,  divuwF7, pushFFEA,  0, 0, 0
-	.long cmp80EA,  shraC0EA, shraC1EA, divwF7,  undefFF,   0, 0, 0
+	.long incFFEA, 0, 0
+	.long or80EA,   rorC0EA,  rorC1EA,  undefF6, undefF7, decFFEA,   0, 0
+	.long adc80EA,  rolcC0EA, rolcC1EA, notF6EA, notF7EA, callFFEA,  0, 0
+	.long subc80EA, rorcC0EA, rorcC1EA, negF6EA, negF7EA, callFarFF, 0, 0
+	.long and80EA,  shlC0EA,  shlC1EA,  muluF6,  muluF7,  braFFEA,   0, 0
+	.long sub80EA,  shrC0EA,  shrC1EA,  mulF6,   mulF7,   braFarFF,  0, 0
+	.long xor80EA,  undC0EA,  undC1EA,  divubF6, divuwF7, pushFFEA,  0, 0
+	.long cmp80EA,  shraC0EA, shraC1EA, divbF6,  divwF7,  undefFF,   0, 0
 
-	.long add80EA,  rolC0EA,  rolC1EA,  testF7,  incFFEA,   0, 0, 0
-	.long or80EA,   rorC0EA,  rorC1EA,  undefF7, decFFEA,   0, 0, 0
-	.long adc80EA,  rolcC0EA, rolcC1EA, notF7EA, callFFEA,  0, 0, 0
-	.long subc80EA, rorcC0EA, rorcC1EA, negF7EA, callFarFF, 0, 0, 0
-	.long and80EA,  shlC0EA,  shlC1EA,  muluF7,  braFFEA,   0, 0, 0
-	.long sub80EA,  shrC0EA,  shrC1EA,  mulF7,   braFarFF,  0, 0, 0
-	.long xor80EA,  undC0EA,  undC1EA,  divuwF7, pushFFEA,  0, 0, 0
-	.long cmp80EA,  shraC0EA, shraC1EA, divwF7,  undefFF,   0, 0, 0
+	.long add80EA,  rolC0EA,  rolC1EA,  testF6,  testF7,  incFFEA,   0, 0
+	.long or80EA,   rorC0EA,  rorC1EA,  undefF6, undefF7, decFFEA,   0, 0
+	.long adc80EA,  rolcC0EA, rolcC1EA, notF6EA, notF7EA, callFFEA,  0, 0
+	.long subc80EA, rorcC0EA, rorcC1EA, negF6EA, negF7EA, callFarFF, 0, 0
+	.long and80EA,  shlC0EA,  shlC1EA,  muluF6,  muluF7,  braFFEA,   0, 0
+	.long sub80EA,  shrC0EA,  shrC1EA,  mulF6,   mulF7,   braFarFF,  0, 0
+	.long xor80EA,  undC0EA,  undC1EA,  divubF6, divuwF7, pushFFEA,  0, 0
+	.long cmp80EA,  shraC0EA, shraC1EA, divbF6,  divwF7,  undefFF,   0, 0
 
-	.long add80EA,  rolC0EA,  rolC1EA,  testF7,  incFFEA,   0, 0, 0
-	.long or80EA,   rorC0EA,  rorC1EA,  undefF7, decFFEA,   0, 0, 0
-	.long adc80EA,  rolcC0EA, rolcC1EA, notF7EA, callFFEA,  0, 0, 0
-	.long subc80EA, rorcC0EA, rorcC1EA, negF7EA, callFarFF, 0, 0, 0
-	.long and80EA,  shlC0EA,  shlC1EA,  muluF7,  braFFEA,   0, 0, 0
-	.long sub80EA,  shrC0EA,  shrC1EA,  mulF7,   braFarFF,  0, 0, 0
-	.long xor80EA,  undC0EA,  undC1EA,  divuwF7, pushFFEA,  0, 0, 0
-	.long cmp80EA,  shraC0EA, shraC1EA, divwF7,  undefFF,   0, 0, 0
+	.long add80EA,  rolC0EA,  rolC1EA,  testF6,  testF7,  incFFEA,   0, 0
+	.long or80EA,   rorC0EA,  rorC1EA,  undefF6, undefF7, decFFEA,   0, 0
+	.long adc80EA,  rolcC0EA, rolcC1EA, notF6EA, notF7EA, callFFEA,  0, 0
+	.long subc80EA, rorcC0EA, rorcC1EA, negF6EA, negF7EA, callFarFF, 0, 0
+	.long and80EA,  shlC0EA,  shlC1EA,  muluF6,  muluF7,  braFFEA,   0, 0
+	.long sub80EA,  shrC0EA,  shrC1EA,  mulF6,   mulF7,   braFarFF,  0, 0
+	.long xor80EA,  undC0EA,  undC1EA,  divubF6, divuwF7, pushFFEA,  0, 0
+	.long cmp80EA,  shraC0EA, shraC1EA, divbF6,  divwF7,  undefFF,   0, 0
 
-	.long add80Reg, rolC0Reg, rolC1Reg, testF7,  incFFReg,  0, 0, 0
-	.long or80Reg,  rorC0Reg, rorC1Reg, undefF7, decFFReg,  0, 0, 0
-	.long adc80Reg, rolcC0Reg, rolcC1Reg,notF7Reg,callFFReg,0, 0, 0
-	.long subc80Reg, rorcC0Reg, rorcC1Reg,negF7Reg,callFarFFReg,0,0,0
-	.long and80Reg, shlC0Reg, shlC1Reg, muluF7,  braFFReg,  0, 0, 0
-	.long sub80Reg, shrC0Reg, shrC1Reg, mulF7, braFarFFReg, 0, 0, 0
-	.long xor80Reg, undC0Reg, undC1Reg, divuwF7, pushFFReg, 0, 0, 0
-	.long cmp80Reg, shraC0Reg, shraC1Reg, divwF7,undefFF,   0, 0, 0
+	.long add80Reg, rolC0Reg, rolC1Reg, testF6,  testF7,  incFFReg,  0, 0
+	.long or80Reg,  rorC0Reg, rorC1Reg, undefF6, undefF7, decFFReg,  0, 0
+	.long adc80Reg, rolcC0Reg,rolcC1Reg,notF6Reg,notF7Reg,callFFReg, 0, 0
+	.long subc80Reg,rorcC0Reg,rorcC1Reg,negF6Reg,negF7Reg,callFarFFReg,0,0
+	.long and80Reg, shlC0Reg, shlC1Reg, muluF6,  muluF7,  braFFReg,  0, 0
+	.long sub80Reg, shrC0Reg, shrC1Reg, mulF6,   mulF7, braFarFFReg, 0, 0
+	.long xor80Reg, undC0Reg, undC1Reg, divubF6, divuwF7, pushFFReg, 0, 0
+	.long cmp80Reg, shraC0Reg,shraC1Reg,divbF6,  divwF7,  undefFF,   0, 0
 
 ;@----------------------------------------------------------------------------
 
