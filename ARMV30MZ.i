@@ -105,11 +105,12 @@ v30ModRm:
 v30ModRmRm:
 v30ModRmReg:		.space 256*4
 v30SegTbl:			.space 256
+v3080Table:			.space 4
 v30C0Table:			.space 4
 v30C1Table:			.space 4
 v30F7Table:			.space 4
 v30FFTable:			.space 4
-					.space 32*8*4-16
+					.space 32*8*4-20
 v30Size:
 	.previous
 ;@----------------------------------------------------------------------------
