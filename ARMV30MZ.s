@@ -95,9 +95,9 @@ i_add_wr16:
 _01:	;@ ADD WR16
 ;@----------------------------------------------------------------------------
 	getNextByte
+	add r2,v30ptr,#v30Regs2
 	and r1,r0,#0x38
-	add r2,v30ptr,r1,lsr#1
-	ldr r4,[r2,#v30Regs2]
+	ldr r4,[r2,r1,lsr#1]
 	cmp r0,#0xC0
 	bmi 0f
 	mov r5,r0,ror#3
@@ -134,17 +134,17 @@ i_add_r16w:
 _03:	;@ ADD R16W
 ;@----------------------------------------------------------------------------
 	getNextByte
-	and r1,r0,#0x38
-	add r4,v30ptr,r1,lsr#1
+	add r4,v30ptr,#v30Regs2
+	and r5,r0,#0x38
 	cmp r0,#0xC0
 	andpl r0,r0,#7
 	add v30ofs,v30ptr,r0,lsl#2
 	ldrhpl r0,[v30ofs,#v30Regs]
 	blmi v30ReadEAW1
 
-	ldr r1,[r4,#v30Regs2]
+	ldr r1,[r4,r5,lsr#1]
 	add16 r1,r0
-	str r1,[r4,#v30Regs2]
+	str r1,[r4,r5,lsr#1]
 	fetch 1
 ;@----------------------------------------------------------------------------
 i_add_ald8:
@@ -207,9 +207,9 @@ i_or_wr16:
 _09:	;@ OR WR16
 ;@----------------------------------------------------------------------------
 	getNextByte
+	add r2,v30ptr,#v30Regs2
 	and r1,r0,#0x38
-	add r2,v30ptr,r1,lsr#1
-	ldr r4,[r2,#v30Regs2]
+	ldr r4,[r2,r1,lsr#1]
 	cmp r0,#0xC0
 	bmi 0f
 	mov r5,r0,ror#3
@@ -245,17 +245,17 @@ i_or_r16w:
 _0B:	;@ OR R16W
 ;@----------------------------------------------------------------------------
 	getNextByte
-	and r1,r0,#0x38
-	add r4,v30ptr,r1,lsr#1
+	add r4,v30ptr,#v30Regs2
+	and r5,r0,#0x38
 	cmp r0,#0xC0
 	andpl r0,r0,#7
 	add v30ofs,v30ptr,r0,lsl#2
 	ldrhpl r0,[v30ofs,#v30Regs]
 	blmi v30ReadEAW1
 
-	ldr r1,[r4,#v30Regs2]
+	ldr r1,[r4,r5,lsr#1]!
 	or16 r1,r0
-	strh r1,[r4,#v30Regs]
+	strh r1,[r4,#2]
 	fetch 1
 ;@----------------------------------------------------------------------------
 i_or_ald8:
@@ -311,9 +311,9 @@ i_adc_wr16:
 _11:	;@ ADDC/ADC WR16
 ;@----------------------------------------------------------------------------
 	getNextByte
+	add r2,v30ptr,#v30Regs2
 	and r1,r0,#0x38
-	add r2,v30ptr,r1,lsr#1
-	ldr r4,[r2,#v30Regs2]
+	ldr r4,[r2,r1,lsr#1]
 	cmp r0,#0xC0
 	bmi 0f
 	mov r5,r0,ror#3
@@ -350,17 +350,17 @@ i_adc_r16w:
 _13:	;@ ADDC/ADC R16W
 ;@----------------------------------------------------------------------------
 	getNextByte
-	and r1,r0,#0x38
-	add r4,v30ptr,r1,lsr#1
+	add r4,v30ptr,#v30Regs2
+	and r5,r0,#0x38
 	cmp r0,#0xC0
 	andpl r0,r0,#7
 	add v30ofs,v30ptr,r0,lsl#2
 	ldrhpl r0,[v30ofs,#v30Regs]
 	blmi v30ReadEAW1
 
-	ldr r1,[r4,#v30Regs2]
+	ldr r1,[r4,r5,lsr#1]
 	adc16 r1,r0
-	str r1,[r4,#v30Regs2]
+	str r1,[r4,r5,lsr#1]
 	fetch 1
 ;@----------------------------------------------------------------------------
 i_adc_ald8:
@@ -425,9 +425,9 @@ i_sbb_wr16:
 _19:	;@ SUBC/SBB WR16
 ;@----------------------------------------------------------------------------
 	getNextByte
+	add r2,v30ptr,#v30Regs2
 	and r1,r0,#0x38
-	add r2,v30ptr,r1,lsr#1
-	ldr r4,[r2,#v30Regs2]
+	ldr r4,[r2,r1,lsr#1]
 	cmp r0,#0xC0
 	bmi 0f
 	mov r5,r0,ror#3
@@ -464,17 +464,17 @@ i_sbb_r16w:
 _1B:	;@ SUBC/SBB R16W
 ;@----------------------------------------------------------------------------
 	getNextByte
-	and r1,r0,#0x38
-	add r4,v30ptr,r1,lsr#1
+	add r4,v30ptr,#v30Regs2
+	and r5,r0,#0x38
 	cmp r0,#0xC0
 	andpl r0,r0,#7
 	add v30ofs,v30ptr,r0,lsl#2
 	ldrhpl r0,[v30ofs,#v30Regs]
 	blmi v30ReadEAW1
 
-	ldr r1,[r4,#v30Regs2]
+	ldr r1,[r4,r5,lsr#1]
 	subc16 r1,r0
-	str r1,[r4,#v30Regs2]
+	str r1,[r4,r5,lsr#1]
 	fetch 1
 ;@----------------------------------------------------------------------------
 i_sbb_ald8:
@@ -537,9 +537,9 @@ i_and_wr16:
 _21:	;@ AND WR16
 ;@----------------------------------------------------------------------------
 	getNextByte
+	add r2,v30ptr,#v30Regs2
 	and r1,r0,#0x38
-	add r2,v30ptr,r1,lsr#1
-	ldr r4,[r2,#v30Regs2]
+	ldr r4,[r2,r1,lsr#1]
 	cmp r0,#0xC0
 	bmi 0f
 	mov r5,r0,ror#3
@@ -575,17 +575,17 @@ i_and_r16w:
 _23:	;@ AND R16W
 ;@----------------------------------------------------------------------------
 	getNextByte
-	and r1,r0,#0x38
-	add r4,v30ptr,r1,lsr#1
+	add r4,v30ptr,#v30Regs2
+	and r5,r0,#0x38
 	cmp r0,#0xC0
 	andpl r0,r0,#7
 	add v30ofs,v30ptr,r0,lsl#2
 	ldrhpl r0,[v30ofs,#v30Regs]
 	blmi v30ReadEAW1
 
-	ldr r1,[r4,#v30Regs2]
+	ldr r1,[r4,r5,lsr#1]!
 	and16 r1,r0
-	strh r1,[r4,#v30Regs]
+	strh r1,[r4,#2]
 	fetch 1
 ;@----------------------------------------------------------------------------
 i_and_ald8:
@@ -668,9 +668,9 @@ i_sub_wr16:
 _29:	;@ SUB WR16
 ;@----------------------------------------------------------------------------
 	getNextByte
+	add r2,v30ptr,#v30Regs2
 	and r1,r0,#0x38
-	add r2,v30ptr,r1,lsr#1
-	ldr r4,[r2,#v30Regs2]
+	ldr r4,[r2,r1,lsr#1]
 	cmp r0,#0xC0
 	bmi 0f
 	mov r5,r0,ror#3
@@ -707,17 +707,17 @@ i_sub_r16w:
 _2B:	;@ SUB R16W
 ;@----------------------------------------------------------------------------
 	getNextByte
-	and r1,r0,#0x38
-	add r4,v30ptr,r1,lsr#1
+	add r4,v30ptr,#v30Regs2
+	and r5,r0,#0x38
 	cmp r0,#0xC0
 	andpl r0,r0,#7
 	add v30ofs,v30ptr,r0,lsl#2
 	ldrhpl r0,[v30ofs,#v30Regs]
 	blmi v30ReadEAW1
 
-	ldr r1,[r4,#v30Regs2]
+	ldr r1,[r4,r5,lsr#1]
 	sub16 r1,r0
-	str r1,[r4,#v30Regs2]
+	str r1,[r4,r5,lsr#1]
 	fetch 1
 ;@----------------------------------------------------------------------------
 i_sub_ald8:
@@ -801,9 +801,9 @@ i_xor_wr16:
 _31:	;@ XOR WR16
 ;@----------------------------------------------------------------------------
 	getNextByte
+	add r2,v30ptr,#v30Regs2
 	and r1,r0,#0x38
-	add r2,v30ptr,r1,lsr#1
-	ldr r4,[r2,#v30Regs2]
+	ldr r4,[r2,r1,lsr#1]
 	cmp r0,#0xC0
 	bmi 0f
 	mov r5,r0,ror#3
@@ -839,17 +839,17 @@ i_xor_r16w:
 _33:	;@ XOR R16W
 ;@----------------------------------------------------------------------------
 	getNextByte
-	and r1,r0,#0x38
-	add r4,v30ptr,r1,lsr#1
+	add r4,v30ptr,#v30Regs2
+	and r5,r0,#0x38
 	cmp r0,#0xC0
 	andpl r0,r0,#7
 	add v30ofs,v30ptr,r0,lsl#2
 	ldrhpl r0,[v30ofs,#v30Regs]
 	blmi v30ReadEAW1
 
-	ldr r1,[r4,#v30Regs2]
+	ldr r1,[r4,r5,lsr#1]!
 	xor16 r1,r0
-	strh r1,[r4,#v30Regs]
+	strh r1,[r4,#2]
 	fetch 1
 ;@----------------------------------------------------------------------------
 i_xor_ald8:
@@ -925,9 +925,9 @@ i_cmp_wr16:
 _39:	;@ CMP WR16
 ;@----------------------------------------------------------------------------
 	getNextByte
+	add r2,v30ptr,#v30Regs2
 	and r1,r0,#0x38
-	add r2,v30ptr,r1,lsr#1
-	ldr r4,[r2,#v30Regs2]
+	ldr r4,[r2,r1,lsr#1]
 	cmp r0,#0xC0
 cmp81Reg:
 	andpl r0,r0,#7
@@ -960,15 +960,15 @@ i_cmp_r16w:
 _3B:	;@ CMP R16W
 ;@----------------------------------------------------------------------------
 	getNextByte
-	and r1,r0,#0x38
-	add r4,v30ptr,r1,lsr#1
+	add r4,v30ptr,#v30Regs2
+	and r5,r0,#0x38
 	cmp r0,#0xC0
 	andpl r0,r0,#7
 	add v30ofs,v30ptr,r0,lsl#2
 	ldrhpl r0,[v30ofs,#v30Regs]
 	blmi v30ReadEAW1
 
-	ldr r1,[r4,#v30Regs2]
+	ldr r1,[r4,r5,lsr#1]
 	sub16 r1,r0
 	fetch 1
 ;@----------------------------------------------------------------------------
@@ -1297,9 +1297,9 @@ i_chkind:
 _62:	;@ CHKIND/BOUND
 ;@----------------------------------------------------------------------------
 	getNextByte
+	add r2,v30ptr,#v30Regs2
 	and r1,r0,#0x38
-	add r2,v30ptr,r1,lsr#1
-	ldr r4,[r2,#v30Regs2]
+	ldr r4,[r2,r1,lsr#1]
 	bl v30ReadEAW
 	add v30ofs,v30ofs,#0x20000
 	mov r5,r0,lsl#16
@@ -1741,9 +1741,9 @@ i_test_wr16:
 _85:	;@ TEST WR16
 ;@----------------------------------------------------------------------------
 	getNextByte
+	add r2,v30ptr,#v30Regs2
 	and r1,r0,#0x38
-	add r2,v30ptr,r1,lsr#1
-	ldr r4,[r2,#v30Regs2]
+	ldr r4,[r2,r1,lsr#1]
 	cmp r0,#0xC0
 	andpl r0,r0,#7
 	add v30ofs,v30ptr,r0,lsl#2
@@ -1886,14 +1886,14 @@ i_lea:
 _8D:	;@ LDEA/LEA
 ;@----------------------------------------------------------------------------
 	getNextByte
-	and r1,r0,#0x38
-	add r4,v30ptr,r1,lsr#1
+	add r4,v30ptr,#v30Regs2
+	and r5,r0,#0x38
 //	tst r0,#4					;@ 2 reg ModRm? LEA, LES & LDS don't take 2 extra cycles, just one.
 //	addeq v30cyc,v30cyc,#1*CYCLE
 	add v30ofs,v30ptr,r0,lsl#2
 	mov r12,pc					;@ Return reg for EA
 	ldr pc,[v30ofs,#v30EATable]	;@ EATable return EO in v30ofs
-	str v30ofs,[r4,#v30Regs2]
+	str v30ofs,[r4,r5,lsr#1]
 	fetch 1
 ;@----------------------------------------------------------------------------
 i_mov_sregw:
@@ -4798,23 +4798,6 @@ V30OpTable:
 	.long i_lock,    i_brks,     i_repne,   i_repe,     i_hlt,      i_cmc,       i_f6pre,   i_f7pre		// 0xF0
 	.long i_clc,     i_stc,      i_di,      i_ei,       i_cld,      i_std,       i_fepre,   i_ffpre		// 0xF8
 
-PZSTable:
-	.byte PSR_Z|PSR_P, 0, 0, PSR_P, 0, PSR_P, PSR_P, 0, 0, PSR_P, PSR_P, 0, PSR_P, 0, 0, PSR_P
-	.byte 0      , PSR_P, PSR_P, 0, PSR_P, 0, 0, PSR_P, PSR_P, 0, 0, PSR_P, 0, PSR_P, PSR_P, 0
-	.byte 0, PSR_P, PSR_P, 0, PSR_P, 0, 0, PSR_P, PSR_P, 0, 0 ,PSR_P, 0, PSR_P, PSR_P, 0
-	.byte PSR_P, 0, 0, PSR_P, 0, PSR_P, PSR_P, 0, 0, PSR_P, PSR_P, 0, PSR_P, 0, 0, PSR_P
-	.byte 0      , PSR_P, PSR_P, 0, PSR_P, 0, 0, PSR_P, PSR_P, 0, 0, PSR_P, 0, PSR_P, PSR_P, 0
-	.byte PSR_P,       0, 0, PSR_P, 0, PSR_P, PSR_P, 0, 0, PSR_P, PSR_P, 0, PSR_P, 0, 0, PSR_P
-	.byte PSR_P, 0, 0, PSR_P, 0, PSR_P, PSR_P, 0, 0, PSR_P, PSR_P, 0, PSR_P, 0, 0, PSR_P
-	.byte 0, PSR_P, PSR_P, 0, PSR_P, 0, 0, PSR_P, PSR_P, 0, 0, PSR_P, 0, PSR_P, PSR_P, 0
-	.byte PSR_S, PSR_P+PSR_S, PSR_S+PSR_P, PSR_S, PSR_S+PSR_P, PSR_S, PSR_S, PSR_P+PSR_S, PSR_S+PSR_P, PSR_S, PSR_S, PSR_P+PSR_S, PSR_S, PSR_P+PSR_S, PSR_S+PSR_P, PSR_S
-	.byte PSR_S+PSR_P, PSR_S, PSR_S, PSR_P+PSR_S, PSR_S, PSR_P+PSR_S, PSR_S+PSR_P, PSR_S, PSR_S, PSR_P+PSR_S, PSR_S+PSR_P, PSR_S, PSR_S+PSR_P, PSR_S, PSR_S, PSR_P+PSR_S
-	.byte PSR_S+PSR_P, PSR_S, PSR_S, PSR_P+PSR_S, PSR_S, PSR_P+PSR_S, PSR_S+PSR_P, PSR_S, PSR_S, PSR_P+PSR_S, PSR_S+PSR_P, PSR_S, PSR_S+PSR_P, PSR_S, PSR_S, PSR_P+PSR_S
-	.byte PSR_S, PSR_P+PSR_S, PSR_S+PSR_P, PSR_S, PSR_S+PSR_P, PSR_S, PSR_S, PSR_P+PSR_S, PSR_S+PSR_P, PSR_S, PSR_S, PSR_P+PSR_S, PSR_S, PSR_P+PSR_S, PSR_S+PSR_P, PSR_S
-	.byte PSR_S+PSR_P, PSR_S, PSR_S, PSR_P+PSR_S, PSR_S, PSR_P+PSR_S, PSR_S+PSR_P, PSR_S, PSR_S, PSR_P+PSR_S, PSR_S+PSR_P, PSR_S, PSR_S+PSR_P, PSR_S, PSR_S, PSR_P+PSR_S
-	.byte PSR_S, PSR_P+PSR_S, PSR_S+PSR_P, PSR_S, PSR_S+PSR_P, PSR_S, PSR_S, PSR_P+PSR_S, PSR_S+PSR_P, PSR_S, PSR_S, PSR_P+PSR_S, PSR_S, PSR_P+PSR_S, PSR_S+PSR_P, PSR_S
-	.byte PSR_S, PSR_P+PSR_S, PSR_S+PSR_P, PSR_S, PSR_S+PSR_P, PSR_S, PSR_S, PSR_P+PSR_S, PSR_S+PSR_P, PSR_S, PSR_S, PSR_P+PSR_S, PSR_S, PSR_P+PSR_S, PSR_S+PSR_P, PSR_S
-	.byte PSR_S+PSR_P, PSR_S, PSR_S, PSR_P+PSR_S, PSR_S, PSR_P+PSR_S, PSR_S+PSR_P, PSR_S, PSR_S, PSR_P+PSR_S, PSR_S+PSR_P, PSR_S, PSR_S+PSR_P, PSR_S, PSR_S, PSR_P+PSR_S
 GetEA:
 	.long EA_000, EA_001, EA_002, EA_003, EA_004, EA_005, EA_006, EA_007
 	.long EA_000, EA_001, EA_002, EA_003, EA_004, EA_005, EA_006, EA_007
@@ -4853,6 +4836,23 @@ GetEA:
 	.long EA_300, EA_301, EA_302, EA_303, EA_304, EA_305, EA_306, EA_307
 Mod_RM:
 	.space 0x400
+PZSTable:
+	.byte PSR_Z|PSR_P, 0, 0, PSR_P, 0, PSR_P, PSR_P, 0, 0, PSR_P, PSR_P, 0, PSR_P, 0, 0, PSR_P
+	.byte 0      , PSR_P, PSR_P, 0, PSR_P, 0, 0, PSR_P, PSR_P, 0, 0, PSR_P, 0, PSR_P, PSR_P, 0
+	.byte 0, PSR_P, PSR_P, 0, PSR_P, 0, 0, PSR_P, PSR_P, 0, 0 ,PSR_P, 0, PSR_P, PSR_P, 0
+	.byte PSR_P, 0, 0, PSR_P, 0, PSR_P, PSR_P, 0, 0, PSR_P, PSR_P, 0, PSR_P, 0, 0, PSR_P
+	.byte 0      , PSR_P, PSR_P, 0, PSR_P, 0, 0, PSR_P, PSR_P, 0, 0, PSR_P, 0, PSR_P, PSR_P, 0
+	.byte PSR_P,       0, 0, PSR_P, 0, PSR_P, PSR_P, 0, 0, PSR_P, PSR_P, 0, PSR_P, 0, 0, PSR_P
+	.byte PSR_P, 0, 0, PSR_P, 0, PSR_P, PSR_P, 0, 0, PSR_P, PSR_P, 0, PSR_P, 0, 0, PSR_P
+	.byte 0, PSR_P, PSR_P, 0, PSR_P, 0, 0, PSR_P, PSR_P, 0, 0, PSR_P, 0, PSR_P, PSR_P, 0
+	.byte PSR_S, PSR_P+PSR_S, PSR_S+PSR_P, PSR_S, PSR_S+PSR_P, PSR_S, PSR_S, PSR_P+PSR_S, PSR_S+PSR_P, PSR_S, PSR_S, PSR_P+PSR_S, PSR_S, PSR_P+PSR_S, PSR_S+PSR_P, PSR_S
+	.byte PSR_S+PSR_P, PSR_S, PSR_S, PSR_P+PSR_S, PSR_S, PSR_P+PSR_S, PSR_S+PSR_P, PSR_S, PSR_S, PSR_P+PSR_S, PSR_S+PSR_P, PSR_S, PSR_S+PSR_P, PSR_S, PSR_S, PSR_P+PSR_S
+	.byte PSR_S+PSR_P, PSR_S, PSR_S, PSR_P+PSR_S, PSR_S, PSR_P+PSR_S, PSR_S+PSR_P, PSR_S, PSR_S, PSR_P+PSR_S, PSR_S+PSR_P, PSR_S, PSR_S+PSR_P, PSR_S, PSR_S, PSR_P+PSR_S
+	.byte PSR_S, PSR_P+PSR_S, PSR_S+PSR_P, PSR_S, PSR_S+PSR_P, PSR_S, PSR_S, PSR_P+PSR_S, PSR_S+PSR_P, PSR_S, PSR_S, PSR_P+PSR_S, PSR_S, PSR_P+PSR_S, PSR_S+PSR_P, PSR_S
+	.byte PSR_S+PSR_P, PSR_S, PSR_S, PSR_P+PSR_S, PSR_S, PSR_P+PSR_S, PSR_S+PSR_P, PSR_S, PSR_S, PSR_P+PSR_S, PSR_S+PSR_P, PSR_S, PSR_S+PSR_P, PSR_S, PSR_S, PSR_P+PSR_S
+	.byte PSR_S, PSR_P+PSR_S, PSR_S+PSR_P, PSR_S, PSR_S+PSR_P, PSR_S, PSR_S, PSR_P+PSR_S, PSR_S+PSR_P, PSR_S, PSR_S, PSR_P+PSR_S, PSR_S, PSR_P+PSR_S, PSR_S+PSR_P, PSR_S
+	.byte PSR_S, PSR_P+PSR_S, PSR_S+PSR_P, PSR_S, PSR_S+PSR_P, PSR_S, PSR_S, PSR_P+PSR_S, PSR_S+PSR_P, PSR_S, PSR_S, PSR_P+PSR_S, PSR_S, PSR_P+PSR_S, PSR_S+PSR_P, PSR_S
+	.byte PSR_S+PSR_P, PSR_S, PSR_S, PSR_P+PSR_S, PSR_S, PSR_P+PSR_S, PSR_S+PSR_P, PSR_S, PSR_S, PSR_P+PSR_S, PSR_S+PSR_P, PSR_S, PSR_S+PSR_P, PSR_S, PSR_S, PSR_P+PSR_S
 SegmentTable:
 	.byte      0,      0,      0,      0, NOT_PF, NOT_PF, NOT_PF, NOT_PF,      0,      0,      0,      0, NOT_PF, NOT_PF, NOT_PF, NOT_PF
 	.byte      0,      0,      0,      0, NOT_PF, NOT_PF, NOT_PF, NOT_PF,      0,      0,      0,      0, NOT_PF, NOT_PF, NOT_PF, NOT_PF

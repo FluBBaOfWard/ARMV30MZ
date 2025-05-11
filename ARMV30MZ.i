@@ -99,11 +99,11 @@ v30MemTbl:			.space 16*4
 v30MemTblInv:
 								;@ Base address
 v30Opz:				.space 256*4
-v30PZST:			.space 256
 v30EATable:			.space 256*4
 v30ModRm:
 v30ModRmRm:
 v30ModRmReg:		.space 256*4
+v30PZST:			.space 256
 v30SegTbl:			.space 256
 v3080Table:			.space 4
 v30C0Table:			.space 4
