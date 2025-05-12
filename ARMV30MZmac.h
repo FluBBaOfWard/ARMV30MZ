@@ -175,8 +175,8 @@
 ;@ r1 should not be used for src
 ;@----------------------------------------------------------------------------
 	.macro add8 dst src
-	mov r2,\dst,lsl#28
 	mov \src,\src,lsl#24
+	mov r2,\dst,lsl#28
 	adds \dst,\src,\dst,lsl#24
 	mrs v30f,cpsr				;@ S, Z, C & V.
 	mov v30f,v30f,lsr#28
@@ -519,7 +519,7 @@
 	.endm
 
 ;@----------------------------------------------------------------------------
-	.macro sub8 src dst
+	.macro sub8 dst src
 	mov r2,\src,lsl#28
 	mov \dst,\dst,lsl#24
 	subs \src,\dst,\src,lsl#24
@@ -554,7 +554,7 @@
 	str r1,[v30ptr,#v30ParityValL]
 	.endm
 ;@----------------------------------------------------------------------------
-	.macro subc8 src dst
+	.macro subc8 dst src
 	and v30f,v30f,#PSR_C
 	subs \src,\src,v30f,lsl#7	;@ Fix up src and set correct C.
 	mvn \src,\src,ror#8
@@ -583,8 +583,8 @@
 	.endm
 
 	.macro rsbc16 dst src
-	mov \src,\src,lsr#16
 	and v30f,v30f,#PSR_C
+	mov \src,\src,lsr#16
 	subs \src,\src,v30f,lsl#15	;@ Fix up src and set correct C.
 	mvn \src,\src,ror#16
 	adcs r1,\src,\dst,lsl#16

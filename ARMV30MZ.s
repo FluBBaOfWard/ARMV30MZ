@@ -79,15 +79,15 @@ _00:	;@ ADD BR8
 	beq v30ReadEA
 
 add80Reg:
-	ldrb r0,[v30ptr,-r3]
-	add8 r4,r0
+	ldrb r1,[v30ptr,-r3]
+	add8 r1,r4
 	strb r1,[v30ptr,-r3]
 	fetch 1
 
 add80EA:
 	getNextByteTo r4
 0:
-	add8 r4,r0
+	add8 r0,r4
 	bl v30WriteSegOfs
 	fetch 3
 ;@----------------------------------------------------------------------------
@@ -126,7 +126,7 @@ _02:	;@ ADD R8b
 	bleq v30ReadEA1
 
 	ldrb r1,[v30ptr,-r4,lsr#24]
-	add8 r0,r1
+	add8 r1,r0
 	strb r1,[v30ptr,-r4,lsr#24]
 	fetch 1
 ;@----------------------------------------------------------------------------
@@ -152,7 +152,7 @@ _04:	;@ ADD ALD8
 ;@----------------------------------------------------------------------------
 	getNextByte
 	ldrb r1,[v30ptr,#v30RegAL]
-	add8 r0,r1
+	add8 r1,r0
 	strb r1,[v30ptr,#v30RegAL]
 	fetch 1
 ;@----------------------------------------------------------------------------
@@ -410,14 +410,14 @@ _18:	;@ SUBC/SBB BR8
 
 subc80Reg:
 	ldrb r0,[v30ptr,-r3]
-	subc8 r4,r0
+	subc8 r0,r4
 	strb r1,[v30ptr,-r3]
 	fetch 1
 
 subc80EA:
 	getNextByteTo r4
 0:
-	subc8 r4,r0
+	subc8 r0,r4
 	bl v30WriteSegOfs
 	fetch 3
 ;@----------------------------------------------------------------------------
@@ -456,7 +456,7 @@ _1A:	;@ SUBC/SBB R8b
 	bleq v30ReadEA1
 
 	ldrb r1,[v30ptr,-r4,lsr#24]
-	subc8 r0,r1
+	subc8 r1,r0
 	strb r1,[v30ptr,-r4,lsr#24]
 	fetch 1
 ;@----------------------------------------------------------------------------
@@ -482,7 +482,7 @@ _1C:	;@ SUBC/SBB ALD8
 ;@----------------------------------------------------------------------------
 	getNextByte
 	ldrb r1,[v30ptr,#v30RegAL]
-	subc8 r0,r1
+	subc8 r1,r0
 	strb r1,[v30ptr,#v30RegAL]
 	fetch 1
 ;@----------------------------------------------------------------------------
@@ -653,14 +653,14 @@ _28:	;@ SUB BR8
 
 sub80Reg:
 	ldrb r0,[v30ptr,-r3]
-	sub8 r4,r0
+	sub8 r0,r4
 	strb r1,[v30ptr,-r3]
 	fetch 1
 
 sub80EA:
 	getNextByteTo r4
 0:
-	sub8 r4,r0
+	sub8 r0,r4
 	bl v30WriteSegOfs
 	fetch 3
 ;@----------------------------------------------------------------------------
@@ -699,7 +699,7 @@ _2A:	;@ SUB R8b
 	bleq v30ReadEA1
 
 	ldrb r1,[v30ptr,-r4,lsr#24]
-	sub8 r0,r1
+	sub8 r1,r0
 	strb r1,[v30ptr,-r4,lsr#24]
 	fetch 1
 ;@----------------------------------------------------------------------------
@@ -725,7 +725,7 @@ _2C:	;@ SUB ALD8
 ;@----------------------------------------------------------------------------
 	getNextByte
 	ldrb r1,[v30ptr,#v30RegAL]
-	sub8 r0,r1
+	sub8 r1,r0
 	strb r1,[v30ptr,#v30RegAL]
 	fetch 1
 ;@----------------------------------------------------------------------------
@@ -912,13 +912,13 @@ _38:	;@ CMP BR8
 
 cmp80Reg:
 	ldrb r0,[v30ptr,-r3]
-	sub8 r4,r0
+	sub8 r0,r4
 	fetch 1
 
 cmp80EA:
 	getNextByteTo r4
 0:
-	sub8 r4,r0
+	sub8 r0,r4
 	fetch 2
 ;@----------------------------------------------------------------------------
 i_cmp_wr16:
@@ -953,7 +953,7 @@ _3A:	;@ CMP R8b
 	bleq v30ReadEA1
 
 	ldrb r1,[v30ptr,-r4,lsr#24]
-	sub8 r0,r1
+	sub8 r1,r0
 	fetch 1
 ;@----------------------------------------------------------------------------
 i_cmp_r16w:
@@ -977,7 +977,7 @@ _3C:	;@ CMP ALD8
 ;@----------------------------------------------------------------------------
 	getNextByte
 	ldrb r1,[v30ptr,#v30RegAL]
-	sub8 r0,r1
+	sub8 r1,r0
 	fetch 1
 ;@----------------------------------------------------------------------------
 i_cmp_awd16:
@@ -2290,7 +2290,7 @@ f2a6:	;@ REPNE CMPBKB/CMPSB
 	str r1,[v30ptr,#v30RegIY]
 	bl cpuReadMem20
 
-	sub8 r0,r4
+	sub8 r4,r0
 
 	eatCycles 10
 	subs r5,r5,#1
@@ -2324,7 +2324,7 @@ f3a6:	;@ REPE CMPBKB/CMPSB
 	str r1,[v30ptr,#v30RegIY]
 	bl cpuReadMem20
 
-	sub8 r0,r4
+	sub8 r4,r0
 
 	eatCycles 10
 	subs r5,r5,#1
@@ -2349,7 +2349,7 @@ _A6:	;@ CMPBKB/CMPSB
 	str r2,[v30ptr,#v30RegIY]
 	bl v30ReadSegOfs
 
-	sub8 r0,r4					;@ sub8 clears prefixes
+	sub8 r4,r0					;@ sub8 clears prefixes
 
 	fetch 6
 
@@ -2614,7 +2614,7 @@ f2ae:	;@ REPNE CMPMB/SCASB
 	add v30ofs,v30ofs,r4,lsl#16
 	ldrb r1,[v30ptr,#v30RegAL]
 
-	sub8 r0,r1
+	sub8 r1,r0
 
 	eatCycles 9
 	subs r5,r5,#1
@@ -2637,7 +2637,7 @@ f3ae:	;@ REPE CMPMB/SCASB
 	add v30ofs,v30ofs,r4,lsl#16
 	ldrb r1,[v30ptr,#v30RegAL]
 
-	sub8 r0,r1
+	sub8 r1,r0
 
 	eatCycles 9
 	subs r5,r5,#1
@@ -2661,7 +2661,7 @@ _AE:	;@ CMPMB/SCASB
 	str v30ofs,[v30ptr,#v30RegIY]
 	ldrb r1,[v30ptr,#v30RegAL]
 
-	sub8 r0,r1
+	sub8 r1,r0
 
 	fetch 4
 
