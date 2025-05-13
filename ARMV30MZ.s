@@ -216,8 +216,7 @@ _09:	;@ OR WR16
 or81Reg:
 	add v30ofs,v30ptr,r5,lsr#27
 	ldrh r0,[v30ofs,#v30Regs]
-	or16 r4,r0
-	strh r1,[v30ofs,#v30Regs]
+	or16 r4,r0,"str v30f,[v30ofs,#v30Regs2]"
 	fetch 1
 0:
 	bl v30ReadEAW
@@ -253,9 +252,8 @@ _0B:	;@ OR R16W
 	ldrhpl r0,[v30ofs,#v30Regs]
 	blmi v30ReadEAW1
 
-	ldr r1,[r4,r5,lsr#1]!
-	or16 r1,r0
-	strh r1,[r4,#2]
+	ldr r1,[r4,r5,lsr#1]
+	or16 r1,r0,"str v30f,[r4,r5,lsr#1]"
 	fetch 1
 ;@----------------------------------------------------------------------------
 i_or_ald8:
@@ -272,8 +270,7 @@ _0D:	;@ OR AWD16
 ;@----------------------------------------------------------------------------
 	getNextWord
 	ldr r1,[v30ptr,#v30RegAW-2]
-	or16 r1,r0
-	strh r1,[v30ptr,#v30RegAW]
+	or16 r1,r0,"str v30f,[v30ptr,#v30RegAW-2]"
 	fetch 1
 ;@----------------------------------------------------------------------------
 i_push_ps:
@@ -546,8 +543,7 @@ _21:	;@ AND WR16
 and81Reg:
 	add v30ofs,v30ptr,r5,lsr#27
 	ldrh r0,[v30ofs,#v30Regs]
-	and16 r4,r0
-	strh r1,[v30ofs,#v30Regs]
+	and16 r4,r0,"str v30f,[v30ofs,#v30Regs2]"
 	fetch 1
 0:
 	bl v30ReadEAW
@@ -583,9 +579,8 @@ _23:	;@ AND R16W
 	ldrhpl r0,[v30ofs,#v30Regs]
 	blmi v30ReadEAW1
 
-	ldr r1,[r4,r5,lsr#1]!
-	and16 r1,r0
-	strh r1,[r4,#2]
+	ldr r1,[r4,r5,lsr#1]
+	and16 r1,r0,"str v30f,[r4,r5,lsr#1]"
 	fetch 1
 ;@----------------------------------------------------------------------------
 i_and_ald8:
@@ -602,8 +597,7 @@ _25:	;@ AND AWD16
 ;@----------------------------------------------------------------------------
 	getNextWord
 	ldr r1,[v30ptr,#v30RegAW-2]
-	and16 r1,r0
-	strh r1,[v30ptr,#v30RegAW]
+	and16 r1,r0,"str v30f,[v30ptr,#v30RegAW-2]"
 	fetch 1
 ;@----------------------------------------------------------------------------
 i_ds1:
@@ -810,8 +804,7 @@ _31:	;@ XOR WR16
 xor81Reg:
 	add v30ofs,v30ptr,r5,lsr#27
 	ldrh r0,[v30ofs,#v30Regs]
-	xor16 r4,r0
-	strh r1,[v30ofs,#v30Regs]
+	xor16 r4,r0,"str v30f,[v30ofs,#v30Regs2]"
 	fetch 1
 0:
 	bl v30ReadEAW
@@ -847,9 +840,8 @@ _33:	;@ XOR R16W
 	ldrhpl r0,[v30ofs,#v30Regs]
 	blmi v30ReadEAW1
 
-	ldr r1,[r4,r5,lsr#1]!
-	xor16 r1,r0
-	strh r1,[r4,#2]
+	ldr r1,[r4,r5,lsr#1]
+	xor16 r1,r0,"str v30f,[r4,r5,lsr#1]"
 	fetch 1
 ;@----------------------------------------------------------------------------
 i_xor_ald8:
@@ -866,8 +858,7 @@ _35:	;@ XOR AWD16
 ;@----------------------------------------------------------------------------
 	getNextWord
 	ldr r1,[v30ptr,#v30RegAW-2]
-	xor16 r1,r0
-	strh r1,[v30ptr,#v30RegAW]
+	xor16 r1,r0,"str v30f,[v30ptr,#v30RegAW-2]"
 	fetch 1
 ;@----------------------------------------------------------------------------
 i_ss:
