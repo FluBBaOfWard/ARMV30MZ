@@ -45,40 +45,40 @@
 	ldr \reg,[v30ptr,#v30LastBank]
 	.endm
 
-	.macro getNextByteTo reg
+	.macro getNextByteTo reg=r0
 	ldrb \reg,[v30pc],#1
 	.endm
 
 	.macro getNextByte
-	getNextByteTo r0
+	getNextByteTo
 	.endm
 
-	.macro getNextSignedByteTo reg
+	.macro getNextSignedByteTo reg=r0
 	ldrsb \reg,[v30pc],#1
 	.endm
 
 	.macro getNextSignedByte
-	getNextSignedByteTo r0
+	getNextSignedByteTo
 	.endm
 
-	.macro getNextWordTo dst use
+	.macro getNextWordTo dst=r0 use=r1
 	ldrb \dst,[v30pc],#1
 	ldrb \use,[v30pc],#1
 	orr \dst,\dst,\use,lsl#8
 	.endm
 
 	.macro getNextWord
-	getNextWordTo r0, r1
+	getNextWordTo
 	.endm
 
-	.macro getNextSignedWordTo dst use
+	.macro getNextSignedWordTo dst=r0 use=r1
 	ldrb \dst,[v30pc],#1
 	ldrsb \use,[v30pc],#1
 	orr \dst,\dst,\use,lsl#8
 	.endm
 
 	.macro getNextSignedWord
-	getNextSignedWordTo r0, r1
+	getNextSignedWordTo
 	.endm
 
 	.macro fetch count
@@ -533,12 +533,12 @@
 	.endm
 
 	.macro sub16 dst src
-	mov r2,\dst,lsl#12
-	subs \dst,\dst,\src,lsl#16
+	mov r2,\src,lsl#28
+	subs r1,\dst,\src,lsl#16
 	mrs v30f,cpsr				;@ S, Z, C & V.
 	mov v30f,v30f,lsr#28
-	cmp r2,\src,lsl#28
-	orrcc v30f,v30f,#PSR_A
+	cmn r2,r1,lsl#12
+	orrcs v30f,v30f,#PSR_A
 	eor v30f,v30f,#PSR_C		;@ Invert C
 	str r1,[v30ptr,#v30ParityValL]
 	.endm
