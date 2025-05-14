@@ -180,18 +180,18 @@
 	adds \dst,\src,\dst,lsl#24
 	mrs v30f,cpsr				;@ S, Z, C & V.
 	mov v30f,v30f,lsr#28
-	adds r2,r2,\src,lsl#4
+	cmn r2,\src,lsl#4
 	orrcs v30f,v30f,#PSR_A
 	mov r1,\dst,lsr#24
 	strb r1,[v30ptr,#v30ParityVal]
 	.endm
 
-	.macro add16 dst src
+	.macro add16 dst src shift=16
 	mov r2,\dst,lsl#12
-	adds r1,\dst,\src,lsl#16
+	adds r1,\dst,\src,lsl#\shift
 	mrs v30f,cpsr				;@ S, Z, C & V.
 	mov v30f,v30f,lsr#28
-	adds r2,r2,\src,lsl#28
+	cmn r2,\src,lsl#\shift +12
 	orrcs v30f,v30f,#PSR_A
 	str r1,[v30ptr,#v30ParityValL]
 	.endm
@@ -215,9 +215,9 @@
 	subcs \src,\src,#0x10000
 	eor r2,\src,\dst,lsr#16
 	adcs r1,\dst,\src,ror#16
+	mrs v30f,cpsr				;@ S, Z, V & C.
 	eor r2,r2,r1,lsr#16
 	and r2,r2,#PSR_A
-	mrs v30f,cpsr				;@ S, Z, V & C.
 	orr v30f,r2,v30f,lsr#28
 	str r1,[v30ptr,#v30ParityValL]
 	.endm
@@ -230,8 +230,8 @@
 	strb r1,[v30ptr,#v30ParityVal]
 	.endm
 
-	.macro and16 dst src write="mov r1,v30f,lsr#16"
-	ands v30f,\dst,\src,lsl#16	;@ Do op & clear flags.
+	.macro and16 dst src write="mov r1,v30f,lsr#16" shift=16
+	ands v30f,\dst,\src,lsl#\shift	;@ Do op & clear flags.
 	str v30f,[v30ptr,#v30ParityValL]
 	\write
 	movmi v30f,#PSR_S
@@ -312,8 +312,8 @@
 	strb r1,[v30ptr,#v30ParityVal]
 	.endm
 
-	.macro or16 dst src write="mov r1,v30f,lsr#16"
-	orrs v30f,\dst,\src,lsl#16	;@ Do op & clear flags.
+	.macro or16 dst src write="mov r1,v30f,lsr#16" shift=16
+	orrs v30f,\dst,\src,lsl#\shift	;@ Do op & clear flags.
 	str v30f,[v30ptr,#v30ParityValL]
 	\write
 	movmi v30f,#PSR_S
@@ -532,9 +532,9 @@
 	strb r1,[v30ptr,#v30ParityVal]
 	.endm
 
-	.macro sub16 dst src
-	mov r2,\src,lsl#28
-	subs r1,\dst,\src,lsl#16
+	.macro sub16 dst src shift=16
+	mov r2,\src,lsl#\shift +12
+	subs r1,\dst,\src,lsl#\shift
 	mrs v30f,cpsr				;@ S, Z, C & V.
 	mov v30f,v30f,lsr#28
 	cmn r2,r1,lsl#12
@@ -543,9 +543,9 @@
 	str r1,[v30ptr,#v30ParityValL]
 	.endm
 
-	.macro rsb16 dst src
-	mov r2,\dst,lsl#28
-	rsbs r1,\src,\dst,lsl#16
+	.macro rsb16 dst src shift=16
+	mov r2,\dst,lsl#\shift +12
+	rsbs r1,\src,\dst,lsl#\shift
 	mrs v30f,cpsr				;@ S, Z, C & V.
 	mov v30f,v30f,lsr#28
 	cmp r2,\src,lsl#12
@@ -613,8 +613,8 @@
 	strb r1,[v30ptr,#v30ParityVal]
 	.endm
 
-	.macro xor16 dst src write="mov r1,v30f,lsr#16"
-	eors v30f,\dst,\src,lsl#16	;@ Do op & clear flags.
+	.macro xor16 dst src write="mov r1,v30f,lsr#16" shift=16
+	eors v30f,\dst,\src,lsl#\shift	;@ Do op & clear flags.
 	str v30f,[v30ptr,#v30ParityValL]
 	\write
 	movmi v30f,#PSR_S
