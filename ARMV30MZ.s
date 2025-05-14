@@ -77,13 +77,11 @@ _00:	;@ ADD BR8
 	ldrb r4,[v30ptr,-r1,lsr#24]
 	ands r3,r1,#0xff
 	beq v30ReadEA
-
 add80Reg:
 	ldrb r1,[v30ptr,-r3]
 	add8 r1,r4
 	strb r1,[v30ptr,-r3]
 	fetch 1
-
 add80EA:
 	getNextByteTo r4
 0:
@@ -102,6 +100,7 @@ _01:	;@ ADD WR16
 	cmp r0,#0xC0
 	bmi v30ReadEAW
 	mov r5,r0,ror#3
+add83Reg:
 	ldr r0,[r3,r5,lsr#27]
 	add16 r4,r0,0
 	str r1,[r3,r5,lsr#27]
@@ -196,13 +195,11 @@ _08:	;@ OR BR8
 	ldrb r4,[v30ptr,-r1,lsr#24]
 	ands r3,r1,#0xff
 	beq v30ReadEA
-
 or80Reg:
 	ldrb r0,[v30ptr,-r3]
 	or8 r4,r0
 	strb r1,[v30ptr,-r3]
 	fetch 1
-
 or80EA:
 	getNextByteTo r4
 0:
@@ -221,6 +218,7 @@ _09:	;@ OR WR16
 	cmp r0,#0xC0
 	bmi v30ReadEAW
 	mov r5,r0,ror#3
+or83Reg:
 	ldr r0,[r3,r5,lsr#27]
 	or16 r4,r0,"str v30f,[r3,r5,lsr#27]",0
 	fetch 1
@@ -303,13 +301,11 @@ _10:	;@ ADDC/ADC BR8
 	ldrb r4,[v30ptr,-r1,lsr#24]
 	ands r3,r1,#0xff
 	beq v30ReadEA
-
 adc80Reg:
 	ldrb r0,[v30ptr,-r3]
 	adc8 r4,r0
 	strb r1,[v30ptr,-r3]
 	fetch 1
-
 adc80EA:
 	getNextByteTo r4
 0:
@@ -328,6 +324,12 @@ _11:	;@ ADDC/ADC WR16
 	cmp r0,#0xC0
 	bmi v30ReadEAW
 	mov r5,r0,ror#3
+adc83Reg:
+	ldr r0,[r3,r5,lsr#27]
+	mov r0,r0,lsr#16
+	adc16 r4,r0
+	str r1,[r3,r5,lsr#27]
+	fetch 1
 adc81Reg:
 	add v30ofs,v30ptr,r5,lsr#27
 	ldrh r0,[v30ofs,#v30Regs]
@@ -420,13 +422,11 @@ _18:	;@ SUBC/SBB BR8
 	ldrb r4,[v30ptr,-r1,lsr#24]
 	ands r3,r1,#0xff
 	beq v30ReadEA
-
 subc80Reg:
 	ldrb r0,[v30ptr,-r3]
 	subc8 r0,r4
 	strb r1,[v30ptr,-r3]
 	fetch 1
-
 subc80EA:
 	getNextByteTo r4
 0:
@@ -445,6 +445,12 @@ _19:	;@ SUBC/SBB WR16
 	cmp r0,#0xC0
 	bmi v30ReadEAW
 	mov r5,r0,ror#3
+subc83Reg:
+	ldr r0,[r3,r5,lsr#27]
+	mov r0,r0,lsr#16
+	rsbc16 r0,r4
+	str r1,[r3,r5,lsr#27]
+	fetch 1
 subc81Reg:
 	add v30ofs,v30ptr,r5,lsr#27
 	ldrh r0,[v30ofs,#v30Regs]
@@ -535,13 +541,11 @@ _20:	;@ AND BR8
 	ldrb r4,[v30ptr,-r1,lsr#24]
 	ands r3,r1,#0xff
 	beq v30ReadEA
-
 and80Reg:
 	ldrb r0,[v30ptr,-r3]
 	and8 r4,r0
 	strb r1,[v30ptr,-r3]
 	fetch 1
-
 and80EA:
 	getNextByteTo r4
 0:
@@ -560,6 +564,7 @@ _21:	;@ AND WR16
 	cmp r0,#0xC0
 	bmi v30ReadEAW
 	mov r5,r0,ror#3
+and83Reg:
 	ldr r0,[r3,r5,lsr#27]
 	and16 r4,r0,"str v30f,[r3,r5,lsr#27]",0
 	fetch 1
@@ -669,13 +674,11 @@ _28:	;@ SUB BR8
 	ldrb r4,[v30ptr,-r1,lsr#24]
 	ands r3,r1,#0xff
 	beq v30ReadEA
-
 sub80Reg:
 	ldrb r0,[v30ptr,-r3]
 	sub8 r0,r4
 	strb r1,[v30ptr,-r3]
 	fetch 1
-
 sub80EA:
 	getNextByteTo r4
 0:
@@ -694,6 +697,7 @@ _29:	;@ SUB WR16
 	cmp r0,#0xC0
 	bmi v30ReadEAW
 	mov r5,r0,ror#3
+sub83Reg:
 	ldr r0,[r3,r5,lsr#27]
 	rsb16 r0,r4,0
 	str r1,[r3,r5,lsr#27]
@@ -809,13 +813,11 @@ _30:	;@ XOR BR8
 	ldrb r4,[v30ptr,-r1,lsr#24]
 	ands r3,r1,#0xff
 	beq v30ReadEA
-
 xor80Reg:
 	ldrb r0,[v30ptr,-r3]
 	xor8 r4,r0
 	strb r1,[v30ptr,-r3]
 	fetch 1
-
 xor80EA:
 	getNextByteTo r4
 0:
@@ -834,6 +836,7 @@ _31:	;@ XOR WR16
 	cmp r0,#0xC0
 	bmi v30ReadEAW
 	mov r5,r0,ror#3
+xor83Reg:
 	ldr r0,[r3,r5,lsr#27]
 	xor16 r4,r0,"str v30f,[r3,r5,lsr#27]",0
 	fetch 1
@@ -938,12 +941,10 @@ _38:	;@ CMP BR8
 	ldrb r4,[v30ptr,-r1,lsr#24]
 	ands r3,r1,#0xff
 	beq v30ReadEA
-
 cmp80Reg:
 	ldrb r0,[v30ptr,-r3]
 	sub8 r0,r4
 	fetch 1
-
 cmp80EA:
 	getNextByteTo r4
 0:
@@ -961,6 +962,7 @@ _39:	;@ CMP WR16
 	cmp r0,#0xC0
 	bmi v30ReadEAW
 	mov r5,r0,ror#3
+cmp83Reg:
 	ldr r0,[r3,r5,lsr#27]
 	rsb16 r0,r4,0
 	fetch 1
@@ -1748,15 +1750,16 @@ i_83pre:
 _83:	;@ PRE 83
 ;@----------------------------------------------------------------------------
 	getNextByte
-	cmp r0,#0xC0
 	mov r5,r0,ror#3
-	blmi v30ReadEAW
+	add r2,v30ptr,r5,lsl#5
+	ldr lr,[r2,#v3083Table]
+	cmp r0,#0xC0
+	bmi v30ReadEAW
+	add r3,v30ptr,#v30Regs2
 
 	getNextSignedByteTo r4
 	mov r4,r4,lsl#16
-
-	adr r2,_81Table
-	ldr pc,[r2,r5,lsl#3]
+	bx lr
 ;@----------------------------------------------------------------------------
 i_test_br8:
 _84:	;@ TEST BR8
@@ -4708,10 +4711,10 @@ V30Reset:					;@ r0=v30ptr, r1=type (0=ASWAN)
 	ldr r0,=f6Table
 	ldreq r1,=muluF6Aswan
 	ldrne r1,=muluF6
-	str r1,[r0,#4*4]
-	str r1,[r0,#12*4]
-	str r1,[r0,#20*4]
-	str r1,[r0,#28*4]
+	str r1,[r0,#4*32]
+	str r1,[r0,#12*32]
+	str r1,[r0,#20*32]
+	str r1,[r0,#28*32]
 	ldr r0,=f7Table
 	ldreq r1,=muluF7Aswan
 	ldrne r1,=muluF7
@@ -4908,6 +4911,8 @@ SegmentTable:
 
 _80Table:
 	.long add80EA
+_83Table:
+	.long add83EA
 c0Table:
 	.long rolC0EA
 c1Table:
@@ -4919,41 +4924,41 @@ f7Table:
 feTable:
 	.long incFEEA
 ffTable:
-	.long incFFEA, 0
-	.long or80EA,   rorC0EA,  rorC1EA,  undefF6, undefF7, decFEEA, decFFEA,   0
-	.long adc80EA,  rolcC0EA, rolcC1EA, notF6EA, notF7EA, contFF,  callFFEA,  0
-	.long subc80EA, rorcC0EA, rorcC1EA, negF6EA, negF7EA, contFF,  callFarFF, 0
-	.long and80EA,  shlC0EA,  shlC1EA,  muluF6,  muluF7,  contFF,  braFFEA,   0
-	.long sub80EA,  shrC0EA,  shrC1EA,  mulF6,   mulF7,   contFF,  braFarFF,  0
-	.long xor80EA,  undC0EA,  undC1EA,  divubF6, divuwF7, contFF,  pushFFEA,  0
-	.long cmp80EA,  shraC0EA, shraC1EA, divbF6,  divwF7,  undefFF, undefFF,   0
+	.long incFFEA
+	.long or80EA,   or83EA,   rorC0EA,  rorC1EA,  undefF6, undefF7, decFEEA, decFFEA
+	.long adc80EA,  adc83EA,  rolcC0EA, rolcC1EA, notF6EA, notF7EA, contFF,  callFFEA
+	.long subc80EA, subc83EA, rorcC0EA, rorcC1EA, negF6EA, negF7EA, contFF,  callFarFF
+	.long and80EA,  and83EA,  shlC0EA,  shlC1EA,  muluF6,  muluF7,  contFF,  braFFEA
+	.long sub80EA,  sub83EA,  shrC0EA,  shrC1EA,  mulF6,   mulF7,   contFF,  braFarFF
+	.long xor80EA,  xor83EA,  undC0EA,  undC1EA,  divubF6, divuwF7, contFF,  pushFFEA
+	.long cmp80EA,  cmp83EA,  shraC0EA, shraC1EA, divbF6,  divwF7,  undefFF, undefFF
 
-	.long add80EA,  rolC0EA,  rolC1EA,  testF6,  testF7,  incFEEA, incFFEA,   0
-	.long or80EA,   rorC0EA,  rorC1EA,  undefF6, undefF7, decFEEA, decFFEA,   0
-	.long adc80EA,  rolcC0EA, rolcC1EA, notF6EA, notF7EA, contFF,  callFFEA,  0
-	.long subc80EA, rorcC0EA, rorcC1EA, negF6EA, negF7EA, contFF,  callFarFF, 0
-	.long and80EA,  shlC0EA,  shlC1EA,  muluF6,  muluF7,  contFF,  braFFEA,   0
-	.long sub80EA,  shrC0EA,  shrC1EA,  mulF6,   mulF7,   contFF,  braFarFF,  0
-	.long xor80EA,  undC0EA,  undC1EA,  divubF6, divuwF7, contFF,  pushFFEA,  0
-	.long cmp80EA,  shraC0EA, shraC1EA, divbF6,  divwF7,  undefFF, undefFF,   0
+	.long add80EA,  add83EA,  rolC0EA,  rolC1EA,  testF6,  testF7,  incFEEA, incFFEA
+	.long or80EA,   or83EA,   rorC0EA,  rorC1EA,  undefF6, undefF7, decFEEA, decFFEA
+	.long adc80EA,  adc83EA,  rolcC0EA, rolcC1EA, notF6EA, notF7EA, contFF,  callFFEA
+	.long subc80EA, subc83EA, rorcC0EA, rorcC1EA, negF6EA, negF7EA, contFF,  callFarFF
+	.long and80EA,  and83EA,  shlC0EA,  shlC1EA,  muluF6,  muluF7,  contFF,  braFFEA
+	.long sub80EA,  sub83EA,  shrC0EA,  shrC1EA,  mulF6,   mulF7,   contFF,  braFarFF
+	.long xor80EA,  xor83EA,  undC0EA,  undC1EA,  divubF6, divuwF7, contFF,  pushFFEA
+	.long cmp80EA,  cmp83EA,  shraC0EA, shraC1EA, divbF6,  divwF7,  undefFF, undefFF
 
-	.long add80EA,  rolC0EA,  rolC1EA,  testF6,  testF7,  incFEEA, incFFEA,   0
-	.long or80EA,   rorC0EA,  rorC1EA,  undefF6, undefF7, decFEEA, decFFEA,   0
-	.long adc80EA,  rolcC0EA, rolcC1EA, notF6EA, notF7EA, contFF,  callFFEA,  0
-	.long subc80EA, rorcC0EA, rorcC1EA, negF6EA, negF7EA, contFF,  callFarFF, 0
-	.long and80EA,  shlC0EA,  shlC1EA,  muluF6,  muluF7,  contFF,  braFFEA,   0
-	.long sub80EA,  shrC0EA,  shrC1EA,  mulF6,   mulF7,   contFF,  braFarFF,  0
-	.long xor80EA,  undC0EA,  undC1EA,  divubF6, divuwF7, contFF,  pushFFEA,  0
-	.long cmp80EA,  shraC0EA, shraC1EA, divbF6,  divwF7,  undefFF, undefFF,   0
+	.long add80EA,  add83EA,  rolC0EA,  rolC1EA,  testF6,  testF7,  incFEEA, incFFEA
+	.long or80EA,   or83EA,   rorC0EA,  rorC1EA,  undefF6, undefF7, decFEEA, decFFEA
+	.long adc80EA,  adc83EA,  rolcC0EA, rolcC1EA, notF6EA, notF7EA, contFF,  callFFEA
+	.long subc80EA, subc83EA, rorcC0EA, rorcC1EA, negF6EA, negF7EA, contFF,  callFarFF
+	.long and80EA,  and83EA,  shlC0EA,  shlC1EA,  muluF6,  muluF7,  contFF,  braFFEA
+	.long sub80EA,  sub83EA,  shrC0EA,  shrC1EA,  mulF6,   mulF7,   contFF,  braFarFF
+	.long xor80EA,  xor83EA,  undC0EA,  undC1EA,  divubF6, divuwF7, contFF,  pushFFEA
+	.long cmp80EA,  cmp83EA,  shraC0EA, shraC1EA, divbF6,  divwF7,  undefFF, undefFF
 
-	.long add80Reg, rolC0Reg, rolC1Reg, testF6,  testF7,  incFEReg,incFFReg,  0
-	.long or80Reg,  rorC0Reg, rorC1Reg, undefF6, undefF7, decFEReg,decFFReg,  0
-	.long adc80Reg, rolcC0Reg,rolcC1Reg,notF6Reg,notF7Reg,contFF,  callFFReg, 0
-	.long subc80Reg,rorcC0Reg,rorcC1Reg,negF6Reg,negF7Reg,contFF,  callFarFFReg,0
-	.long and80Reg, shlC0Reg, shlC1Reg, muluF6,  muluF7,  contFF,  braFFReg,  0
-	.long sub80Reg, shrC0Reg, shrC1Reg, mulF6,   mulF7,   contFF, braFarFFReg,0
-	.long xor80Reg, undC0Reg, undC1Reg, divubF6, divuwF7, contFF, pushFFReg,  0
-	.long cmp80Reg, shraC0Reg,shraC1Reg,divbF6,  divwF7,  undefFF, undefFF,   0
+	.long add80Reg, add83Reg, rolC0Reg, rolC1Reg, testF6,  testF7,  incFEReg,incFFReg
+	.long or80Reg,  or83Reg,  rorC0Reg, rorC1Reg, undefF6, undefF7, decFEReg,decFFReg
+	.long adc80Reg, adc83Reg, rolcC0Reg,rolcC1Reg,notF6Reg,notF7Reg,contFF,  callFFReg
+	.long subc80Reg,subc83Reg,rorcC0Reg,rorcC1Reg,negF6Reg,negF7Reg,contFF,  callFarFFReg
+	.long and80Reg, and83Reg, shlC0Reg, shlC1Reg, muluF6,  muluF7,  contFF,  braFFReg
+	.long sub80Reg, sub83Reg, shrC0Reg, shrC1Reg, mulF6,   mulF7,   contFF,  braFarFFReg
+	.long xor80Reg, xor83Reg, undC0Reg, undC1Reg, divubF6, divuwF7, contFF,  pushFFReg
+	.long cmp80Reg, cmp83Reg, shraC0Reg,shraC1Reg,divbF6,  divwF7,  undefFF, undefFF
 
 ;@----------------------------------------------------------------------------
 
