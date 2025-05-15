@@ -2246,7 +2246,7 @@ breakRepMov:
 	sub r5,r5,#1
 	str v30ofs,[v30ptr,#v30RegIX]
 	strh r5,[v30ptr,#v30RegCW]
-	sub v30pc,v30pc,#2
+	sub v30pc,v30pc,#1
 	TestSegmentPrefix
 	subne v30pc,v30pc,#1
 	ClearPrefixes
@@ -2515,7 +2515,7 @@ breakRep:
 	sub r5,r5,#1
 	str v30ofs,[v30ptr,#v30RegIY]
 	strh r5,[v30ptr,#v30RegCW]
-	sub v30pc,v30pc,#2
+	sub v30pc,v30pc,#1
 	ClearPrefixes
 	b v30OutOfCycles
 ;@----------------------------------------------------------------------------
@@ -3575,16 +3575,14 @@ _F3:	;@ REPE
 i_hlt:
 _F4:	;@ HALT
 ;@----------------------------------------------------------------------------
+	mov lr,pc
+	ldr pc,[v30ptr,#v30BusStatusFunc]
 	eatCycles 12
 	ldrb r0,[v30ptr,#v30IrqPin]
 	cmp r0,#0
 	bne v30ChkIrqInternal
-	mov lr,pc
-	ldr pc,[v30ptr,#v30BusStatusFunc]
 	orr v30cyc,v30cyc,#HALT_FLAG
-	mvns r0,v30cyc,asr#CYC_SHIFT			;@
-	addmi v30cyc,v30cyc,r0,lsl#CYC_SHIFT	;@ Consume all remaining cycles in steps of 1.
-	b v30OutOfCycles
+	b v30ChkHalt
 ;@----------------------------------------------------------------------------
 i_cmc:
 _F5:	;@ NOT1 CY/CMC		;@ Not Carry/Complement Carry
@@ -4516,9 +4514,12 @@ v30InHaltTrap:
 	tst r1,#IRQ_PIN				;@ IRQ Pin ?
 	bicne v30cyc,v30cyc,#HALT_FLAG
 	bne V30Go
-	mvns r0,v30cyc,asr#CYC_SHIFT			;@
-	addmi v30cyc,v30cyc,r0,lsl#CYC_SHIFT	;@ Consume all remaining cycles in steps of 1.
+v30ChkHalt:
+	tst v30cyc,#0x20000000			;@ Check for minus cycles.
+	andeq v30cyc,v30cyc,#CYC_MASK	;@ Consume all remaining cycles.
+	ldmfd sp!,{pc}
 v30OutOfCycles:
+	sub v30pc,v30pc,#1			;@ Fix up pc
 	mov v30cyc,v30cyc,lsl#2		;@ Check for delayed irq check.
 	movs v30cyc,v30cyc,asr#2
 	bgt v30ChkIrqInternal
@@ -4594,7 +4595,6 @@ i_crash:
 	mov lr,pc
 	bx r0
 
-	sub v30pc,v30pc,#1
 	and v30cyc,v30cyc,#CYC_MASK
 	b v30OutOfCycles
 ;@----------------------------------------------------------------------------
