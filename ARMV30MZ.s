@@ -1383,6 +1383,18 @@ _6B:	;@ MUL/IMUL D8
 	fetch 3
 
 ;@----------------------------------------------------------------------------
+i_inmb:
+_6C:	;@ INMB/INSB
+;@----------------------------------------------------------------------------
+	ldrsb r4,[v30ptr,#v30DF]
+	TestRepeatPrefix
+	bne f36c
+	ldrh r0,[v30ptr,#v30RegDW]
+	bl v30ReadPort
+	mov r1,r0
+	bl v30WriteEsIy
+	fetch 5
+;@----------------------------------------------------------------------------
 f36c:	;@ REP INMB/INSB
 ;@----------------------------------------------------------------------------
 	ldrh r5,[v30ptr,#v30RegCW]
@@ -1403,19 +1415,22 @@ f36c:	;@ REP INMB/INSB
 1:
 	ClearPrefixes
 	fetch 5
+
 ;@----------------------------------------------------------------------------
-i_inmb:
-_6C:	;@ INMB/INSB
+i_inmw:
+_6D:	;@ INMW/INSW
 ;@----------------------------------------------------------------------------
+	GetIyOfsESegment
 	ldrsb r4,[v30ptr,#v30DF]
 	TestRepeatPrefix
-	bne f36c
+	bne f36d
 	ldrh r0,[v30ptr,#v30RegDW]
-	bl v30ReadPort
+	bl v30ReadPort16
 	mov r1,r0
-	bl v30WriteEsIy
+	bl v30WriteSegOfsW
+	add v30ofs,v30ofs,r4,lsl#17
+	str v30ofs,[v30ptr,#v30RegIY]
 	fetch 5
-
 ;@----------------------------------------------------------------------------
 f36d:	;@ REP INMW/INSW
 ;@----------------------------------------------------------------------------
@@ -1436,22 +1451,18 @@ f36d:	;@ REP INMW/INSW
 1:
 	ClearPrefixes
 	fetch 5
-;@----------------------------------------------------------------------------
-i_inmw:
-_6D:	;@ INMW/INSW
-;@----------------------------------------------------------------------------
-	GetIyOfsESegment
-	ldrsb r4,[v30ptr,#v30DF]
-	TestRepeatPrefix
-	bne f36d
-	ldrh r0,[v30ptr,#v30RegDW]
-	bl v30ReadPort16
-	mov r1,r0
-	bl v30WriteSegOfsW
-	add v30ofs,v30ofs,r4,lsl#17
-	str v30ofs,[v30ptr,#v30RegIY]
-	fetch 5
 
+;@----------------------------------------------------------------------------
+i_outmb:
+_6E:	;@ OUTMB/OUTSB
+;@----------------------------------------------------------------------------
+	TestRepeatPrefix
+	bne f36e
+	bl v30ReadDsIx
+	ldrh r1,[v30ptr,#v30RegDW]
+	bl v30WritePort
+	ClearPrefixes
+	fetch 5
 ;@----------------------------------------------------------------------------
 f36e:	;@ REP OUTMB/OUTSB
 ;@----------------------------------------------------------------------------
@@ -1475,18 +1486,24 @@ f36e:	;@ REP OUTMB/OUTSB
 1:
 	ClearPrefixes
 	fetch 5
+
 ;@----------------------------------------------------------------------------
-i_outmb:
-_6E:	;@ OUTMB/OUTSB
+i_outmw:
+_6F:	;@ OUTMW/OUTSW
 ;@----------------------------------------------------------------------------
 	TestRepeatPrefix
-	bne f36e
-	bl v30ReadDsIx
+	bne f36f
+	TestSegmentPrefix
+	ldreq v30csr,[v30ptr,#v30SRegDS0]
+	ldr v30ofs,[v30ptr,#v30RegIX]
+	ldrsb r4,[v30ptr,#v30DF]
+	bl v30ReadSegOfsW
+	add v30ofs,v30ofs,r4,lsl#17
+	str v30ofs,[v30ptr,#v30RegIX]
 	ldrh r1,[v30ptr,#v30RegDW]
-	bl v30WritePort
+	bl v30WritePort16
 	ClearPrefixes
 	fetch 5
-
 ;@----------------------------------------------------------------------------
 f36f:	;@ REP OUTMW/OUTSW
 ;@----------------------------------------------------------------------------
@@ -1508,23 +1525,6 @@ f36f:	;@ REP OUTMW/OUTSW
 	str v30ofs,[v30ptr,#v30RegIX]
 	strh r5,[v30ptr,#v30RegCW]
 1:
-	ClearPrefixes
-	fetch 5
-;@----------------------------------------------------------------------------
-i_outmw:
-_6F:	;@ OUTMW/OUTSW
-;@----------------------------------------------------------------------------
-	TestRepeatPrefix
-	bne f36f
-	TestSegmentPrefix
-	ldreq v30csr,[v30ptr,#v30SRegDS0]
-	ldr v30ofs,[v30ptr,#v30RegIX]
-	ldrsb r4,[v30ptr,#v30DF]
-	bl v30ReadSegOfsW
-	add v30ofs,v30ofs,r4,lsl#17
-	str v30ofs,[v30ptr,#v30RegIX]
-	ldrh r1,[v30ptr,#v30RegDW]
-	bl v30WritePort16
 	ClearPrefixes
 	fetch 5
 
@@ -2173,6 +2173,17 @@ _A3:	;@ MOV DISPAW
 	fetch 1
 
 ;@----------------------------------------------------------------------------
+i_movsb:
+_A4:	;@ MOVMB/MOVSB
+;@----------------------------------------------------------------------------
+	TestRepeatPrefix
+	bne f3a4
+	bl v30ReadDsIx
+	mov r1,r0
+	bl v30WriteEsIy
+	ClearPrefixes
+	fetch 5
+;@----------------------------------------------------------------------------
 f3a4:	;@ REP MOVMB/MOVSB
 ;@----------------------------------------------------------------------------
 	ldrh r5,[v30ptr,#v30RegCW]
@@ -2199,18 +2210,27 @@ f3a4:	;@ REP MOVMB/MOVSB
 1:
 	ClearPrefixes
 	fetch 5
+
 ;@----------------------------------------------------------------------------
-i_movsb:
-_A4:	;@ MOVMB/MOVSB
+i_movsw:
+_A5:	;@ MOVMW/MOVSW
 ;@----------------------------------------------------------------------------
+	TestSegmentPrefix
+	ldreq v30csr,[v30ptr,#v30SRegDS0]
+	ldr v30ofs,[v30ptr,#v30RegIX]
+	ldrsb r4,[v30ptr,#v30DF]
 	TestRepeatPrefix
-	bne f3a4
-	bl v30ReadDsIx
+	bne f3a5
+	bl v30ReadSegOfsW
+	add v30ofs,v30ofs,r4,lsl#17
+	str v30ofs,[v30ptr,#v30RegIX]
+	GetIyOfsESegment
 	mov r1,r0
-	bl v30WriteEsIy
+	bl v30WriteSegOfsW
+	add v30ofs,v30ofs,r4,lsl#17
+	str v30ofs,[v30ptr,#v30RegIY]
 	ClearPrefixes
 	fetch 5
-
 ;@----------------------------------------------------------------------------
 f3a5:	;@ REP MOVMW/MOVSW
 ;@----------------------------------------------------------------------------
@@ -2244,27 +2264,26 @@ breakRepMov:
 	subne v30pc,v30pc,#1
 	ClearPrefixes
 	b v30OutOfCycles
-;@----------------------------------------------------------------------------
-i_movsw:
-_A5:	;@ MOVMW/MOVSW
-;@----------------------------------------------------------------------------
-	TestSegmentPrefix
-	ldreq v30csr,[v30ptr,#v30SRegDS0]
-	ldr v30ofs,[v30ptr,#v30RegIX]
-	ldrsb r4,[v30ptr,#v30DF]
-	TestRepeatPrefix
-	bne f3a5
-	bl v30ReadSegOfsW
-	add v30ofs,v30ofs,r4,lsl#17
-	str v30ofs,[v30ptr,#v30RegIX]
-	GetIyOfsESegment
-	mov r1,r0
-	bl v30WriteSegOfsW
-	add v30ofs,v30ofs,r4,lsl#17
-	str v30ofs,[v30ptr,#v30RegIY]
-	ClearPrefixes
-	fetch 5
 
+;@----------------------------------------------------------------------------
+i_cmpsb:
+_A6:	;@ CMPBKB/CMPSB
+;@----------------------------------------------------------------------------
+	TestRepeatEPrefix
+	bne f3a6
+	TestRepeatNEPrefix
+	bne f2a6
+	bl v30ReadDsIx
+
+	GetIyOfsESegment
+	add r2,v30ofs,r4,lsl#16
+	mov r4,r0
+	str r2,[v30ptr,#v30RegIY]
+	bl v30ReadSegOfs
+
+	sub8 r4,r0					;@ sub8 clears prefixes
+
+	fetch 6
 ;@----------------------------------------------------------------------------
 f2a6:	;@ REPNE CMPBKB/CMPSB
 ;@----------------------------------------------------------------------------
@@ -2329,26 +2348,32 @@ f3a6:	;@ REPE CMPBKB/CMPSB
 	str v30ofs,[v30ptr,#v30RegIX]
 	strh r5,[v30ptr,#v30RegCW]
 	fetch 5
+
 ;@----------------------------------------------------------------------------
-i_cmpsb:
-_A6:	;@ CMPBKB/CMPSB
+i_cmpsw:
+_A7:	;@ CMPBKW/CMPSW
 ;@----------------------------------------------------------------------------
+	TestSegmentPrefix
+	ldreq v30csr,[v30ptr,#v30SRegDS0]
+	ldr v30ofs,[v30ptr,#v30RegIX]
 	TestRepeatEPrefix
-	bne f3a6
+	bne f3a7
 	TestRepeatNEPrefix
-	bne f2a6
-	bl v30ReadDsIx
+	bne f2a7
+	ldrsb r4,[v30ptr,#v30DF]
+	bl v30ReadSegOfsW
+	add v30ofs,v30ofs,r4,lsl#17
+	str v30ofs,[v30ptr,#v30RegIX]
 
 	GetIyOfsESegment
-	add r2,v30ofs,r4,lsl#16
-	mov r4,r0
-	str r2,[v30ptr,#v30RegIY]
-	bl v30ReadSegOfs
+	add r1,v30ofs,r4,lsl#17
+	mov r4,r0,lsl#16
+	str r1,[v30ptr,#v30RegIY]
+	bl v30ReadSegOfsW
 
-	sub8 r4,r0					;@ sub8 clears prefixes
+	sub16 r4,r0					;@ sub16 clears prefixes
 
 	fetch 6
-
 ;@----------------------------------------------------------------------------
 f2a7:	;@ REPNE CMPBKW/CMPSW
 ;@----------------------------------------------------------------------------
@@ -2404,31 +2429,7 @@ f3a7:	;@ REPE CMPBKW/CMPSW
 	str v30ofs,[v30ptr,#v30RegIX]
 	strh r5,[v30ptr,#v30RegCW]
 	fetch 5
-;@----------------------------------------------------------------------------
-i_cmpsw:
-_A7:	;@ CMPBKW/CMPSW
-;@----------------------------------------------------------------------------
-	TestSegmentPrefix
-	ldreq v30csr,[v30ptr,#v30SRegDS0]
-	ldr v30ofs,[v30ptr,#v30RegIX]
-	TestRepeatEPrefix
-	bne f3a7
-	TestRepeatNEPrefix
-	bne f2a7
-	ldrsb r4,[v30ptr,#v30DF]
-	bl v30ReadSegOfsW
-	add v30ofs,v30ofs,r4,lsl#17
-	str v30ofs,[v30ptr,#v30RegIX]
 
-	GetIyOfsESegment
-	add r1,v30ofs,r4,lsl#17
-	mov r4,r0,lsl#16
-	str r1,[v30ptr,#v30RegIY]
-	bl v30ReadSegOfsW
-
-	sub16 r4,r0					;@ sub16 clears prefixes
-
-	fetch 6
 ;@----------------------------------------------------------------------------
 i_test_ald8:
 _A8:	;@ TEST ALD8
@@ -2446,6 +2447,16 @@ _A9:	;@ TEST AWD16
 	tst16 r1,r0
 	fetch 1
 
+;@----------------------------------------------------------------------------
+i_stosb:
+_AA:	;@ STMB/STOSB
+;@----------------------------------------------------------------------------
+	ldrsb r4,[v30ptr,#v30DF]
+	TestRepeatPrefix
+	bne f3aa
+	ldrb r1,[v30ptr,#v30RegAL]
+	bl v30WriteEsIy
+	fetch 3
 ;@----------------------------------------------------------------------------
 f3aa:	;@ REP STMB/STOSB
 ;@----------------------------------------------------------------------------
@@ -2465,17 +2476,20 @@ f3aa:	;@ REP STMB/STOSB
 1:
 	ClearPrefixes
 	fetch 5
+
 ;@----------------------------------------------------------------------------
-i_stosb:
-_AA:	;@ STMB/STOSB
+i_stosw:
+_AB:	;@ STMW/STOSW
 ;@----------------------------------------------------------------------------
+	GetIyOfsESegment
 	ldrsb r4,[v30ptr,#v30DF]
 	TestRepeatPrefix
-	bne f3aa
-	ldrb r1,[v30ptr,#v30RegAL]
-	bl v30WriteEsIy
+	bne f3ab
+	ldrh r1,[v30ptr,#v30RegAW]
+	bl v30WriteSegOfsW
+	add v30ofs,v30ofs,r4,lsl#17
+	str v30ofs,[v30ptr,#v30RegIY]
 	fetch 3
-
 ;@----------------------------------------------------------------------------
 f3ab:	;@ REP STMW/STOSW
 ;@----------------------------------------------------------------------------
@@ -2502,20 +2516,17 @@ breakRep:
 	sub v30pc,v30pc,#1
 	ClearPrefixes
 	b v30OutOfCycles
-;@----------------------------------------------------------------------------
-i_stosw:
-_AB:	;@ STMW/STOSW
-;@----------------------------------------------------------------------------
-	GetIyOfsESegment
-	ldrsb r4,[v30ptr,#v30DF]
-	TestRepeatPrefix
-	bne f3ab
-	ldrh r1,[v30ptr,#v30RegAW]
-	bl v30WriteSegOfsW
-	add v30ofs,v30ofs,r4,lsl#17
-	str v30ofs,[v30ptr,#v30RegIY]
-	fetch 3
 
+;@----------------------------------------------------------------------------
+i_lodsb:
+_AC:	;@ LDMB/LODSB
+;@----------------------------------------------------------------------------
+	TestRepeatPrefix
+	bne f3ac
+	bl v30ReadDsIx
+	strb r0,[v30ptr,#v30RegAL]
+	ClearPrefixes
+	fetch 3
 ;@----------------------------------------------------------------------------
 f3ac:	;@ REP LDMB/LODSB
 ;@----------------------------------------------------------------------------
@@ -2538,17 +2549,23 @@ f3ac:	;@ REP LDMB/LODSB
 1:
 	ClearPrefixes
 	fetch 5
+
 ;@----------------------------------------------------------------------------
-i_lodsb:
-_AC:	;@ LDMB/LODSB
+i_lodsw:
+_AD:	;@ LDMW/LODSW
 ;@----------------------------------------------------------------------------
 	TestRepeatPrefix
-	bne f3ac
-	bl v30ReadDsIx
-	strb r0,[v30ptr,#v30RegAL]
+	bne f3ad
+	TestSegmentPrefix
+	ldreq v30csr,[v30ptr,#v30SRegDS0]
+	ldr v30ofs,[v30ptr,#v30RegIX]
+	ldrsb r4,[v30ptr,#v30DF]
+	bl v30ReadSegOfsW
+	add v30ofs,v30ofs,r4,lsl#17
+	str v30ofs,[v30ptr,#v30RegIX]
+	strh r0,[v30ptr,#v30RegAW]
 	ClearPrefixes
 	fetch 3
-
 ;@----------------------------------------------------------------------------
 f3ad:	;@ REP LDMW/LODSW
 ;@----------------------------------------------------------------------------
@@ -2571,23 +2588,25 @@ f3ad:	;@ REP LDMW/LODSW
 1:
 	ClearPrefixes
 	fetch 5
-;@----------------------------------------------------------------------------
-i_lodsw:
-_AD:	;@ LDMW/LODSW
-;@----------------------------------------------------------------------------
-	TestRepeatPrefix
-	bne f3ad
-	TestSegmentPrefix
-	ldreq v30csr,[v30ptr,#v30SRegDS0]
-	ldr v30ofs,[v30ptr,#v30RegIX]
-	ldrsb r4,[v30ptr,#v30DF]
-	bl v30ReadSegOfsW
-	add v30ofs,v30ofs,r4,lsl#17
-	str v30ofs,[v30ptr,#v30RegIX]
-	strh r0,[v30ptr,#v30RegAW]
-	ClearPrefixes
-	fetch 3
 
+;@----------------------------------------------------------------------------
+i_scasb:
+_AE:	;@ CMPMB/SCASB
+;@----------------------------------------------------------------------------
+	GetIyOfsESegment
+	ldrsb r4,[v30ptr,#v30DF]
+	TestRepeatEPrefix
+	bne f3ae
+	TestRepeatNEPrefix
+	bne f2ae
+	bl v30ReadSegOfs
+	add v30ofs,v30ofs,r4,lsl#16
+	str v30ofs,[v30ptr,#v30RegIY]
+	ldrb r1,[v30ptr,#v30RegAL]
+
+	sub8 r1,r0
+
+	fetch 4
 ;@----------------------------------------------------------------------------
 f2ae:	;@ REPNE CMPMB/SCASB
 ;@----------------------------------------------------------------------------
@@ -2629,25 +2648,25 @@ f3ae:	;@ REPE CMPMB/SCASB
 	str v30ofs,[v30ptr,#v30RegIY]
 	strh r5,[v30ptr,#v30RegCW]
 	fetch 5
+
 ;@----------------------------------------------------------------------------
-i_scasb:
-_AE:	;@ CMPMB/SCASB
+i_scasw:
+_AF:	;@ CMPMW/SCASW
 ;@----------------------------------------------------------------------------
 	GetIyOfsESegment
 	ldrsb r4,[v30ptr,#v30DF]
 	TestRepeatEPrefix
-	bne f3ae
+	bne f3af
 	TestRepeatNEPrefix
-	bne f2ae
-	bl v30ReadSegOfs
-	add v30ofs,v30ofs,r4,lsl#16
+	bne f2af
+	bl v30ReadSegOfsW
+	add v30ofs,v30ofs,r4,lsl#17
 	str v30ofs,[v30ptr,#v30RegIY]
-	ldrb r1,[v30ptr,#v30RegAL]
+	ldr r1,[v30ptr,#v30RegAW-2]
 
-	sub8 r1,r0
+	sub16 r1,r0
 
 	fetch 4
-
 ;@----------------------------------------------------------------------------
 f2af:	;@ REPNE CMPMW/SCASW
 ;@----------------------------------------------------------------------------
@@ -2689,24 +2708,7 @@ f3af:	;@ REPE CMPMW/SCASW
 	str v30ofs,[v30ptr,#v30RegIY]
 	strh r5,[v30ptr,#v30RegCW]
 	fetch 5
-;@----------------------------------------------------------------------------
-i_scasw:
-_AF:	;@ CMPMW/SCASW
-;@----------------------------------------------------------------------------
-	GetIyOfsESegment
-	ldrsb r4,[v30ptr,#v30DF]
-	TestRepeatEPrefix
-	bne f3af
-	TestRepeatNEPrefix
-	bne f2af
-	bl v30ReadSegOfsW
-	add v30ofs,v30ofs,r4,lsl#17
-	str v30ofs,[v30ptr,#v30RegIY]
-	ldr r1,[v30ptr,#v30RegAW-2]
 
-	sub16 r1,r0
-
-	fetch 4
 ;@----------------------------------------------------------------------------
 i_mov_ald8:
 _B0:	;@ MOV ALD8

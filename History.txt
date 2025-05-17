@@ -2,7 +2,7 @@ ARMV30MZ revision history
 -=-=-=-=-=-=-=-=-=-=-=-=-
 
 
-V0.8.11 - 2025-05-15 (FluBBa)
+V0.8.11 - 2025-05-17 (FluBBa)
 	Fixed Branch Far & Call Far.
 	Refactored neg opcodes to be more like the Z80 implementation.
 	Optimized Opcode fetch.
