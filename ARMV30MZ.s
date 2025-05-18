@@ -1491,17 +1491,17 @@ f36e:	;@ REP OUTMB/OUTSB
 i_outmw:
 _6F:	;@ OUTMW/OUTSW
 ;@----------------------------------------------------------------------------
-	TestRepeatPrefix
-	bne f36f
 	TestSegmentPrefix
 	ldreq v30csr,[v30ptr,#v30SRegDS0]
 	ldr v30ofs,[v30ptr,#v30RegIX]
 	ldrsb r4,[v30ptr,#v30DF]
+	TestRepeatPrefix
+	bne f36f
 	bl v30ReadSegOfsW
-	add v30ofs,v30ofs,r4,lsl#17
-	str v30ofs,[v30ptr,#v30RegIX]
 	ldrh r1,[v30ptr,#v30RegDW]
+	add v30ofs,v30ofs,r4,lsl#17
 	bl v30WritePort16
+	str v30ofs,[v30ptr,#v30RegIX]
 	ClearPrefixes
 	fetch 5
 ;@----------------------------------------------------------------------------
@@ -1510,10 +1510,6 @@ f36f:	;@ REP OUTMW/OUTSW
 	ldrh r5,[v30ptr,#v30RegCW]
 	cmp r5,#0
 	beq 1f
-	TestSegmentPrefix
-	ldreq v30csr,[v30ptr,#v30SRegDS0]
-	ldr v30ofs,[v30ptr,#v30RegIX]
-	ldrsb r4,[v30ptr,#v30DF]
 0:
 	bl v30ReadSegOfsW
 	ldrh r1,[v30ptr,#v30RegDW]
@@ -2026,9 +2022,7 @@ _9B:	;@ POLL / WAIT
 i_pushf:
 _9C:	;@ PUSH F
 ;@----------------------------------------------------------------------------
-	bl pushFlags
-	fetch 2
-;@----------------------------------------------------------------------------
+	adr lr,pushRet
 pushFlags:
 	ldrb r2,[v30ptr,#v30ParityVal]
 	ldr r1,=0xF002
@@ -2053,9 +2047,10 @@ pushFlags:
 	orreq r1,r1,#ZF
 	orrcs r1,r1,#CF
 	orrvs r1,r1,#OF
-
 	b v30PushW
 	.pool
+pushRet:
+	fetch 2
 ;@----------------------------------------------------------------------------
 i_popf:
 _9D:	;@ POP F
@@ -2554,16 +2549,16 @@ f3ac:	;@ REP LDMB/LODSB
 i_lodsw:
 _AD:	;@ LDMW/LODSW
 ;@----------------------------------------------------------------------------
-	TestRepeatPrefix
-	bne f3ad
 	TestSegmentPrefix
 	ldreq v30csr,[v30ptr,#v30SRegDS0]
 	ldr v30ofs,[v30ptr,#v30RegIX]
 	ldrsb r4,[v30ptr,#v30DF]
+	TestRepeatPrefix
+	bne f3ad
 	bl v30ReadSegOfsW
 	add v30ofs,v30ofs,r4,lsl#17
-	str v30ofs,[v30ptr,#v30RegIX]
 	strh r0,[v30ptr,#v30RegAW]
+	str v30ofs,[v30ptr,#v30RegIX]
 	ClearPrefixes
 	fetch 3
 ;@----------------------------------------------------------------------------
@@ -2572,10 +2567,6 @@ f3ad:	;@ REP LDMW/LODSW
 	ldrh r5,[v30ptr,#v30RegCW]
 	cmp r5,#0
 	beq 1f
-	TestSegmentPrefix
-	ldreq v30csr,[v30ptr,#v30SRegDS0]
-	ldr v30ofs,[v30ptr,#v30RegIX]
-	ldrsb r4,[v30ptr,#v30DF]
 0:
 	bl v30ReadSegOfsW
 	add v30ofs,v30ofs,r4,lsl#17
