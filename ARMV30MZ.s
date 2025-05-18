@@ -3327,10 +3327,10 @@ _D6:	;@ SALC				;@ Set AL on Carry
 i_trans:
 _D7:	;@ TRANS/XLAT		;@ Translate al via LUT.
 ;@----------------------------------------------------------------------------
-	TestSegmentPrefix
-	ldreq v30csr,[v30ptr,#v30SRegDS0]
 	ldrb r0,[v30ptr,#v30RegAL]
 	ldr v30ofs,[v30ptr,#v30RegBW-2]
+	TestSegmentPrefix
+	ldreq v30csr,[v30ptr,#v30SRegDS0]
 	add v30ofs,v30ofs,r0,lsl#16
 	bl v30ReadSegOfs
 	strb r0,[v30ptr,#v30RegAL]
@@ -3346,8 +3346,8 @@ _D8:	;@ FPO1
 i_loopne:
 _E0:	;@ DBNZNE/LOOPNE
 ;@----------------------------------------------------------------------------
-	getNextSignedByte
 	ldrh r2,[v30ptr,#v30RegCW]
+	getNextSignedByte
 	subs r2,r2,#1
 	andne r3,v30f,#PSR_Z
 	cmpne r3,#PSR_Z
@@ -3360,8 +3360,8 @@ _E0:	;@ DBNZNE/LOOPNE
 i_loope:
 _E1:	;@ DBNZE/LOOPE
 ;@----------------------------------------------------------------------------
-	getNextSignedByte
 	ldrh r2,[v30ptr,#v30RegCW]
+	getNextSignedByte
 	subs r2,r2,#1
 	tstne v30f,#PSR_Z
 	addne v30pc,v30pc,r0
@@ -3373,8 +3373,8 @@ _E1:	;@ DBNZE/LOOPE
 i_loop:
 _E2:	;@ DBNZ/LOOP
 ;@----------------------------------------------------------------------------
-	getNextSignedByte
 	ldrh r2,[v30ptr,#v30RegCW]
+	getNextSignedByte
 	subs r2,r2,#1
 	addne v30pc,v30pc,r0
 	subne v30cyc,v30cyc,#3*CYCLE
@@ -3385,8 +3385,8 @@ _E2:	;@ DBNZ/LOOP
 i_bcwz:
 _E3:	;@ BCWZ/JCXZ
 ;@----------------------------------------------------------------------------
-	getNextSignedByte
 	ldrh r2,[v30ptr,#v30RegCW]
+	getNextSignedByte
 	cmp r2,#0
 	addeq v30pc,v30pc,r0
 	subeq v30cyc,v30cyc,#3*CYCLE
