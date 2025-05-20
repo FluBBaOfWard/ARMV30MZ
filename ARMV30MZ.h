@@ -16,7 +16,7 @@ extern "C" {
 typedef struct {
 	u32 regs[8];
 	u32 sRegs[4];
-	u32 prefixBase;
+	u32 prefixBase; // Deprecated, to be removed.
 	u32 flags;
 	u8 *pc;
 	u32 cycles;
@@ -24,11 +24,12 @@ typedef struct {
 	u8 iFlag;
 	u8 empty;
 	u8 nmiPending;
+	u16 parityValL; // For 32bit access
 	u16 parityVal;
 	u8 nmiPin;
 	u8 df;
 	u8 mulOverflow;
-	u8 dummy0[3];
+	u8 dummy0[1];
 
 	u8 *lastBank;
 	u8 (*irqVectorFunc)(void);

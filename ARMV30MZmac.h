@@ -111,6 +111,11 @@
 	bl V30EncodePC
 	.endm
 
+	.macro v30EncodeFastPCAndFetch  count
+	eatCycles \count
+	b V30EncodePCAndFetch
+	.endm
+
 	.macro v30ReEncodeFastPC
 //	tst v30pc,#1
 //	subne v30cyc,v30cyc,#1*CYCLE

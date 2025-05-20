@@ -2009,8 +2009,7 @@ _9A:	;@ CALL FAR
 	v30DecodeFastPCToReg r1
 	bl v30PushLastW
 	mov v30pc,r4,lsl#16
-	v30EncodeFastPC
-	fetch 10
+	v30EncodeFastPCAndFetch 10
 
 ;@----------------------------------------------------------------------------
 i_poll:
@@ -2994,23 +2993,21 @@ i_ret_d16:
 _C2:	;@ RET D16
 ;@----------------------------------------------------------------------------
 	bl v30ReadStack
-	add v30ofs,v30ofs,#0x20000
 	getNextWordTo r2, r1
-	add v30ofs,v30ofs,r2,lsl#16
-	str v30ofs,[v30ptr,#v30RegSP]
 	mov v30pc,r0,lsl#16
-	v30EncodeFastPC
-	fetch 6
+	add v30ofs,v30ofs,r2,lsl#16
+	add v30ofs,v30ofs,#0x20000
+	str v30ofs,[v30ptr,#v30RegSP]
+	v30EncodeFastPCAndFetch 6
 ;@----------------------------------------------------------------------------
 i_ret:
 _C3:	;@ RET
 ;@----------------------------------------------------------------------------
 	bl v30ReadStack
+	mov v30pc,r0,lsl#16
 	add v30ofs,v30ofs,#0x20000
 	str v30ofs,[v30ptr,#v30RegSP]
-	mov v30pc,r0,lsl#16
-	v30EncodeFastPC
-	fetch 6
+	v30EncodeFastPCAndFetch 6
 ;@----------------------------------------------------------------------------
 i_les_dw:
 _C4:	;@ MOV DS1 / LES DW
@@ -3151,12 +3148,11 @@ _CA:	;@ RETF D16
 	add v30ofs,v30ofs,#0x20000
 	mov v30pc,r0,lsl#16
 	bl v30ReadSegOfsW
-	add v30ofs,v30ofs,#0x20000
 	add v30ofs,v30ofs,r4,lsl#16
+	add v30ofs,v30ofs,#0x20000
 	strh r0,[v30ptr,#v30SRegPS+2]
 	str v30ofs,[v30ptr,#v30RegSP]
-	v30EncodeFastPC
-	fetch 9
+	v30EncodeFastPCAndFetch 9
 ;@----------------------------------------------------------------------------
 i_retf:
 _CB:	;@ RETF
@@ -3168,8 +3164,7 @@ _CB:	;@ RETF
 	add v30ofs,v30ofs,#0x20000
 	strh r0,[v30ptr,#v30SRegPS+2]
 	str v30ofs,[v30ptr,#v30RegSP]
-	v30EncodeFastPC
-	fetch 8
+	v30EncodeFastPCAndFetch 8
 ;@----------------------------------------------------------------------------
 i_int3:
 _CC:	;@ BRK3/INT3
@@ -3435,8 +3430,7 @@ _E8:	;@ CALL D16
 	add v30pc,r0,r1
 	bl v30PushW
 	mov v30pc,v30pc,lsl#16
-	v30EncodeFastPC
-	fetch 5
+	v30EncodeFastPCAndFetch 5
 ;@----------------------------------------------------------------------------
 i_jmp_d16:
 _E9:	;@ BR/JMP D16
@@ -3445,18 +3439,16 @@ _E9:	;@ BR/JMP D16
 	v30DecodeFastPCToReg r1
 	add v30pc,r0,r1
 	mov v30pc,v30pc,lsl#16
-	v30EncodeFastPC
-	fetch 4
+	v30EncodeFastPCAndFetch 4
 ;@----------------------------------------------------------------------------
 i_jmp_far:
 _EA:	;@ BR/JMP FAR
 ;@----------------------------------------------------------------------------
 	getNextWordTo r4, r0
 	getNextWord
-	strh r0,[v30ptr,#v30SRegPS+2]
 	mov v30pc,r4,lsl#16
-	v30EncodeFastPC
-	fetch 7
+	strh r0,[v30ptr,#v30SRegPS+2]
+	v30EncodeFastPCAndFetch 7
 ;@----------------------------------------------------------------------------
 i_br_d8:
 _EB:	;@ BR/JMP short
@@ -3991,48 +3983,48 @@ callFFReg:
 	v30DecodeFastPCToReg r1
 	ldr v30pc,[v30ofs,#v30Regs2]
 	bl v30PushW
-	V30EncodeFastPC
 	ClearPrefixes
-	fetch 5
+	v30EncodeFastPCAndFetch 5
 callFFEA:
 	v30DecodeFastPCToReg r1
 	mov v30pc,r0,lsl#16
 	bl v30PushW
-	V30EncodeFastPC
 	ClearPrefixes
-	fetch 6
+	v30EncodeFastPCAndFetch 6
 ;@----------------------------------------------------------------------------
 callFarFFReg:
 	bl v30ReadEAW
 callFarFF:
-	v30DecodeFastPCToReg r4
+	ldr r4,[v30ptr,#v30RegSP]
+	ldr r5,[v30ptr,#v30SRegSS]
+	ldrh r1,[v30ptr,#v30SRegPS+2]
+	sub r4,r4,#0x20000
+	add r0,r5,r4,lsr#4
+	bl cpuWriteMem20W
+
+	v30DecodeFastPCToReg r1
+	sub r4,r4,#0x20000
+	str r4,[v30ptr,#v30RegSP]
+	add r0,r5,r4,lsr#4
+	bl cpuWriteMem20W
+
+	bl v30ReadSegOfsW
 	mov v30pc,r0,lsl#16
 	add v30ofs,v30ofs,#0x20000
 	bl v30ReadSegOfsW
-
-	ldrh r1,[v30ptr,#v30SRegPS+2]
 	strh r0,[v30ptr,#v30SRegPS+2]
-	ldr v30ofs,[v30ptr,#v30RegSP]
-	ldr v30csr,[v30ptr,#v30SRegSS]
-	sub v30ofs,v30ofs,#0x20000
-	bl v30WriteSegOfsW
 
-	mov r1,r4
-	bl v30PushLastW
-	V30EncodeFastPC
 	ClearPrefixes
-	fetch 12
+	v30EncodeFastPCAndFetch 12
 ;@----------------------------------------------------------------------------
 braFFReg:
 	ldr v30pc,[v30ofs,#v30Regs2]
-	v30EncodeFastPC
 	ClearPrefixes
-	fetch 5
+	v30EncodeFastPCAndFetch 5
 braFFEA:
 	mov v30pc,r0,lsl#16
-	v30EncodeFastPC
 	ClearPrefixes
-	fetch 6
+	v30EncodeFastPCAndFetch 6
 ;@----------------------------------------------------------------------------
 braFarFFReg:
 	bl v30ReadEAW
@@ -4041,9 +4033,8 @@ braFarFF:
 	add v30ofs,v30ofs,#0x20000
 	bl v30ReadSegOfsW
 	strh r0,[v30ptr,#v30SRegPS+2]
-	v30EncodeFastPC
 	ClearPrefixes
-	fetch 10
+	v30EncodeFastPCAndFetch 10
 ;@----------------------------------------------------------------------------
 pushFFReg:
 	ldrh r1,[v30ofs,#v30Regs]
@@ -4418,6 +4409,18 @@ V30EncodePC:
 //	subne v30cyc,v30cyc,#1*CYCLE
 	ldmfd sp!,{pc}
 ;@----------------------------------------------------------------------------
+V30EncodePCAndFetch:
+;@----------------------------------------------------------------------------
+	ldr r0,[v30ptr,#v30SRegPS]
+	add r0,r0,v30pc,lsr#4
+	bl cpuReadMem20
+	sub r0,r1,v30pc,lsr#16
+	str r0,[v30ptr,#v30LastBank]
+	mov v30pc,r1
+//	tst v30pc,#1
+//	subne v30cyc,v30cyc,#1*CYCLE
+	fetch 0
+;@----------------------------------------------------------------------------
 V30SetIRQPin:				;@ r0=pin state
 ;@----------------------------------------------------------------------------
 	cmp r0,#0
@@ -4451,8 +4454,7 @@ V30TakeIRQ:					;@ r0 = vector number
 	bl cpuReadMem20W
 	strh r0,[v30ptr,#v30SRegPS+2]
 
-	v30EncodeFastPC
-	fetch 33
+	v30EncodeFastPCAndFetch 33
 ;@----------------------------------------------------------------------------
 V30RestoreAndRunXCycles:	;@ r0 = number of cycles to run
 ;@----------------------------------------------------------------------------
