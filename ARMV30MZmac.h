@@ -5,6 +5,9 @@
 //  Created by Fredrik Ahlström on 2021-10-19.
 //  Copyright © 2021-2025 Fredrik Ahlström. All rights reserved.
 //
+#if !__ASSEMBLER__
+	#error This header file is only for use in assembly files!
+#endif
 
 #include "ARMV30MZ.i"
 							;@ ARM flags

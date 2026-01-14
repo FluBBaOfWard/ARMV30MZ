@@ -5,23 +5,13 @@
 //  Created by Fredrik Ahlström on 2021-12-19.
 //  Copyright © 2021-2025 Fredrik Ahlström. All rights reserved.
 //
-
 #ifdef __arm__
 
 #include "ARMV30MZmac.h"
 
-	.syntax unified
-	.arm
-
-#ifdef NDS
-	.section .itcm						;@ For the NDS ARM9
-#elif GBA
-	.section .iwram, "ax", %progbits	;@ For the GBA
-#else
-	.section .text						;@ For anything else
-#endif
-	.align 2
-
+	.global defaultV30
+	.global V30OpTable
+	.global PZSTable
 
 	.global V30Init
 	.global V30Reset
@@ -38,11 +28,6 @@
 	.global V30DecodePC
 	.global V30EncodePC
 	.global v30OutOfCycles
-
-	.global defaultV30
-
-	.global V30OpTable
-	.global PZSTable
 
 	.global i_bv
 	.global i_bnv
@@ -61,6 +46,18 @@
 	.global i_ble
 	.global i_bgt
 
+
+	.syntax unified
+	.arm
+
+#ifdef NDS
+	.section .itcm, "ax", %progbits		;@ For the NDS ARM9
+#elif GBA
+	.section .iwram, "ax", %progbits	;@ For the GBA
+#else
+	.section .text						;@ For anything else
+#endif
+	.align 2
 //
 // All opcodes are free to also use r4-r5 without pushing to stack.
 // If an opcode calls another opcode, the caller is responsible for
@@ -4713,9 +4710,9 @@ V30RedirectOpcode:			;@ In r0=opcode, r1=address.
 	bx lr
 ;@----------------------------------------------------------------------------
 #ifdef NDS
-	.section .dtcm, "ax", %progbits		;@ For the NDS
+	.section .dtcm, "a", %progbits		;@ For the NDS
 #elif GBA
-	.section .iwram, "ax", %progbits	;@ For the GBA
+	.section .iwram, "a", %progbits	;@ For the GBA
 #else
 	.section .text
 #endif

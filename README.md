@@ -39,6 +39,8 @@ Address is in the top 20bits.
 
 Fredrik Ahlström
 
-X/Twitter @TheRealFluBBa
+<https://bsky.app/profile/therealflubba.bsky.social>
 
 <https://www.github.com/FluBBaOfWard>
+
+X/Twitter @TheRealFluBBa
