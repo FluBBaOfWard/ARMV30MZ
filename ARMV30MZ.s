@@ -4717,7 +4717,7 @@ V30RedirectOpcode:			;@ In r0=opcode, r1=address.
 	.section .text
 #endif
 ;@----------------------------------------------------------------------------
-	.align 6
+	.align 5		;@ align 8 * 4, because of _80Table, _83Table etc.
 	.space (48-42)*4
 defaultV30:
 v30StateStart:
