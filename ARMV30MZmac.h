@@ -10,35 +10,6 @@
 #endif
 
 #include "ARMV30MZ.i"
-							;@ ARM flags
-	.equ PSR_S, 0x00000008		;@ Sign (negative)
-	.equ PSR_Z, 0x00000004		;@ Zero
-	.equ PSR_C, 0x00000002		;@ Carry
-	.equ PSR_V, 0x00000001		;@ Overflow
-
-	.equ PSR_P, 0x00000020		;@ Parity
-	.equ PSR_A, 0x00000010		;@ Aux/Half carry
-
-
-							;@ V30 flags
-	.equ MF, 0x8000				;@ Mode, 1=native/0=emulated, 0 invalid in V30MZ.
-		;@   0x4000				;@ 1
-		;@   0x2000				;@ 1
-		;@   0x1000				;@ 1
-	.equ OF, 0x0800				;@ Overflow
-	.equ DF, 0x0400				;@ Direction
-	.equ IF, 0x0200				;@ Interrupt enable
-	.equ TF, 0x0100				;@ BREAK/TRAP
-	.equ SF, 0x0080				;@ Sign (negative)
-	.equ ZF, 0x0040				;@ Zero
-		;@   0x0020				;@ 0
-	.equ AF, 0x0010				;@ Aux / Half carry
-		;@   0x0008				;@ 0
-	.equ PF, 0x0004				;@ Parity
-		;@   0x0002				;@ 1
-	.equ CF, 0x0001				;@ Carry
-
-;@----------------------------------------------------------------------------
 
 	.macro eatCycles count
 	sub v30cyc,v30cyc,#(\count)*CYCLE
