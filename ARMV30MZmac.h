@@ -19,7 +19,17 @@
 	ldr \reg,[v30ptr,#v30LastBank]
 	.endm
 
+	;@ Apply the cached host bus penalty only to instruction-stream reads.
+	;@ Normal data accesses keep using cpuReadMem20/cpuReadMem20W unchanged.
+	.macro eatFetchWait scratch
+	;@ Keep the caller's ARM condition flags intact: several handlers fetch an
+	;@ instruction byte between a compare and its conditional operation.
+	and \scratch,v30cyc,#FETCH_WAIT_ACTIVE_FLAG
+	sub v30cyc,v30cyc,\scratch,lsl#3	;@ Flag bit 5 becomes 1*CYCLE.
+	.endm
+
 	.macro getNextByteTo reg=r0
+	eatFetchWait \reg
 	ldrb \reg,[v30pc],#1
 	.endm
 
@@ -28,6 +38,7 @@
 	.endm
 
 	.macro getNextSignedByteTo reg=r0
+	eatFetchWait \reg
 	ldrsb \reg,[v30pc],#1
 	.endm
 
@@ -36,7 +47,9 @@
 	.endm
 
 	.macro getNextWordTo dst=r0 use=r1
+	eatFetchWait \dst
 	ldrb \dst,[v30pc],#1
+	eatFetchWait \use
 	ldrb \use,[v30pc],#1
 	orr \dst,\dst,\use,lsl#8
 	.endm
@@ -46,7 +59,9 @@
 	.endm
 
 	.macro getNextSignedWordTo dst=r0 use=r1
+	eatFetchWait \dst
 	ldrb \dst,[v30pc],#1
+	eatFetchWait \use
 	ldrsb \use,[v30pc],#1
 	orr \dst,\dst,\use,lsl#8
 	.endm
@@ -56,6 +71,7 @@
 	.endm
 
 	.macro fetch count
+	eatFetchWait r0
 	ldrb r0,[v30pc],#1
 	subs v30cyc,v30cyc,#(\count)*CYCLE
 	ldrgt pc,[v30ptr,r0,lsl#2]
@@ -63,6 +79,7 @@
 	.endm
 
 	.macro executeNext
+	eatFetchWait r0
 	ldrb r0,[v30pc],#1
 	ldr pc,[v30ptr,r0,lsl#2]
 	.endm

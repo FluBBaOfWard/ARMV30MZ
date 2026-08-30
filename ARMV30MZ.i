@@ -56,6 +56,11 @@
 	.equ TRAP_FLAG, 1<<0		;@ Bit 0, this is used directly as IRQ nr.
 	.equ HALT_FLAG, 1<<1		;@ Bit 1
 	.equ LOCK_PREFIX, 1<<2		;@ Bit 2
+	;@ Host-managed instruction-stream timing flags. They live below CYCLE so
+	;@ cycle additions/subtractions and idle-loop truncation preserve them.
+	.equ FETCH_CART_ROM_FLAG, 1<<3	;@ Current mapped PC is cartridge ROM.
+	.equ FETCH_ROM_WAIT_FLAG, 1<<4	;@ Cartridge ROM wait state is enabled.
+	.equ FETCH_WAIT_ACTIVE_FLAG, 1<<5	;@ Both conditions above are true.
 ;@----------------------------------------------------------------------------
 ;@ Extra v30f flags
 	.equ SEG_PF, 1<<6			;@ Segment prefix
