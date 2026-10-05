@@ -3,7 +3,7 @@
 //  V30MZ cpu emulator for arm32.
 //
 //  Created by Fredrik Ahlström on 2021-12-19.
-//  Copyright © 2021-2025 Fredrik Ahlström. All rights reserved.
+//  Copyright © 2021-2026 Fredrik Ahlström. All rights reserved.
 //
 #ifdef __arm__
 
@@ -3656,9 +3656,6 @@ divubF6:		;@ DIVU/DIV
 	cmp r0,#1
 	bicne v30f,v30f,#PSR_Z
 	fetch 15
-divubF6Error:
-	eatCycles 15
-	b divideError
 ;@----------------------------------------------------------------------------
 divbF6:			;@ DIV/IDIV
 	movs r1,r0,lsl#24
@@ -4488,10 +4485,10 @@ v30ChkHalt:
 	ldmfd sp!,{pc}
 v30OutOfCycles:
 	sub v30pc,v30pc,#1			;@ Fix up pc
-	mov v30cyc,v30cyc,lsl#2		;@ Check for delayed irq check.
-	movs v30cyc,v30cyc,asr#2
-	bgt v30ChkIrqInternal
-	ldmfd sp!,{pc}
+	movs r0,v30cyc,lsl#2		;@ Check for delayed irq check.
+	ldmfdle sp!,{pc}
+	mov v30cyc,r0,asr#2
+	b v30ChkIrqInternal
 ;@----------------------------------------------------------------------------
 v30DelayIrqCheckTrap:		;@ This is used by EI
 ;@----------------------------------------------------------------------------
@@ -4527,6 +4524,20 @@ doV30NMI:					;@
 	strb r1,[v30ptr,#v30NmiPending]
 	mov r0,#NEC_NMI_VECTOR		;@ (2)
 	b V30TakeIRQ
+
+;@----------------------------------------------------------------------------
+divubF6Error:
+;@----------------------------------------------------------------------------
+	mov r0,r0,lsr#6
+	movs r1,r1,lsr#8
+	tsteq r0,#0xFF
+	sub r0,r0,r1
+	cmpne r0,#0x300
+	sub r0,r0,r1,lsl#1
+	cmpne r0,#0x100
+	bicne v30f,v30f,#PSR_Z
+	eatCycles 15
+//	b divideError
 ;@----------------------------------------------------------------------------
 divideError:
 ;@----------------------------------------------------------------------------
