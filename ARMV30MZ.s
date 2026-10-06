@@ -3646,8 +3646,8 @@ divubF6:		;@ DIVU/DIV
 	mov r1,r0,lsl#8
 	ldrh r0,[v30ptr,#v30RegAW]
 	cmp r0,r1
-	bcs divubF6Error
 	rsb r1,r1,#1
+	bcs divubF6Error
 
 	bl division8
 
@@ -3798,8 +3798,8 @@ divuwF7:		;@ DIVU/DIV
 	ldrh r2,[v30ptr,#v30RegDW]
 	orr r0,r0,r2,lsl#16
 	cmp r0,r1,lsl#1
-	bcs divuwF7Error
 	rsb r1,r1,#0
+	bcs divuwF7Error
 
 	bl division16
 
@@ -3811,10 +3811,6 @@ divuwF7:		;@ DIVU/DIV
 	movne v30f,#0						;@ Clear flags.
 
 	fetch 23
-divuwF7Error:
-	mov v30f,#0							;@ Clear flags.
-	eatCycles 15
-	b divideError
 ;@----------------------------------------------------------------------------
 divwF7:			;@ DIV/IDIV
 	mov v30f,#PSR_Z						;@ Set Z.
@@ -4526,15 +4522,27 @@ doV30NMI:					;@
 	b V30TakeIRQ
 
 ;@----------------------------------------------------------------------------
+divuwF7Error:
+;@----------------------------------------------------------------------------
+	mov v30f,#0							;@ Clear flags.
+	mov r0,r0,lsr#14
+	movs r1,r1,lsl#1
+	movseq r2,r0,lsl#16
+	mov r0,r0,lsl#14
+	addsne r0,r0,r1,lsr#2
+	cmnne r0,r1,lsr#1
+	orreq v30f,v30f,#PSR_Z
+	eatCycles 15
+	b divideError
+;@----------------------------------------------------------------------------
 divubF6Error:
 ;@----------------------------------------------------------------------------
 	mov r0,r0,lsr#6
-	movs r1,r1,lsr#8
+	ands r1,r1,#0xFF00
 	tsteq r0,#0xFF
-	sub r0,r0,r1
-	cmpne r0,#0x300
-	sub r0,r0,r1,lsl#1
-	cmpne r0,#0x100
+	mov r0,r0,lsl#16+6
+	addsne r0,r0,r1,lsl#8+6
+	cmnne r0,r1,lsl#8+6+1
 	bicne v30f,v30f,#PSR_Z
 	eatCycles 15
 //	b divideError

@@ -2,8 +2,9 @@ ARMV30MZ revision history
 -=-=-=-=-=-=-=-=-=-=-=-=-
 
 
-V0.8.12 - 2026-10-05 (FluBBa)
+V0.8.12 - 2026-10-06 (FluBBa)
 	Fixed Zero flag on exception for u16/u8.
+	Fixed Zero flag on exception for u32/u16.
 
 V0.8.11 - 2025-05-25 (FluBBa)
 	Fixed Branch Far & Call Far.

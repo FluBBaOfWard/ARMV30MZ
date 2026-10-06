@@ -5,8 +5,8 @@ NEC V30MZ emulator for ARM32.
 ## About
 
 All opcodes should behave pretty much like the real deal in a WonderSwan.
-All flags should be emulated correctly except when a division exception occurs,
-then the Zero flag is not updated as it is on HW.
+All flags should be emulated correctly except when a signed division
+exception occurs, then the Zero flag is not updated as it is on HW.
 Timing should be pretty close to HW as well, it doesn't handle extra cycles on branches to odd addresses.
 It only handles interrupts during REP instructions for MOVMW/MOVSW & STMW/STOSW, on these instructions LOCK is never accounted for.
 It doesn't handle emulation bit/mode in status register, I haven't figured out how to test that.

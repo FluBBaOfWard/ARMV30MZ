@@ -1,7 +1,7 @@
 ARMV30MZ To do
 --------------
 
-	Figure out how Zero flag is set during division exception.
+	Figure out how Zero flag is set during signed division exception.
 	Make all rep instructions able to recognize interrupts.
 	Segment wrapping eats extra cycles? At least for LDS.
 	Log opcode for undefined instructions.
