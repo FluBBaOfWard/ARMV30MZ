@@ -28,6 +28,7 @@
 	.global V30DecodePC
 	.global V30EncodePC
 	.global v30OutOfCycles
+	.global v30FetchRegionFunc
 
 	.global i_bv
 	.global i_bnv
@@ -4391,10 +4392,15 @@ V30EncodePC:
 	stmfd sp!,{lr}
 	ldr r0,[v30ptr,#v30SRegPS]
 	add r0,r0,v30pc,lsr#4
+	mov r3,r0
 	bl cpuReadMem20
 	sub r0,r1,v30pc,lsr#16
 	str r0,[v30ptr,#v30LastBank]
 	mov v30pc,r1
+	mov r0,r3
+	ldr r2,=v30FetchRegionFunc
+	ldr r2,[r2]
+	blx r2
 //	tst v30pc,#1
 //	subne v30cyc,v30cyc,#1*CYCLE
 	ldmfd sp!,{pc}
@@ -4403,10 +4409,15 @@ V30EncodePCAndFetch:
 ;@----------------------------------------------------------------------------
 	ldr r0,[v30ptr,#v30SRegPS]
 	add r0,r0,v30pc,lsr#4
+	mov r3,r0
 	bl cpuReadMem20
 	sub r0,r1,v30pc,lsr#16
 	str r0,[v30ptr,#v30LastBank]
 	mov v30pc,r1
+	mov r0,r3
+	ldr r2,=v30FetchRegionFunc
+	ldr r2,[r2]
+	blx r2
 //	tst v30pc,#1
 //	subne v30cyc,v30cyc,#1*CYCLE
 	fetch 0
@@ -4592,6 +4603,10 @@ V30IrqVectorDummy:
 V30BusStatusDummy:
 ;@----------------------------------------------------------------------------
 	bx lr
+;@----------------------------------------------------------------------------
+V30FetchRegionDummy:			;@ r0=physical address, r1=mapped host pointer
+;@----------------------------------------------------------------------------
+	bx lr
 
 ;@----------------------------------------------------------------------------
 V30Init:					;@ r0=v30ptr
@@ -4629,6 +4644,9 @@ regConv2Loop:
 	str r0,[v30ptr,#v30IrqVectorFunc]
 	adr r0,V30BusStatusDummy
 	str r0,[v30ptr,#v30BusStatusFunc]
+	adr r0,V30FetchRegionDummy
+	ldr r1,=v30FetchRegionFunc
+	str r0,[r1]
 	ldmfd sp!,{v30ptr,lr}
 	bx lr
 regConvert:
@@ -4736,6 +4754,8 @@ V30RedirectOpcode:			;@ In r0=opcode, r1=address.
 	.section .text
 #endif
 ;@----------------------------------------------------------------------------
+v30FetchRegionFunc:
+	.long V30FetchRegionDummy
 	.align 5		;@ align 8 * 4, because of _80Table, _83Table etc.
 	.space (48-42)*4
 defaultV30:
